@@ -118,11 +118,15 @@ const INFO_CLIENTS = ["WEB", "MWEB", "ANDROID", "IOS"] as const;
 async function getInfoWithCaptions(yt: Innertube, videoId: string) {
   let best: Awaited<ReturnType<Innertube["getInfo"]>> | null = null;
   let hollow: Awaited<ReturnType<Innertube["getInfo"]>> | null = null;
+  const attempts: string[] = [];
   for (const client of INFO_CLIENTS) {
     try {
       const info = await yt.getInfo(videoId, { client });
       const hasTitle = Boolean(info.basic_info.title);
       const hasTracks = (info.captions?.caption_tracks ?? []).length > 0;
+      attempts.push(
+        `${client}=${hasTitle ? "title" : "-"}/${hasTracks ? "tracks" : "-"}/${info.playability_status?.status ?? "?"}`
+      );
       if (hasTitle && hasTracks) return info;
       if (hasTitle) {
         if (!best) best = info; // real video, just no captions on this client
@@ -131,10 +135,14 @@ async function getInfoWithCaptions(yt: Innertube, videoId: string) {
         // may still carry the transcript engagement panel — keep it
         hollow = info;
       }
-    } catch {
-      // bot check or client-specific failure — try the next client
+    } catch (err) {
+      attempts.push(
+        `${client}=ERR(${(err instanceof Error ? err.message : String(err)).slice(0, 60)})`
+      );
     }
   }
+  // degraded result — leave a trail in the server logs for diagnosis
+  console.warn(`[youtube] info degraded for ${videoId}:`, attempts.join(" | "));
   return best ?? hollow;
 }
 
@@ -243,7 +251,11 @@ export async function fetchVideoData(videoId: string): Promise<VideoData> {
           startSec: Math.floor(Number(seg.start_ms ?? 0) / 1000),
         }))
         .filter((s) => s.text.length > 0);
-    } catch {
+    } catch (err) {
+      console.warn(
+        `[youtube] getTranscript fallback failed for ${videoId}:`,
+        err instanceof Error ? err.message : err
+      );
       throw new Error(
         botChecked
           ? "YouTube refused the request for this video (bot check) — try again in a bit."
