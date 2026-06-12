@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.104.1",
+    "bgutils-js": "^3.2.0",
+    "jsdom": "^29.1.1",
     "leaflet": "^1.9.4",
     "next": "16.2.9",
     "react": "19.2.4",
@@ -18,6 +20,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@types/jsdom": "^28.0.3",
     "@types/leaflet": "^1.9.21",
     "@types/node": "^20",
     "@types/react": "^19",

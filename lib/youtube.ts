@@ -2,9 +2,64 @@ import { Innertube } from "youtubei.js";
 
 let ytPromise: Promise<Innertube> | null = null;
 
+/**
+ * From datacenter IPs (Vercel), YouTube bot-checks /player requests unless
+ * the session carries a BotGuard proof-of-origin token. Mint one per process
+ * (the documented BgUtils recipe: visitor data -> challenge -> run the
+ * interpreter VM -> generate token). Falls back to a plain session — which
+ * is all that's needed locally — if any minting step fails.
+ */
+async function createClient(): Promise<Innertube> {
+  try {
+    const base = await Innertube.create({ retrieve_player: false });
+    const visitorData = base.session.context.client.visitorData;
+    if (!visitorData) throw new Error("no visitor data");
+
+    const { BG } = await import("bgutils-js");
+    const { JSDOM } = await import("jsdom");
+    const dom = new JSDOM();
+    // BotGuard's VM needs window/document; expose them only while minting so
+    // nothing else (SSR code branching on `typeof window`) sees a fake browser.
+    Object.assign(globalThis, { window: dom.window, document: dom.window.document });
+    try {
+      const bgConfig = {
+        fetch: (input: string | URL | Request, init?: RequestInit) => fetch(input, init),
+        globalObj: globalThis,
+        identifier: visitorData,
+        requestKey: "O43z0dpjhgX20SCx4KAo",
+      };
+      const challenge = await BG.Challenge.create(bgConfig);
+      if (!challenge) throw new Error("no challenge");
+      const script =
+        challenge.interpreterJavascript.privateDoNotAccessOrElseSafeScriptWrappedValue;
+      if (!script) throw new Error("no interpreter script");
+      new Function(script)();
+      const poToken = await BG.PoToken.generate({
+        program: challenge.program,
+        globalName: challenge.globalName,
+        bgConfig,
+      });
+      return await Innertube.create({
+        po_token: poToken.poToken,
+        visitor_data: visitorData,
+        generate_session_locally: true,
+      });
+    } finally {
+      delete (globalThis as Record<string, unknown>).window;
+      delete (globalThis as Record<string, unknown>).document;
+    }
+  } catch (err) {
+    console.warn(
+      "[youtube] po_token minting failed, using plain session:",
+      err instanceof Error ? err.message : err
+    );
+    return Innertube.create({ generate_session_locally: true });
+  }
+}
+
 function getClient(): Promise<Innertube> {
   if (!ytPromise) {
-    ytPromise = Innertube.create({ generate_session_locally: true });
+    ytPromise = createClient();
   }
   return ytPromise;
 }
@@ -57,7 +112,8 @@ export interface VideoData {
 // getInfo "succeeds" but comes back hollow — no title, no caption tracks.
 // Alternate clients usually pass, so walk the list until one returns
 // captions. Locally WEB wins on the first try and nothing changes.
-const INFO_CLIENTS = ["WEB", "ANDROID", "TV_EMBEDDED", "IOS"] as const;
+// Only these clients expose caption tracks (TV variants don't).
+const INFO_CLIENTS = ["WEB", "MWEB", "ANDROID", "IOS"] as const;
 
 async function getInfoWithCaptions(yt: Innertube, videoId: string) {
   let best: Awaited<ReturnType<Innertube["getInfo"]>> | null = null;
