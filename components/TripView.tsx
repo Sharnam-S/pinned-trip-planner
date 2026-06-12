@@ -4,6 +4,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { Spot, Trip, TripVideo } from "@/lib/types";
 import { CATEGORY_EMOJI, formatTimestamp, youtubeLink } from "@/lib/categories";
+import { getLocalTrip, saveLocalTrip, subscribeLocalTrips } from "@/lib/clientStore";
+import { addVideosToTrip, ensureRunning, isRunning } from "@/lib/runner";
+import { parseVideoId } from "@/lib/links";
 import type { MapBounds } from "./TripMap";
 
 const TripMap = dynamic(() => import("./TripMap"), { ssr: false });
@@ -89,15 +92,17 @@ function spotPhotoUrl(spot: Spot): string | null {
 
 // Lazy photo carousel state, shared by the grid tiles and the detail card.
 // Photos beyond the cover resolve on the first swipe — a card nobody swipes
-// never bills the Photos API.
-function useSpotPhotos(spot: Spot, tripId: string) {
+// never bills the Photos API. Local trips persist the resolved URLs back to
+// localStorage; sample trips keep them for this page view only.
+function useSpotPhotos(spot: Spot, tripId: string, local: boolean) {
   const baseUrls =
     spot.photos && spot.photos.length > 0
       ? spot.photos.map((p) => p.url)
       : spotPhotoUrl(spot)
         ? [spotPhotoUrl(spot)!]
         : [];
-  // Full resolved list once the lazy fetch lands
+  // Full resolved list once the lazy fetch lands (sample trips only — local
+  // trips re-render off the localStorage update instead)
   const [allUrls, setAllUrls] = useState<string[] | null>(null);
   const [index, setIndex] = useState(0);
   const fetchingRef = useRef(false);
@@ -110,9 +115,32 @@ function useSpotPhotos(spot: Spot, tripId: string) {
   const ensureAll = () => {
     if (allUrls || pending === 0 || fetchingRef.current) return;
     fetchingRef.current = true;
-    fetch(`/api/trips/${tripId}/spots/${spot.id}/photos`, { method: "POST" })
+    fetch(`/api/photos`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ names: spot.morePhotoNames }),
+    })
       .then((r) => (r.ok ? r.json() : Promise.reject()))
-      .then((data: { urls: string[] }) => setAllUrls(data.urls))
+      .then((data: { urls: string[] }) => {
+        const seen = new Set(baseUrls);
+        const extras = data.urls.filter((u) => !seen.has(u));
+        setAllUrls([...baseUrls, ...extras]);
+        if (local) {
+          const trip = getLocalTrip(tripId);
+          const s = trip?.spots.find((x) => x.id === spot.id);
+          if (trip && s) {
+            const have = new Set((s.photos ?? []).map((p) => p.url));
+            s.photos = [
+              ...(s.photos ?? []),
+              ...extras
+                .filter((u) => !have.has(u))
+                .map((u) => ({ url: u, source: "google" as const })),
+            ];
+            s.morePhotoNames = undefined;
+            saveLocalTrip(trip);
+          }
+        }
+      })
       .catch(() => {
         fetchingRef.current = false; // allow retry on the next swipe
       });
@@ -164,8 +192,8 @@ function CarouselControls({
 
 // Airbnb-style tile photo carousel: arrows appear on hover, dots track the
 // current photo. Single-photo spots render a plain image.
-function TilePhotos({ spot, tripId }: { spot: Spot; tripId: string }) {
-  const { urls, i, total, step } = useSpotPhotos(spot, tripId);
+function TilePhotos({ spot, tripId, local }: { spot: Spot; tripId: string; local: boolean }) {
+  const { urls, i, total, step } = useSpotPhotos(spot, tripId, local);
 
   return (
     <div className="tile-photo">
@@ -187,20 +215,20 @@ function TilePhotos({ spot, tripId }: { spot: Spot; tripId: string }) {
 
 function Sources({
   trip,
+  canAdd,
   addLinks,
   setAddLinks,
   addError,
-  adding,
   onAddVideos,
   pinnedId,
   onHoverVideo,
   onClickVideo,
 }: {
   trip: Trip;
+  canAdd: boolean;
   addLinks: string;
   setAddLinks: (v: string) => void;
   addError: string;
-  adding: boolean;
   onAddVideos: () => void;
   pinnedId: string | null;
   onHoverVideo: (id: string | null) => void;
@@ -236,7 +264,7 @@ function Sources({
             onHoverVideo={onHoverVideo}
             onClickVideo={onClickVideo}
           />
-          {trip.status !== "processing" && (
+          {canAdd && trip.status !== "processing" && (
             <div className="add-videos">
               <textarea
                 placeholder="Add more YouTube links…"
@@ -249,10 +277,16 @@ function Sources({
               <button
                 className="btn-secondary"
                 onClick={onAddVideos}
-                disabled={adding || !addLinks.trim()}
+                disabled={!addLinks.trim()}
               >
-                {adding ? "Adding…" : "Add videos"}
+                Add videos
               </button>
+            </div>
+          )}
+          {!canAdd && (
+            <div className="hero-hint" style={{ padding: "8px 4px 2px" }}>
+              This is a sample trip — build your own from the homepage to add
+              videos.
             </div>
           )}
         </div>
@@ -263,6 +297,8 @@ function Sources({
 
 export default function TripView({ tripId }: { tripId: string }) {
   const [trip, setTrip] = useState<Trip | null>(null);
+  // null = still checking localStorage; then the trip is local or a sample
+  const [isLocal, setIsLocal] = useState<boolean | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [bounds, setBounds] = useState<MapBounds | null>(null);
@@ -273,10 +309,9 @@ export default function TripView({ tripId }: { tripId: string }) {
   const highlightVideoId = hoverVideoId ?? pinnedVideoId;
   const [addLinks, setAddLinks] = useState("");
   const [addError, setAddError] = useState("");
-  const [adding, setAdding] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const load = useCallback(async () => {
+  const loadSample = useCallback(async () => {
     const res = await fetch(`/api/trips/${tripId}`);
     if (res.status === 404) {
       setNotFound(true);
@@ -287,19 +322,33 @@ export default function TripView({ tripId }: { tripId: string }) {
   }, [tripId]);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    const local = getLocalTrip(tripId);
+    if (local) {
+      setIsLocal(true);
+      setTrip(local);
+      // resume an interrupted build (page refresh mid-processing)
+      if (local.status === "processing" && !isRunning(tripId)) {
+        ensureRunning(tripId);
+      }
+      return subscribeLocalTrips(() => {
+        const t = getLocalTrip(tripId);
+        if (t) setTrip(t);
+      });
+    }
+    setIsLocal(false);
+    loadSample();
+  }, [tripId, loadSample]);
 
-  // Poll while processing so spots appear as each video finishes — and while
-  // background passes (photo backfill, Google data upgrade) are improving
-  // older trips, so pins slide to corrected positions live.
+  // Sample trips only: poll while local-dev background passes (photo
+  // backfill, Google data upgrade) are improving them, so pins slide to
+  // corrected positions live. Local trips re-render off store subscriptions.
   const needsPoll =
-    trip?.status === "processing" ||
-    (trip?.status === "ready" &&
-      (trip.upgrading === true || trip.spots.some((s) => s.photo === undefined)));
+    isLocal === false &&
+    trip?.status === "ready" &&
+    (trip.upgrading === true || trip.spots.some((s) => s.photo === undefined));
   useEffect(() => {
     if (needsPoll && !pollRef.current) {
-      pollRef.current = setInterval(load, 2500);
+      pollRef.current = setInterval(loadSample, 2500);
     }
     if (trip && !needsPoll && pollRef.current) {
       clearInterval(pollRef.current);
@@ -311,35 +360,39 @@ export default function TripView({ tripId }: { tripId: string }) {
         pollRef.current = null;
       }
     };
-  }, [trip, needsPoll, load]);
+  }, [trip, needsPoll, loadSample]);
 
-  async function addVideos() {
+  function addVideos() {
     setAddError("");
-    const urls = addLinks
+    const entries = addLinks
       .split(/\n|,/)
       .map((s) => s.trim())
-      .filter(Boolean);
-    if (urls.length === 0) return;
-    setAdding(true);
-    const res = await fetch(`/api/trips/${tripId}/videos`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ urls }),
-    });
-    const data = await res.json();
-    setAdding(false);
-    if (!res.ok) {
-      setAddError(data.error ?? "Failed to add videos.");
+      .filter(Boolean)
+      .map((url) => ({ url, id: parseVideoId(url) }));
+    if (entries.length === 0) return;
+    const invalid = entries.filter((e) => !e.id);
+    if (invalid.length > 0) {
+      setAddError(`Not valid YouTube links: ${invalid.map((e) => e.url).join(", ")}`);
+      return;
+    }
+    const unique = [...new Map(entries.map((e) => [e.id as string, e])).values()];
+    const fresh = unique.filter((e) => !trip?.videos.some((v) => v.id === e.id));
+    if (fresh.length === 0) {
+      setAddError("Those videos are already in this trip.");
       return;
     }
     setAddLinks("");
-    load();
+    addVideosToTrip(tripId, fresh.map((e) => ({ id: e.id as string, url: e.url })));
   }
 
   if (notFound) {
     return (
       <div className="processing-page">
         <h1>Trip not found</h1>
+        <div className="progress">
+          Trips are saved in the browser that created them — this link may be
+          someone else&rsquo;s trip, or it was deleted.
+        </div>
         <a className="back" href="/">← Back to trips</a>
       </div>
     );
@@ -402,10 +455,10 @@ export default function TripView({ tripId }: { tripId: string }) {
 
         <Sources
           trip={trip}
+          canAdd={isLocal === true}
           addLinks={addLinks}
           setAddLinks={setAddLinks}
           addError={addError}
-          adding={adding}
           onAddVideos={addVideos}
           pinnedId={pinnedVideoId}
           onHoverVideo={setHoverVideoId}
@@ -430,7 +483,7 @@ export default function TripView({ tripId }: { tripId: string }) {
                   className={`spot-tile ${selectedId === spot.id ? "selected" : ""}`}
                   onClick={() => setSelectedId(spot.id)}
                 >
-                  <TilePhotos spot={spot} tripId={trip.id} />
+                  <TilePhotos spot={spot} tripId={trip.id} local={isLocal === true} />
                   <div className="tile-meta">
                     <div className="tile-name">{spot.name}</div>
                     <div className="tile-sub">
@@ -471,6 +524,7 @@ export default function TripView({ tripId }: { tripId: string }) {
                 key={selectedSpot.id} // remount per spot — photo carousel state must not leak between spots
                 spot={selectedSpot}
                 tripId={trip.id}
+                local={isLocal === true}
                 onClose={() => setSelectedId(null)}
               />
             )}
@@ -484,13 +538,15 @@ export default function TripView({ tripId }: { tripId: string }) {
 function SpotCard({
   spot,
   tripId,
+  local,
   onClose,
 }: {
   spot: Spot;
   tripId: string;
+  local: boolean;
   onClose: () => void;
 }) {
-  const { urls, i, total, step } = useSpotPhotos(spot, tripId);
+  const { urls, i, total, step } = useSpotPhotos(spot, tripId, local);
   // Google photo sets are all-Google; otherwise it's the single legacy photo
   // (wikimedia) or a frame from the recommending creator's video
   const credit =

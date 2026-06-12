@@ -542,6 +542,11 @@ button {
   color: white;
 }
 
+.badge.sample {
+  background: rgba(255, 255, 255, 0.92);
+  color: #555;
+}
+
 /* ---------- Trip page ---------- */
 
 .trip-page {

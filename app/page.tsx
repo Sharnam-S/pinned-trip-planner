@@ -4,12 +4,21 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Mention, Spot, Trip } from "@/lib/types";
+import {
+  listLocalTrips,
+  newTripId,
+  saveLocalTrip,
+  subscribeLocalTrips,
+} from "@/lib/clientStore";
+import { newSearchTrip } from "@/lib/merge";
+import { ensureRunning } from "@/lib/runner";
 
 const HeroMap = dynamic(() => import("@/components/HeroMap"), { ssr: false });
 
 export default function Home() {
   const router = useRouter();
-  const [trips, setTrips] = useState<Trip[]>([]);
+  const [localTrips, setLocalTrips] = useState<Trip[]>([]);
+  const [samples, setSamples] = useState<Trip[]>([]);
   const [destination, setDestination] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -18,20 +27,23 @@ export default function Home() {
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
+    setLocalTrips(listLocalTrips());
+    const unsub = subscribeLocalTrips(() => setLocalTrips(listLocalTrips()));
     fetch("/api/trips")
       .then((r) => r.json())
-      .then(setTrips)
+      .then(setSamples)
       .catch(() => {});
+    return unsub;
   }, []);
 
-  // The hero showcases the user's freshest ready trip — the most spots wins
-  // a tie so the map always looks alive.
+  // The hero showcases the freshest ready trip — yours first, then the
+  // samples — the most spots wins a tie so the map always looks alive.
   const heroTrip = useMemo(
     () =>
-      trips
+      [...localTrips, ...samples]
         .filter((t) => t.status === "ready" && t.spots.length > 0)
         .sort((a, b) => b.spots.length - a.spots.length)[0] ?? null,
-    [trips]
+    [localTrips, samples]
   );
 
   const heroSpots: Spot[] = useMemo(
@@ -52,7 +64,7 @@ export default function Home() {
       .slice(0, 12);
   }, [heroTrip]);
 
-  async function createTrip() {
+  function createTrip() {
     setError("");
     if (!destination.trim()) {
       setError("Tell us where you're going.");
@@ -63,23 +75,20 @@ export default function Home() {
       return;
     }
     setCreating(true);
-    try {
-      const res = await fetch("/api/trips", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ destination, startDate, endDate, interests }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "Something went wrong.");
-        setCreating(false);
-        return;
-      }
-      router.push(`/trip/${data.id}`);
-    } catch {
-      setError("Network error — is the dev server running?");
+    const id = newTripId();
+    const trip = newSearchTrip(id, {
+      destination: destination.trim(),
+      startDate: startDate || undefined,
+      endDate: endDate || undefined,
+      interests: interests.trim() || undefined,
+    });
+    if (!saveLocalTrip(trip)) {
+      setError("Your browser storage is full — delete an old trip first.");
       setCreating(false);
+      return;
     }
+    ensureRunning(id);
+    router.push(`/trip/${id}`);
   }
 
   function uniqueCreators(trip: Trip) {
@@ -99,6 +108,40 @@ export default function Home() {
       null
     );
   }
+
+  function coverCard(t: Trip, sample: boolean) {
+    const cover = tripCover(t);
+    return (
+      <a key={t.id} href={`/trip/${t.id}`} className="cover-card">
+        {cover ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={cover} alt={t.name} loading="lazy" />
+        ) : (
+          <div className="cover-fallback">🗺️</div>
+        )}
+        <span className={`badge ${sample ? "sample" : t.status}`}>
+          {sample ? "sample" : t.status}
+        </span>
+        <div className="cover-meta">
+          <div className="cover-name">{t.name}</div>
+          <div className="cover-sub">
+            {t.videos.length} video{t.videos.length === 1 ? "" : "s"} ·{" "}
+            {t.spots.length} spot{t.spots.length === 1 ? "" : "s"}
+          </div>
+        </div>
+        <div className="cover-avatars">
+          {uniqueCreators(t).map(([name, avatar]) =>
+            avatar ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={name} src={avatar} alt={name} title={name} />
+            ) : null
+          )}
+        </div>
+      </a>
+    );
+  }
+
+  const hasTrips = localTrips.length > 0 || samples.length > 0;
 
   return (
     <main className="landing">
@@ -180,12 +223,13 @@ export default function Home() {
           {error && <div className="hero-error">{error}</div>}
           <div className="hero-hint">
             Dates and interests are optional — they tune which videos we pick.
+            Trips are saved in your browser, on your device.
           </div>
         </div>
 
         {heroQuotes.length > 0 && <QuoteField quotes={heroQuotes} />}
 
-        {trips.length > 0 && (
+        {hasTrips && (
           <button
             className="scroll-hint"
             onClick={() =>
@@ -194,7 +238,9 @@ export default function Home() {
                 ?.scrollIntoView({ behavior: "smooth" })
             }
           >
-            <span className="hint-label">Your trips</span>
+            <span className="hint-label">
+              {localTrips.length > 0 ? "Your trips" : "Sample trips"}
+            </span>
             <svg width="16" height="9" viewBox="0 0 16 9" fill="none" aria-hidden="true">
               <path d="M1 1l7 6.5L15 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -202,45 +248,27 @@ export default function Home() {
         )}
       </section>
 
-      {trips.length > 0 && (
+      {localTrips.length > 0 && (
         <section className="trips-gallery">
           <h2>Your trips</h2>
           <div className="gallery-grid">
-            {trips.map((t) => {
-              const cover = tripCover(t);
-              return (
-                <a key={t.id} href={`/trip/${t.id}`} className="cover-card">
-                  {cover ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={cover} alt={t.name} loading="lazy" />
-                  ) : (
-                    <div className="cover-fallback">🗺️</div>
-                  )}
-                  <span className={`badge ${t.status}`}>{t.status}</span>
-                  <div className="cover-meta">
-                    <div className="cover-name">{t.name}</div>
-                    <div className="cover-sub">
-                      {t.videos.length} video{t.videos.length === 1 ? "" : "s"} ·{" "}
-                      {t.spots.length} spot{t.spots.length === 1 ? "" : "s"}
-                    </div>
-                  </div>
-                  <div className="cover-avatars">
-                    {uniqueCreators(t).map(([name, avatar]) =>
-                      avatar ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img key={name} src={avatar} alt={name} title={name} />
-                      ) : null
-                    )}
-                  </div>
-                </a>
-              );
-            })}
+            {localTrips.map((t) => coverCard(t, false))}
+          </div>
+        </section>
+      )}
+
+      {samples.length > 0 && (
+        <section className="trips-gallery">
+          <h2>Sample trips</h2>
+          <div className="gallery-grid">
+            {samples.map((t) => coverCard(t, true))}
           </div>
         </section>
       )}
 
       <footer className="landing-footer">
-        Built from creators&rsquo; actual words — never sponsored lists.
+        Built from creators&rsquo; actual words — never sponsored lists. Your
+        trips stay in your browser.
       </footer>
     </main>
   );

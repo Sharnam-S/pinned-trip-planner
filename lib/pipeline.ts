@@ -10,255 +10,88 @@ import {
   googlePlacePhotoNames,
   isGoogleEnabled,
 } from "./google";
-import { curateVideos, gatherCandidates, planSearchQueries } from "./discover";
-import { Mention, Spot, SpotPhotoRef, Trip, TripQuery, TripVideo } from "./types";
-
-function normalizeName(name: string) {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9 ]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
+import { normalizeName, VideoResult } from "./merge";
+import { Mention, Spot, SpotPhotoRef, Trip } from "./types";
 
 /**
- * Processes every video still marked "pending" in the trip, one at a time.
- * The trip file is re-saved after each video so the UI can show progress
- * and spots appearing incrementally.
+ * Reads one video and returns everything the client needs to fold it into a
+ * trip: video metadata, the video's own destination, fully-resolved new spots
+ * (coords, placeId, cover photo), and mentions of already-known spots.
+ *
+ * Stateless on purpose — trips live in the visitor's localStorage, so the
+ * browser orchestrates videos one call at a time and saves between calls.
  */
-export async function processTrip(tripId: string): Promise<void> {
-  let trip = getTrip(tripId);
-  if (!trip) return;
+export async function processVideo(
+  videoId: string,
+  knownSpotNames: string[]
+): Promise<VideoResult> {
+  const data = await fetchVideoData(videoId);
+  const extraction = await extractSpots(data, knownSpotNames);
 
-  for (const videoRef of trip.videos.filter((v) => v.status === "pending")) {
-    trip = getTrip(tripId)!;
-    const video = trip.videos.find((v) => v.id === videoRef.id)!;
-    video.status = "processing";
-    trip.progress = `Fetching transcript: ${video.url}`;
-    saveTrip(trip);
+  const known = new Set(knownSpotNames.map(normalizeName));
+  const newSpots: Spot[] = [];
+  const knownMentions: VideoResult["knownMentions"] = [];
 
-    try {
-      const data = await fetchVideoData(video.id);
-      video.title = data.title;
-      video.channelName = data.channelName;
-      video.channelAvatar = data.channelAvatar;
-      video.thumbnail = data.thumbnail;
-      trip.progress = `Reading "${data.title}" — extracting spots with Claude…`;
-      saveTrip(trip);
+  for (const raw of extraction.spots) {
+    const mention: Mention = {
+      videoId: data.id,
+      videoTitle: data.title,
+      channelName: data.channelName,
+      channelAvatar: data.channelAvatar,
+      timestampSec: Math.max(0, Math.floor(raw.timestamp_sec)),
+      quote: raw.quote,
+    };
 
-      const knownNames = trip.spots.map((s) => s.name);
-      const extraction = await extractSpots(data, knownNames);
-
-      if (!trip.destination) {
-        trip.destination = extraction.destination;
-        if (trip.name === "Untitled trip") trip.name = extraction.destination.name;
-        saveTrip(trip);
-      }
-
-      let added = 0;
-      for (const raw of extraction.spots) {
-        const mention: Mention = {
-          videoId: data.id,
-          videoTitle: data.title,
-          channelName: data.channelName,
-          channelAvatar: data.channelAvatar,
-          timestampSec: Math.max(0, Math.floor(raw.timestamp_sec)),
-          quote: raw.quote,
-        };
-
-        const existing = trip.spots.find(
-          (s) => normalizeName(s.name) === normalizeName(raw.name)
-        );
-        if (existing) {
-          if (!existing.mentions.some((m) => m.videoId === data.id)) {
-            existing.mentions.push(mention);
-          }
-          mergeThingsToKnow(existing, raw.things_to_know);
-          continue;
-        }
-
-        trip.progress = `Locating "${raw.name}" on the map…`;
-        saveTrip(trip);
-        // Disambiguate with THIS video's destination, not the trip-level one
-        // (which is whatever the first video covered). A multi-region trip —
-        // e.g. south-coast + Arugam Bay videos — would otherwise tag every
-        // east-coast spot with "Weligama…", making Google return south-coast
-        // places that fail the distance check and strand the pin on the LLM's
-        // rough guess.
-        const resolved = await resolveSpotData(
-          raw.name,
-          raw.geocode_query,
-          raw.lat,
-          raw.lng,
-          extraction.destination?.name ?? trip.destination?.name ?? null
-        );
-
-        const spot: Spot = {
-          id: crypto.randomUUID(),
-          name: raw.name,
-          category: raw.category,
-          description: raw.description,
-          lat: resolved.lat,
-          lng: resolved.lng,
-          geocodeSource: resolved.geocodeSource,
-          placeId: resolved.placeId,
-          mentions: [mention],
-          thingsToKnow: (raw.things_to_know ?? []).slice(0, 6),
-          photo: resolved.photo,
-          photos: resolved.photos,
-          morePhotoNames: resolved.morePhotoNames,
-        };
-        trip.spots.push(spot);
-        added++;
-        saveTrip(trip);
-      }
-
-      video.status = "done";
-      video.spotCount = extraction.spots.length;
-      trip.progress = `Finished "${data.title}" — found ${added} new spots.`;
-      saveTrip(trip);
-    } catch (err) {
-      video.status = "error";
-      video.error = err instanceof Error ? err.message : String(err);
-      saveTrip(trip);
+    if (known.has(normalizeName(raw.name))) {
+      knownMentions.push({ name: raw.name, mention, thingsToKnow: raw.things_to_know });
+      continue;
     }
-  }
+    known.add(normalizeName(raw.name)); // dedupe within this video too
 
-  const finished = getTrip(tripId);
-  if (!finished) return;
-  const allFailed =
-    finished.videos.length > 0 && finished.videos.every((v) => v.status === "error");
-  finished.status = allFailed ? "error" : "ready";
-  finished.progress = allFailed
-    ? "All videos failed to process."
-    : `Done — ${finished.spots.length} spots on the map.`;
-  saveTrip(finished);
-}
+    // Disambiguate with THIS video's destination, not a trip-level one —
+    // a multi-region trip (e.g. south-coast + Arugam Bay videos) would
+    // otherwise tag every spot with the first video's region, making Google
+    // return far-away places that fail the distance check and strand the pin
+    // on the LLM's rough guess.
+    const resolved = await resolveSpotData(
+      raw.name,
+      raw.geocode_query,
+      raw.lat,
+      raw.lng,
+      extraction.destination?.name ?? null
+    );
 
-export function makeTrip(id: string, urls: { id: string; url: string }[]): Trip {
-  return {
-    id,
-    name: "Untitled trip",
-    destination: null,
-    createdAt: new Date().toISOString(),
-    status: "processing",
-    progress: "Starting…",
-    videos: urls.map((u) => ({
-      id: u.id,
-      url: u.url,
-      title: "",
-      channelName: "",
-      channelAvatar: "",
-      thumbnail: "",
-      status: "pending" as const,
-    })),
-    spots: [],
-  };
-}
-
-export function makeSearchTrip(id: string, query: TripQuery): Trip {
-  return {
-    id,
-    name: query.destination,
-    destination: null,
-    createdAt: new Date().toISOString(),
-    status: "processing",
-    progress: "Planning YouTube searches…",
-    videos: [],
-    spots: [],
-    query,
-  };
-}
-
-function pendingVideo(id: string, title = "", channelName = ""): TripVideo {
-  return {
-    id,
-    url: `https://www.youtube.com/watch?v=${id}`,
-    title,
-    channelName,
-    channelAvatar: "",
-    thumbnail: "",
-    status: "pending" as const,
-  };
-}
-
-const PICK_COUNT = 5;
-
-/**
- * Search-mode trips: find the videos on the user's behalf, then run the
- * normal extraction pipeline. Videos that turn out to have no captions are
- * swapped for the next-best candidate from the bench instead of erroring.
- */
-export async function discoverAndProcess(tripId: string): Promise<void> {
-  let trip = getTrip(tripId);
-  if (!trip?.query) return;
-
-  try {
-    const plan = await planSearchQueries(trip.query);
-    trip = getTrip(tripId)!;
-    trip.query!.resolvedDestination = plan.resolvedDestination;
-    trip.name = plan.resolvedDestination;
-    trip.progress = `Searching YouTube: ${plan.queries.map((q) => `“${q}”`).join(", ")}`;
-    saveTrip(trip);
-
-    const candidates = await gatherCandidates(plan.queries);
-    if (candidates.length === 0) {
-      throw new Error(
-        `Couldn't find travel videos for "${plan.resolvedDestination}". Try a different destination spelling.`
-      );
-    }
-    trip = getTrip(tripId)!;
-    trip.progress = `Found ${candidates.length} candidate videos — picking the best ${PICK_COUNT}…`;
-    saveTrip(trip);
-
-    const ranked = await curateVideos(candidates, trip.query!, plan.resolvedDestination);
-    if (ranked.length === 0) {
-      throw new Error(
-        `None of the videos found looked like real travel guides for "${plan.resolvedDestination}".`
-      );
-    }
-    const byId = new Map(candidates.map((c) => [c.id, c]));
-    trip = getTrip(tripId)!;
-    trip.videos = ranked.slice(0, PICK_COUNT).map((id) => {
-      const c = byId.get(id);
-      return pendingVideo(id, c?.title, c?.channelName);
+    newSpots.push({
+      id: crypto.randomUUID(),
+      name: raw.name,
+      category: raw.category,
+      description: raw.description,
+      lat: resolved.lat,
+      lng: resolved.lng,
+      geocodeSource: resolved.geocodeSource,
+      placeId: resolved.placeId,
+      mentions: [mention],
+      thingsToKnow: (raw.things_to_know ?? []).slice(0, 6),
+      photo: resolved.photo ?? null,
+      photos: resolved.photos,
+      morePhotoNames: resolved.morePhotoNames,
     });
-    trip.bench = ranked.slice(PICK_COUNT);
-    trip.progress = `Picked ${trip.videos.length} videos from ${trip.videos.length} creators — reading transcripts…`;
-    saveTrip(trip);
-  } catch (err) {
-    const t = getTrip(tripId);
-    if (!t) return;
-    t.status = "error";
-    t.progress = err instanceof Error ? err.message : String(err);
-    saveTrip(t);
-    return;
   }
 
-  // Process, substituting caption-less picks from the bench (bounded rounds)
-  for (let round = 0; round < 4; round++) {
-    await processTrip(tripId);
-    const t = getTrip(tripId);
-    if (!t) return;
-    const errored = t.videos.filter((v) => v.status === "error");
-    if (errored.length === 0 || !t.bench || t.bench.length === 0) break;
-
-    const subs = t.bench.splice(0, errored.length);
-    t.videos = t.videos.filter((v) => v.status !== "error");
-    t.videos.push(...subs.map((id) => pendingVideo(id)));
-    t.status = "processing";
-    t.progress = `${errored.length} video${errored.length === 1 ? " has" : "s have"} no captions — swapping in replacement${subs.length === 1 ? "" : "s"}…`;
-    saveTrip(t);
-  }
-}
-
-function mergeThingsToKnow(spot: Spot, incoming: string[] | undefined) {
-  if (!incoming?.length) return;
-  const seen = new Set((spot.thingsToKnow ?? []).map(normalizeName));
-  spot.thingsToKnow = [
-    ...(spot.thingsToKnow ?? []),
-    ...incoming.filter((t) => !seen.has(normalizeName(t))),
-  ].slice(0, 8);
+  return {
+    video: {
+      id: data.id,
+      url: `https://www.youtube.com/watch?v=${data.id}`,
+      title: data.title,
+      channelName: data.channelName,
+      channelAvatar: data.channelAvatar,
+      thumbnail: data.thumbnail,
+      spotCount: extraction.spots.length,
+    },
+    destination: extraction.destination,
+    newSpots,
+    knownMentions,
+  };
 }
 
 /**
@@ -269,7 +102,7 @@ function mergeThingsToKnow(spot: Spot, incoming: string[] | undefined) {
 /** Up to 5 carousel photos, best first. */
 const MAX_PHOTOS = 5;
 
-async function resolvePhotoSet(photoNames: string[]): Promise<SpotPhotoRef[]> {
+export async function resolvePhotoSet(photoNames: string[]): Promise<SpotPhotoRef[]> {
   // One media call per photo is unavoidable (no batch endpoint), but they can
   // all fly at once. Billed once here; the stored URLs render free forever.
   const urls = await Promise.all(
@@ -307,7 +140,7 @@ async function resolveSpotData(
       if (place) {
         const names = place.photoNames.slice(0, MAX_PHOTOS);
         // Only the cover photo is billed now; the rest resolve lazily on the
-        // first carousel swipe (see resolveMorePhotos).
+        // first carousel swipe (see /api/photos).
         const photos = await resolvePhotoSet(names.slice(0, 1));
         const photo =
           photos[0] ??
@@ -341,7 +174,7 @@ async function resolveSpotData(
 const backfilling = new Set<string>();
 
 /**
- * One-time photo lookup for spots created before photos existed.
+ * One-time photo lookup for sample trips created before photos existed.
  * Fired from the trip GET route; saves after each spot so the polling UI
  * sees photos appear. `photo: null` marks "tried, nothing found" so we
  * never re-query Commons for the same spot.
@@ -369,7 +202,7 @@ export async function backfillPhotos(tripId: string): Promise<void> {
   }
 }
 
-/** True when this trip has spots a configured Google key could improve. */
+/** True when this sample trip has spots a configured Google key could improve. */
 export function needsGoogleUpgrade(trip: Trip): boolean {
   return (
     isGoogleEnabled() &&
@@ -382,50 +215,13 @@ export function needsGoogleUpgrade(trip: Trip): boolean {
   );
 }
 
-const resolvingPhotos = new Set<string>();
-
-/**
- * Lazily resolves a spot's remaining carousel photos (first swipe on the
- * tile). Idempotent: returns the already-complete list when there's nothing
- * pending, and a per-spot in-flight guard stops double-billing on rapid
- * clicks. Returns null when the trip/spot doesn't exist.
- */
-export async function resolveMorePhotos(
-  tripId: string,
-  spotId: string
-): Promise<string[] | null> {
-  const key = `${tripId}:${spotId}`;
-  if (resolvingPhotos.has(key)) {
-    // someone's already on it — report what's resolved so far
-    const t = getTrip(tripId);
-    const s = t?.spots.find((x) => x.id === spotId);
-    return s ? (s.photos ?? []).map((p) => p.url) : null;
-  }
-  resolvingPhotos.add(key);
-  try {
-    const trip = getTrip(tripId);
-    const spot = trip?.spots.find((s) => s.id === spotId);
-    if (!trip || !spot) return null;
-    if (spot.morePhotoNames?.length) {
-      const extra = await resolvePhotoSet(spot.morePhotoNames);
-      const seen = new Set((spot.photos ?? []).map((p) => p.url));
-      spot.photos = [...(spot.photos ?? []), ...extra.filter((p) => !seen.has(p.url))];
-      spot.morePhotoNames = undefined;
-      saveTrip(trip);
-    }
-    return (spot.photos ?? []).map((p) => p.url);
-  } finally {
-    resolvingPhotos.delete(key);
-  }
-}
-
 const upgrading = new Set<string>();
 
 /**
- * One-time Google upgrade for trips created before the key existed (or before
- * this feature): re-resolves each spot's coordinates via Places Text Search
- * and swaps in a real place photo. Runs in the background off the trip GET
- * route, saving after every spot so the polling UI shows pins sliding to
+ * One-time Google upgrade for sample trips created before the key existed (or
+ * before this feature): re-resolves each spot's coordinates via Places Text
+ * Search and swaps in a real place photo. Runs in the background off the trip
+ * GET route, saving after every spot so the polling UI shows pins sliding to
  * their corrected positions. `placeId: null` marks "Google tried, no match"
  * so a spot is never re-queried.
  */
