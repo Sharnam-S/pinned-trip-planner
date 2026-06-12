@@ -309,6 +309,8 @@ export default function TripView({ tripId }: { tripId: string }) {
   const highlightVideoId = hoverVideoId ?? pinnedVideoId;
   const [addLinks, setAddLinks] = useState("");
   const [addError, setAddError] = useState("");
+  // Full-width map: hides the spot grid, toggled from under the zoom control
+  const [mapExpanded, setMapExpanded] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const loadSample = useCallback(async () => {
@@ -468,7 +470,7 @@ export default function TripView({ tripId }: { tripId: string }) {
         />
       </header>
 
-      <div className="trip-body">
+      <div className={`trip-body ${mapExpanded ? "map-expanded" : ""}`}>
         <section className="content-panel">
           {visibleSpots.length === 0 ? (
             <div className="empty-area">
@@ -519,6 +521,24 @@ export default function TripView({ tripId }: { tripId: string }) {
               onSelect={setSelectedId}
               onBoundsChange={setBounds}
             />
+            <button
+              className="map-expand-btn"
+              onClick={() => setMapExpanded((x) => !x)}
+              title={mapExpanded ? "Show the spot list" : "Expand the map"}
+              aria-label={mapExpanded ? "Show the spot list" : "Expand the map"}
+            >
+              {mapExpanded ? (
+                // arrows pointing in — collapse back to the split view
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M6.5 1.5v5h-5M9.5 14.5v-5h5M6.5 6.5L1 1M9.5 9.5L15 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                // arrows pointing out — go full width
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M9.5 1.5h5v5M6.5 14.5h-5v-5M14.5 1.5L9 7M1.5 14.5L7 9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </button>
             {selectedSpot && (
               <SpotCard
                 key={selectedSpot.id} // remount per spot — photo carousel state must not leak between spots
