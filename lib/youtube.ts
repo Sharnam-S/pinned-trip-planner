@@ -117,18 +117,51 @@ const INFO_CLIENTS = ["WEB", "MWEB", "ANDROID", "IOS"] as const;
 
 async function getInfoWithCaptions(yt: Innertube, videoId: string) {
   let best: Awaited<ReturnType<Innertube["getInfo"]>> | null = null;
+  let hollow: Awaited<ReturnType<Innertube["getInfo"]>> | null = null;
   for (const client of INFO_CLIENTS) {
     try {
       const info = await yt.getInfo(videoId, { client });
       const hasTitle = Boolean(info.basic_info.title);
       const hasTracks = (info.captions?.caption_tracks ?? []).length > 0;
       if (hasTitle && hasTracks) return info;
-      if (hasTitle && !best) best = info; // real video, just no captions yet
+      if (hasTitle) {
+        if (!best) best = info; // real video, just no captions on this client
+      } else if (!hollow) {
+        // bot-checked husk: /player was refused, but the /next data inside
+        // may still carry the transcript engagement panel — keep it
+        hollow = info;
+      }
     } catch {
       // bot check or client-specific failure — try the next client
     }
   }
-  return best;
+  return best ?? hollow;
+}
+
+/** Title/channel/thumbnail without touching /player — oEmbed is public and
+ *  isn't behind the bot check that blocks video info from server IPs. */
+async function fetchOEmbed(videoId: string) {
+  try {
+    const res = await fetch(
+      `https://www.youtube.com/oembed?url=${encodeURIComponent(
+        `https://www.youtube.com/watch?v=${videoId}`
+      )}&format=json`,
+      { signal: AbortSignal.timeout(8000) }
+    );
+    if (!res.ok) return null;
+    const data = (await res.json()) as {
+      title?: string;
+      author_name?: string;
+      thumbnail_url?: string;
+    };
+    return {
+      title: data.title ?? "",
+      channelName: data.author_name ?? "",
+      thumbnail: data.thumbnail_url ?? "",
+    };
+  } catch {
+    return null;
+  }
 }
 
 export async function fetchVideoData(videoId: string): Promise<VideoData> {
@@ -140,9 +173,20 @@ export async function fetchVideoData(videoId: string): Promise<VideoData> {
     );
   }
 
-  const title = info.basic_info.title ?? "Untitled video";
-  const channelName = info.basic_info.author ?? "Unknown creator";
-  const thumbnail = info.basic_info.thumbnail?.[0]?.url ?? "";
+  const botChecked = !info.basic_info.title;
+  let title = info.basic_info.title ?? "";
+  let channelName = info.basic_info.author ?? "";
+  let thumbnail = info.basic_info.thumbnail?.[0]?.url ?? "";
+  if (botChecked) {
+    const oe = await fetchOEmbed(videoId);
+    if (oe) {
+      title = oe.title;
+      channelName = channelName || oe.channelName;
+      thumbnail = thumbnail || oe.thumbnail;
+    }
+  }
+  title = title || "Untitled video";
+  channelName = channelName || "Unknown creator";
 
   let channelAvatar = "";
   try {
@@ -201,7 +245,9 @@ export async function fetchVideoData(videoId: string): Promise<VideoData> {
         .filter((s) => s.text.length > 0);
     } catch {
       throw new Error(
-        `No transcript available for "${title}". The video needs captions (auto-generated is fine).`
+        botChecked
+          ? "YouTube refused the request for this video (bot check) — try again in a bit."
+          : `No transcript available for "${title}". The video needs captions (auto-generated is fine).`
       );
     }
   }
