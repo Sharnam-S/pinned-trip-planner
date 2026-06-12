@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getTrip, saveTrip } from "@/lib/store";
+import { getTrip, isReadOnly, saveTrip } from "@/lib/store";
 import { processTrip } from "@/lib/pipeline";
 import { parseVideoId } from "@/lib/youtube";
 
@@ -9,6 +9,12 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (isReadOnly) {
+    return NextResponse.json(
+      { error: "This deployed copy is a read-only showcase — run Pinned locally to add videos." },
+      { status: 503 }
+    );
+  }
   const { id } = await params;
   const trip = getTrip(id);
   if (!trip) return NextResponse.json({ error: "Trip not found" }, { status: 404 });

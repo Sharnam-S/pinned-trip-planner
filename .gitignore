@@ -40,5 +40,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# trip data (local only)
-/data/
+# half-written trip saves
+/data/trips/*.tmp

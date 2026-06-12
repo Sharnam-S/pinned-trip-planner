@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "YouTube Trip Planner",
+  title: "Pinned — every place they raved about, on one map",
   description:
-    "Paste YouTube travel videos, get every recommended spot pinned on a map.",
+    "Paste travel videos, get every recommended spot pinned on a map — with links back to the exact moment it was mentioned.",
 };
 
 export default function RootLayout({

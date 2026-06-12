@@ -4,6 +4,11 @@ import { Trip } from "./types";
 
 const DATA_DIR = path.join(process.cwd(), "data", "trips");
 
+// Deployed copies (Vercel) run on a read-only filesystem: the committed trips
+// are served as a showcase, and anything that writes is disabled — trip
+// creation, deletion, and the background photo/geocode passes.
+export const isReadOnly = Boolean(process.env.VERCEL);
+
 function ensureDir() {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
@@ -25,6 +30,7 @@ export function getTrip(id: string): Trip | null {
 }
 
 export function saveTrip(trip: Trip) {
+  if (isReadOnly) return;
   ensureDir();
   const file = path.join(DATA_DIR, `${trip.id}.json`);
   const tmp = file + ".tmp";
@@ -33,6 +39,7 @@ export function saveTrip(trip: Trip) {
 }
 
 export function deleteTrip(id: string) {
+  if (isReadOnly) return;
   ensureDir();
   const file = path.join(DATA_DIR, `${id}.json`);
   if (fs.existsSync(file)) fs.unlinkSync(file);

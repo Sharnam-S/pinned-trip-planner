@@ -1,0 +1,1147 @@
+{
+  "id": "373aac077066",
+  "name": "Tbilisi, Georgia",
+  "destination": {
+    "name": "Tbilisi, Georgia",
+    "lat": 41.6938,
+    "lng": 44.8015,
+    "zoom": 12
+  },
+  "createdAt": "2026-06-11T11:20:30.716Z",
+  "status": "ready",
+  "progress": "Done — 28 spots on the map.",
+  "videos": [
+    {
+      "id": "-kIHlGrlXCk",
+      "url": "https://www.youtube.com/watch?v=-kIHlGrlXCk",
+      "title": "Tbilisi, Georgia ULTIMATE Guide 2025 | Where to Stay, Best Time to Visit, Things To Do",
+      "channelName": "Dian Huang",
+      "channelAvatar": "https://yt3.googleusercontent.com/msgURPx7wvkdd31JJnFoQ2-mopXEkVdgzLM_3OtlGpg33YlKhzdD3vmZkOvhvToUeTy-s-rfYQ=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi/-kIHlGrlXCk/maxresdefault.jpg",
+      "status": "done",
+      "spotCount": 9
+    },
+    {
+      "id": "DxBviP18M3w",
+      "url": "https://www.youtube.com/watch?v=DxBviP18M3w",
+      "title": "WHY TO TRAVEL GEORGIA: Top 10 things we LOVE in Georgia 🇬🇪",
+      "channelName": "Loz's Leisure",
+      "channelAvatar": "https://yt3.googleusercontent.com/ALiqXBPtLh5c9lRzJGt0Peccuj-paMKEhjdQEhdKcHZbnBAHmlfzKwz31IA9Rs3MgP77JeYHGBI=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi/DxBviP18M3w/maxresdefault.jpg",
+      "status": "done",
+      "spotCount": 7
+    },
+    {
+      "id": "VOeTtOyNTLI",
+      "url": "https://www.youtube.com/shorts/VOeTtOyNTLI",
+      "title": "5 things to know before you visit Tbilisi in Georgia #travel",
+      "channelName": "Emma | Travel & adventures",
+      "channelAvatar": "https://yt3.googleusercontent.com/v6ToqJIXT1GuFObAYFzyoPv0QeXd_3JaK7PaNa2hqsjhf3zbcWTr8irQZ4Tj8JMwPNG-duNebcM=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi/VOeTtOyNTLI/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AHOBYACgAqKAgwIABABGFkgXyhlMA8=&rs=AOn4CLCD9GYmXvjgoH77DX0Wv2Dog_lUnw",
+      "status": "done",
+      "spotCount": 1
+    },
+    {
+      "id": "Q3p7iBOAey4",
+      "url": "https://www.youtube.com/watch?v=Q3p7iBOAey4",
+      "title": "First Time in Georgia 🇬🇪 | 4 Day Itinerary in Tbilisi",
+      "channelName": "JHMedium",
+      "channelAvatar": "https://yt3.googleusercontent.com/9mPet_wdW9JGD-jx1cd_YFkuzJAbT9ClKgv30KLE50gMeCmfq8aDxf20G08voFF6zv609tSmpGo=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi/Q3p7iBOAey4/maxresdefault.jpg",
+      "status": "done",
+      "spotCount": 12
+    },
+    {
+      "id": "emGjaLAJcH0",
+      "url": "https://www.youtube.com/watch?v=emGjaLAJcH0",
+      "title": "Can't believe This is Georgia! Full Tour of Tbilisi (Most Underrated City?)",
+      "channelName": "Dany Dev",
+      "channelAvatar": "https://yt3.googleusercontent.com/Pu6eBFeGnfC1mkZuCjpuFy4CUeqE5iJQY6GCWXtNTCTAffYn8wvEmebvZXwqKMBNqzYletRhbZs=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi/emGjaLAJcH0/maxresdefault.jpg",
+      "status": "done",
+      "spotCount": 10
+    }
+  ],
+  "spots": [
+    {
+      "id": "6543789d-5574-43a0-85a8-003d08c5f748",
+      "name": "Old Tbilisi",
+      "category": "town",
+      "description": "The historic heart of Tbilisi where most tourist attractions are concentrated. The creator describes it as a beautiful mix of old architecture and nature, with everything within walking distance. Note that it is the busier, more touristy area where prices can be two to three times higher.",
+      "lat": 41.695453099999995,
+      "lng": 44.7962822,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "-kIHlGrlXCk",
+          "videoTitle": "Tbilisi, Georgia ULTIMATE Guide 2025 | Where to Stay, Best Time to Visit, Things To Do",
+          "channelName": "Dian Huang",
+          "channelAvatar": "https://yt3.googleusercontent.com/msgURPx7wvkdd31JJnFoQ2-mopXEkVdgzLM_3OtlGpg33YlKhzdD3vmZkOvhvToUeTy-s-rfYQ=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 93,
+          "quote": "it's such a beautiful area, it's like a good combination of the old architecture [and] the nature"
+        },
+        {
+          "videoId": "DxBviP18M3w",
+          "videoTitle": "WHY TO TRAVEL GEORGIA: Top 10 things we LOVE in Georgia 🇬🇪",
+          "channelName": "Loz's Leisure",
+          "channelAvatar": "https://yt3.googleusercontent.com/ALiqXBPtLh5c9lRzJGt0Peccuj-paMKEhjdQEhdKcHZbnBAHmlfzKwz31IA9Rs3MgP77JeYHGBI=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 37,
+          "quote": "It's got good food, beautiful views and it's got so many opportunities for exploration but it still feels manageable."
+        },
+        {
+          "videoId": "VOeTtOyNTLI",
+          "videoTitle": "5 things to know before you visit Tbilisi in Georgia #travel",
+          "channelName": "Emma | Travel & adventures",
+          "channelAvatar": "https://yt3.googleusercontent.com/v6ToqJIXT1GuFObAYFzyoPv0QeXd_3JaK7PaNa2hqsjhf3zbcWTr8irQZ4Tj8JMwPNG-duNebcM=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 64,
+          "quote": "You have the old town on one side, and over the bridge of peace, you have the more modern part of the city."
+        },
+        {
+          "videoId": "Q3p7iBOAey4",
+          "videoTitle": "First Time in Georgia 🇬🇪 | 4 Day Itinerary in Tbilisi",
+          "channelName": "JHMedium",
+          "channelAvatar": "https://yt3.googleusercontent.com/9mPet_wdW9JGD-jx1cd_YFkuzJAbT9ClKgv30KLE50gMeCmfq8aDxf20G08voFF6zv609tSmpGo=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 44,
+          "quote": "We start in the heart of Old Tbilisi."
+        },
+        {
+          "videoId": "emGjaLAJcH0",
+          "videoTitle": "Can't believe This is Georgia! Full Tour of Tbilisi (Most Underrated City?)",
+          "channelName": "Dany Dev",
+          "channelAvatar": "https://yt3.googleusercontent.com/Pu6eBFeGnfC1mkZuCjpuFy4CUeqE5iJQY6GCWXtNTCTAffYn8wvEmebvZXwqKMBNqzYletRhbZs=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 43,
+          "quote": "we are entering the old town right now gonna go for a nice little walk"
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMvw2QIETL14O02WdTDkp0hicaQKANkJ1Y8r4r6RiLFmfVrl7el3Otg3QSDijNexxaVha1q6f0HAL7G2q_XfEY24bildDO72Lkl02O39wH6D3B2AJd1Tsbux0dSGHsL-iIwV74mO_j7qr8LgA=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJse7aRMEMREAR0eUvgU76Iv0",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMvw2QIETL14O02WdTDkp0hicaQKANkJ1Y8r4r6RiLFmfVrl7el3Otg3QSDijNexxaVha1q6f0HAL7G2q_XfEY24bildDO72Lkl02O39wH6D3B2AJd1Tsbux0dSGHsL-iIwV74mO_j7qr8LgA=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNtJEBU4kZozhdMPje-2tLhZZCjor0OniuJ2Rj0CSLVpPeFvwwhxX8vBgaOtdPl7z0l2HKGzOBpFNnvu8PuQvEtwlSE56ZprPE-ZfXx3Oa-E3AA5QVXQhvAjQ0ckMslbee9nU_m0W1b-3CxG50=s4800-w738",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZP7eFdzikLXuxcC8R3F5IMo0joSDquTiJFsIUyPY7AsTMrmBDT_3vEKbPmZ1gQxPRbR3fVKPHl7JBDDk9VqLm7QmkMv2brc0s-IG5JfTpom9Dj8GPW90b2rgvzYBCGFGBKqcOPIjIWikUnwhHk=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPFGq8Uxapn45gMUt9uCl_mLnyJLatbT5RuJyPfBVOYzIHk-ye0gA2OqHs_6x7cedu9C7eKHi2xPcv1W2f0wpmMBmYyXuZChZMTjop85pkgApm5M63DPmew8hw_4_csW6zS3voHTmiW5_9JMA=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM9tK34r7pZcHQZrPsLlWUXUQGRPmvrWzxbcRO64XdCY_ODh2gannsyXiXRF6WQZhH8UJ4QWyb75JptDR_47hvGabnVqroKeNQWtp-jG7m8qDZRNaM_8nSa5rbNIPi3vsoJrCZ9iDsBwVXPdJU=s4800-w800",
+          "source": "google"
+        }
+      ]
+    },
+    {
+      "id": "e9327957-a959-47ff-ac66-8561b5080c6c",
+      "name": "Mother of Georgia (Kartlis Deda)",
+      "category": "viewpoint",
+      "description": "The iconic statue of the Mother of Georgia standing on Sololaki Hill, listed by the creator as one of the key tourist attractions to see in Old Tbilisi.",
+      "lat": 41.6881503,
+      "lng": 44.8045239,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "-kIHlGrlXCk",
+          "videoTitle": "Tbilisi, Georgia ULTIMATE Guide 2025 | Where to Stay, Best Time to Visit, Things To Do",
+          "channelName": "Dian Huang",
+          "channelAvatar": "https://yt3.googleusercontent.com/msgURPx7wvkdd31JJnFoQ2-mopXEkVdgzLM_3OtlGpg33YlKhzdD3vmZkOvhvToUeTy-s-rfYQ=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 98,
+          "quote": "tourist attraction like mother of Georgia"
+        },
+        {
+          "videoId": "Q3p7iBOAey4",
+          "videoTitle": "First Time in Georgia 🇬🇪 | 4 Day Itinerary in Tbilisi",
+          "channelName": "JHMedium",
+          "channelAvatar": "https://yt3.googleusercontent.com/9mPet_wdW9JGD-jx1cd_YFkuzJAbT9ClKgv30KLE50gMeCmfq8aDxf20G08voFF6zv609tSmpGo=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 463,
+          "quote": "She's holding wine in one hand to welcome her friends, and a sword in the other to fend off the enemy."
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM63Zyu-2-tq7svoJIBVnJyxRl8roL1sQ6lilulefG7D4yAYdx0Y3g7RDW4nKv4WHq2j2nsCXg9p00DC70uOyR50SbM_weacj6LKykxSlHTLOk_5KGjuIzY6HHsh1KM7dlK__ZD5Qw5eKCkrA=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJAR7i-fMMREARIvO9YwS9GWQ",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM63Zyu-2-tq7svoJIBVnJyxRl8roL1sQ6lilulefG7D4yAYdx0Y3g7RDW4nKv4WHq2j2nsCXg9p00DC70uOyR50SbM_weacj6LKykxSlHTLOk_5KGjuIzY6HHsh1KM7dlK__ZD5Qw5eKCkrA=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJAR7i-fMMREARIvO9YwS9GWQ/photos/AaVGc3nWdmwasshydOC2G8WP9k7zqqpFAKWOsIOH1_2f1Ho5Svz7fNilLonagxAh70g2Uq1vh6BwDfyFjmbTr_cai9gy0Kz5-l2Toyop9FVRpxexJxV3dEYetld-gEJ0e10h41bLsXF_fZJ60b5ztMdKnQL00sH9-_ypsbjOYbPTQEs1dIPcrRKaC9OPSPTxiQYhqmUYSIFUBQ9KW04O3kiDKbT4wI-gxNhdIiJ1uaiSqnhP9rDurdpmBR9EQYSOZOq8kcuRdk9ksMf_4HPSfrRPK89o5h8vkq6kkmMBba9vTi0LlesuP6oUYzvezZHoLsztosVRqdrBRgrJV0S6ktYc7aJQOH8WFaM65WTV9bs6JminXEjKIA6FQXnKp726O7Or4OjJz6AVd2ziSlRbNG40oVesr5N9eBjv_ovPG89Ltao7r1w",
+        "places/ChIJAR7i-fMMREARIvO9YwS9GWQ/photos/AaVGc3mAsWaOpT90Izqf-t_7tvkKT2ZErJ_49IueHlLnXCRnvtkFoqb8R3ypAxzOzh2uovClu9iR3nYoRpYZp_xuQutk_6UuVaYB5IBK6myuSpXNQMT65Q9k78DFP5Y-xCVtABJcqFJaJEO5V80lpSWmiUSvgYG6Dj36OoJuvyAXo9WvJlENl-hngkP7DJpmK0wtLJpvYeOgj874QNBTNT2rPSuhyh-jqiuZMnsZZP3J0wmaCaki_e0CV9mtiozAS_bJmo8QeCHU1PHuaeaPravMB-6nICHWx6L50-uX0hLQWeFzF5PcZ9f7l6d6rD444Nxi0ggrD3637l2zlwgjpTKRcetHir1vCSKMpnTyDKabKaoVt6gyID0CInoJUaeLUVf05A-_6kqQuBHWfHGw00ERZMURUhdDpTPi6i5sYmZHkJY",
+        "places/ChIJAR7i-fMMREARIvO9YwS9GWQ/photos/AaVGc3lJACs9bcd63ExCUuBQ1nfZDmbzewaiEtuLZo0aCGk2gsCNCoT40D_8CfLvGw-KUynxJbK-Rtx1FUjTjtyA4YnsczJF81JaIXO8z46hzmL8kv_cc4ndCbwUrxKOy8u9GylO-AghArgTSxR1MZ2twCwCcns-CqkWT6mj6raY5qAmZk93f5uvrDI6vdsvUGqjHMubkOw3beOS1y3o79MmqFHTCULHwRieaKNU_8_lD-BfMWmG3IKX5UWjAIFmOk8iCxaqZ421zQayS5Gt0odmq2SHqoi1zqspdOr0JVWb1tz6ZgXmAAnNqsWHKQZqu676Qd6KSlLhqiOCUaSPPRxTBsbYJXje-OxeELukr3q2uEmTrQ0RoPBkgTS48kyXJ0_sqoG-3-vnrvhLmUdX-aB0q03mgMo-rhn4IYBtnKdcJWSQbdCuiruZ4OGjkot4OlkU",
+        "places/ChIJAR7i-fMMREARIvO9YwS9GWQ/photos/AaVGc3l4B0fbhUDHpybvZc5eh-LnzS7_2zWYe4S5e-3N0pzJXQngw0DDpO7OZrdpooV-t7-fS20BkKs0rOq6nzMb959dFf5-rA0lPKCzLG8D70IGfrXULEPzV7omWjgAF_u9Vvbpz6Ms_OZU-XfX-EpmDQrdX2_EY6vKIMRK7DOy-FByeIvGOcZ0fU1GhDGZ4BsW_flT-5Xd_UwqiTGOmdqKqKezEs6DuAZIQm8bi1yeUx-It6Gy5oPPhE9gtr2LVuPNiFKnzIOYXqzyjviBINFiyF_ozbHAOU9M70HhdzmaMBNA5A9OUc_5sKaaKVEDWPEUMl3nHySIdkpqu6Kzocc8PmF4XiOa_Mmq182VMxcuHOl-oxSiTkkHKZeMhTg4KIZZrdfz9Ubawus0FPGCgzwoN2f1JDGloxgb0LA7NguBWewjNQ"
+      ]
+    },
+    {
+      "id": "69614afc-c5e6-487a-80f3-0b7be52c6f16",
+      "name": "Narikala Fortress",
+      "category": "other",
+      "description": "An ancient fortress overlooking Old Tbilisi, highlighted by the creator as one of the must-see tourist attractions in the city.",
+      "lat": 41.6880478,
+      "lng": 44.808764,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "-kIHlGrlXCk",
+          "videoTitle": "Tbilisi, Georgia ULTIMATE Guide 2025 | Where to Stay, Best Time to Visit, Things To Do",
+          "channelName": "Dian Huang",
+          "channelAvatar": "https://yt3.googleusercontent.com/msgURPx7wvkdd31JJnFoQ2-mopXEkVdgzLM_3OtlGpg33YlKhzdD3vmZkOvhvToUeTy-s-rfYQ=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 100,
+          "quote": "tourist attraction like... narikala Fortress"
+        },
+        {
+          "videoId": "emGjaLAJcH0",
+          "videoTitle": "Can't believe This is Georgia! Full Tour of Tbilisi (Most Underrated City?)",
+          "channelName": "Dany Dev",
+          "channelAvatar": "https://yt3.googleusercontent.com/Pu6eBFeGnfC1mkZuCjpuFy4CUeqE5iJQY6GCWXtNTCTAffYn8wvEmebvZXwqKMBNqzYletRhbZs=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 436,
+          "quote": "nadikala Fortress I would say definitely worth it for six Lottie you get like a super nice view of the whole city up here"
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZP1wbB_-dd7KMlqBjxLNxFJUQiQPlHlRTQM2xqcW73FlWSRd9DSAUVTg93dn8_hmFkTASoITeYs9JsO1EyDcXgMUW_KWmz9PL1lXNVbQlCMAEiX-GDVE7I8fYGnDMX78nTghBty6lQfKABnxW4=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJl-d-k_YMREARzXBLe7MsRAE",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZP1wbB_-dd7KMlqBjxLNxFJUQiQPlHlRTQM2xqcW73FlWSRd9DSAUVTg93dn8_hmFkTASoITeYs9JsO1EyDcXgMUW_KWmz9PL1lXNVbQlCMAEiX-GDVE7I8fYGnDMX78nTghBty6lQfKABnxW4=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOC6ncizDYWUU2Llv6J80kC_Y3Y-N78D8fU5HRGATq-YqKajjVEnyPHuKSj9FDJRKg6MEyQ_ERYg9d2whk04I8DoLTRKm7Y2XwleD6x_CjlOJ_bnSXeM-foTAPL0n538762TDTetyQqcrWZAEw=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNgElg5QN9v3jPspBNswC9fn-v-vX1nbnoNeejeC8soLSrVG4vUwl_pXrhw9-FBdQtVLXvFOpuc7sv3zxhsDTlehVM6Ji2bKNvQO2kRw2ADS5MWJ-2iXOIVJQL3biUEwz5F-Vm-1Zaz4YcRpg=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPP2ImO1_Kev6Tn5pCgWf8Mf5_PU4BnY89r5GAY7kwTB8THex6WVe5zra5TY0VSmFD9uEuxmMzlB-vrSKxwqmqWtTfEomiKBx0cKQJqDIxUNA1e5LI9nUKqRttM-M5msUCX-6SasKQ2ycK5eA=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPKhRoy2HRUlfLUVE3V5rEHrU2Gswh8pJwNW8EYLLPwVQe1Q9mDeQFrqH-n3iws3M8c1Xhye-mvGsSZo9jr4y7s1qJEvYlOVv6aYU8w8C41EYguQYmVCvYPmgbDA5I5Ttk-p8LKoAhrZGftlQ=s4800-w800",
+          "source": "google"
+        }
+      ]
+    },
+    {
+      "id": "f8299f29-51fc-4b4b-be56-30b526eb5583",
+      "name": "Abanotubani Sulfur Baths",
+      "category": "activity",
+      "description": "Tbilisi's famous traditional sulfur bathhouses located in the Old Town district. The creator explicitly recommends trying them as a signature local experience.",
+      "lat": 41.6876347,
+      "lng": 44.8106766,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "-kIHlGrlXCk",
+          "videoTitle": "Tbilisi, Georgia ULTIMATE Guide 2025 | Where to Stay, Best Time to Visit, Things To Do",
+          "channelName": "Dian Huang",
+          "channelAvatar": "https://yt3.googleusercontent.com/msgURPx7wvkdd31JJnFoQ2-mopXEkVdgzLM_3OtlGpg33YlKhzdD3vmZkOvhvToUeTy-s-rfYQ=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 103,
+          "quote": "try the famous sulfur bath"
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOVmQYEFvcqrQJWpQNAZJnMlCcdhYdejCBeAZJiuC4M-C-8cr7bvgdqS0Hi7_yzB64wh4DXteLeRI0Dbkn-dis1FcIMXs4ePnQ3dmGm0DT3Igk7372N4kx--kdzCIoj5snYaKWhexIpxzDYlz8=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJp1AABfcMREAR-U0SBWHxp0E",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOVmQYEFvcqrQJWpQNAZJnMlCcdhYdejCBeAZJiuC4M-C-8cr7bvgdqS0Hi7_yzB64wh4DXteLeRI0Dbkn-dis1FcIMXs4ePnQ3dmGm0DT3Igk7372N4kx--kdzCIoj5snYaKWhexIpxzDYlz8=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJp1AABfcMREAR-U0SBWHxp0E/photos/AaVGc3myHoiheTMmRpA3QJ3fiD_-nuCoO5t84bSn2B7_dX-SQzBs92gslUHPHhbqSBqvtkslFG7knq1kfHB0dXrkJB-CsGAN-XD-3nwQqmnxmCXvm_3l5hRU7y_kpQZSq-TQ6vlwYnU0VVOJP1wT0kcQOKb758ukGZVtmiaN12C8kfFZGRRYPwdBlS977skRfYKEA5h45vtKYYeNsHJofLLSftTQizzWS1VKXDkbsewk-CIKThWq8I9evRuyj5lh8tqvnzMLoA5Dr-lZe4UoM9IFucRBpJ5FMZLdy3rWpitS6ROBbt3HEq0jKUPOMrkg7tpwW2zoUvK2Scj6952aR0lub9QVimMpfWLxOG2H0hx-Rj-zt1_LnrAe8zhgyPNiiK1_4r-eNxerrU97n8YPq9jOd6xqUFFf4Uq9hsVvXnUBNFBWJhTq",
+        "places/ChIJp1AABfcMREAR-U0SBWHxp0E/photos/AaVGc3n16YdNeZUKPh2ItWUKEJF62hm80Rz0uszoVuDKu-vuxb3iMpbtchmfiRgrq_ZpcNl2HxWcjK7N-8RqnJYA5eJywrSuohaamNXWRCXERbMxQYr3c9WcB-cJMF7YOG5cCmLS6tNZw442qGYWXnvh5UyYaHo-D-Af3CAUiN5s9udZzCbivXqK5MoWZ2X6zbrGGhS_6XrfCt7d-HC4uM3KsKiOR4VhtrxcmwIWGEK7lixwgGXBM5__rjF7I4-1xKRwJH8npHZMOqDmprWAlt8tOHKGOj9OSQ5v_kGHqywt8fc4htyg8RwWG3LSP5TwfF6SLCQfr9JGRDC2dXfk7-1abPNUx2cHrPCOPfN3k0mNOo1Qz-9AU0RbgZzg1fBirPQBOusNUzxiim06syrtapzEh4hwYTL-5JE0IQYcoBLBlTLaxhM",
+        "places/ChIJp1AABfcMREAR-U0SBWHxp0E/photos/AaVGc3miIxNKLoTCZ8Af2yAEcw11MNYJBDxsZ67d2hKs6_y5glQWR_9v0h2OgZq3P5QwDjcrZzQQGm66cTXwbqTItqkolj3e1s4ODuEs3Tx5YH-BgJiy6Z1tDgHA0gupdn5uFAoR1aMSHVgtY9BJBhwFXwnd7P1PR0fwP21T5AMa4qr3xbp3OrD1e08eIJX5RvddhrzUBWWqCjp-nb39IlFfRvqvBmJ6RGPjEHXE2WS9jiGdHUB-AN6djJnHFbSY6_L_c7TbVtbeppmXuX19OsWsENZ-lxZ938-b6hMAnIkE8LR4NZQD-oa4kEuzFF1D7Jq_uBZdsuq4g_CqoLkg14_cgNyIs57y3Chd4kjjBJGz5XlN-q8cMAohb4S-puXQRWG_p76SZwV0lFcEIaoRwi9XWqDLWNfrFa49R4MvsC5pSe2Kfw",
+        "places/ChIJp1AABfcMREAR-U0SBWHxp0E/photos/AaVGc3n0ZW_LZTdDV1Fd796nY6iL84JdBLrv8qpurQOfC_k1R6zmjOVe01pDjqNFlzPzZ_wyjPlNPBUxnGxfxLwCj2rLhFl5um9NRQrihdulZA51ADtbOj9H5afy_niproNL-f9d9v7BC7syaykTL-RjjdItqYx39z0GCIgdrBrAAUUD7bQszDmBYExaDyPJIaa4VOw8NnSll7d4CtLs-4F8fK-jFJ154IXxa2nwFBGRWeorHyqzBq6HbtocO0UI-4uUQWfVKQfmubHzmuC3GCYGZK8m8mmrVnoGETog5jwpNKmSIZADH-KLVAHel224lHfqVA4SEEZiNbVZLcrrso13j8ZZyXTgrSM3OMiLPISFEAiUhATxTxiIRSOgEKquTGAUKPxqBhYITiS37sCwvW_ggnqETP6IBbYWjPd7xLcNrwHVdAyX"
+      ]
+    },
+    {
+      "id": "e800ac35-2495-4f3b-a445-8c9d15c07c66",
+      "name": "Vera Neighborhood",
+      "category": "town",
+      "description": "A residential neighborhood in Tbilisi's new district that the creator personally recommends as a base. It is only about 10 minutes from Old Tbilisi, has gyms and grocery stores, and is quieter and more affordable than the touristy Old Town.",
+      "lat": 41.7087797,
+      "lng": 44.787971399999996,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "-kIHlGrlXCk",
+          "videoTitle": "Tbilisi, Georgia ULTIMATE Guide 2025 | Where to Stay, Best Time to Visit, Things To Do",
+          "channelName": "Dian Huang",
+          "channelAvatar": "https://yt3.googleusercontent.com/msgURPx7wvkdd31JJnFoQ2-mopXEkVdgzLM_3OtlGpg33YlKhzdD3vmZkOvhvToUeTy-s-rfYQ=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 153,
+          "quote": "I personally prefer [this] area because it's only 10 minutes away from old [Tbilisi] and it's also very convenient"
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMo0MPc7HYO8fUw_TyJVL3topTPJWQ7UljptxGgc5xZA6uVydG30Uyp4Ij5eep39HKa-qMXrTUtAsM4XGB5_OSJuKRhiokQa3xzWDvLs5IUQxy43odAzi3YHnRcjcKb-6I9yFf6CHO4RA0q-Q=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJ37TnINcMREARoZL_1LBlzMo",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMo0MPc7HYO8fUw_TyJVL3topTPJWQ7UljptxGgc5xZA6uVydG30Uyp4Ij5eep39HKa-qMXrTUtAsM4XGB5_OSJuKRhiokQa3xzWDvLs5IUQxy43odAzi3YHnRcjcKb-6I9yFf6CHO4RA0q-Q=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ37TnINcMREARoZL_1LBlzMo/photos/AaVGc3m2ibOObpMHrvW-Qna49udvsazppV6KjNrjs04KliwM43W-v4GbhYh2ClZvx6jWsAo5RZdI-mdfdxZ_8Z6MZFhTH0sZuzcQONuqHIu15Vmwx7D1PIEQlu2btOg39K-wXWu2v3kCWRkedxD7D3YdaZtiq4RCztjwUJuzzfmetBdbHkVwhkYgDjU8eA8Yq6Z0Cn5lKBRqcNyb4mVw3A70ixja8DAKr8euOqzkzema_n_2j9Y1wI0NQZEqo7DhvXl7CGFJ8kbFN1MXU0Y18czdrTId94DBWmz9A3bJr_3EN7LFD4zKAIdzyvK7jmT-kX-2NjoqD2Bx7Ugpd6DbNfxKDpbKTSKPABDCPOETZ8rrvb3wbLqKdrdExIKs_kioLbN9fbomCM5SL4XEkTS5NodZPw2EPowNTlkzsy_tSZRiS9orR2xv",
+        "places/ChIJ37TnINcMREARoZL_1LBlzMo/photos/AaVGc3mCHBi-NH6NxxPPe4r7fC558wTmEOWNDd8wvg5L1-cHVAj6HAhDQOXt4G7q5LnevTqUNrzrDF0n_ltpGYNe8OKY7DIag2GN1oX9ks7N-VWLEbbVf3cj78G1w8YdYHRrqGpLrO7AK8-mFBVziV9IMU-OdwonjCa_8G0p4XsjJdLjpoYkLhKKWOgCJ-8-v5G7L9X2Qd3u7y_GGMldfyCZDaK2zH5rFqJxsc1PZQi12_N_sHcv8vdLCruYNt_idrPK-pEkciTGCPThpABluAr8240GUvaNhfcEVIFz61WQwaqNtKN9W7yCenxQw3FdkF161gqhszwdN3Cpk02XzAxk1svJVoItBLgvRatPRCwOZVph3KwwSb9KexkWogZrgtT17Zn4qTpPNc-g7DiGUsGk7KBg5FhVtjqQNl1ZHDSbG3r9pCUh",
+        "places/ChIJ37TnINcMREARoZL_1LBlzMo/photos/AaVGc3l6xcvaYiyojyBNTN1x6mz-Fj_VLpdtiJ2HpC8w5k1-GybdRETSRwnRHPxgKu528isYEtMtfDFAWmSh--XuZtSaT5vpJIy3MX8X22USFgrQVSqOhkLQf4a1N7DurYxq72Jufp8cFU3oMOzWoAHBEyGbzU9mguhk-WNrKJlBMwPMOghb2mJLmmCM5Q0tYZtUa0w7XJF_0kZtqdfmPgGKAwIFZ9giiAJlo2Th1mFu6zdlo86Dfv57G-rsZJIz2AMjDy7qiv3J5GTOlwb8RtM6k-3uAnjO1oXmFWrhf1bYP1FuTcqnZglQo9yQiXRg_rtQ_SdsOWKJdOgHGCVsY3-olP2Bo0ffT34PNimDCUQK1kQf63lQavGSIX_anlKx5MZJBWr-kDmqjznCMKYFstw7GQjli5-_QlOLrklHchXXxHpSPVk",
+        "places/ChIJ37TnINcMREARoZL_1LBlzMo/photos/AaVGc3lePD2Y0l757B_Ucv9b2kqjzV5tmDxSowf2TeX1KyFw-nbn7HmK_bGmEdHsEJJmlK5QqDDciI76rjlnL25lbmNX8taiQRjfXD8usqnPQTpfL7RQyIfkrZj3HwwE4WZaQFI5KUBe2XIOzds8Cqg5KZmemy0e6f--u5AesHZ3UJN_ugMajUsMYe6ze6N4bUhh-xeNVa-pU2IRdJIWk-uPwFIDuHVqp66DcJ1-DpowE_6zoXKb80svvcy0e6g3dkRZerz_bp1vfNYLi-RHfvXpH3Xql49obgR7fK_SDIdY4LQrPzMFNNsyNnWe0stAvM9e27Ju6na4O5erMABx5GrZqnKyFWnfaem6OYm8I38SoeN0s4TBb5jUu9icGYCOrS5P4u1drDq1GWGZrBJJfXxGz65SaZ8FQNqhbIs6cGy1evrRyi-a"
+      ]
+    },
+    {
+      "id": "744f8032-c60f-43a3-902c-89d0fe3775ea",
+      "name": "Saburtalo",
+      "category": "town",
+      "description": "A modern district in Tbilisi's new area, known for its skyscrapers and contemporary infrastructure. Mentioned by the creator as one of the popular areas where expats live.",
+      "lat": 41.725938,
+      "lng": 44.750388,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "-kIHlGrlXCk",
+          "videoTitle": "Tbilisi, Georgia ULTIMATE Guide 2025 | Where to Stay, Best Time to Visit, Things To Do",
+          "channelName": "Dian Huang",
+          "channelAvatar": "https://yt3.googleusercontent.com/msgURPx7wvkdd31JJnFoQ2-mopXEkVdgzLM_3OtlGpg33YlKhzdD3vmZkOvhvToUeTy-s-rfYQ=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 149,
+          "quote": "sabalo is more modern with a lot more skyscrapers"
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOM0RHCAV7Xkxo4NyIANE8azgRzG1Wou05vMT5MUKwesAntZp1WjZQm85yD8M9myca_ggcUCDP_ackHfOnv9QmPTQ_URufNeUttg0Rm1fMFch3gYWx4_A0AYwaORFABYAOdFPxq1BZKM3-lqck=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJJZgXfBdzREARaHE8Vh86DHI",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOM0RHCAV7Xkxo4NyIANE8azgRzG1Wou05vMT5MUKwesAntZp1WjZQm85yD8M9myca_ggcUCDP_ackHfOnv9QmPTQ_URufNeUttg0Rm1fMFch3gYWx4_A0AYwaORFABYAOdFPxq1BZKM3-lqck=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJJZgXfBdzREARaHE8Vh86DHI/photos/AaVGc3neU0vsbtzxLo9YzYqrkEkVISdeJYbgDwCPmop1hziYtl2qb8BE1nE4oyszhOSIJuhRFVnVrENGMc7KnTtJNOMgdfe9ExgaAXzFMx9CDZ4GDubEler1OqnG50U-g5-jcOGnVcwfNgHjKlIR-AhKvgsS_sWmUmg8W4HfbNzYbRwQXtBUpMhjDed2ob1f1zgt8Ilzylqb61vUI8097xjUmvAUbSVqxgbcQ3y7YnPRO32iQKSeFJqg9drfqe6m8vHRTJPpIqW0b8GklvXDCWmoOatkgn8MuzdahLKYKKszH7frkasnF9j3dOVCh0iFhp8qEECPx4WvUp5ASOXF_0XvoWWlOAqnOz24eD5RDDe5leURjh89AQwC_CbI2yWyPFAGiVIDUfvjJ5vPwjhJINgBTce2sZKaLZiwTEHs-5J1hp9jCQ",
+        "places/ChIJJZgXfBdzREARaHE8Vh86DHI/photos/AaVGc3nuWwSkZTtb-rVLjURQus4XO021d5TsmrW3qh7f8UEBup4nZ5cP9wCGYNDbCjIVKmoCQjCljAL0SfoAPw9WXSp9i0m9RLSwrCIRNplya33omQWHafIFkrMRo5cWjQYWY9yXyFC2EnR4khSIF86xUeL6ISU0d-N_4caHnpxU1e3tOkYTFOXw1Y9QIKSwRy0C9-W4PRIkcdkcsd7kGdF07mEDw3nELOEQopzC15wVL5T2Kazvutocdsn07MzGgqPQt4f2ENYTueiJHDYegUsLwZr4_Ne7zhRfCK_PEVvId0VeKQKMIKo8iREo3HfrAgCbvj-bBgxFbSKuHnUTG2WWcLh1LlGRRWgZF7ZaI2h4sHc6W32twbg8uGtURkc_Sl46vTRuzWzSdaYOEJxgZBosbjXHGu79MtdYP0uw4VGGDKedl0_t",
+        "places/ChIJJZgXfBdzREARaHE8Vh86DHI/photos/AaVGc3m8pQP243mQJKe3wtdIR9RLSI5YEdfWk4bDI99lztK1MJy1uhFNZsF89r_Bcu9oxzbU3LTJruH5CN8fIPmrV7MZEmOkLfdR5OUQ2dHD1E7QUO1TvOiuXw_7rsFYdijYjY3oLLV3WEc6hyNIk4aTb4YrSUktiI1NPxfcQWLxk5N1KijluTuZo3_j6RvwSnWKY1xtZUwBQh3OPzmTjGBEK92tupiYTFSfcssWmfLj93Q3X1V5dC_-eCsBd381V2ah4kQ1YsOqp4T-QINdhrAoEM8suT8lfa1WjHVWBkq1CyHIy2-AbA2u89M4XFXWnVPARwYjt_XzxvIE-or8Sj45ksjSrO9EniERuvZun2_Zv2QyiKNaBcNEnQZbBhargtx-KqwxncDlW9UkTzJ4KTBROS5jE2jKtUBwJ7T8yCTN4xB-e10",
+        "places/ChIJJZgXfBdzREARaHE8Vh86DHI/photos/AaVGc3l_ratrAkyCayApuE47On_qOWi_ZwUoX2IWPnwuiLf2UNoiRMPtW1ofAtX3-ZnbmtIouhTPQemJoWf258Oeq202gBy_CBB1TYls0u699HyuWHffthGxWpY3Lns7LIiGbvnqa3-A9F1j4zBeTJKjjv8FnA6RsclxCwhlfZDbKtBMOdcv1h10xIhoZJGF4wd2fpTbRJ19eO0ot7--TANA8rLhfw0MtMTmtFeUN35liswmCW3JBrHKvRei_lBVmYzDwRnggFONqP4mTb6_3gQj_j3-SimLTyoOJoJKX_zgI7Y3tSMtM0N0d1uATW_GkGN4h8NvTBGJf7CMQ8bCmsLIvtXX94qkrau5Zrc4xFqMw_ISrttiiDOG1cAr9Js5b-0JZA_NJE6WEJgDP9xwJJieJafz6U_7znDy-sNTP-TtbZpONKms"
+      ]
+    },
+    {
+      "id": "dc3cbe06-7e1b-4291-885e-3c1d81cd4ab7",
+      "name": "Fabrika",
+      "category": "stay",
+      "description": "A former Soviet sewing factory converted into a vibrant multi-use cultural space featuring restaurants, a hostel, and a coworking area. The creator recommends it especially for solo travelers looking for a social environment.",
+      "lat": 41.7094157,
+      "lng": 44.8028859,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "-kIHlGrlXCk",
+          "videoTitle": "Tbilisi, Georgia ULTIMATE Guide 2025 | Where to Stay, Best Time to Visit, Things To Do",
+          "channelName": "Dian Huang",
+          "channelAvatar": "https://yt3.googleusercontent.com/msgURPx7wvkdd31JJnFoQ2-mopXEkVdgzLM_3OtlGpg33YlKhzdD3vmZkOvhvToUeTy-s-rfYQ=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 405,
+          "quote": "all this building was a sewing Factory before and then they turned it into like this huge [space]... they have some restaurants outside and inside it's a hostel with a coworking spot"
+        },
+        {
+          "videoId": "DxBviP18M3w",
+          "videoTitle": "WHY TO TRAVEL GEORGIA: Top 10 things we LOVE in Georgia 🇬🇪",
+          "channelName": "Loz's Leisure",
+          "channelAvatar": "https://yt3.googleusercontent.com/ALiqXBPtLh5c9lRzJGt0Peccuj-paMKEhjdQEhdKcHZbnBAHmlfzKwz31IA9Rs3MgP77JeYHGBI=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 73,
+          "quote": "Even stay in one of these hipster areas in one of the most famous hostels in all of Europe called Fabrica."
+        },
+        {
+          "videoId": "emGjaLAJcH0",
+          "videoTitle": "Can't believe This is Georgia! Full Tour of Tbilisi (Most Underrated City?)",
+          "channelName": "Dany Dev",
+          "channelAvatar": "https://yt3.googleusercontent.com/Pu6eBFeGnfC1mkZuCjpuFy4CUeqE5iJQY6GCWXtNTCTAffYn8wvEmebvZXwqKMBNqzYletRhbZs=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1176,
+          "quote": "it's a past Soviet Union Factory that they transformed into this co-working... pretty nice kind of like a couple of restaurants the pizza back there looks pretty good"
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOmjQbQwE3cO7yu8k61QHt9-PiZxkwVIiKO9_WDk8jNKFG6F6InzX4RC-xi3Afz6OCqFgAM6Lb50EM5DKQuXgE8_nqbj0jvx5HaKAqFyFaGyuZFW8ZuMHPfGxEOzNaXT6q56UYa4sMmVwOcqFoCMNDW3g=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJtVIuNc0MREARGnp9PE_BK_Q",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOmjQbQwE3cO7yu8k61QHt9-PiZxkwVIiKO9_WDk8jNKFG6F6InzX4RC-xi3Afz6OCqFgAM6Lb50EM5DKQuXgE8_nqbj0jvx5HaKAqFyFaGyuZFW8ZuMHPfGxEOzNaXT6q56UYa4sMmVwOcqFoCMNDW3g=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJtVIuNc0MREARGnp9PE_BK_Q/photos/AaVGc3mEmrKjTGpkDyxZIvx4A5gtipQW89GKRphEizfJ1bYen0vusIZrMr-mUwPdm7RkGI0Nt5tSymjhApC_B8VTmVbQyqtwF7ndP8yjaQG7FSSNbtnaszhEapI19kyMp1rQ9WvejitagkUklICeSqRRH2qGXnK5yrY2DHO44VGycuDyQtm3AiBf8WJlJOc_bxhiYeSZ4UcJ0x28eQTdhqB8qkAr4DqdM-2Z-JZnMDzwkgRPv74Yi8zoxZSfGFeVG3j6EZ-jpAeNZ6_SbG5fxBKe8WU4qWye4sGwXCd7H-0OmD3WOnY5TUEUoJRdy1vZgbJ5d60Fes1XX0onspms5pOwUEFA6SB0GUTwwtB0RveGVVzzlGp4C4ESpe_yA_CNrWisCYp2OQF-Vocci0Y_FQYGg7iW_n3rE_DfBWJ3VUHtWjAZ2moR",
+        "places/ChIJtVIuNc0MREARGnp9PE_BK_Q/photos/AaVGc3kIN0LG0Ew53JUKgVRL5_ONJHWyim1hvsPIuUDUQeMIptU-BDq8mQMoZUtg1tPMLaWdLFeH_TDSw5ghmehK2I1RkEEvaFH_tMG37mNECAgHf-WGyjqzjb7jb3cAtHIO4YAAxlk_AS2nVkfKTy34nCZ--mATxnZ3luN6lbwXJj2mtM5cfw86WCEKGY1DW7D0GcgpheLm4i7uQkjJkVMdBjGXpVmbWj_BQKaYM6KD3WgX1nYdQYicF1ULYp7ThXsmhWk_69SPm-xhW49oWCSSq4vfKeMDmHr_wjRQdbS44-RSrRtU5TU305P1rk5wku84OW7w8WVdfjwLyi-S6sJYOrmAyfUkDboa6Qbsv5ug3p0nCFtJ8pvsFCbH6dcwk63ecLSpknyqxq4_WI6bkAkWkH16dF8CsLxiJT2DVySOTzhYorE",
+        "places/ChIJtVIuNc0MREARGnp9PE_BK_Q/photos/AaVGc3lxl0fLRKo2kNpuS4lEHiPrIssFn50GBHiPAEt09hTuwyBy4OALDi03umXA9mbH_Ahtf1ZOAboNNFLtyuLGWyVKADPoqKnT_JpaTZBCsIwI4PNo5VDCI0KzhjosKWHltjvky1djkc5SAlTmzeSsH51e3puOJW23ZyLyWsJWHaurI27n_Z3RgMbTYMbbEqd33133gn1iW4fO1XDqnfoyhhtU7wdiPrbWn0Jwkcjtsbez8iJiI4rlAwdH77vSVbzsMaZJIu_crwuMy_Qt2cC_PBDdZ-JG6wV7fD9r45AUZYiB4s0rkSj2H4IZBctPnI3tMTcvHm4LdLDHRlU9YkD8LeRG_MMIQcM7earYIjBbFo0atu_qp-TtQ79kUEKDcFXyEoN54omNs8br5LcBFLMjbt3MphNDXZavuliGCV5kH_mjfA",
+        "places/ChIJtVIuNc0MREARGnp9PE_BK_Q/photos/AaVGc3mRUeba9BOR8553xOVrGj6cilsXVB7FoavXwAyIhPqsT47azgJDM6XicPgiGTTIfOOR8PSaheQf9gJeHqvkpHnIVFvMG67yrntbRAiC7JpnDpSEsqICvJXJp4PQwaDEKG9LJB6zjJu3Hy_CGTo7Tjxz5TYGqWlT_a3Fa3l7_MvDlSm-yHFD2eoALy5Xzy5J8KeY66kN8Pg_BKv8a3rPpbeOXMkWOuifSkCN3wUUdnK9bDpCTESpSSVb6Ed94o6DzW5lLPGWjLxw9iEqaql11ChJLfUbzQz6yshL8z0zSpXeJ98qIKxdIMu0DfcBw7GQn1sRRpVADSZ0V0-sqPAdAqCQljwQg6vsc4u7PqJcKWBGdBMNwA_ccaTKcVR56uX9FAxDPwlM4d5T4SklV_gAtfg2SQ7Ai-kaDLVhs3JfGqY2iw"
+      ]
+    },
+    {
+      "id": "d4987381-9e41-48d8-9871-c5205fb121ba",
+      "name": "Kakheti Wine Region",
+      "category": "nature",
+      "description": "Georgia's famous wine region, accessible as a short trip from Tbilisi. The creator recommends going for wine tasting and notes that the scenery is also very beautiful.",
+      "lat": 41.7263148,
+      "lng": 45.421655699999995,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "-kIHlGrlXCk",
+          "videoTitle": "Tbilisi, Georgia ULTIMATE Guide 2025 | Where to Stay, Best Time to Visit, Things To Do",
+          "channelName": "Dian Huang",
+          "channelAvatar": "https://yt3.googleusercontent.com/msgURPx7wvkdd31JJnFoQ2-mopXEkVdgzLM_3OtlGpg33YlKhzdD3vmZkOvhvToUeTy-s-rfYQ=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 480,
+          "quote": "ketti is the wine region of Georgia so a lot of people go there to try the wine tasting but the views are also very beautiful"
+        },
+        {
+          "videoId": "DxBviP18M3w",
+          "videoTitle": "WHY TO TRAVEL GEORGIA: Top 10 things we LOVE in Georgia 🇬🇪",
+          "channelName": "Loz's Leisure",
+          "channelAvatar": "https://yt3.googleusercontent.com/ALiqXBPtLh5c9lRzJGt0Peccuj-paMKEhjdQEhdKcHZbnBAHmlfzKwz31IA9Rs3MgP77JeYHGBI=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 237,
+          "quote": "Kakheti is the most famous wine producing region in the country and is only a few hours from Tbilisi."
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOnJJ4yqJAOVgh9Wbol5RrEiwzGHIjEiLEFPfTR_KTLk_WsGEm2Sn5Xp9XwwsRegv1JqgVEmD80AdY-jRGuwdhcy5uqg0SyluIzp30CzlU_aquCn4J_WZx4kbOvgO2gVl38u_gh26wAmctYDg=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJG7pUsNcnREARLrYUpw3wKHE",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOnJJ4yqJAOVgh9Wbol5RrEiwzGHIjEiLEFPfTR_KTLk_WsGEm2Sn5Xp9XwwsRegv1JqgVEmD80AdY-jRGuwdhcy5uqg0SyluIzp30CzlU_aquCn4J_WZx4kbOvgO2gVl38u_gh26wAmctYDg=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPKGREyHcKMYqy3XmiA1paLAE_GO9lI_R0r2UU69fMvLgCjKgltkx0U3F-c2K-cmdLrO2ntCEMohDsBe7QUZS20v1QcCSYzFyMSvBmcmRkzCtwr15iS9ZIdRq7ep914O8sFCeVsEdwj-08Nsw=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMjGNnCaZaF4JAfFiDYEl8_DUHbBYOZsL4SuKBod0M2LWwNacmutX9P6LuCUkmO-HDeHL3QLGAsmfA83ciJ_zhEnChWJIbvs8-aCXI1kNtoeW69Q3mjf7qvfkEjIZy0ib14CPDm69YMu5cU2qDfDqoUOg=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMAkZ_zLh1s2-UvUsyXIu1HlDsEemWCWC4AUR14J0uTD_l6bjIQGI58jcd3ycL_W4XT_qmFieB7ldRggH4OokF4GYYb26cSkdiutGwGpJQAfnn2HOdTA-8L2jX6kGBjkeYyNln8UhGpDisqBlaJgQxMTw=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOJbsKdgzYjz--ZBlYMR90X55Tb8QKYzrG64yx1xDhQsm7hL3ssXYVFN71OJsBCK7oFZsQLkV2B-E2k0icj0GVvJw5pcWHs5-UkrlrMP3QwGg93CtI2rJqQ5D4FgPhTkh_VSTfcW_m4CA-yPSHg1qxKlw=s4800-w800",
+          "source": "google"
+        }
+      ]
+    },
+    {
+      "id": "09132634-2a5a-4898-a0aa-9d10e55cda47",
+      "name": "Kazbegi (Stepantsminda)",
+      "category": "nature",
+      "description": "A mountain destination in the Caucasus that the creator recommends as a day trip from Tbilisi, calling it a place where you can see the best nature Georgia has to offer and saying visitors should not miss it.",
+      "lat": 42.6583174,
+      "lng": 44.6409521,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "-kIHlGrlXCk",
+          "videoTitle": "Tbilisi, Georgia ULTIMATE Guide 2025 | Where to Stay, Best Time to Visit, Things To Do",
+          "channelName": "Dian Huang",
+          "channelAvatar": "https://yt3.googleusercontent.com/msgURPx7wvkdd31JJnFoQ2-mopXEkVdgzLM_3OtlGpg33YlKhzdD3vmZkOvhvToUeTy-s-rfYQ=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 494,
+          "quote": "you can also take a day trip to [Kazbegi] — it definitely has the best nature"
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOETK9ps-X9f86Bz6sn6RcCJ2WDRM5u9lxmDx9doJ_zL3ONGDgitC9yBUkVmNEIg0taogZpCo1S6RprhoF9Zajxq3BF2HEKVOhTKbEaaYeJ6gLeURfCX28FXq859DWM9xsDPDWDVV0l_pr7cZE=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJV6FZWBs1RUARgoUFyx111vg",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOETK9ps-X9f86Bz6sn6RcCJ2WDRM5u9lxmDx9doJ_zL3ONGDgitC9yBUkVmNEIg0taogZpCo1S6RprhoF9Zajxq3BF2HEKVOhTKbEaaYeJ6gLeURfCX28FXq859DWM9xsDPDWDVV0l_pr7cZE=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJV6FZWBs1RUARgoUFyx111vg/photos/AaVGc3m1If5GAXetcDwj47geCwYX0ETA9UFuQNZmUJT0X4Wnia2EOEv4JdoBkV50z7qblWmpxSpvAqfqNAjj22769PJBzKy0oIxmTTWI2DI8nemlH6wfbakznWBLg-OwFIacnnQrDHK_cKVVBW2TmWypVhftdYgPp0lW5Zk1c-Vbh6iXHkZaD23rFK_gTDKBLkiMIT5grKsVfB_Xs2KFZT96hIJsG4GEgkXg9R6yTeacWTqk1iXT-SqGs0GURW66kta0CEYRHKZgbh6NQxTEGZ_iydZt_4o_yvO-Q0GdotKFvUjNwqb-l-lI-fJFYBvPWZD5ZJ-3IbBSGrbqzJnfz63UQfx-Zn2yfCvKKJTYsb2ndAZ7aORtsTwzGFSDRysDwMG0b-sNRlYbS496BY2ZhvZ34ADAbA2cHc0gFqyrXLkoq301GA",
+        "places/ChIJV6FZWBs1RUARgoUFyx111vg/photos/AaVGc3n5KFlMIqfBpf7gGiger5e3CxX_dza941yFLgyFh8wUJ_EAZIuxKccaSi1kxHSijj6Cs4ZottlIYZskkv0PFUZWGgxl5Slr-jrI086zzfReJYXV4Pk5kPcSssHhPKaJGfhpepcmGvIMnItNI4hCYrYEGF-Y88mCDUTw1zni6B16ngUyj3xP1luN86dUbA-CjVnakpwYKKg__GB6bh6n2bxhITs4zEvIrnwouWXspuPPjPIBHcg-m-F6DaQr_cKrfOXBrbUPaSR1PeYdzME0i4XWfH-P9CWXxIeDb-ob08uiI5XYo2dQscB_WoYzb6mVywYOzQgnQsKtWTMXKdFjYNOdCDFVpAKz0-hJ9NBnP1kyx13adBS6nEUAwMZ0Ctxh4YpFW60YDHGmfGIwIXcEABQNzFPnFEWYbVKJckbPU-c54w",
+        "places/ChIJV6FZWBs1RUARgoUFyx111vg/photos/AaVGc3kv8pa7NjiIRzj4NxfVpKGmIsxlYd59zMqwsdOefZn08yMLKpy2XIw1S9K7MwuMAf5-8ViwbWuq3hoAjvqcUgGfrhhVW6mftRXkKwhIxfSxSpPeiUhO8lQcGlNnQdTpTiXx-vkBvEJalhyd3C1tCfb0CvY96rrbRFYe3YomMEgOslvdYv3j6hA3hd-6ewOz0rzOEa7XicxPJtsc0AWElOfTVZNfVXbXcZsNrwsui_bkTECCWohTlSJQlMOGUKt_WS0bon0YB3LVJZjg0ANcI1NloaUZHnM-796zQswATsA-N5bwGzfdWYOuvpdwKrUhK4bn0jCkVYwKfmy6qwaTvwdWGq0XjLtzxqVsheHv9XyMBnz1e94bg8eNSl8Qtuse-hTilSaLDXshMcgrub9MQu6cVjwxO-PNMGeiP6XsN4g1Mg",
+        "places/ChIJV6FZWBs1RUARgoUFyx111vg/photos/AaVGc3lwEgVTQjAqGM8_a5uK30lqYBCXAJOzu7hWVka1TUAWu4HQos3APzUl8ruKQ-JGPj43FPXVWY9i_AOm7C-yiH9smsKtbCbgP5o-Z3-2_7BPUmazjW6yF0QS7fVCpXYZs-NtC_HqNtu82B-6NBJ8T406yUvvlZG6nk2ezYpFxJX4YnMA3HvgQ9awlSUf0Bg-2riZeeJLrV0EOhNUpq8DJ31lkk3mQqeencc9Sp4yUAoaiqsP_1vi7Du0Fi6zNvBvb7kDk4-cNE2PIa1vBmIop6bY1a6JgErWyXfX-gQG7hsKvHYq-GICxEZoPG9F5DMWFCHGMKYcqSSs4bL_6cKPVOhuhkLsocLLZ0uqDauw1aViPtfPFqwcRX0O3bUKHyjzYhWHu2B3H_DhfreVYnZRT75ukh4KEAktXPRuFUM2HSo0ovQ"
+      ]
+    },
+    {
+      "id": "8f8bca7a-41e3-4329-b8d0-fe98df2c39bd",
+      "name": "Sighnaghi",
+      "category": "town",
+      "description": "Known as the 'City of Love', Sighnaghi is a town in Kakheti where the creators based themselves for a few nights while exploring the wine region. They went on a wine-tasting trip from here set amongst beautiful hillsides.",
+      "lat": 41.7099175,
+      "lng": 44.8107313,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "DxBviP18M3w",
+          "videoTitle": "WHY TO TRAVEL GEORGIA: Top 10 things we LOVE in Georgia 🇬🇪",
+          "channelName": "Loz's Leisure",
+          "channelAvatar": "https://yt3.googleusercontent.com/ALiqXBPtLh5c9lRzJGt0Peccuj-paMKEhjdQEhdKcHZbnBAHmlfzKwz31IA9Rs3MgP77JeYHGBI=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 247,
+          "quote": "We stayed there for a few nights and stayed in the city of love, Sighnaghi."
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPJCC06hMaZeiWttDQfsIOtpgvMsi2g_2zz4BCCYazxord1D1Jh9_ZHAmcr74uveRZJUmBFx5TR3-HcGwgfoHk8ILI7JE7_5n86xWorWWkg-5-TmsM5hatqBDFRVko1RqhFc8-TrUW-Lj4Ojg=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJETlEqiMNREARClleayLPYLQ",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPJCC06hMaZeiWttDQfsIOtpgvMsi2g_2zz4BCCYazxord1D1Jh9_ZHAmcr74uveRZJUmBFx5TR3-HcGwgfoHk8ILI7JE7_5n86xWorWWkg-5-TmsM5hatqBDFRVko1RqhFc8-TrUW-Lj4Ojg=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMc4hmha8hE7iFYcoiV-j5aK7-1V-vhRaye64UKX6H4vvhC36TDT5SlFcu9cyRkJ8D_Ktoe6M4hVQZKukJ9RxvY0P8rsgBaM0KrZTRWcj5-jfhiLfXbncalP01Sgc40kiRtr539omL94LaJLz4=s4800-w800",
+          "source": "google"
+        }
+      ]
+    },
+    {
+      "id": "84c9b4ec-89b3-4b12-85c6-18a7b408b0db",
+      "name": "Gori",
+      "category": "town",
+      "description": "Gori is the birthplace of Stalin and is only about an hour from Tbilisi. Many people visit to go to the Stalin Museum, though the creator didn't go inside; they did enjoy the Soviet-era theme park on a hilltop nearby.",
+      "lat": 41.726363,
+      "lng": 44.791528,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "DxBviP18M3w",
+          "videoTitle": "WHY TO TRAVEL GEORGIA: Top 10 things we LOVE in Georgia 🇬🇪",
+          "channelName": "Loz's Leisure",
+          "channelAvatar": "https://yt3.googleusercontent.com/ALiqXBPtLh5c9lRzJGt0Peccuj-paMKEhjdQEhdKcHZbnBAHmlfzKwz31IA9Rs3MgP77JeYHGBI=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 354,
+          "quote": "Stalin was actually born in Georgia in a town called Gori which is only an hour away from Tbilisi and a lot of people visit to go to the museum."
+        }
+      ],
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Gori_at_MSI_2023.jpg",
+        "source": "wikimedia"
+      },
+      "placeId": "ChIJXzZ-3c5yREARmn3YVqrDuwU",
+      "photos": [],
+      "morePhotoNames": []
+    },
+    {
+      "id": "c5be636b-43c0-4291-a7b0-da489be87e88",
+      "name": "Kutaisi",
+      "category": "town",
+      "description": "Kutaisi is a town in western Georgia that the creators were walking through when a local woman spontaneously gave them a local fruit called a karaoke as a gift. It illustrates the warmth and generosity of the Georgian people.",
+      "lat": 42.2596791,
+      "lng": 42.6633738,
+      "geocodeSource": "nominatim",
+      "mentions": [
+        {
+          "videoId": "DxBviP18M3w",
+          "videoTitle": "WHY TO TRAVEL GEORGIA: Top 10 things we LOVE in Georgia 🇬🇪",
+          "channelName": "Loz's Leisure",
+          "channelAvatar": "https://yt3.googleusercontent.com/ALiqXBPtLh5c9lRzJGt0Peccuj-paMKEhjdQEhdKcHZbnBAHmlfzKwz31IA9Rs3MgP77JeYHGBI=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 508,
+          "quote": "Another day we were just walking through Kutaisi, another town in Georgia, when a lady just walked up to us and gave us a local fruit."
+        }
+      ],
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Downtown_Kutaisi_%26_White_Bridge_as_seen_from_Mt_Gora_%28August_2011%29-cropped.jpg/960px-Downtown_Kutaisi_%26_White_Bridge_as_seen_from_Mt_Gora_%28August_2011%29-cropped.jpg",
+        "source": "wikimedia"
+      },
+      "placeId": null
+    },
+    {
+      "id": "8bc9fb4c-0fd2-48d6-b578-63cee6bca54a",
+      "name": "Svaneti",
+      "category": "nature",
+      "description": "Svaneti is a mountain region where the creators went hiking and had memorable interactions with locals, including being called over by a man who tried to teach them how to sieve grain. The region offers rugged mountain scenery and authentic rural Georgian life.",
+      "lat": 43.0445803,
+      "lng": 42.7276524,
+      "geocodeSource": "nominatim",
+      "mentions": [
+        {
+          "videoId": "DxBviP18M3w",
+          "videoTitle": "WHY TO TRAVEL GEORGIA: Top 10 things we LOVE in Georgia 🇬🇪",
+          "channelName": "Loz's Leisure",
+          "channelAvatar": "https://yt3.googleusercontent.com/ALiqXBPtLh5c9lRzJGt0Peccuj-paMKEhjdQEhdKcHZbnBAHmlfzKwz31IA9Rs3MgP77JeYHGBI=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 524,
+          "quote": "We were hiking in Svaneti and a man called us over and he tried to teach us how to sieve."
+        }
+      ],
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Svaneti%2C_Georgia._2018_117.jpg/960px-Svaneti%2C_Georgia._2018_117.jpg",
+        "source": "wikimedia"
+      },
+      "placeId": null
+    },
+    {
+      "id": "421fb2f7-c668-4e63-8a25-766211f4ad32",
+      "name": "Rezo Gabriadze Clock Tower",
+      "category": "other",
+      "description": "A whimsical puppet-inspired clock tower in Old Tbilisi designed by Georgian artist Rezo Gabriadze, built from stones and bricks of old abandoned buildings and thousands of ceramic tiles. There are two daily mechanical puppet performances on the tower at noon and 7PM.",
+      "lat": 41.695783,
+      "lng": 44.806546,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "Q3p7iBOAey4",
+          "videoTitle": "First Time in Georgia 🇬🇪 | 4 Day Itinerary in Tbilisi",
+          "channelName": "JHMedium",
+          "channelAvatar": "https://yt3.googleusercontent.com/9mPet_wdW9JGD-jx1cd_YFkuzJAbT9ClKgv30KLE50gMeCmfq8aDxf20G08voFF6zv609tSmpGo=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 51,
+          "quote": "It kind of looks like it's out of a storybook. It's actually a puppet-inspired tower."
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPw5UACRyu-PKksYVNMvT_aE6CQ4sPMeCPR8wqRaDbmt8klo6DT5W8yjZmWu02NV49ZqvaOqcMZ2kl1LEPusjhZSpNP_SkkZyxpGKMnNbgqZom2Jw5ubv_qKPx0WLrF_HFIiyqf15ShBI708mk=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJCXcIHuUMREAR--0GnDgwDjo",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPw5UACRyu-PKksYVNMvT_aE6CQ4sPMeCPR8wqRaDbmt8klo6DT5W8yjZmWu02NV49ZqvaOqcMZ2kl1LEPusjhZSpNP_SkkZyxpGKMnNbgqZom2Jw5ubv_qKPx0WLrF_HFIiyqf15ShBI708mk=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJCXcIHuUMREAR--0GnDgwDjo/photos/AaVGc3lPTn2IA7SH7i2J-v0iGlURoYh6-m-z6eADzNPnsnWVSkkdGJ9szdSFUQPwfezmnnd4twQDIgc0aXfz2Pn1fiZtXKL0HdoiI6CteBe1aztRHHV0RWyYTTLMBuv7l3Qrma9NFIr679dZqi8hB_prdacpEbQ4kGO1l6OkQAEGC7mwPWzhtFjdUGPTGDkmLtbq3OQuNS_R4zCKkEGetkWe0ISlVKjd1-q4liiTGXxhGXqg2XAsIeL6VFa4XJm15y9uu8AVAYJOE2Srh8iJqIrJGu87nzkUQ_743Fm_TVxqaVDIBBmQEjz2wwy8soR2vp-PKsAT91OBb917TmLBEnqjYK1bQEeoX3bC6LtRoVBT0KNvQg8VkZc3ngPAA9arbzNmc0YZylnKRcptA_0cTg8fxrFx_6b0Ps86yPU5FUVUK8qf0A",
+        "places/ChIJCXcIHuUMREAR--0GnDgwDjo/photos/AaVGc3l0AVBhYg67qBZLfxxcbEdI44XzLdT-J38i9Epjdde9Kd6G6de8vFuzDvyz9RYnuhEmBi6lE07YeHpvE2V9lUohGqTXdxZLmirkGe8edBYkx3OvCesafhQ1_JD-V5x64Vf0z6B66aV3qKt0mr-76SEjt8Y6sYR_dh2tkpaQM9M2hX1yWokARsORXvjMxa2AUTo3Tqn9Tyl-jPSk2WrYLaMnGNyfAYMSfBPBIqoYhvsmMz2xlDT2NO3J2R4m3-6YpV05F19gLTGLjcsiwCOj1oJm3bGfo62OdGzWzRV6aEvWFi5CEMAIM5dfcshh4yTTD_4lPLsmPgM-bJqT-xRs8bTLdTw92NO2wI8X822Ne_CzXQUIN-FaXbbVBpCNsNLLQ8HmWZosLDR09VP193qBbZLe8cHsxdXHH6NPxcuF6unKJg",
+        "places/ChIJCXcIHuUMREAR--0GnDgwDjo/photos/AaVGc3mYmhSR03M2ld9J_NMa9zLV-WWghLDQttgs3FrMv76AhYKEmzE91boBOZhJHuG3UO693mwOr6I2o3jdDhkmtS7pSyDlvJsfr69iNEFH95q6_ufK1n9XKBTfJmsavEvYewncqKY1nKDTzRIaue2wanNf952fUThaCCFbAYHkLeSDkwT1TLRqZ06WXeBJ9F3ru2K58i4kGM3qRRy6X42PunPo2GwWncfe97nFCaCaqYevRM4y2MELyfpCHwU2t1-M_Sm144Z67G4IqM2HVzhQS1gaAa38SVfLTWPdKAOinXIYszYDqQP3YI2v6M1bzhcN2GAtkye8ERN3TXnz3heGB8r-bGmqOyrpVvhH3bT26G6j5FWvg40HajiKXq8GlgJvjq1t3XHx9b-ToD9w74RIJ_GTQUFjgOtod-NccijzFdiRWlg1WklfquehbVPBSPmj",
+        "places/ChIJCXcIHuUMREAR--0GnDgwDjo/photos/AaVGc3nDccJACVGP660XZphsD5UN0eIBNSKBgXFXQp4sqhJAf8OpJXwAOl_C1y6nbNBXz-iRfvsWTqORtt22H0RS8bPFz5MhvBbbZFtHFhTAKT-Noi2A14ehSLHjq-WOGs4I6eeAFgS5zIzhgkeqDY4VvVHQlRUs8qJ8JxAVXcjdVsr_kVYDGsWoyIoQv6XQuBTO9L6yxrI1wEr1dH2W4EFCqKnky6tpV5LCRcmiZkjB-PQ4AYmx5ug7yl_4n5Ol6IaThst-uCrO2eB3My_vVQQuAfq8bxCCTMqSJXX44lxpByffdfLB6Zg7ZrM66U0FIhzdmiwWA0f8lVzwsU-r45ccq25JwX49kyFHPMmi1fZbYHttttHv9cIJNkxWNC3iYnieDJKzg7MJJAsLm4qRqoOxNFuuNov_z8IQvEtdYUHnK9s"
+      ]
+    },
+    {
+      "id": "34da4011-c4f3-4f11-8a97-b28042ce9de6",
+      "name": "Sioni Cathedral",
+      "category": "temple",
+      "description": "One of the most sacred churches in Georgia, named after Mount Zion in Jerusalem and first built during the 6th century. A prime example of Georgian religious architecture with a central dome set on a cross-in-square floor plan, it has been destroyed and rebuilt multiple times through invasions and disasters.",
+      "lat": 41.6913325,
+      "lng": 44.807447599999996,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "Q3p7iBOAey4",
+          "videoTitle": "First Time in Georgia 🇬🇪 | 4 Day Itinerary in Tbilisi",
+          "channelName": "JHMedium",
+          "channelAvatar": "https://yt3.googleusercontent.com/9mPet_wdW9JGD-jx1cd_YFkuzJAbT9ClKgv30KLE50gMeCmfq8aDxf20G08voFF6zv609tSmpGo=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 369,
+          "quote": "This cathedral is one of the most sacred churches in all of Georgia."
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNXT2pGH1_qXsBPFk_lOWrY8nz3-iM6hPZ3GV9myaGACJO8XALDsBkRdL5GAW_wQy2-hibBbnpO81gKyT9GGgdZAu0xTuTMNM65VHQGkagei21BeTfoQtH_0afciESLyBIyyFyPnHd73nsQ5ukaWiTA=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJPzumeQANREARbWArJ_IYiNY",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNXT2pGH1_qXsBPFk_lOWrY8nz3-iM6hPZ3GV9myaGACJO8XALDsBkRdL5GAW_wQy2-hibBbnpO81gKyT9GGgdZAu0xTuTMNM65VHQGkagei21BeTfoQtH_0afciESLyBIyyFyPnHd73nsQ5ukaWiTA=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJPzumeQANREARbWArJ_IYiNY/photos/AaVGc3nbgj3TGuZfIjZOgxzNWokUMu_jE8LrXT-LpQA1kaebWGe-O5BxP6hL8yVsWDYs5Y_Lj6n0zoxKFgOKFZJikUxzeCK5cXY66JvvLg-RrXEA2PcK4YRxVo-Gl4sw023gkbeQMimOHo9sEojczX6xDAXQ9E5iQhSqBZLhoxMRoAAhFlszkZEJiy61KCJ4jnTJsbiQIXy8GBmrG7W-3-yIxSO6xGNKci-UCyWuXR-kWgaVkKYeONuJaB4pNMrsyGboNcHspiM9CtY8IG45tW2CWEdjWUSF-AwxQbqribQJqqGzF4679akvVJdSUV_BUqe6HKx3gvq4tPHVa5VjwDCQbW8VIh5sX47ZGAIdWzssgUI_joEkdaDsOYraxEBGob_fRXur34OeLHgdwBCKbXkLsVGI9ORbA_86-ROEStkv2IJBp0iU-e1BfVrPQB9rooUm",
+        "places/ChIJPzumeQANREARbWArJ_IYiNY/photos/AaVGc3l25ud4iF5k5bY_m2J8fyjuPv7XsdaPsC_at1eZ-2SiZBiNzeVxxQMW64D827_TRZ50wbXSRpKwwZr4bk5ouv_xxd6WXtffzXZzzjJVINKdvV5fjoG3d6S3Jrim4sOHA1yn_z4PjNsv-AKd0am5Tgt2XRAyKm6LM4LrwT16l0Er_NFgcmF15PUPxBJRY8uooknajCromGkNjSr7fr-27F3zzHAQ3e1XBTyfzXuMemKVBSYZEWhD2m3nIyHd1kShs-Z2-aQQArbFSg6_2b_r_EiNA6nZKm4S0u5U7pIJTbxLUkqz6d4-xtsWwvBnUy8LCxffytHfBkwIAjWwNi4k8QmWrWBPyW0qs2dQQzA3dDCyPbmQYihsudu7TgwJmxI2PrOeV-6TNkr77O5I2zObHsSzkTkr49o3H_jszhuTYDyWtuVhfxvVC3uqV-1M8qSj",
+        "places/ChIJPzumeQANREARbWArJ_IYiNY/photos/AaVGc3lczfYNQmLFv16TJ-tu6ILTuiJrrfk6NJ63LSysX_my-cjOe9uEwFpXxJ9oGOxFDQZKwHK3Qh4x3XtOb0YlWGCW_C_o_ZwCQRRI81i_H-sFbETh5MwhKCqvdRNmsBbdB1aqGot0Krcj0xq8M1r9iw6habHXjEwq6IFiGAkv-IU2xNgudajUC4YEXXIXzX7pJUaYdGfx4XOOIFg9U4CyiX-Rneib0v-aaywbNnddMyyl0YCIBlAhp6Qfcq2GbWywF1IenotaO871UGIcoIgfprbtSzxa-BNS6e0mT6igejiA0moZT51QBWStZrGOTWlHWEG-Z8bNrcrIZxD6r8BFz1gkx1BKNT2zyrGoaARJu0eDM1Sf9lyr82-2yQvdE6U0UefQXOzXfChy5M_OnjlyYkKu0ZW9cLxcqutjEYV5FNohHVmMgPzRayCZsnJYc6bP",
+        "places/ChIJPzumeQANREARbWArJ_IYiNY/photos/AaVGc3lWbiHyN_6t_agU_0znIb-pMcaPsucPReXCaMfADeuzWPNiNOVJJa9XIWQQ5hEzJIsIpEXpreS6Z5RUhVA-kC8SMl6QoSleeAsCZ-8rfqO0EfMlONxm82UzASqY12rEfeCT9Fhn2eWXHIpfvSKgZyTSK84Dgf3O_hIqQODacAMuFqJ7CNqo2Acp2GLjZ3GOfZZQUxnYgMU9M_wq3gGsDEdI3wkSfBGWpHwFTynH05MbVyVBZy32qd7wAQ2sG8ev3sNDgHEeX9H0CZdvVZzhMnOjvqIlOsTemZ4uiP5kpNMMIvDx7u_PYMU2qXVd5YdOCxt7lg9NRhI6hQ-MGoIQ0whY9nwswyQQnGzqUGyMcOSLKu9nM-ArxlgfkKb5k4RgGIunJD21RxbvHZMMeJ9uunNkrlg1HDWd1VX8NZVJre2xxAbfzpwTCkGz9HUFZx9I"
+      ]
+    },
+    {
+      "id": "b7c78000-2d4d-4ecf-a269-0f1cd112100e",
+      "name": "Rike Park",
+      "category": "activity",
+      "description": "A riverside park on the left bank of the Mtkvari River where you can catch the cable car up to the Mother of Georgia statue on Sololaki Hill. The creator notes you can pay contactless but recommends getting a transportation card to avoid a 0.5 Lari surcharge.",
+      "lat": 41.693114,
+      "lng": 44.810232,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "Q3p7iBOAey4",
+          "videoTitle": "First Time in Georgia 🇬🇪 | 4 Day Itinerary in Tbilisi",
+          "channelName": "JHMedium",
+          "channelAvatar": "https://yt3.googleusercontent.com/9mPet_wdW9JGD-jx1cd_YFkuzJAbT9ClKgv30KLE50gMeCmfq8aDxf20G08voFF6zv609tSmpGo=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 479,
+          "quote": "We made our way over to Rike Park, and we're going to head to the cable car station and take the cable car up to the Mother of Georgia."
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM3sM68YYr2sUxn69y9VxJFIAS96yIwjhCKarnBs_F6ZPA8kQPqlCQX_Pnyxdb1WekniUdC5LsH91QV71jeU7WpE3HwrsAelkg4kZ6JOFIoD0e_u04XJx3e5kjQt3Mxn0mFZ_o0COjezfIAgA=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJLS605voMREARW08Q7EikE3E",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM3sM68YYr2sUxn69y9VxJFIAS96yIwjhCKarnBs_F6ZPA8kQPqlCQX_Pnyxdb1WekniUdC5LsH91QV71jeU7WpE3HwrsAelkg4kZ6JOFIoD0e_u04XJx3e5kjQt3Mxn0mFZ_o0COjezfIAgA=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJLS605voMREARW08Q7EikE3E/photos/AaVGc3mZIdbr4S0KshYu1tbv8XbR5qRVAhWDUqD5lbTOjZ8Kq_xOLZ0gv6ci3_3j_L4v2JFOkxTVd4dmjqPu-Mkg-17eoRnyiZXIdVgJedrMyRdvmckITSCMKBXBt1InfN_dZ8qIua8qMeEmf2w7oVRZr1_7ebSGbKYrnJertaoiXyYxwQqGPqIUMvoqbV2zokYxHQTFHwll9131pbv8IgVdut8ii7vRKTXWEeZ-5OrvLJk-IQ8Nu8HnnOQViIpaFjaQ1ZvZQIpAt8E6UWbaJ12cUbYWapyVK62He7IkJp6vJNAiwvuUxn7qSljZ3IQ9vB_MtlYHM33eeyFnLeI0drYELbUUUcClslxXuMSLOQ9l5XmKeSw1r0piR3VqTZyFDKROy0z88dt5-uZwYOeWa7JLbn4P4R7HTuSjfg-gAUSGBigZLD4",
+        "places/ChIJLS605voMREARW08Q7EikE3E/photos/AaVGc3mcMo62TypSXzZWhJHpTdjzyolamDDj6bZMN03Ldsz91_CB83b6oadPu9YCclbssovWm4CRovc7_5IUNIE5IRenYK7OX6PBqoXurOHoPXTJyqiOTJA5DoZKEoPxQjTWjACvVbyAAJa3qTMUWkl9ld8NO0FfMCuejlBGsdEyzLvcXnOMJK6bgfdFBUxS8ynR2axfK03UGWHJNnEC9UFbNiHEknu_-2Inyl6UeEFtPHPnZCSuAKACK8Zkc20XpIR-KRJNDSagDOU3k--Tcpa-sN7K6pDd9I-kaogJxqTpmaikoB8iy-IbPMVO93SgZdiTF4fMfeZ_yDuPMb_CWkDMKzLCCa0LZiHXgc1EnEvw1EdAmrwZsETXacAFSvxiQ1GvzX3KqUV8YVSa62UdGoS-MMNlfPAIAgDKYzaJ7s6ij6hLUA",
+        "places/ChIJLS605voMREARW08Q7EikE3E/photos/AaVGc3nJRYRK7QqlPnbKYXkBDfojRYE8tDabjzdplrVD7Fcda8jntT_tbstCfna7Wy3BFCssuvfCouSx506HbqlAq9R2eOLJQz3W7h_lbItvIFltd97B2VnVYlSVqPCCD_qnsq6-KwQqGV4WFIQOBmay_DQGtyb4dwNg3GoiWJ2WUs8K8QQFTth3nqWFgp7Rv1AM9v14DOBpdwFn8c0HL--rC5ae1BlDnS5hWwkLsIAA_D3f52Kj2RPqy2JKjSlf-hMdo7qwke2x7QVSL40_69Hd7zZfK5QYC1ofqKlrxuxkAwpqafwqymoLCtP08HastWo6d5-QH1BYgPebTa9pJi3hXbt3lhRjn5zLfB_YyPdJK1b6q0qRj-h6XWaiyDBoiYdBoBZjIeUYJFTYOfpe3SVxCt9Y5ReQjSKgnSE5xlXxXEeREGsR",
+        "places/ChIJLS605voMREARW08Q7EikE3E/photos/AaVGc3mS523UXEh4a6bAxaPsdDa9gCQNkcesEp3kB98I4L4zrDwcEXYLFdSSpPnl7EPlwOBIOHkWya2ndCCNTBqtTRw-dA7bM8vXAh4nw3RHMAuxAQuQm7OvByCv_68B3DMCP2Y3Jl-wya-s7jksyRHanz8-6DF7M6en_rYQs0k7pGA3kTRe2J-QIZ7YtgTzr3qmHjO9jhcrgjPbXicfjQcOwXO-bVi3Sh2AQBUcr5OqBpX-PrsXroPqbsHMqnC5SEz5LpRqq66_GOJiqQH8TPy_U30jZAp3mmP_-HmlpIoKQQRs4qMcHDzfhdQrIHMM72LyiWE7r6dZzuGt2F1FiiNx2hVwViq9F9ldDxNtu0qcg1czFNIue3m1g_oWpdcpqSff7Fisy5_BUx8OGsJSBXOn85SODVM032Sblut816MwapU"
+      ]
+    },
+    {
+      "id": "34504ab2-b0c6-43a8-87b6-2907e20ea451",
+      "name": "Betlemi Street Stairs",
+      "category": "viewpoint",
+      "description": "A beautiful historic staircase and alleyway in Old Tbilisi that was once the main pathway up Sololaki Hill before the cable car was built. The creator specifically recommends taking the cable car up and walking back down through this pretty route.",
+      "lat": 41.689389899999995,
+      "lng": 44.8041069,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "Q3p7iBOAey4",
+          "videoTitle": "First Time in Georgia 🇬🇪 | 4 Day Itinerary in Tbilisi",
+          "channelName": "JHMedium",
+          "channelAvatar": "https://yt3.googleusercontent.com/9mPet_wdW9JGD-jx1cd_YFkuzJAbT9ClKgv30KLE50gMeCmfq8aDxf20G08voFF6zv609tSmpGo=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 695,
+          "quote": "I highly recommend you take the cable car up and walk your way back down, so you can visit this very pretty staircase and alleyway."
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNUK2iFXO8WR7OcH2p_DQ7n9UqNeWeJX3kF6des-CaGiM69c9ShSlEqCFS2Spr6QbcFTV35cnPbI3HWDqi7PvQ6HE8UGXULJuXs8Lt3SSANaZZxPIOAX3ZS0stXC2wUlTQTym_YJ85S0i73MDp__LMG=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJ-1Ab_CANREARsj9VQk3n4L8",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNUK2iFXO8WR7OcH2p_DQ7n9UqNeWeJX3kF6des-CaGiM69c9ShSlEqCFS2Spr6QbcFTV35cnPbI3HWDqi7PvQ6HE8UGXULJuXs8Lt3SSANaZZxPIOAX3ZS0stXC2wUlTQTym_YJ85S0i73MDp__LMG=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ-1Ab_CANREARsj9VQk3n4L8/photos/AaVGc3lkx0eXVPj83wMxHDLPlFFUypElLQGPYk0jIGodIlzgusHEhF6ixuw8XbbfyugKx4WZAOQprHnrqgDVlJuAGSO0tbOxJJpsMrt4qskVSISL5n_hO3iib272fQeWVMq-avDkoSMz7P_s5Q9PcG4EsSEhuXtMsgUnWQEuMtwqthlMSz6irX2FKMG9s0SLEUSAmJCYiDRoVrgdqHiKosFzb3GZ12dBP1TTkijmir2rMs7NCnRvUBJD6ky6nITOkaQOpYnhY_32E1hRpTVrW5i8bgPV_LyKOCPrjKE_M90sxVHCvV1OP6msfj__l3e6bn--wcnKdyiLpn1q1R2XxRWcgLYDMjYRrOXQ4iTBSnibLoR41Kw9gy8FFPWUaGrCt3sA3ULGCfnUbzyXlM-Z_S095tC1Elt3moD5eZI_l4-u9lcPzA",
+        "places/ChIJ-1Ab_CANREARsj9VQk3n4L8/photos/AaVGc3ngs48IbVoWGvpa6fB1O___w1MCYWkkx7oDyh94qtbJZqjWPpQp_VNN91OZ5c_L5W-FbEFS7yhKanlxowPIlKFGFwHnyNbqks8FbI-spvCkwwzzUtANDNyD2MXMbxz2plU1uG2JlCEwdx7xuIgQmHrFoyiS1TQSQWf0c685iqx5TCBrLHVcHa0EnT_5Kzmftwy2jCzERzcdNDf1lN5bIx-ac6uS9ItCLjcSnrmtkjnkVpNLoy7OXVENOF-y3tzVnMW5JXhbr69cmQShMC6ztBE5A_ZmA_19d4AFURpJCCQgKRVmPQxLvK8XbgkB4xRaORddgIRhsrIZfGZHfdCHKdFztKMcsVHL9TfpATElNJpiDiONTYovIHyRWGxf_tLYRpQVdnsEktN15eaPPMemZwYHSuIAPPtCxia5swyeMj4kdiBC",
+        "places/ChIJ-1Ab_CANREARsj9VQk3n4L8/photos/AaVGc3mUd0YSfP0urtdJJq__ADzOgWTsdnmT14bGih6kc6_oJ7EoiouV2datHFZg7_fBbyOZrWKTPhppkPbgkcrdQVbaZUkmnYP6nSqw1d5P0vs-VwWIpiw167v8h3TF_6SkEAe2NR4eZvWlckjrd9RihTbkcrCanpEU4vnIohtGYzGnYoZP_67hMTFwTjWULHlGYBYShk29pZmzcClxbV34CfjH0yuQ-q_DFodN0syn3A5sZ4MnM9pscLdhTqeN7y1ZWHv8ku9gBLvRYqydj4PeVgMzemtY1vo1Zv1SH13try87inU30FIGgnAWGd_JjpNVGDUJ9kxTItLuUFfL913X8mGOf3Wi4euCwptfyBy92Zrt0i4D-r-vOEVa5vCdLDtPK80Sy3TGOvLiElTwLEjl_1DzLuK7RaFEd2rhu_X9p6gf-Q",
+        "places/ChIJ-1Ab_CANREARsj9VQk3n4L8/photos/AaVGc3lTA7y1dE489o_pvV2swobT6jU9uWfKZnI1L3KFfXwFZRtpX-E9DUHE7oBWBnvOKD6udO0i7Sm2mf1qOio8Q3oqzCbev0BwUTT-SUG5H8ZbJ3pedEFKT4NSkw9-l8m6wBEafMRsVh7vcjvQhtUlREelsIF1VsPvCj2WgZD-irK-PZ_sVaXdPUa6XCz1qwikpdg3SQEh3AHoEMvuTUreRpUeSCrVntcGvy6lgiL0IgIZT6uUvxOnCg5uklTPr2EHqYyyZ37YKAZaLv-Vox9SwnF5bs-QJmK3ouK-FVygOgxDLCCsQcYG91T-EVcMo9eXXgLEHYvSISItr10NUGNzKkbvrS79-ZqvFKdDy_0-e_FGq_FwHDe8K4O5ZFQomuL66XxxXEMpHKhd8o_Q8RSaFN4WqUNKoiIgqQpNfeJYfq1agyU"
+      ]
+    },
+    {
+      "id": "f48ffe48-ae4e-4ba1-a7e2-0789dd63ef97",
+      "name": "Dry Bridge Flea Market",
+      "category": "shopping",
+      "description": "An open-air antique and flea market spread across a park and the surrounding streets, filled with retro Soviet-era products, collectibles, and curiosities. Open daily but busiest on weekends; the creator found it very pleasant to wander on a quiet weekday.",
+      "lat": 41.7009962,
+      "lng": 44.8031177,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "Q3p7iBOAey4",
+          "videoTitle": "First Time in Georgia 🇬🇪 | 4 Day Itinerary in Tbilisi",
+          "channelName": "JHMedium",
+          "channelAvatar": "https://yt3.googleusercontent.com/9mPet_wdW9JGD-jx1cd_YFkuzJAbT9ClKgv30KLE50gMeCmfq8aDxf20G08voFF6zv609tSmpGo=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 883,
+          "quote": "They have all sorts of retro products, antiques, and just random little things."
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNRqRMTQTG5s4buWbsJpdwioAyhkySU_KJdmVNic77a-LGo1AbZmTZxEKdU1Q8V8tM-riUZ7zXdMbKyxKvRxD46LhnyPCXY8tUZlBv8f5z8OTVhQFjMAVeEnLzUcwQUsuL3y9FNnsQ1hn1a=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJEdugo-AMREARK0W_JUX0m54",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNRqRMTQTG5s4buWbsJpdwioAyhkySU_KJdmVNic77a-LGo1AbZmTZxEKdU1Q8V8tM-riUZ7zXdMbKyxKvRxD46LhnyPCXY8tUZlBv8f5z8OTVhQFjMAVeEnLzUcwQUsuL3y9FNnsQ1hn1a=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJEdugo-AMREARK0W_JUX0m54/photos/AaVGc3nK4YnTrC_IYttFUDClUKDOm705dj8lPAT2DARg-ntgBbzsoNWO3MNDyK5FCnSvnjWWmFrsN_7r0vhTLaBDLIUdz2vlKy_EdiZt9_64Fn9-ZohyA8x8MGwu4v6OP3LxhvkrLUS0-71DFl_crBdmPYjJvlv1ZfPtd56W28Er-sSyUNnx2yjVevp87_8fyUIHsUOLIyv9G8xOdd1368yoLZpfL9uj_2PE8XHZhSWPIiPR8xWN59LFD9V5Hogg_AD4kPae1MpxuY-Vm2Vkzcha7AzOCLhmBKDRFla_u35J70OSBndYwdHFo_dsa0LYzanKILaI_uRo8fFZHfoSiIdb9OIpIM6H23KhTPcKd44gwMC6gvHxvzjx6yK3aSuHKs4_WTCc8LIJ0203lxs1spDe5BHVtlTRD_OEmCgbtHAJZqAauDup6C_fWXzVnteusA",
+        "places/ChIJEdugo-AMREARK0W_JUX0m54/photos/AaVGc3nf0vtJQXtnhmGr9xeMxoT-tI7ceMmoMYzXmPh4WMQTZzx_A1r7K_wPGiw_XpXP1MZ-VWoLthwDtg63Uh897taW7Xgz7_SmhTh4U8hYd1oM8I5_8MPkTNS-73vT0jRGiyakKD3G97WcNBeopsKYpUuvm2Zvjr7FS8If0ZOgzm5l4uR2Pxl_m2U2EMjngRGXdzXwWkaMGmffuKOojCb2ptZ_7vl64ccSL1bPFoZt52gdRsfE8nDZEbq99mnUVyjvHKmd_smzPv7_inogDPr85is_W4TDnox0FrDPw0Ud7vekfmxhAxyaeyvpU9U5vhqa41WMNyY6tLwcezl7W0KWU09mJHyFx8dqPOhwM7KTs29wZerNLrozNVmUM0SpOZxpMhH2kjflP8TCCqNc4_yQVpdhcr4XZF_QL_WcGBO-r8mBew",
+        "places/ChIJEdugo-AMREARK0W_JUX0m54/photos/AaVGc3li-NE6KoJ_o_zllbl5TqtpXAcCZqVGmHXkeEe0t9LJ_Twni0keXJCHBriYfjb_PPBgt0JNtPEkbxuZhgIpE_yM6YmZ65bOyHJjG0ypY21cd0_ilIlqTbSucYv8qQmBXXYr2kZqhG_w5mbZujH81XLzdNCXQwUy2S7ZfUpDnHWufZ24OnVmmv0zKItSnb1zNo447qf8Rb0zfeD9uyL5euxoEBnYaVfy9gmkwlf0cC-0cQJglDTE8qX-_2kpZcTbGMmjDbqY3pSLpUdslHJ6e1n_T-SPS4gU8x3QEP7S0ZIDpbOjWIohiUW7o0QGNLUuGcc579S1-3hP-rDH7giEo8cu320JONIpAV7wjjYd6KgVOoVexHGFEj9apNcvpLIuUoA0XHQvYDpgRw07OuMQ8reGaSuXqlh00dJfryrAkFTl2w",
+        "places/ChIJEdugo-AMREARK0W_JUX0m54/photos/AaVGc3nNkN648SDOs8MRc4xzvNTIVxIZrwmxb6AYxLnHXJl2jct9fr15LK0TwPIMJfa96Flggq3tIa--syF_xeAaT-sDw8DMuM5jx8soFjBfvS8eSZvUFZDevk2V2WO-yyznLfubAZB1eE2EDoW541dDwZ8aT9-mbVXZH1xHOiomOziPeksXfb4FdHVlVrcc2_ovQ0HdH9gKkwQV3zxl015SamJ0r9ETJ3uxcQywYabcqdWN-zm4sFKHUnpF1ln9Wp0SN7QVqSEOYykCESTauDDmKbHrTZvDOEuHFnbTQY3w8MPdmZnE9SLReP1L64VNwM0sEPRhY0pJp8AY8sCIgsGxkvpEQTF_k3TfHx0LrMPoR2xukaaQ36pDQMHGbNWLA8DqNe1v4qoPcwGtROxItbi3Gs8Utyuk6ZG1b-L713f7XML2Ew"
+      ]
+    },
+    {
+      "id": "2120e67d-c816-464a-9f94-4035c40a709b",
+      "name": "Dedaena Park",
+      "category": "other",
+      "description": "A leafy urban park adjacent to the Dry Bridge Flea Market whose name means 'mother tongue' in Georgian. It features a monument commemorating Georgia's successful 1978 movement to preserve their national language and alphabet from Soviet removal.",
+      "lat": 41.7007992,
+      "lng": 44.8042083,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "Q3p7iBOAey4",
+          "videoTitle": "First Time in Georgia 🇬🇪 | 4 Day Itinerary in Tbilisi",
+          "channelName": "JHMedium",
+          "channelAvatar": "https://yt3.googleusercontent.com/9mPet_wdW9JGD-jx1cd_YFkuzJAbT9ClKgv30KLE50gMeCmfq8aDxf20G08voFF6zv609tSmpGo=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 944,
+          "quote": "Right next to the antique market is the Dedaena Park, literally means mother tongue in Georgian."
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOQbEiIQ0xJAB7CF9gOQ3aAFdmpePlAstKAiBvkOjZAk1_HmU9N8UlRG4rJv7ymrX-1YTsXD45IGJUMhARJWfqurG7b04JrPydUizl5FQBoVIH6Q8NPzd9yfxUon6YDLhwxVAmzPMVOiFPi4XBnGunn4w=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJC44FIeEMREARI7JyLcKMhsk",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOQbEiIQ0xJAB7CF9gOQ3aAFdmpePlAstKAiBvkOjZAk1_HmU9N8UlRG4rJv7ymrX-1YTsXD45IGJUMhARJWfqurG7b04JrPydUizl5FQBoVIH6Q8NPzd9yfxUon6YDLhwxVAmzPMVOiFPi4XBnGunn4w=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJC44FIeEMREARI7JyLcKMhsk/photos/AaVGc3mHoShRzO1OPz8lcP1RJo_aywViE-PjyJjiZfqoX8sg6mQr0_dcvK2jOPQAT5CNP0ye9ckHj6ShdNQyecKa0pw7GptG67450Z0UNXFFfxrtLMET3uYC3fLnGQ_k9DIztuzDKX5AeMaeyFdUx16ghVE0UgiWu_SEGxwjP-YVM4kj1gYlXqA-9rjw89PePUIAuGCKBzyoZKzUN0TBVs7_H_5JUNafnt2nCcn2vBgZjfblH1xuPptOg9yFYFqyja5peMTkS2giKX1YKWBU1VsLmX9VfpHhG9uBZzQ_e-Mv_op2sTL88d09GAjli3Ms0pNQLBY2AEeLgHScv8LPKbdhxfHImMxumwElI9M5Tbxcy0zpbkEvFFY-kLLkgiTXxTzLAZM5Fr_vvW26FirnO6mvawWeJSLBBZGBtYEO94d9XrXzIldz",
+        "places/ChIJC44FIeEMREARI7JyLcKMhsk/photos/AaVGc3k9IWeDJ78z4l2LdBkTH5MxuqA6c12K-_FGfcnFF-O50vAEu6SV8lsCv7i2IY0VQCSWMzTqnKMPLv0OL5hRK9clfLZ85R_CfKGxBrixD1edcjetFXxEERgWmWX1vXVLrkRgjNC6Jhjxw-PNYCZ6bfSmoMQIDR1uGZnFkM3VtS7qfGbiP0BB0C2JzN9MWTMXnL1wgEBOgSUCgVr6CrWWb95D3qa_whLTZSW-BEnMKgtkVkSzn8S23ny1BF1eLWVMUaIRda6ozsmrhk0L8a63BQNEAb2O6ynm9D1XG87sE0qqk0EkDxKLb9atwWTwgYWcBwpiOd2vXjfC-aksIyRFCTlXV4RuGL4vEn0EJ-AlqrnIV5WRQZdMjKwN0_Y9JX-WMZJL2LdEDtsRW_l7dVn2HxV6eDySi5Wtnv9ussTgwuFdWQQg",
+        "places/ChIJC44FIeEMREARI7JyLcKMhsk/photos/AaVGc3nF3HJkNqhEVSRNGkmGbBt6uAk8bLIP1Gyqo_0GGLJsmls5yEoKTpqEPh20bcFU0oyjJmJ9-Qr368ybu_Ud7vC-4Z1iceCNOTc9jHdRTCp8szMW8PIaSsXdpPEUFFuZeuh5sqbjrCH48WanJbuEWqbhhA7A9B9OptppK6dmwSDBDrYeVFo3Z7jO4gJGj7aICij1OypaVmRnP8iBuSOlPZbM01lORmEJPNNSBqKv2KkEiSFS1qVIxTlaGKYIysYwgE5wxkpFHDEyfTEokFNGpHix3RGixDFFsenEaKiMMxj53J773mksHj4zzTfv_Dzjdk2btZe8RtVy9N4nI36KjRZs7DOb5f0V5oTV9uDJT5nUCk4jIzOUkfHivPVTM1nuT6dt6GowPIUyQ8wNW_FuZqXf6oaOSPBc1nL-cFkSVACT9XLp",
+        "places/ChIJC44FIeEMREARI7JyLcKMhsk/photos/AaVGc3lXOTwUqCub6cndJ2jaVWkif1zoio5X-N934wjjdiM5wBpu1QyIDqNkBucO0LWwJvTcBv5RttYq_5yVP489abbOHLgPF6XBmX4D_fLtEBgRpHWqZh_E6XTaFmozVspsf-79EmTslimCw9Q8OqzWggJZG4dFqUnZbuEbdcTjtgFqeyknfJ1BNCLCySl4UVYZVAOCIa0H_BS2w8jB7cQvDIqyVgHIq2P7bYjHOfTmN_vLVeb8kGn5XoWzNdeJ_l0fXC6ZnL1jygEarfWGcRStq1wwk0OncaZYCsjVo5yLMWc078QiQFZIWJh3GrD5wdtVwxEnW1jnEGmJ9hdymb_lzY_J8ZDx6zzwzPpAoOBJbD2bpqUhv8eNuAVTW5z1Yb1WmRjrFL0PYQUfDTSMF1GIRRv5M8Hg-LluVc8asXVrM8gkuQ"
+      ]
+    },
+    {
+      "id": "33ed368f-cfb9-424f-8bd0-1bbc3b087a93",
+      "name": "Holy Trinity Cathedral (Sameba)",
+      "category": "temple",
+      "description": "The largest cathedral in Georgia, completed in 2004 and standing 87 metres tall — the third largest Orthodox cathedral in the world. The creator calls it a must-visit, praising its elegant simplicity, vast interior space, and gold dome, and recommends viewing it lit up at night from Mtatsminda Park.",
+      "lat": 41.6976516,
+      "lng": 44.8164521,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "Q3p7iBOAey4",
+          "videoTitle": "First Time in Georgia 🇬🇪 | 4 Day Itinerary in Tbilisi",
+          "channelName": "JHMedium",
+          "channelAvatar": "https://yt3.googleusercontent.com/9mPet_wdW9JGD-jx1cd_YFkuzJAbT9ClKgv30KLE50gMeCmfq8aDxf20G08voFF6zv609tSmpGo=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1012,
+          "quote": "The Holy Trinity Cathedral is a must-visit landmark in Tbilisi."
+        },
+        {
+          "videoId": "emGjaLAJcH0",
+          "videoTitle": "Can't believe This is Georgia! Full Tour of Tbilisi (Most Underrated City?)",
+          "channelName": "Dany Dev",
+          "channelAvatar": "https://yt3.googleusercontent.com/Pu6eBFeGnfC1mkZuCjpuFy4CUeqE5iJQY6GCWXtNTCTAffYn8wvEmebvZXwqKMBNqzYletRhbZs=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 607,
+          "quote": "this must be the largest church property I've ever seen in my life"
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOAOL7txaVR5QHEQBhto5k0GTvyOZSoMr1rm5xueXblbFXcOIF0FrgDG3GdByRcAvOLU0e7XHHWsoyXwq_6aq7FPtwe56P0DVTaw_J1ukbzYZS_MNTZoVvIxdWY9sYfCIxNU3emvO0mkl4V=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJm6KpFP0MREARMiza2SWGQ5o",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOAOL7txaVR5QHEQBhto5k0GTvyOZSoMr1rm5xueXblbFXcOIF0FrgDG3GdByRcAvOLU0e7XHHWsoyXwq_6aq7FPtwe56P0DVTaw_J1ukbzYZS_MNTZoVvIxdWY9sYfCIxNU3emvO0mkl4V=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJm6KpFP0MREARMiza2SWGQ5o/photos/AaVGc3mfO0A9oGzHWtNsG4alBDk1FvqPdx72iVhAmlUeGfAJVJHU4ZEnwqRsndd_2O8N7zBO_MpEOHfAWa0TOuu0ZW5zi4KdxiOJ6K4Xz1Oz8wY7GVHS3WJmrqCZZpWZ9wWzKEw4_XHXoJJkEL1EmLI1VXfU_YklbSH53U8DUZd5qO-H-hZWT-GzL3hyMGYDfRakntbaWivLoEuGHEG297hTB58_392F28IBP4oeeEf72BlCGP_LOyMLVJtKd31pxlsvgZRqmoTWuRcseBLf0K_q03F8USXTUBD5kQempFKKb1SLyh6t1cdyFefeXhjKOLSSmLM6koGIuZ78WJA6FY8wb1JwK_VDvgCSf4OOFEfge4AvDecauJzM13NXOltciAE-bbtk_yFPDafUq68hrVePdrfJDZS9sF5vTcgJLEswcke1Iaay",
+        "places/ChIJm6KpFP0MREARMiza2SWGQ5o/photos/AaVGc3np0WoZlj53M_HfsBy2MnE7Qxf4ZeDItspjB5hxOG-7cjICgHE7qPvIZKeCRvFG-lC_XMArS7KTjc5mPMKZXJ6i3V5yKr4Sbl-I4mQacicAMiJ1lcfhenjZsv7AYXPER-bBNH3ZOkrSk1eDr3jCOCms5ktSi1YtnC741IKkqSpzGpYYO-yCOuLFJG5ov1-5bJPR8UDhjUQ-h90KL3HgHSMFUlOdjiWGJYhqUVMbiQarP7gRWHQWbH-DMl8nHFkc8dNg3Vn3_YCyoZAQ0aO3HItymDQeR2CGGbuQ0XtBlr0lL3KKAUhE2CPJ0s90UEnSJTYfTZvWHEDMzqozss7J4gOsAZemQhXPjT46H__kVTIKM2bUyFa0V6oxqe3BsZ8uQ2ujfZQ9lLjY-DET9WCwfwGA5NvK8Y2mbjh_tZzf4eiFf3rO",
+        "places/ChIJm6KpFP0MREARMiza2SWGQ5o/photos/AaVGc3kiYHMDROZzcgq4FfPwh5t4hP0POkF79YvtMdSYnSHPHe5PWFk5P_JJ7vb8oW4kEYnaLlwVtJcUQm52rOI5KvkunqYDWNJrEJazWvOpuR7p0P7_PYTBtG7-WCdX-5NjiJSFwFwiaxJVful-4Aal6YZ86L2YKDFbQxeRNNYGtAB5l30V1GY6QktkL2iCePI4dApQ1BPy8e3A0PScKTZX7O_lZ7ikGDBykisY5aDwffg7H-6nHGat9kJb3pDRxQb8qMKDrilr8b7MEAr18sXdrtWTXRFHEzAM_3E9bQl4gRjNvUw-cr7yA0qHbMSHAV_1eBXCvg0Tbu2yOZRPDUmAqgiL6DLF3lsg3timr-m2GCoV23l4uNwTe-nt7S3ZML7QonLeXd3YHydeVzxsVGk0cCgWkIgqEzc-0zsArWhROADLrITkK4gJvOBw1e5Qd41s",
+        "places/ChIJm6KpFP0MREARMiza2SWGQ5o/photos/AaVGc3mjSOtoXeFP_asue41LJH-h6R79FvfJCnIbzAP3nzKc7JRUzBnBNQGbMTslrrIi-cN0iCRZmnlOmJHUSZIs-fS1RwPgiVKhbZLUT-UoVJkpbBDoenx4YH_CLwxpPrGtT3bAoJrfKPfTwf_shytmx_qNQHWgXydGePDxII5FHGcnSoUVU789pokJvSc6bY3lL_RjlLBFrsRGOiGwqRQTKcO1DWhdmM8AofacJ0HTF0nvpyXubliK_r9ffJRUcejnu3Mugc7dhqlR6gn43N2Wngvfp80AywFlT8uoeHzl62sIbH_yGRipO2TkGwTF6HY_LQejoH_XVw5VUSwmvCh524_f6sJ7GFw6jLpElp00ptYa97h2xDvYQ_qj8HHlX-bwkl3rlBfHpKg1CX97Da0HOpSosznJbZQ0Xur8ANfMjrQ"
+      ]
+    },
+    {
+      "id": "b0c4b654-d49d-414b-aa36-b95cec9d118a",
+      "name": "Chronicles of Georgia",
+      "category": "other",
+      "description": "A colossal hilltop monument near the Tbilisi Sea consisting of towering stone pillars carved with scenes from Georgian history, religion, and warfare. The creator calls it 'absolutely insane' in scale and compares it to Stonehenge, saying it feels like walking through an otherworldly structure — well worth the bus ride out.",
+      "lat": 41.770616499999996,
+      "lng": 44.810419499999995,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "Q3p7iBOAey4",
+          "videoTitle": "First Time in Georgia 🇬🇪 | 4 Day Itinerary in Tbilisi",
+          "channelName": "JHMedium",
+          "channelAvatar": "https://yt3.googleusercontent.com/9mPet_wdW9JGD-jx1cd_YFkuzJAbT9ClKgv30KLE50gMeCmfq8aDxf20G08voFF6zv609tSmpGo=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1257,
+          "quote": "Walking in feels like stepping into a three-dimensional, immersive history book."
+        },
+        {
+          "videoId": "emGjaLAJcH0",
+          "videoTitle": "Can't believe This is Georgia! Full Tour of Tbilisi (Most Underrated City?)",
+          "channelName": "Dany Dev",
+          "channelAvatar": "https://yt3.googleusercontent.com/Pu6eBFeGnfC1mkZuCjpuFy4CUeqE5iJQY6GCWXtNTCTAffYn8wvEmebvZXwqKMBNqzYletRhbZs=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1063,
+          "quote": "what we're looking at in the back is a place that is called The Chronicles of Georgia... truly a massive structure"
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMRY6uIGgmNBoQd9V4FxRYc5buZyj52tQb5yZRyZATBY8XxDt8piTxP1D3gMCp_8vHM8GiBk4u29Sv1Htrce9RjIVhYkUV1r9EDrXmoU3vvS9-pK11WmQrytobrBgnF7liS6TGCZFB-OHDLhw=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJmfOeEQptREARy-Xb8PHhdwM",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMRY6uIGgmNBoQd9V4FxRYc5buZyj52tQb5yZRyZATBY8XxDt8piTxP1D3gMCp_8vHM8GiBk4u29Sv1Htrce9RjIVhYkUV1r9EDrXmoU3vvS9-pK11WmQrytobrBgnF7liS6TGCZFB-OHDLhw=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJmfOeEQptREARy-Xb8PHhdwM/photos/AaVGc3njzQao6bYvmNF-SU_Jx8jteFvyaJbS8j-zm9i70FPG-8oSWAot4jxZCbSTqaCkkySrxnDIwMbrTxZ33lh1zOaQS2sTrJM-6HNid4Q8qeUsIVUoszVe8EZhfpoTz5iNl187aQVRNGKAgK6m2bdyGwG4GDpq26txAp0VD3PA5UWW2TMMyaFtVpH4VEMhOrDr7wqPz_CTadboq_ox3JaGJr6BzCM73rWzKrrR2CiTADwOupfZKqNfJQOKkD0mkuSTF4WsFUgIRs0tHVFar068i-9HL7ETDIJRQrH7cSR51AjsLWNJcGFhcC-B6uu9IwvxexJOHec7cWCnzt1VXpGAl6udeXflekBCf6RrsMVDfecxuLA5Z5uY0LUdzC5SyY7TIjtOWPbYBQe8pwsGTWDaQiKSRWFnKxraDM5akac67ujIsw",
+        "places/ChIJmfOeEQptREARy-Xb8PHhdwM/photos/AaVGc3kOnroFSMbsRosm5cyhrye9jHB4yy71lC2BaSoJZMop2QbZrBb-WEGZqauiev8_af6gsnynkNMFtyvbSh9fJXS5Cb19LvA-HiInqPaO2XLp1wugGGgWRKa0HlqW-ILCim5JJPANGh_AiwsrLludV9RQbHWZR5BtpVUk_mMakWi69PsGBj9dVJVX-pUzInzlF9JaxXUul6q4Iica6Fgwe--dsjsbVZs72vrXjdmPSDkdw3lK7WmUvm85vVi2BFED07xcBInHp_b3GNvMtgnjzXV0g5cSkDVo7hbRR6836cKM_GOsburYs9ujwakUcom96_ktyzeXBt_6AJvMIIj9nSDa-8Es1QfrSVCyPMXEzA91hEmuX-csnN20SC3-D9AvT03FkJBVoZiyR_ho3OUWwEIpQ0IrGhNyx6rveePMveqIDs45Nx8cYylXFCx5-030",
+        "places/ChIJmfOeEQptREARy-Xb8PHhdwM/photos/AaVGc3lpLNGrBRI-orbQdcmEXuzSc9FnYVyTkgUzAB4eV5KR2pVUlifZD64Z87L20od3KEOdF6GNts0InKWQ-ehJ1aEhuMERMELKIfFjawnjCvLRFXAKvrUxZHrnoEvVMyAw2c_LZlhx4ff-REhGd671ZxZ5XWB884HpyJE7gvIyGY-UuyecPOue2m6Nm-CVWN3mgyTCsh-KDFua1E_ab-3s_PEA95Nm6JSwmAPvTOqDDA-YD4xx8kina6wRlynpB4tFvsKH6a6VYfKJBZBB7F8aAsMMxJQBxEx--a_mvMNsRLGqqP4_SkFbbOeTlPFsGRqpSgkj2sdBe5udtSYdKb8B1ZRyyg7vKUp0tcxgZzd0bpcIa3T2nE6IEPj5nPEl4euODoFe9oTUir9UkHPIm2SdwpbXBe3WD2dF6TjrqiELB9E",
+        "places/ChIJmfOeEQptREARy-Xb8PHhdwM/photos/AaVGc3k5qfGxyu9yoMALVzr2R-AF7cvgdA6NvH85wX6EELx0Om_WzN7Ow0i6IoDnJmBLJz46w_0XrGiIGsbupCOZ8-u-CfoVmR8up6brsVrqPBMvXFbMWf4vdAaF6X06ul-JnntKgxqd-P6eMdYl6FL1Ygk9-NJZhNlDwZleSAHN-TUzkaMXb-8ty0ufjp2jG5MEOhXZmGBdiTROfGCPGqmdgrYC7otNhISWhAgvQA1G3V2V0unFNTDtU-Nv4MSjYObj_imC2fnxfJYAOnKePs0wkZWMFuF5nkt7W0AL_24o3xShA3--giGIQIPDyvlteNWgK1y5Zf9R1tZOcLhhtY6CRWPM-AXV3P89CNVp1DST30neaHIF48RZrDS7VfPh8kBT2dgW9ty1dwhrP1OqYJM-PwfY_nQAShyt985RylNjwpdt6r_OBOrtHDPdOwugtWWN"
+      ]
+    },
+    {
+      "id": "33932668-d7d5-4fce-b250-40d1450d001e",
+      "name": "Tbilisi Sea",
+      "category": "nature",
+      "description": "A large man-made turquoise reservoir on the outskirts of Tbilisi, created during the Soviet era by damming a river. It offers water activities, a rocky shoreline for swimming, and a walkable path along the lake — a popular recreation escape for locals since Tbilisi has no natural waterfront.",
+      "lat": 41.7641785,
+      "lng": 44.8384784,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "Q3p7iBOAey4",
+          "videoTitle": "First Time in Georgia 🇬🇪 | 4 Day Itinerary in Tbilisi",
+          "channelName": "JHMedium",
+          "channelAvatar": "https://yt3.googleusercontent.com/9mPet_wdW9JGD-jx1cd_YFkuzJAbT9ClKgv30KLE50gMeCmfq8aDxf20G08voFF6zv609tSmpGo=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1254,
+          "quote": "Right now, it's this perfect turquoise blue. Since Tbilisi is not next to a body of water, this is a perfect place for recreation."
+        }
+      ],
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/2023-12-26_Tbilisi_Sea_seen_from_The_Chronicle_of_Georgia_1.jpg/960px-2023-12-26_Tbilisi_Sea_seen_from_The_Chronicle_of_Georgia_1.jpg",
+        "source": "wikimedia"
+      },
+      "placeId": "ChIJ8anYbxhtREARRtgP5Vq7fZc",
+      "photos": [],
+      "morePhotoNames": []
+    },
+    {
+      "id": "83598fc4-cef0-4a51-bb9c-fad67e544ad2",
+      "name": "Mtatsminda Park",
+      "category": "viewpoint",
+      "description": "An amusement park on top of Mtatsminda Hill offering the best panoramic views of Tbilisi, including the Holy Trinity Cathedral and the Mother of Georgia. The creator strongly recommends arriving around sunset and watching from near the ferris wheel or a small off-trail hill for an unobstructed view, then riding the funicular back down.",
+      "lat": 41.6935121,
+      "lng": 44.7805715,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "Q3p7iBOAey4",
+          "videoTitle": "First Time in Georgia 🇬🇪 | 4 Day Itinerary in Tbilisi",
+          "channelName": "JHMedium",
+          "channelAvatar": "https://yt3.googleusercontent.com/9mPet_wdW9JGD-jx1cd_YFkuzJAbT9ClKgv30KLE50gMeCmfq8aDxf20G08voFF6zv609tSmpGo=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1603,
+          "quote": "The best time to come up here is definitely around sunset and then you can wait until the city gets dark."
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMtmS6czhwu5Z48zRPfVEwQYYSehtedz8Fak9dGZcH5MECLZLyCucCtJfk_Q8WmOBTjRKbGj4wYm5wGJPyquc-a-M_vRrc6p39H2VjZYAKduir8xzMifPGepLXRBQwr52bV_ZS_9J3Z8vilEE8=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJmad5CsAMREARUwixLM6qzIo",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMtmS6czhwu5Z48zRPfVEwQYYSehtedz8Fak9dGZcH5MECLZLyCucCtJfk_Q8WmOBTjRKbGj4wYm5wGJPyquc-a-M_vRrc6p39H2VjZYAKduir8xzMifPGepLXRBQwr52bV_ZS_9J3Z8vilEE8=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOOnSlXGeCSbpbtKIuyWlQDCmVA20bSdW4dJyq3dbhQ7kH3JjuM8brPcxxt4Zob33X7BenECmntwsJaDZ7h47y99hsHBY-2UGmRUkr_n79izgoemb2bFf1mSlbMtZZehwKiH3SCv4KP51b0tos=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPjPrC9B62sdkgqINCw6qA8-Lw8fNhKnIKxVs2oSk7eZDu06HcCCFmHiN4GPX0xWCncq-4upJi_sDu7zHTJO5z3cRbAx9mlKpyIIisIpUSEZj7dCVGOwInpbx3V8ckJHuxiX1pdQGcKME19hu0=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM2HDfU7dGCVEZ6iWoy5DISggW80PnNiQ3_ilwO7DlwvlUvHYt2FauLeOngUrpkUEjGcHBAk9lAoBT41kHgRixyZB5a_ZEEWaAmugyqOH9kTjoc1Q3isQpKsow8EICJMSHi8ngMfbwSK5Oyjg4=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMFzYVyTeZREtH3ON1Xd1ZCvLf6ap1lDtg6egZjf4K2KjGftOUxopLvpvv9NxunPGN34tfLNVGWLFhYeegy9VtQGpKQRGnQ3-8_TS16i2N0Ap-wXEihmtXgTdYXJEBrWP7BiB8PPYsnnUmkiw=s4800-w800",
+          "source": "google"
+        }
+      ]
+    },
+    {
+      "id": "cb5f2780-0d4e-4388-bc8f-e5f3436d1173",
+      "name": "Metekhi Church",
+      "category": "temple",
+      "description": "A medieval Orthodox church perched dramatically on a cliff overlooking the Mtkvari River, completed around 1278. The creator visited the viewpoint here, noting there is no entrance fee and the views of the entire city are truly impressive.",
+      "lat": 41.690207199999996,
+      "lng": 44.8111695,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "emGjaLAJcH0",
+          "videoTitle": "Can't believe This is Georgia! Full Tour of Tbilisi (Most Underrated City?)",
+          "channelName": "Dany Dev",
+          "channelAvatar": "https://yt3.googleusercontent.com/Pu6eBFeGnfC1mkZuCjpuFy4CUeqE5iJQY6GCWXtNTCTAffYn8wvEmebvZXwqKMBNqzYletRhbZs=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 203,
+          "quote": "the church has been finished in 1270 something... the view that you're getting from here is truly something"
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZN8BhCbH5-AbdonvDgHEbbtzBEaZ-qoLnaOA2amHpeXpTytw8-12p4_hxucFi5PDoPB8JqdyPFIbqk32U8wtOF3htTVgE6eK2GqGySvaHB2JVXN-BL0HZLEQ1iYqCbZdZNqiRZQo2LKVgslqQ=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJrZZTWvcMREARrnw5_7dNJwo",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZN8BhCbH5-AbdonvDgHEbbtzBEaZ-qoLnaOA2amHpeXpTytw8-12p4_hxucFi5PDoPB8JqdyPFIbqk32U8wtOF3htTVgE6eK2GqGySvaHB2JVXN-BL0HZLEQ1iYqCbZdZNqiRZQo2LKVgslqQ=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJrZZTWvcMREARrnw5_7dNJwo/photos/AaVGc3nJgLXFrTPshjbqDum_Ah2xC-1nHD7U6kx0pvqgc5yiFcKq0sNzL_0pkcab4VZlsUmZs4fvKfygWo3L482Vm2RguLXIlnL1hdnpt_eVIv_I5hy1OolZp2tQWXwKeZ_FRrso6kcPoUwzHyj7MHTDnnBPnPdoHrlBvj3-vEf8sOy6ExC9tFC_WWF2ysafLbV7nR4hoXLramUF2eAHCiUzIq9-Q2XJaHaEnLpPRs33Kg6w6Kt9kRLOJGUM6nU-89DwPNavv6XdLhkz156GVlzCWMaeRw9SYReSCQHXJ5uucIQ80TeH9QHE4E4K5ABpFFJSXpD0twDB7088LXvD4w9TmtZ6DZW5k6XrdnPC3KtPVtxcBSZh8dtqzZiuwV2UXbsfGo0OQBwOCy2_0wvXchID0YlhGWaKVXGII1cbAfD7lCiLrw",
+        "places/ChIJrZZTWvcMREARrnw5_7dNJwo/photos/AaVGc3mQPCdfg-0pgSPb3D_SgFl3avsa2qa3RudbrCfgZNWr7L4z3kasw8dh44kHExpE07Uwwj2aSmHpHeFmfsN9uPFqsxj9FPwdChkO3z7Pfv3QwO9glUll1KBIqTdeWepBeKFiZTnT7vjME5bYgHBNbSTBzh0Z2aF73iRKreFAxks1ivB-qbfMmsSbJNQndOVtXNgB7Snw0IWl-5lXoXB5Fa7HPdeEzkmEPk9Eniw7zzW2hEtPCDllfuPZrfAWdr__TMq8TmhvVGytWlU7Prs8Pskdv53dv7F791PKlKGs0CvBySjhIm92KeEO-22ES4JvWrWmj-vBqokRULfI2CcBl6YBXaxpt68l3BVKxcTyczmEoLz4t7yaeCV1HfWiAXxNv_2iyLG221sQbQgRjz8BZtssBu7Oe5Bkz-z0ZyKjpUY",
+        "places/ChIJrZZTWvcMREARrnw5_7dNJwo/photos/AaVGc3ndVOaXsTmEi-o-7h8TjPs-Jn6B7l8kla9qR01b49bx8NhihHHCyhnVzGFVSNbGJg9qBR2J-j0ejujIYRaCnJQ8nzGD1y8gqFHefflAXrmg-zkxM-3Vq9j59rTDDlys8L5TWpE7CjQwoyQqBWFWzvGSZ1wsjAN3h2IUY7FSU4RftxMaHXKG-mKkErnyVDME2MelWJmdW_6xzvRxm7Q7aaH0rOGWFJdzrEeXMhggrfFbbe6JBIQkJpkZseu1lAiy3MofeICV8eIfFdWXLhRgGhUv6W3jUuan03WNbhbXfNYFG4vC-FUsNDCOYcOwa_MkrVGKnWGPgZegINGaMbSxwBlf0EIHhH0eHuQFWHJeGn4APcNRcra7PGdJ9OrkqTBsoqmkIku_Bp6EdTWnDBmQn4WgVIHk21iPU8DULK2fe2jv8JCHkl8fmi2ySwjcjA",
+        "places/ChIJrZZTWvcMREARrnw5_7dNJwo/photos/AaVGc3kVy5Qt5EyYiLlPNAs-ooK6DqJ80cfqDtZXRX0eK3OYMgvhetxxqd4Ic1HC1GbP3uAqrTcvanEjC2Uhwh3SVagTboumGDSx8yyM6YsYS9BsnjRPQPIgQzPhWuusYPkhih2vQ92XH0wZlwGT-Kd2HxahClXwsEkOp5gIoPl3apKmrXfqoG2cYT6UX7JR8a_UfVF2TE9S-ShE2V82pBTZksOrOtXMMcY5q67iSXEyEulQl8KlH9aMm1Jwbeb73-j1tM4gBuzHgEKn3062FBP3FVRjNewAq5iG5WgiLF8tNhhwGcaaadhope-t7CVLitHXoAOOq8b6WHwp0zEIvolu0Ljp6XmlbEuuqEr-YF6sNNFBRCSyjp5lVs0s2c63wnN-3DhMt_h-l0sCWecAI2KELLpYomy5NqqwlaYfR2mCq7s"
+      ]
+    },
+    {
+      "id": "7162fd91-1b59-4b1f-987f-a5f4729c884a",
+      "name": "Folk Boutique Hotel",
+      "category": "stay",
+      "description": "A creative boutique hotel about a 15-minute walk from the old town, featuring traditional Georgian costumes and decor throughout. The creator loved the unique design concept and praised its breakfast options.",
+      "lat": 41.6857356,
+      "lng": 44.8193391,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "emGjaLAJcH0",
+          "videoTitle": "Can't believe This is Georgia! Full Tour of Tbilisi (Most Underrated City?)",
+          "channelName": "Dany Dev",
+          "channelAvatar": "https://yt3.googleusercontent.com/Pu6eBFeGnfC1mkZuCjpuFy4CUeqE5iJQY6GCWXtNTCTAffYn8wvEmebvZXwqKMBNqzYletRhbZs=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 706,
+          "quote": "the folk Hotel kind of like 15 minute walk from the old town super nice and peaceful but the place itself is really interesting"
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMqmfjnZEXiY39TBYHluDxuPZVM4Jpf-uscAO67P-aFqYjn05nxznSlnNsTJJ9NmCc9pOk_tyQLFCXrwBOG34eS47P-c1Q7KFEVA-n3uELr2g4WCRDoIGLrINmjeP5syBnTuXaoBVaXoKawAw=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJnc_nbZkNREAR9xWslin5hEg",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMqmfjnZEXiY39TBYHluDxuPZVM4Jpf-uscAO67P-aFqYjn05nxznSlnNsTJJ9NmCc9pOk_tyQLFCXrwBOG34eS47P-c1Q7KFEVA-n3uELr2g4WCRDoIGLrINmjeP5syBnTuXaoBVaXoKawAw=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJnc_nbZkNREAR9xWslin5hEg/photos/AaVGc3keXdNZM9liQ41ZQn7bcwx1csbhN5igTPWTCzXluWjDNXQFwUAtnuh61gOv9mMr7e2963pQCU3hLCvfArFClEawVWeKMGG1BRSpuFMwXp17yGDiKW2-syAcaRosPlF9E9nNMXGkcg1Y1Y2L6BMl8rixxskhmjbqXD53Mw_zxkg1PHF1wM4cAzjWql82SvWKSg-l2sX1uEKnazeqhRjwrYKUSrvW_3NVAm-bWwdmxYmwkgMIA5A9CnUqxLC2ijFqx-_Spl_zLd3rCPhBfYryJlRFU5Qw_xO2cfbIAjBEzKz1sVtjUeCw77udioA0WzL4U-Cr6I0o9Qv4-T0KD3aoySw0s_76muQf1cM69kXVX7Ys2qlOt1OucTJWNRI82F_deEwdSGQts_8A6yQ14wzZcCkgb-RVDPvlT_y2Q6oS90DWtA",
+        "places/ChIJnc_nbZkNREAR9xWslin5hEg/photos/AaVGc3no_ZOZGu01lRGbjU32tiMv-2hq3-2PLZaU79Pi9xDH57O97hFxwSWM6og8NKZ3vrRKOrUVLVJ1DPR_y7RSIzz3nCCvfb2cRKagnwgk0qbVlr3fL8_tAVoB5Lx8eZV3xvDaeRYjXKmXmKQDF-1HjkYYPdEvMG5pWPaWiTY8SvKOE4XM6sOv0joRYvMawtvpUWUYT2zibJ7oYUwOpKI3beH-6mZZY2G5Ul7QMK0bs7T_Os0kcu11xPl8Q6WX-W7vvOqxbVP0IBh6UaOtlDHgGHA3QU2gr2BWTJ1MgQr60AfbEDEZYL7VNyammD7sGpPnIIAo3qLdjxsx4XMM9wPtviEHscWIp-o8Z98-OnQg27oxt0CKZGQBNF9VHaStuZnhvDhuhmRPqxGkZBggaR-qC6825wC9s2tOj7CXXWH-ZsdA-gzY",
+        "places/ChIJnc_nbZkNREAR9xWslin5hEg/photos/AaVGc3kcnr138IZn_gf83LCPXYDjU38DctdCADbioGBIamX9Si4z5qOOB-_gC3f2Bgf0oQpc8v1E6kcGXHShu-wzqlM-2xzvmOl-PWd-_mSKB1uEoMPfo9gHFiwPxY-Isv-_CcAUX5L1vcnMtbLAqz_0cFrb-nKqIruJqR2OJr4r3kqG2CskNjrAF3p-3o0q1BhdOmTYwf3vwbtSr1G_hsq5sfsZ9yJbAonpp_o2KlgoIUFrQwrB8eEKwSIPlFBfwUp2cQCsxhZkCqSw2buhl1qlwEGLh6YWyPunVTwcNhxP1a1Ar339WklyqJ3QmiyWEbZjVrr-_dNfbaEsM0OTcQ2WgK2qHtkwwVcBbRejGJkgGI_AiEBYf7b_gt3MKU2_06w9rYnpGOzaJBptmmFn-PNQJa6FQnHKoxUj1vGNC3geATiEcYfU",
+        "places/ChIJnc_nbZkNREAR9xWslin5hEg/photos/AaVGc3lkaGViECke-6UdzE-jcnNIdmTWh9pioFFZoz9FwrCrlCuzZ_pH-wBvLpxNQaVuHsvj3P2vo6k17VetdfxTwU3MNIHurHw6-_m0twB9Gmczmh7htbhoucvp3DdfleR9Ef0BlJFniNRf316eBfvk3HccXgS_PJVn8Ahj7Yf9udd_WMQQoVlTm5O7m6_KZkhimnfhieAVWbA472WgfluFsFFowkdqTJEWtdNwN7iK8dh6xOTIjFKTBrLgh18rb3olFY1AItmBiCqTPx6XW2a_EN6N5n9a4iHDX9m9EZC_OQv-7ze3E1QVnkvU8RrmxJLXzDftLKeScWK9FHCD9dz5PMX5EsV1AgwX-LRpsQquJiyLBKblQs1EiK3OAAEkOw1QJ6GR_ZBwP8zUWoPu8R3ZB4CDHf9ULO2d98NJYUNPL0pWR2S8"
+      ]
+    },
+    {
+      "id": "349db6be-aae4-4104-a249-8c0f3fdb28aa",
+      "name": "Tbilisi Balloon",
+      "category": "activity",
+      "description": "A tethered helium balloon in Rike Park offering panoramic 360-degree views of Tbilisi for about 100 Lari (~$30). The creator rode it at sunset and called it an amazing view especially at that time of day.",
+      "lat": 41.6923825,
+      "lng": 44.8099494,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "emGjaLAJcH0",
+          "videoTitle": "Can't believe This is Georgia! Full Tour of Tbilisi (Most Underrated City?)",
+          "channelName": "Dany Dev",
+          "channelAvatar": "https://yt3.googleusercontent.com/Pu6eBFeGnfC1mkZuCjpuFy4CUeqE5iJQY6GCWXtNTCTAffYn8wvEmebvZXwqKMBNqzYletRhbZs=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 782,
+          "quote": "it's like a hundred Georgian Larry is like 30 bucks... amazing view especially at this time of the day"
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMhB7rtY7EF5bpgQdQwqE7e2T0YjAoCHQWaFjaPFSfjFY_CUXLTXgn8lz2H2qjsggtc1QjLsY5zvwovvsyBJBlf9dVbDbVlMF4oLMZKf28BIEntwVrHw8PpQfcFLR5HFky60YXufmFdykNH6Q=s4800-w800",
+        "source": "google"
+      },
+      "placeId": "ChIJMyX9zeQNREAR4So_PxOV0gQ",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMhB7rtY7EF5bpgQdQwqE7e2T0YjAoCHQWaFjaPFSfjFY_CUXLTXgn8lz2H2qjsggtc1QjLsY5zvwovvsyBJBlf9dVbDbVlMF4oLMZKf28BIEntwVrHw8PpQfcFLR5HFky60YXufmFdykNH6Q=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJMyX9zeQNREAR4So_PxOV0gQ/photos/AaVGc3lru3KzBQc5mKZq1ID9jVjxFSAs6YIPlyOQojyvJ8_GpaXmr3pBrxRusxorPJmzcp5BtZUFxp26FzRAihsaRnqxfcz85QOlIHLu3VkLskaMi42bT9IdhpYw9b709_MLd4PM1y6P6Bn_K5jT7wRCS_QB9UfcSWr95kyxfegHSGhy0Fciz0s4Agd1UO5jriWItvy15d4sQsrrLz_M3bIKtulQLJC_yGXPz5tvgDFlMhrAveHLfXG3KlqbMWWkV3AvvEHuNeJ3A9Me8K73qSgZYrIZZVE436oD4-JPmb2iCG04DvRrHptR8jwasJET8A59eBuqYkYBWMn7cRIVegyidwcH2VXqwQ2FaWWjjVNa0UH73c3S7jpURT681l0y9f7Z0aD-TUmA-0kvA6RZ1YVQ4ZDRO6UqdjHhyouH5F8d6I0",
+        "places/ChIJMyX9zeQNREAR4So_PxOV0gQ/photos/AaVGc3kNhCyTtQWc9BlRKPK1_lFeXg9J8eauYBfkDEGodpQOCN9NVTX9p8Oy7qEHDOeVGS1pyJNE5dBE_IpaLi75BenLHspiweHP-3pGSj6r8wjK9g6XI28Re-9_OKDSu2z-O_OyGeO1_eoXYh6asua7FvLY6HPt2LAXhYA23s3N5br9xhy6ny1mWK42JTJ4BSpwzQLe6zGbZyyfUp8S0W793ISEkUa-CKTI71rW0MAXLU96M7n-AspXeg5IiRg_2zc7xWGLaGaLZPtVqAj26KosZCt_54vH-RctmdNE3FqQRFCd7NM_VjwNxRzByHuL9qFr33kd45ikenTwjNB9Kt-D2e0LTny5XTxKS-ONETBqNViFw6fdiekrUaCG4zoVXvRdAnbhSSadA18HkGFBumhQikLNMInjzlgf0K-UP4zffxffFCAqDP_27m1X7wOkwQ",
+        "places/ChIJMyX9zeQNREAR4So_PxOV0gQ/photos/AaVGc3m-I2_-fXK8VfaUtC5dlMK-si0X8nDZZG2vc_cd-Ij2MxRllWUTmTTRjXAMEuN0Jz4-zWRy0qibteCbhVFvArXoW6PhWSClNclGXOVCIrQROJyrHcmL87lWQ6DrTFzWswGmz_erHnZ6VdIDBWDLZQ627YxUXZX7vMNrOUlJ8AGDr6DoWE2_VzGr40-baiPGCofewdRHc2ZCNXnEoQOnmDJbFt7K3Qaujzzootww8bXpkDIgSET4tcYsMsYBHhux_HSzDhUSpeMGhRm-bkP6GxqcBlNYkyGBnXJdcUKef4EW6YArTSQ9FT5aGKafZc6D7TPfLMrZXxM5Iw3r1MhvOCbR6vgu835WJrjnfgLGITihMwgqBSE1wl9KPUgw9gtDOJn8HGv6uRPiby_idn7dF14Xv83N2sqSByek5_fIawvoZ3E",
+        "places/ChIJMyX9zeQNREAR4So_PxOV0gQ/photos/AaVGc3nT6U2nedbX0wPTsZ62l4LHQSUBCN2fg9Gi2mzPxc8IrtXiLum-PXLWrO6ZqkYDLwSWCR_FrothVyvwM73_3SLQUnpDViy9o7riknld2q7YRqOsLuwCrRRjLFA3LQZsdZFDJrgxdW1POTRu_OA8GgkYCp2QzW7Kl1Q73wi_DyPHkYsPboYEZVQa54BABP2a4-0V79NqRe6X_KmpJMJOcyxho2xfH5f_XWS2Cx1EFPJWRt57laX2P5LLkc5C2LCtyweEtKNTlDPRvENPD6__5mj8VDl92dRzZix-n7houjZ2ZIVcrzbQM9jMXfjuYtdsrSwxa_4_20Kqpr3GZB8bDfKoErP0osvMTIvxQBdwJWutZnLp-Pkiv3q8yWVXFuA7njhsdvW5WAsBgftHD0E6roExBZWCCKUlW0mS8ei4BpQUNA"
+      ]
+    },
+    {
+      "id": "4ae117cf-9937-4d19-bb46-29362a86b86e",
+      "name": "Freedom Square",
+      "category": "other",
+      "description": "Tbilisi's main central square lined with upscale shops and buzzing with energy. The creator noted it was the first place in the city where they felt a proper big-city atmosphere.",
+      "lat": 41.6930929,
+      "lng": 44.801904,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "emGjaLAJcH0",
+          "videoTitle": "Can't believe This is Georgia! Full Tour of Tbilisi (Most Underrated City?)",
+          "channelName": "Dany Dev",
+          "channelAvatar": "https://yt3.googleusercontent.com/Pu6eBFeGnfC1mkZuCjpuFy4CUeqE5iJQY6GCWXtNTCTAffYn8wvEmebvZXwqKMBNqzYletRhbZs=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1363,
+          "quote": "that over there is the Freedom Square and I have to say this is the first time where I feel like a proper like big city energy"
+        }
+      ],
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Freedom_Square_at_night%2C_Tbilisi%2C_Georgia.jpg/960px-Freedom_Square_at_night%2C_Tbilisi%2C_Georgia.jpg",
+        "source": "wikimedia"
+      },
+      "placeId": "ChIJsV8Ftu8MREARD5DdzY_JSxM",
+      "photos": [],
+      "morePhotoNames": []
+    },
+    {
+      "id": "b76331c4-9e45-4992-b9f8-aa5829a8d2a9",
+      "name": "Gudashvili Square",
+      "category": "other",
+      "description": "A beautifully restored historic square in the old town with tastefully colorful buildings and a relaxed vibe. The creator praised Tbilisi's thoughtful approach to restoring old neighborhoods and called it a nice chill little square.",
+      "lat": 41.6910763,
+      "lng": 44.803671400000006,
+      "geocodeSource": "google",
+      "mentions": [
+        {
+          "videoId": "emGjaLAJcH0",
+          "videoTitle": "Can't believe This is Georgia! Full Tour of Tbilisi (Most Underrated City?)",
+          "channelName": "Dany Dev",
+          "channelAvatar": "https://yt3.googleusercontent.com/Pu6eBFeGnfC1mkZuCjpuFy4CUeqE5iJQY6GCWXtNTCTAffYn8wvEmebvZXwqKMBNqzYletRhbZs=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1386,
+          "quote": "tibilis is doing one of the best jobs in restoring a lot of old neighborhoods... it's got like a nice chill little square"
+        }
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOh1-WzS-mtQV5k21-xPXlGcgW5HWnzCVMDNVXzcCY5SpXxUSRzRY2AOassKEitASz2IHG_VavHLGv88UpYL9ECCn7WOqkZHgOSfx4ieJyFf3GRMfvfMa6EfXXxlNteYgqgkSIWCbW5Betx=s4800-w720",
+        "source": "google"
+      },
+      "placeId": "ChIJhTFUYuUNREAREW0ViUwdTUs",
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOh1-WzS-mtQV5k21-xPXlGcgW5HWnzCVMDNVXzcCY5SpXxUSRzRY2AOassKEitASz2IHG_VavHLGv88UpYL9ECCn7WOqkZHgOSfx4ieJyFf3GRMfvfMa6EfXXxlNteYgqgkSIWCbW5Betx=s4800-w720",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJhTFUYuUNREAREW0ViUwdTUs/photos/AaVGc3kwRdQaNPGvFhHPgF3tCUca3ApBipz6PAeC8y2hRJc-YNHhgHMcrmtgPVWdqg325LIGhamh01UYfSWBDWZ3aC2NLqrfFSp9laU5gQ0LSaYCVeeYwVWtcXQ59X15p1dcGCTTEgTDgq928RDEhZ18NS79O0DzS6519VdXD1Gp5SUSPSL23GJ29eyubKyKP8sB2KvEGIjDgUZbHxPKxHh2wfmo_6SZEJ2V2jfHC2keRk8DcCkT82iMYNbTjmSOAcRVRyYdFLdK-8k8MOXYzrgpMF1ZjeejvOXjovqxgqW6bWhituCBjcKRgKZDW2ih-ySBa8qVYSkRmMzx2GeLLLJ4wjbdUrHWbhMHFcVIqfW8woArkF_o230c6RCk7epbd99qd_CxQC0wekS9yTQHybOUic3LJHdIM-UVQMgWZN1agmtO2g",
+        "places/ChIJhTFUYuUNREAREW0ViUwdTUs/photos/AaVGc3mlUmM3WAdLYm3VKP8XEQSQfvFKTuzkuXYahE4nOwLHOP4jEo2IfaDpSyUdCcrklPhzKCawRFj2-l0t61O0J2yl_ZVECqbjPFgi2VMrfEhax-sKh1wYEKDrU8lY_h0j-HXHZDdmJta4EzPrsa5VyT8dUCS_njPxbxL8sjyNWgYGClvhmfFk5inmQLeo0DwDFtTOfU-Ry1CyDRVdsKXS3Hg7L5j-l-U7PhSoUwFP1aHXRMkSHZ9EqLLpHEgU6mtBRBspFO4tIO_AhmSV3psqWvDylASjaB5MkdaU8R9188gL63HzWMtL3to6qChQmwzSY4-pBMZ4P-iSNPfJzIPXNmvqIxpoJuByPwJyXx-e-IBKih8WCqOgipsd6cEL8Ec7Diq6Flcb0N6y6rkmDic4Ya2avg-9El9CiGtd5tplWnKsEQ",
+        "places/ChIJhTFUYuUNREAREW0ViUwdTUs/photos/AaVGc3kaditpkstkOScNcYzwMg-nfJmPmJ9zBq7I76GlT2DfHE9i_PFSTYhZ3hmAS3VVaWmSD9DSTsSfuN7zco-diHauqVv2RT1xgaYxOnPuO4c9Kio-LMw-sqSWfr8F2LJP2JMUAG4W7vff15yCXZbbRM1r_ZpKEOuTDd408a4aWMO4ZR4_kLxOy2FCzMgVBWUQTEgcrIqrs3gMGIDW5MQaY0rrwCvD0EDsHSKKc9Ky6zCJtZeKZ-XgUe_B55_8Z-R5fruBBayCLMEm6MwzaLH-l93heeaSN0VG0awQYUKoR_vJFzimwW0da6Z9kmBx-GmXxqz-q1Zecw7kNmjFjY4q-LSdx5tpW_vfmy0BcutYarnDKRifsvpYXymaBdsI1KMsYHD7ekZpEk86RDMYsqUsLr6g9qOptxhCibVvbcNc6EAtt7sq",
+        "places/ChIJhTFUYuUNREAREW0ViUwdTUs/photos/AaVGc3llgIbkN7Z7cLiiCM3b9IaLmPQZ2CaN6l8sfIYccxy9HK5I1dQEZDXTxL1Laje3XGs4khU5eKPtcNIw_ldCOHnxDnqOH1VzlYc0RAWGvGG1daHHiDjz7QzZ78Orhh8AQpOicciN_7fIr_miswBlv46j9eS0BNTnO-izioTFtblv6UITJgy0dGmmh54raRRbl7WkbQ0fML3mvise9nWPvCLfx3t633qRzcF_jeMcXXmI1rmuTaM7yEdYVxfk4Vs1Md0A6XOG-SvM82A76HL8DJPucV9XbxJlpHaqTJL1kDhoC1QYINRkhAXCa85odPngRQSfUXQmN-CHzcD35175pcLgI8sxUJ1_4oVhq3gl-nACsq3xJ-SsL2RQLbg4wxpGxaO9zeq_rXIcziblDo3luW1-pq3AZ5SwTwW1l7Wp9guXXQ"
+      ]
+    }
+  ]
+}

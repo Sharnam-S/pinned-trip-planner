@@ -1,0 +1,574 @@
+{
+  "id": "e79a3a0ff90d",
+  "name": "Bali, Indonesia",
+  "destination": {
+    "name": "Bali, Indonesia",
+    "lat": -8.3405,
+    "lng": 115.092,
+    "zoom": 10
+  },
+  "createdAt": "2026-06-11T11:07:09.893Z",
+  "status": "ready",
+  "progress": "Done — 25 spots on the map.",
+  "videos": [
+    {
+      "id": "auN_NyqGJ1c",
+      "url": "https://www.youtube.com/watch?v=auN_NyqGJ1c",
+      "title": "What To Do In Bali: Guide to 10 Unique Activities & Hidden Gems",
+      "channelName": "Don's Swank Guide",
+      "channelAvatar": "https://yt3.googleusercontent.com/e6KJg7HJl3Dh2S-MOTdg2VDIDy2c82LqRYAdtkZisfKFmLX2mLr6DhL98acHAK7WYseZckOx=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi_webp/auN_NyqGJ1c/maxresdefault.webp",
+      "status": "done",
+      "spotCount": 14
+    },
+    {
+      "id": "ZZp5kWJKDV4",
+      "url": "https://www.youtube.com/watch?v=ZZp5kWJKDV4",
+      "title": "BALI: A Tropical Paradise | Full Travel Guide 2026 | Bali travel in 4k",
+      "channelName": "Tour Point",
+      "channelAvatar": "https://yt3.googleusercontent.com/CbQsgCJPo_PJ9cIWjx3c1N1S3b_4x0U_D_E8R5h46LMFybuhvFmO1e56977yGHh3TsSYZTu2=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi_webp/ZZp5kWJKDV4/maxresdefault.webp?v=69a301fc",
+      "status": "done",
+      "spotCount": 13
+    }
+  ],
+  "spots": [
+    {
+      "id": "c8029ed5-f0a0-49d9-957a-894e55a47a7a",
+      "name": "Tegallalang Rice Terraces",
+      "category": "nature",
+      "description": "The most iconic and most visited rice fields in Bali, about 15 minutes from Ubud. Visitors can hike well-marked trails through steep terraces for free, or hire a local guide for $5–10.",
+      "lat": -8.4335822,
+      "lng": 115.2794557,
+      "geocodeSource": "nominatim",
+      "mentions": [
+        {
+          "videoId": "auN_NyqGJ1c",
+          "videoTitle": "What To Do In Bali: Guide to 10 Unique Activities & Hidden Gems",
+          "channelName": "Don's Swank Guide",
+          "channelAvatar": "https://yt3.googleusercontent.com/e6KJg7HJl3Dh2S-MOTdg2VDIDy2c82LqRYAdtkZisfKFmLX2mLr6DhL98acHAK7WYseZckOx=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 43,
+          "quote": "The most iconic and the most visited rice fields are around the village of Tegallalang, about 15 minutes from Ubud."
+        },
+        {
+          "videoId": "ZZp5kWJKDV4",
+          "videoTitle": "BALI: A Tropical Paradise | Full Travel Guide 2026 | Bali travel in 4k",
+          "channelName": "Tour Point",
+          "channelAvatar": "https://yt3.googleusercontent.com/CbQsgCJPo_PJ9cIWjx3c1N1S3b_4x0U_D_E8R5h46LMFybuhvFmO1e56977yGHh3TsSYZTu2=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 173,
+          "quote": "Explore the Tagalang rice terraces, a breathtaking landscape that feels like a painting."
+        }
+      ],
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Rice_terraces%2C_Bali.jpg/960px-Rice_terraces%2C_Bali.jpg",
+        "source": "wikimedia"
+      }
+    },
+    {
+      "id": "40f23df5-e76d-426a-8e5e-f0cee81d12f4",
+      "name": "Celuk Village",
+      "category": "shopping",
+      "description": "Bali's center for silver and goldsmiths, about 20 minutes outside Ubud. The village has tons of shops selling intricate handmade silver jewelry ranging from traditional to modern styles at relatively low prices.",
+      "lat": -8.5714,
+      "lng": 115.2514,
+      "geocodeSource": "llm",
+      "mentions": [
+        {
+          "videoId": "auN_NyqGJ1c",
+          "videoTitle": "What To Do In Bali: Guide to 10 Unique Activities & Hidden Gems",
+          "channelName": "Don's Swank Guide",
+          "channelAvatar": "https://yt3.googleusercontent.com/e6KJg7HJl3Dh2S-MOTdg2VDIDy2c82LqRYAdtkZisfKFmLX2mLr6DhL98acHAK7WYseZckOx=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 101,
+          "quote": "The best place to shop for it is the village of Celuk, Bali's center for silver and goldsmiths."
+        }
+      ],
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/7/77/COLLECTIE_TROPENMUSEUM_Armsieraad_met_slang_TMnr_3525-124.jpg",
+        "source": "wikimedia"
+      }
+    },
+    {
+      "id": "726aef78-9292-47a5-93c1-e45847b83375",
+      "name": "Vara Silver",
+      "category": "shopping",
+      "description": "The creator's favorite silver jewelry shop in Celuk Village, where pieces are relatively affordable and some designs can be customized. Bargaining is encouraged.",
+      "lat": -8.571,
+      "lng": 115.251,
+      "geocodeSource": "llm",
+      "mentions": [
+        {
+          "videoId": "auN_NyqGJ1c",
+          "videoTitle": "What To Do In Bali: Guide to 10 Unique Activities & Hidden Gems",
+          "channelName": "Don's Swank Guide",
+          "channelAvatar": "https://yt3.googleusercontent.com/e6KJg7HJl3Dh2S-MOTdg2VDIDy2c82LqRYAdtkZisfKFmLX2mLr6DhL98acHAK7WYseZckOx=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 117,
+          "quote": "Our favorite is Vara Silver."
+        }
+      ],
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Vara_de_hermano_mayor.jpg/960px-Vara_de_hermano_mayor.jpg",
+        "source": "wikimedia"
+      }
+    },
+    {
+      "id": "0da259be-463e-4202-b8aa-a78a81610711",
+      "name": "Pura Desa Ubud",
+      "category": "temple",
+      "description": "One of the main village temples in Ubud, where the creator attended a full moon festival with his Balinese friend Dipta. The ceremony energy was described as undeniable and one of his favorite Bali experiences.",
+      "lat": -8.5063941,
+      "lng": 115.2619188,
+      "geocodeSource": "nominatim",
+      "mentions": [
+        {
+          "videoId": "auN_NyqGJ1c",
+          "videoTitle": "What To Do In Bali: Guide to 10 Unique Activities & Hidden Gems",
+          "channelName": "Don's Swank Guide",
+          "channelAvatar": "https://yt3.googleusercontent.com/e6KJg7HJl3Dh2S-MOTdg2VDIDy2c82LqRYAdtkZisfKFmLX2mLr6DhL98acHAK7WYseZckOx=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 145,
+          "quote": "We are in Pura Desa, one of the main temple in the village."
+        }
+      ],
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Pura_Desa_Ubud_200507-1.jpg/960px-Pura_Desa_Ubud_200507-1.jpg",
+        "source": "wikimedia"
+      }
+    },
+    {
+      "id": "6ed15693-785c-4e29-b388-bb9b16f3f1cd",
+      "name": "Ayung River",
+      "category": "activity",
+      "description": "The most popular spot for white water rafting in Bali, close to Ubud. A half-day costs $30–50 and a full day $50–70 from Ubud.",
+      "lat": -8.4978,
+      "lng": 115.2361,
+      "geocodeSource": "llm",
+      "mentions": [
+        {
+          "videoId": "auN_NyqGJ1c",
+          "videoTitle": "What To Do In Bali: Guide to 10 Unique Activities & Hidden Gems",
+          "channelName": "Don's Swank Guide",
+          "channelAvatar": "https://yt3.googleusercontent.com/e6KJg7HJl3Dh2S-MOTdg2VDIDy2c82LqRYAdtkZisfKFmLX2mLr6DhL98acHAK7WYseZckOx=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 191,
+          "quote": "The most popular place for white water rafting is on the Ayung River, close to Ubud."
+        }
+      ],
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Ayung_River_Estuary.jpg/960px-Ayung_River_Estuary.jpg",
+        "source": "wikimedia"
+      }
+    },
+    {
+      "id": "59141f63-a989-4aa4-856e-8b988fa3dba4",
+      "name": "Batubulan Village",
+      "category": "town",
+      "description": "A village famous for intricate stone carvings made from local volcanic pumice. Visitors can watch craftspeople at work and buy pieces to take home at very reasonable prices.",
+      "lat": -8.5834,
+      "lng": 115.239,
+      "geocodeSource": "llm",
+      "mentions": [
+        {
+          "videoId": "auN_NyqGJ1c",
+          "videoTitle": "What To Do In Bali: Guide to 10 Unique Activities & Hidden Gems",
+          "channelName": "Don's Swank Guide",
+          "channelAvatar": "https://yt3.googleusercontent.com/e6KJg7HJl3Dh2S-MOTdg2VDIDy2c82LqRYAdtkZisfKFmLX2mLr6DhL98acHAK7WYseZckOx=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 217,
+          "quote": "We are in Batubulan Village, and this village is very famous for stone carving."
+        }
+      ],
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Barong%2C_Batubulan_Village%2C_Bali_1601.jpg/960px-Barong%2C_Batubulan_Village%2C_Bali_1601.jpg",
+        "source": "wikimedia"
+      }
+    },
+    {
+      "id": "030be366-f7a2-44ee-88eb-aa21272b92c9",
+      "name": "Mas Village",
+      "category": "town",
+      "description": "Right next door to Batubulan, Mas Village is a hub of traditional Balinese wood carving. You can find both classic traditional pieces and quirky novelty carvings, all at low prices — bargaining welcome.",
+      "lat": -8.5384,
+      "lng": 115.2786,
+      "geocodeSource": "llm",
+      "mentions": [
+        {
+          "videoId": "auN_NyqGJ1c",
+          "videoTitle": "What To Do In Bali: Guide to 10 Unique Activities & Hidden Gems",
+          "channelName": "Don's Swank Guide",
+          "channelAvatar": "https://yt3.googleusercontent.com/e6KJg7HJl3Dh2S-MOTdg2VDIDy2c82LqRYAdtkZisfKFmLX2mLr6DhL98acHAK7WYseZckOx=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 241,
+          "quote": "We are in Mas Village and this village is very famous for the wood carving."
+        }
+      ],
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Mas%2C_Ubud%2C_Bali_200507-2.jpg/960px-Mas%2C_Ubud%2C_Bali_200507-2.jpg",
+        "source": "wikimedia"
+      }
+    },
+    {
+      "id": "f90351ce-d336-4d03-8e0c-0b17d0d00904",
+      "name": "Starfish Bloo at the W Bali, Seminyak",
+      "category": "food",
+      "description": "A brunch spot at the W Hotel in Seminyak recommended by the New York Times, but the creator was disappointed, describing it as a 'total cruise ship vibe' not worth the visit.",
+      "lat": -8.6915,
+      "lng": 115.1614,
+      "geocodeSource": "llm",
+      "mentions": [
+        {
+          "videoId": "auN_NyqGJ1c",
+          "videoTitle": "What To Do In Bali: Guide to 10 Unique Activities & Hidden Gems",
+          "channelName": "Don's Swank Guide",
+          "channelAvatar": "https://yt3.googleusercontent.com/e6KJg7HJl3Dh2S-MOTdg2VDIDy2c82LqRYAdtkZisfKFmLX2mLr6DhL98acHAK7WYseZckOx=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 347,
+          "quote": "Brunch at Starfish Bloo at the W in Seminyak is a total cruise ship vibe — I don't know what the Times was thinking."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "4295fee8-35ae-454d-b9da-df2315eb5016",
+      "name": "Japanese Shipwreck Amed",
+      "category": "activity",
+      "description": "A Japanese WWII shipwreck just a few meters off the beach in East Bali, making it super easy to access for snorkeling without scuba gear. The creator gave it a 7 out of 10.",
+      "lat": -8.3527,
+      "lng": 115.6534,
+      "geocodeSource": "llm",
+      "mentions": [
+        {
+          "videoId": "auN_NyqGJ1c",
+          "videoTitle": "What To Do In Bali: Guide to 10 Unique Activities & Hidden Gems",
+          "channelName": "Don's Swank Guide",
+          "channelAvatar": "https://yt3.googleusercontent.com/e6KJg7HJl3Dh2S-MOTdg2VDIDy2c82LqRYAdtkZisfKFmLX2mLr6DhL98acHAK7WYseZckOx=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 360,
+          "quote": "I enjoyed snorkeling on this Japanese shipwreck — it's just a few meters off the beach, so super easy to access."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "d87cd51c-3b32-4f6b-b4ed-a97d5c142dcf",
+      "name": "USAT Liberty Shipwreck Tulamben",
+      "category": "activity",
+      "description": "A sunken WWII American cargo ship off Tulamben, accessible with proper scuba equipment. The creator gave it a combined five out of ten, noting there are better scuba destinations in Indonesia.",
+      "lat": -8.2906,
+      "lng": 115.5983,
+      "geocodeSource": "llm",
+      "mentions": [
+        {
+          "videoId": "auN_NyqGJ1c",
+          "videoTitle": "What To Do In Bali: Guide to 10 Unique Activities & Hidden Gems",
+          "channelName": "Don's Swank Guide",
+          "channelAvatar": "https://yt3.googleusercontent.com/e6KJg7HJl3Dh2S-MOTdg2VDIDy2c82LqRYAdtkZisfKFmLX2mLr6DhL98acHAK7WYseZckOx=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 369,
+          "quote": "They also suggest diving off the USS Liberty, a sunken World War cargo ship."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "d3788241-b416-4737-9f68-f707f65dfe0a",
+      "name": "Klungkung Water Palace",
+      "category": "other",
+      "description": "A historic royal water palace in East Bali that the creator recommends as a worthwhile stop if you're heading to East Bali, rating it an eight out of ten.",
+      "lat": -8.5367,
+      "lng": 115.4042,
+      "geocodeSource": "llm",
+      "mentions": [
+        {
+          "videoId": "auN_NyqGJ1c",
+          "videoTitle": "What To Do In Bali: Guide to 10 Unique Activities & Hidden Gems",
+          "channelName": "Don's Swank Guide",
+          "channelAvatar": "https://yt3.googleusercontent.com/e6KJg7HJl3Dh2S-MOTdg2VDIDy2c82LqRYAdtkZisfKFmLX2mLr6DhL98acHAK7WYseZckOx=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 410,
+          "quote": "Then there's the Klungkung Water Palace, a good stop if you're headed to East Bali — I'll give that an eight."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "59dcda5f-393c-43fc-affe-bb774e5c9d64",
+      "name": "Amed",
+      "category": "town",
+      "description": "A remote fishing and diving town on the east coast of Bali where the creator took a local fisherman's boat ride along the coast for as little as $20, describing it as a fun and affordable private sunset cruise.",
+      "lat": -8.334584,
+      "lng": 115.6409359,
+      "geocodeSource": "nominatim",
+      "mentions": [
+        {
+          "videoId": "auN_NyqGJ1c",
+          "videoTitle": "What To Do In Bali: Guide to 10 Unique Activities & Hidden Gems",
+          "channelName": "Don's Swank Guide",
+          "channelAvatar": "https://yt3.googleusercontent.com/e6KJg7HJl3Dh2S-MOTdg2VDIDy2c82LqRYAdtkZisfKFmLX2mLr6DhL98acHAK7WYseZckOx=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 435,
+          "quote": "We caught our boat in the remote fishing/diving town of Amed in East Bali."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "12e9d5b6-d568-4545-a7c4-1093d9a203e4",
+      "name": "Ubud",
+      "category": "town",
+      "description": "The cultural heart of Bali, a hilltop town that has drawn artists and travelers for decades. The creator considers it the best place to experience the 'real Bali,' with temples, galleries, restaurants, massage spots, and markets all in one place.",
+      "lat": -8.5170195,
+      "lng": 115.2550507,
+      "geocodeSource": "nominatim",
+      "mentions": [
+        {
+          "videoId": "auN_NyqGJ1c",
+          "videoTitle": "What To Do In Bali: Guide to 10 Unique Activities & Hidden Gems",
+          "channelName": "Don's Swank Guide",
+          "channelAvatar": "https://yt3.googleusercontent.com/e6KJg7HJl3Dh2S-MOTdg2VDIDy2c82LqRYAdtkZisfKFmLX2mLr6DhL98acHAK7WYseZckOx=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 493,
+          "quote": "Ubud is the place to go if you want to experience the real Bali."
+        },
+        {
+          "videoId": "ZZp5kWJKDV4",
+          "videoTitle": "BALI: A Tropical Paradise | Full Travel Guide 2026 | Bali travel in 4k",
+          "channelName": "Tour Point",
+          "channelAvatar": "https://yt3.googleusercontent.com/CbQsgCJPo_PJ9cIWjx3c1N1S3b_4x0U_D_E8R5h46LMFybuhvFmO1e56977yGHh3TsSYZTu2=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 158,
+          "quote": "Next, head north to Ubud, the spiritual center of the island."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "b199c100-95ce-4e5e-bf0a-77b4642933fd",
+      "name": "Lotus Cafe at Saraswati Temple",
+      "category": "food",
+      "description": "A beloved cafe set inside the grounds of Ubud's famous Saraswati Temple. The creator specifically calls it out as a highlight of Ubud, combining great food with a stunning temple setting.",
+      "lat": -8.5057,
+      "lng": 115.263,
+      "geocodeSource": "llm",
+      "mentions": [
+        {
+          "videoId": "auN_NyqGJ1c",
+          "videoTitle": "What To Do In Bali: Guide to 10 Unique Activities & Hidden Gems",
+          "channelName": "Don's Swank Guide",
+          "channelAvatar": "https://yt3.googleusercontent.com/e6KJg7HJl3Dh2S-MOTdg2VDIDy2c82LqRYAdtkZisfKFmLX2mLr6DhL98acHAK7WYseZckOx=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 546,
+          "quote": "We love the Lotus Cafe that's inside the grounds of Ubud's famous Saraswati Temple."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "8aff79dd-4323-4e44-900f-74099b52507e",
+      "name": "Padang Padang Beach",
+      "category": "beach",
+      "description": "A famous beach in the Uluwatu area of southern Bali, made popular by the movie Eat Pray Love. The creator recommends visiting for its stunning scenery and includes it as a key stop in southern Bali.",
+      "lat": -8.8126,
+      "lng": 115.0874,
+      "geocodeSource": "llm",
+      "mentions": [
+        {
+          "videoId": "ZZp5kWJKDV4",
+          "videoTitle": "BALI: A Tropical Paradise | Full Travel Guide 2026 | Bali travel in 4k",
+          "channelName": "Tour Point",
+          "channelAvatar": "https://yt3.googleusercontent.com/CbQsgCJPo_PJ9cIWjx3c1N1S3b_4x0U_D_E8R5h46LMFybuhvFmO1e56977yGHh3TsSYZTu2=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 118,
+          "quote": "Visit Padang Padang Beach made famous by the movie Eat Pray Love."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "2629acd3-9c12-4d6e-9f50-a44e88ded344",
+      "name": "Uluwatu Temple",
+      "category": "temple",
+      "description": "A dramatic cliffside temple perched on the edge of a cliff in southern Bali, perfect for sunset views. The creator recommends staying for the traditional Kecak fire dance at sunset, with tickets costing just $4.",
+      "lat": -8.8293693,
+      "lng": 115.0843428,
+      "geocodeSource": "nominatim",
+      "mentions": [
+        {
+          "videoId": "ZZp5kWJKDV4",
+          "videoTitle": "BALI: A Tropical Paradise | Full Travel Guide 2026 | Bali travel in 4k",
+          "channelName": "Tour Point",
+          "channelAvatar": "https://yt3.googleusercontent.com/CbQsgCJPo_PJ9cIWjx3c1N1S3b_4x0U_D_E8R5h46LMFybuhvFmO1e56977yGHh3TsSYZTu2=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 129,
+          "quote": "For the perfect sunset, head to Ulu Watu Temple perched on the edge of a dramatic cliff."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "5b58e83e-98db-4894-b9ef-9dcb72b10fce",
+      "name": "The Yoga Barn",
+      "category": "activity",
+      "description": "A popular yoga studio in Ubud where the creator recommends taking a class. It is a well-known wellness hub set amid the jungle.",
+      "lat": -8.5192434,
+      "lng": 115.2659771,
+      "geocodeSource": "nominatim",
+      "mentions": [
+        {
+          "videoId": "ZZp5kWJKDV4",
+          "videoTitle": "BALI: A Tropical Paradise | Full Travel Guide 2026 | Bali travel in 4k",
+          "channelName": "Tour Point",
+          "channelAvatar": "https://yt3.googleusercontent.com/CbQsgCJPo_PJ9cIWjx3c1N1S3b_4x0U_D_E8R5h46LMFybuhvFmO1e56977yGHh3TsSYZTu2=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 184,
+          "quote": "Take a yoga class at the yoga barn."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "d24f37aa-b004-413d-a77e-8a7e52516a45",
+      "name": "Sacred Monkey Forest Ubud",
+      "category": "nature",
+      "description": "A nature reserve and temple complex in Ubud where over 1,000 long-tailed macaques roam freely. The creator flags it as a must-see attraction in Ubud.",
+      "lat": -8.5187349,
+      "lng": 115.2583202,
+      "geocodeSource": "nominatim",
+      "mentions": [
+        {
+          "videoId": "ZZp5kWJKDV4",
+          "videoTitle": "BALI: A Tropical Paradise | Full Travel Guide 2026 | Bali travel in 4k",
+          "channelName": "Tour Point",
+          "channelAvatar": "https://yt3.googleusercontent.com/CbQsgCJPo_PJ9cIWjx3c1N1S3b_4x0U_D_E8R5h46LMFybuhvFmO1e56977yGHh3TsSYZTu2=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 193,
+          "quote": "Don't miss the sacred monkey forest where over 1,000 long-tailed macaques roam freely."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "346c8ed1-da18-412f-9b7a-f7b16c19eb59",
+      "name": "Tirta Gangga",
+      "category": "other",
+      "description": "A royal water palace on Bali's east coast featuring koi-filled pools and intricate stone carvings. The creator recommends it as a less touristy stop with a $2 entry fee.",
+      "lat": -8.4116,
+      "lng": 115.575,
+      "geocodeSource": "llm",
+      "mentions": [
+        {
+          "videoId": "ZZp5kWJKDV4",
+          "videoTitle": "BALI: A Tropical Paradise | Full Travel Guide 2026 | Bali travel in 4k",
+          "channelName": "Tour Point",
+          "channelAvatar": "https://yt3.googleusercontent.com/CbQsgCJPo_PJ9cIWjx3c1N1S3b_4x0U_D_E8R5h46LMFybuhvFmO1e56977yGHh3TsSYZTu2=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 218,
+          "quote": "Stop by Tirta Gangga, a royal water palace with koi-filled pools and stone carvings."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "36946a81-d09f-4209-be8f-dfb8ff23f398",
+      "name": "Virgin Beach",
+      "category": "beach",
+      "description": "A hidden white sand beach with crystal-clear waters on Bali's east coast. The creator recommends it as a less touristy gem where you can get fresh grilled fish at a beach shack for just $5.",
+      "lat": -8.5001041,
+      "lng": 115.6110587,
+      "geocodeSource": "nominatim",
+      "mentions": [
+        {
+          "videoId": "ZZp5kWJKDV4",
+          "videoTitle": "BALI: A Tropical Paradise | Full Travel Guide 2026 | Bali travel in 4k",
+          "channelName": "Tour Point",
+          "channelAvatar": "https://yt3.googleusercontent.com/CbQsgCJPo_PJ9cIWjx3c1N1S3b_4x0U_D_E8R5h46LMFybuhvFmO1e56977yGHh3TsSYZTu2=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 230,
+          "quote": "Visit Virgin Beach, a hidden white sand paradise with crystal-clear waters."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "a3c380f9-30a8-44a8-ab43-6d889bc62ce7",
+      "name": "Nusa Penida",
+      "category": "town",
+      "description": "A rugged, untouched island reached by a 45-minute speedboat from Sanur. The creator highlights it for dramatic cliff beaches, manta ray encounters, and adventurous scooter exploration.",
+      "lat": -8.7455877,
+      "lng": 115.5346805,
+      "geocodeSource": "nominatim",
+      "mentions": [
+        {
+          "videoId": "ZZp5kWJKDV4",
+          "videoTitle": "BALI: A Tropical Paradise | Full Travel Guide 2026 | Bali travel in 4k",
+          "channelName": "Tour Point",
+          "channelAvatar": "https://yt3.googleusercontent.com/CbQsgCJPo_PJ9cIWjx3c1N1S3b_4x0U_D_E8R5h46LMFybuhvFmO1e56977yGHh3TsSYZTu2=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 244,
+          "quote": "Take a 45-minute speedboat to Nusa Penida, a rugged, untouched island."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "c3d08c62-1532-44df-808d-05bafad28e31",
+      "name": "Kelingking Beach",
+      "category": "beach",
+      "description": "An iconic beach on Nusa Penida where the cliffs form the shape of a T-Rex, creating a dramatic and surreal landscape. The creator says the steep hike down is worth it for the unreal view.",
+      "lat": -8.751263,
+      "lng": 115.4731315,
+      "geocodeSource": "nominatim",
+      "mentions": [
+        {
+          "videoId": "ZZp5kWJKDV4",
+          "videoTitle": "BALI: A Tropical Paradise | Full Travel Guide 2026 | Bali travel in 4k",
+          "channelName": "Tour Point",
+          "channelAvatar": "https://yt3.googleusercontent.com/CbQsgCJPo_PJ9cIWjx3c1N1S3b_4x0U_D_E8R5h46LMFybuhvFmO1e56977yGHh3TsSYZTu2=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 251,
+          "quote": "Here you'll find Kelingking Beach, where the cliffs form the shape of a T-Rex."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "7938b7ad-2eb1-4fd2-b39d-bf5c156926ba",
+      "name": "Manta Point",
+      "category": "activity",
+      "description": "A snorkeling and diving spot off Nusa Penida where you can swim with manta rays or explore vibrant coral gardens. The creator notes it costs around $30 and is a highlight of the island.",
+      "lat": -8.7984847,
+      "lng": 115.5294895,
+      "geocodeSource": "nominatim",
+      "mentions": [
+        {
+          "videoId": "ZZp5kWJKDV4",
+          "videoTitle": "BALI: A Tropical Paradise | Full Travel Guide 2026 | Bali travel in 4k",
+          "channelName": "Tour Point",
+          "channelAvatar": "https://yt3.googleusercontent.com/CbQsgCJPo_PJ9cIWjx3c1N1S3b_4x0U_D_E8R5h46LMFybuhvFmO1e56977yGHh3TsSYZTu2=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 263,
+          "quote": "Swim with manta rays at Manta Point or snorkel in vibrant coral gardens for about $30."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "9df07650-b25c-4486-a1b0-13103c19544d",
+      "name": "Canggu",
+      "category": "town",
+      "description": "Bali's trendy beach town in the south, full of hip cafes, surf schools, and boutique shops. The creator recommends it for surf lessons at $20, beachfront coffee, and a laid-back Bali vibe.",
+      "lat": -8.6399025,
+      "lng": 115.1436048,
+      "geocodeSource": "nominatim",
+      "mentions": [
+        {
+          "videoId": "ZZp5kWJKDV4",
+          "videoTitle": "BALI: A Tropical Paradise | Full Travel Guide 2026 | Bali travel in 4k",
+          "channelName": "Tour Point",
+          "channelAvatar": "https://yt3.googleusercontent.com/CbQsgCJPo_PJ9cIWjx3c1N1S3b_4x0U_D_E8R5h46LMFybuhvFmO1e56977yGHh3TsSYZTu2=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 279,
+          "quote": "End your journey in Canggu, Bali's trendy beach town full of hip cafes, surf schools, and boutique shops."
+        }
+      ],
+      "photo": null
+    },
+    {
+      "id": "124cd15b-21be-4c2e-891d-cc5bcabce95f",
+      "name": "Echo Beach",
+      "category": "beach",
+      "description": "A popular beach in Canggu known for its legendary sunsets and surf. The creator specifically calls it out as the place to enjoy the Bali sunset.",
+      "lat": -8.6548064,
+      "lng": 115.1248943,
+      "geocodeSource": "nominatim",
+      "mentions": [
+        {
+          "videoId": "ZZp5kWJKDV4",
+          "videoTitle": "BALI: A Tropical Paradise | Full Travel Guide 2026 | Bali travel in 4k",
+          "channelName": "Tour Point",
+          "channelAvatar": "https://yt3.googleusercontent.com/CbQsgCJPo_PJ9cIWjx3c1N1S3b_4x0U_D_E8R5h46LMFybuhvFmO1e56977yGHh3TsSYZTu2=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 296,
+          "quote": "Enjoy the Bali sunset at Echo Beach."
+        }
+      ],
+      "photo": null
+    }
+  ]
+}

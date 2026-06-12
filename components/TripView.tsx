@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { Spot, Trip, TripVideo } from "@/lib/types";
 import { CATEGORY_EMOJI, formatTimestamp, youtubeLink } from "@/lib/categories";
+import type { MapBounds } from "./TripMap";
 
 const TripMap = dynamic(() => import("./TripMap"), { ssr: false });
 
@@ -14,11 +15,34 @@ const STATUS_ICON: Record<TripVideo["status"], string> = {
   error: "⚠️",
 };
 
-function VideoStrip({ videos }: { videos: TripVideo[] }) {
+function VideoStrip({
+  videos,
+  pinnedId,
+  onHoverVideo,
+  onClickVideo,
+}: {
+  videos: TripVideo[];
+  pinnedId?: string | null;
+  onHoverVideo?: (id: string | null) => void;
+  onClickVideo?: (id: string) => void;
+}) {
   return (
     <div className="video-strip">
       {videos.map((v) => (
-        <div className="video-chip" key={v.id} title={v.error ?? ""}>
+        <div
+          className={`video-chip ${onClickVideo ? "interactive" : ""} ${
+            pinnedId === v.id ? "pinned" : ""
+          }`}
+          key={v.id}
+          title={v.error ?? ""}
+          onMouseEnter={() => onHoverVideo?.(v.id)}
+          onMouseLeave={() => onHoverVideo?.(null)}
+          onClick={(e) => {
+            if (!onClickVideo) return;
+            e.stopPropagation();
+            onClickVideo(v.id);
+          }}
+        >
           {v.thumbnail ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img className="thumb" src={v.thumbnail} alt="" />
@@ -40,10 +64,213 @@ function VideoStrip({ videos }: { videos: TripVideo[] }) {
   );
 }
 
+function formatTripDates(trip: Trip): string | null {
+  const { startDate, endDate } = trip.query ?? {};
+  if (!startDate && !endDate) return null;
+  const fmt = (iso: string) =>
+    new Date(iso + "T00:00:00").toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+    });
+  if (startDate && endDate) return `${fmt(startDate)} – ${fmt(endDate)}`;
+  return fmt((startDate ?? endDate)!);
+}
+
+function spotPhotoUrl(spot: Spot): string | null {
+  // Wikimedia photo when we found one; otherwise a frame from the first
+  // creator's video — there is always something to show
+  return (
+    spot.photo?.url ??
+    (spot.mentions[0]
+      ? `https://i.ytimg.com/vi/${spot.mentions[0].videoId}/hqdefault.jpg`
+      : null)
+  );
+}
+
+// Lazy photo carousel state, shared by the grid tiles and the detail card.
+// Photos beyond the cover resolve on the first swipe — a card nobody swipes
+// never bills the Photos API.
+function useSpotPhotos(spot: Spot, tripId: string) {
+  const baseUrls =
+    spot.photos && spot.photos.length > 0
+      ? spot.photos.map((p) => p.url)
+      : spotPhotoUrl(spot)
+        ? [spotPhotoUrl(spot)!]
+        : [];
+  // Full resolved list once the lazy fetch lands
+  const [allUrls, setAllUrls] = useState<string[] | null>(null);
+  const [index, setIndex] = useState(0);
+  const fetchingRef = useRef(false);
+
+  const urls = allUrls ?? baseUrls;
+  const pending = allUrls ? 0 : (spot.morePhotoNames?.length ?? 0);
+  const total = urls.length + pending;
+  const i = Math.min(index, Math.max(0, total - 1));
+
+  const ensureAll = () => {
+    if (allUrls || pending === 0 || fetchingRef.current) return;
+    fetchingRef.current = true;
+    fetch(`/api/trips/${tripId}/spots/${spot.id}/photos`, { method: "POST" })
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
+      .then((data: { urls: string[] }) => setAllUrls(data.urls))
+      .catch(() => {
+        fetchingRef.current = false; // allow retry on the next swipe
+      });
+  };
+
+  const step = (e: React.MouseEvent, delta: number) => {
+    e.stopPropagation(); // don't select the spot behind the arrow
+    ensureAll();
+    setIndex(Math.min(total - 1, Math.max(0, i + delta)));
+  };
+
+  return { urls, i, total, step };
+}
+
+function CarouselControls({
+  i,
+  total,
+  step,
+}: {
+  i: number;
+  total: number;
+  step: (e: React.MouseEvent, delta: number) => void;
+}) {
+  if (total <= 1) return null;
+  return (
+    <>
+      {i > 0 && (
+        <span className="car-arrow left" onClick={(e) => step(e, -1)} aria-label="Previous photo">
+          <svg width="9" height="14" viewBox="0 0 9 14" fill="none">
+            <path d="M8 1L2 7l6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+      )}
+      {i < total - 1 && (
+        <span className="car-arrow right" onClick={(e) => step(e, 1)} aria-label="Next photo">
+          <svg width="9" height="14" viewBox="0 0 9 14" fill="none">
+            <path d="M1 1l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
+      )}
+      <span className="car-dots">
+        {Array.from({ length: total }, (_, d) => (
+          <span key={d} className={`dot ${d === i ? "on" : ""}`} />
+        ))}
+      </span>
+    </>
+  );
+}
+
+// Airbnb-style tile photo carousel: arrows appear on hover, dots track the
+// current photo. Single-photo spots render a plain image.
+function TilePhotos({ spot, tripId }: { spot: Spot; tripId: string }) {
+  const { urls, i, total, step } = useSpotPhotos(spot, tripId);
+
+  return (
+    <div className="tile-photo">
+      {urls[i] ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={urls[i]} alt={spot.name} loading="lazy" />
+      ) : urls.length > 0 ? (
+        <div className="tile-photo-loading" /> // swiped ahead of the lazy fetch
+      ) : (
+        <div className="tile-photo-fallback">{CATEGORY_EMOJI[spot.category]}</div>
+      )}
+      <span className="tile-cat">
+        {CATEGORY_EMOJI[spot.category]} {spot.category}
+      </span>
+      <CarouselControls i={i} total={total} step={step} />
+    </div>
+  );
+}
+
+function Sources({
+  trip,
+  addLinks,
+  setAddLinks,
+  addError,
+  adding,
+  onAddVideos,
+  pinnedId,
+  onHoverVideo,
+  onClickVideo,
+}: {
+  trip: Trip;
+  addLinks: string;
+  setAddLinks: (v: string) => void;
+  addError: string;
+  adding: boolean;
+  onAddVideos: () => void;
+  pinnedId: string | null;
+  onHoverVideo: (id: string | null) => void;
+  onClickVideo: (id: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="sources">
+      <button className="sources-header" onClick={() => setOpen((o) => !o)}>
+        <div className="sources-thumbs">
+          {trip.videos.slice(0, 3).map((v) =>
+            v.thumbnail ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={v.id} src={v.thumbnail} alt="" />
+            ) : null
+          )}
+        </div>
+        <div className="sources-title">
+          Sources
+          <span className="sources-count">
+            {trip.videos.length} video{trip.videos.length === 1 ? "" : "s"}
+          </span>
+        </div>
+        <span className={`sources-chevron ${open ? "open" : ""}`}>▾</span>
+      </button>
+
+      {open && (
+        <div className="sources-body">
+          <VideoStrip
+            videos={trip.videos}
+            pinnedId={pinnedId}
+            onHoverVideo={onHoverVideo}
+            onClickVideo={onClickVideo}
+          />
+          {trip.status !== "processing" && (
+            <div className="add-videos">
+              <textarea
+                placeholder="Add more YouTube links…"
+                value={addLinks}
+                onChange={(e) => setAddLinks(e.target.value)}
+              />
+              {addError && (
+                <div className="error" style={{ color: "var(--red)", fontSize: 13 }}>{addError}</div>
+              )}
+              <button
+                className="btn-secondary"
+                onClick={onAddVideos}
+                disabled={adding || !addLinks.trim()}
+              >
+                {adding ? "Adding…" : "Add videos"}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function TripView({ tripId }: { tripId: string }) {
   const [trip, setTrip] = useState<Trip | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [bounds, setBounds] = useState<MapBounds | null>(null);
+  // Hover previews a video's spots on the map; click pins the highlight until
+  // the user clicks anywhere else.
+  const [pinnedVideoId, setPinnedVideoId] = useState<string | null>(null);
+  const [hoverVideoId, setHoverVideoId] = useState<string | null>(null);
+  const highlightVideoId = hoverVideoId ?? pinnedVideoId;
   const [addLinks, setAddLinks] = useState("");
   const [addError, setAddError] = useState("");
   const [adding, setAdding] = useState(false);
@@ -64,10 +291,12 @@ export default function TripView({ tripId }: { tripId: string }) {
   }, [load]);
 
   // Poll while processing so spots appear as each video finishes — and while
-  // photo backfill is filling in Wikimedia images for older trips.
+  // background passes (photo backfill, Google data upgrade) are improving
+  // older trips, so pins slide to corrected positions live.
   const needsPoll =
     trip?.status === "processing" ||
-    (trip?.status === "ready" && trip.spots.some((s) => s.photo === undefined));
+    (trip?.status === "ready" &&
+      (trip.upgrading === true || trip.spots.some((s) => s.photo === undefined)));
   useEffect(() => {
     if (needsPoll && !pollRef.current) {
       pollRef.current = setInterval(load, 2500);
@@ -139,100 +368,153 @@ export default function TripView({ tripId }: { tripId: string }) {
 
   const selectedSpot = trip.spots.find((s) => s.id === selectedId) ?? null;
 
+  const sortedSpots = [...trip.spots].sort(
+    (a, b) => b.mentions.length - a.mentions.length || a.name.localeCompare(b.name)
+  );
+  const visibleSpots = bounds
+    ? sortedSpots.filter(
+        (s) =>
+          s.lat <= bounds.north &&
+          s.lat >= bounds.south &&
+          s.lng >= bounds.west &&
+          s.lng <= bounds.east
+      )
+    : sortedSpots;
+
   return (
-    <div className="trip-page">
-      <aside className="sidebar">
+    // Clicking anywhere outside a video chip clears the pinned highlight
+    <div className="trip-page" onClick={() => setPinnedVideoId(null)}>
+      <header className="page-header">
         <a className="back" href="/">← All trips</a>
         <h1>{trip.name}</h1>
         <div className="summary">
-          {trip.spots.length} spots from {trip.videos.filter((v) => v.status === "done").length}{" "}
-          video{trip.videos.length === 1 ? "" : "s"}
+          {visibleSpots.length === trip.spots.length
+            ? `${trip.spots.length} spots`
+            : `${visibleSpots.length} of ${trip.spots.length} spots`}{" "}
+          within map area
+          {formatTripDates(trip) && ` · ${formatTripDates(trip)}`}
+          {trip.query?.interests && ` · ${trip.query.interests}`}
         </div>
 
         {trip.status === "processing" && (
           <div className="progress-banner">⚙️ {trip.progress}</div>
         )}
 
-        <VideoStrip videos={trip.videos} />
+        <Sources
+          trip={trip}
+          addLinks={addLinks}
+          setAddLinks={setAddLinks}
+          addError={addError}
+          adding={adding}
+          onAddVideos={addVideos}
+          pinnedId={pinnedVideoId}
+          onHoverVideo={setHoverVideoId}
+          onClickVideo={(id) =>
+            setPinnedVideoId((cur) => (cur === id ? null : id))
+          }
+        />
+      </header>
 
-        {trip.status !== "processing" && (
-          <div className="add-videos">
-            <textarea
-              placeholder="Add more YouTube links…"
-              value={addLinks}
-              onChange={(e) => setAddLinks(e.target.value)}
-            />
-            {addError && <div className="error" style={{ color: "var(--accent)", fontSize: 13 }}>{addError}</div>}
-            <button className="btn-secondary" onClick={addVideos} disabled={adding || !addLinks.trim()}>
-              {adding ? "Adding…" : "Add videos"}
-            </button>
+      <div className="trip-body">
+        <section className="content-panel">
+          {visibleSpots.length === 0 ? (
+            <div className="empty-area">
+              No spots in this part of the map — zoom out or pan around to see more.
+            </div>
+          ) : (
+          <div className="spot-grid">
+            {visibleSpots.map((spot) => {
+              return (
+                <button
+                  key={spot.id}
+                  className={`spot-tile ${selectedId === spot.id ? "selected" : ""}`}
+                  onClick={() => setSelectedId(spot.id)}
+                >
+                  <TilePhotos spot={spot} tripId={trip.id} />
+                  <div className="tile-meta">
+                    <div className="tile-name">{spot.name}</div>
+                    <div className="tile-sub">
+                      {spot.mentions.length === 1
+                        ? spot.mentions[0].channelName
+                        : `${spot.mentions.length} creators recommend`}
+                    </div>
+                    <div className="tile-desc">{spot.description}</div>
+                  </div>
+                  <div className="avatar-stack">
+                    {spot.mentions.slice(0, 3).map((m) =>
+                      m.channelAvatar ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img key={m.videoId} src={m.channelAvatar} alt={m.channelName} />
+                      ) : null
+                    )}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
+      </section>
 
-        <div className="spot-list">
-          {[...trip.spots]
-            .sort((a, b) => b.mentions.length - a.mentions.length || a.name.localeCompare(b.name))
-            .map((spot) => (
-              <button
-                key={spot.id}
-                className={`spot-row ${selectedId === spot.id ? "selected" : ""}`}
-                onClick={() => setSelectedId(spot.id)}
-              >
-                <div className="emoji">{CATEGORY_EMOJI[spot.category]}</div>
-                <div className="smeta">
-                  <div className="sname">{spot.name}</div>
-                  <div className="scat">
-                    {spot.category}
-                    {spot.mentions.length > 1 && ` · ${spot.mentions.length} creators`}
-                  </div>
-                </div>
-                <div className="avatar-stack">
-                  {spot.mentions.slice(0, 3).map((m) =>
-                    m.channelAvatar ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img key={m.videoId} src={m.channelAvatar} alt={m.channelName} />
-                    ) : null
-                  )}
-                </div>
-              </button>
-            ))}
+        <div className="map-side">
+          <div className="map-frame">
+            <TripMap
+              destination={trip.destination}
+              spots={trip.spots}
+              selectedId={selectedId}
+              highlightVideoId={highlightVideoId}
+              fitVideoId={highlightVideoId}
+              onSelect={setSelectedId}
+              onBoundsChange={setBounds}
+            />
+            {selectedSpot && (
+              <SpotCard
+                key={selectedSpot.id} // remount per spot — photo carousel state must not leak between spots
+                spot={selectedSpot}
+                tripId={trip.id}
+                onClose={() => setSelectedId(null)}
+              />
+            )}
+          </div>
         </div>
-      </aside>
-
-      <div className="map-wrap">
-        <TripMap
-          destination={trip.destination}
-          spots={trip.spots}
-          selectedId={selectedId}
-          onSelect={setSelectedId}
-        />
-        {selectedSpot && (
-          <SpotCard spot={selectedSpot} onClose={() => setSelectedId(null)} />
-        )}
       </div>
     </div>
   );
 }
 
-function SpotCard({ spot, onClose }: { spot: Spot; onClose: () => void }) {
-  // Wikimedia photo when we found one; otherwise a frame from the first
-  // creator's video — there is always something to show
-  const photoUrl =
-    spot.photo?.url ??
-    (spot.mentions[0]
-      ? `https://i.ytimg.com/vi/${spot.mentions[0].videoId}/hqdefault.jpg`
-      : null);
+function SpotCard({
+  spot,
+  tripId,
+  onClose,
+}: {
+  spot: Spot;
+  tripId: string;
+  onClose: () => void;
+}) {
+  const { urls, i, total, step } = useSpotPhotos(spot, tripId);
+  // Google photo sets are all-Google; otherwise it's the single legacy photo
+  // (wikimedia) or a frame from the recommending creator's video
+  const credit =
+    spot.photos && spot.photos.length > 0
+      ? "📷 Google Maps"
+      : spot.photo
+        ? spot.photo.source === "google"
+          ? "📷 Google Maps"
+          : "📷 Wikimedia Commons"
+        : `📺 ${spot.mentions[0]?.channelName ?? ""}`;
 
   return (
     <div className="spot-card">
       <button className="close" onClick={onClose} aria-label="Close">✕</button>
-      {photoUrl && (
+      {urls.length > 0 && (
         <div className="card-photo">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={photoUrl} alt={spot.name} loading="lazy" />
-          <span className="photo-credit">
-            {spot.photo ? "📷 Wikimedia Commons" : `📺 ${spot.mentions[0]?.channelName ?? ""}`}
-          </span>
+          {urls[i] ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={urls[i]} alt={spot.name} loading="lazy" />
+          ) : (
+            <div className="tile-photo-loading" />
+          )}
+          <span className="photo-credit">{credit}</span>
+          <CarouselControls i={i} total={total} step={step} />
         </div>
       )}
       <div className="card-body">
@@ -242,6 +524,33 @@ function SpotCard({ spot, onClose }: { spot: Spot; onClose: () => void }) {
         </div>
         <h2>{spot.name}</h2>
         <p className="desc">{spot.description}</p>
+
+        <a
+          className="gmaps-btn"
+          // Official Maps URL scheme — free, no API call. With a placeId it
+          // opens the actual place page (reviews, hours, directions); without
+          // one it falls back to a coordinate search.
+          href={
+            typeof spot.placeId === "string"
+              ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                  spot.name
+                )}&query_place_id=${spot.placeId}`
+              : `https://www.google.com/maps/search/?api=1&query=${spot.lat},${spot.lng}`
+          }
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinejoin="round"
+            />
+            <circle cx="12" cy="9" r="2.5" stroke="currentColor" strokeWidth="2" />
+          </svg>
+          Open in Google Maps
+        </a>
 
         {(spot.thingsToKnow?.length ?? 0) > 0 && (
           <div className="know-section">

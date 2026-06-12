@@ -11,17 +11,27 @@ interface CommonsPage {
   imageinfo?: { thumburl?: string; url?: string }[];
 }
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 async function searchCommons(query: string): Promise<string | null> {
   const url =
     "https://commons.wikimedia.org/w/api.php?action=query&generator=search" +
     `&gsrsearch=${encodeURIComponent(query)}` +
     "&gsrnamespace=6&gsrlimit=8&prop=imageinfo&iiprop=url&iiurlwidth=640&format=json&origin=*";
-  const res = await fetch(url, {
+  let res = await fetch(url, {
     headers: { "User-Agent": "youtube-trip-planner/1.0 (local hobby app)" },
     signal: AbortSignal.timeout(8000),
   });
+  if (res.status === 429) {
+    // Commons throttles bursts — breathe and try once more
+    await sleep(3000);
+    res = await fetch(url, {
+      headers: { "User-Agent": "youtube-trip-planner/1.0 (local hobby app)" },
+      signal: AbortSignal.timeout(8000),
+    });
+  }
   if (!res.ok) {
-    // 429/5xx are transient — let the caller retry on a later backfill pass
+    // still throttled / 5xx — transient; let the caller retry on a later pass
     throw new Error(`Commons returned ${res.status} for "${query}"`);
   }
   const data = await res.json();
@@ -64,6 +74,7 @@ export async function findSpotPhoto(
   for (const q of queries) {
     const url = await searchCommons(q);
     if (url) return { url, source: "wikimedia" };
+    await sleep(400); // stay under Commons' burst limit
   }
   return null;
 }

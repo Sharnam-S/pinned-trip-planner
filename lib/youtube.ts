@@ -31,6 +31,39 @@ export function parseVideoId(url: string): string | null {
   return null;
 }
 
+export interface SearchCandidate {
+  id: string;
+  title: string;
+  channelName: string;
+  durationSec: number;
+  views: string;
+  published: string;
+}
+
+/** Keyless YouTube search via InnerTube — same client we fetch transcripts with. */
+export async function searchVideos(query: string): Promise<SearchCandidate[]> {
+  const yt = await getClient();
+  const res = await yt.search(query, { type: "video" });
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const items: any[] = (res as any).videos ?? (res as any).results ?? [];
+  const out: SearchCandidate[] = [];
+  for (const v of items) {
+    if (v.type !== "Video") continue;
+    const id = v.video_id ?? v.id;
+    if (typeof id !== "string" || !/^[\w-]{11}$/.test(id)) continue;
+    out.push({
+      id,
+      title: v.title?.text ?? String(v.title ?? ""),
+      channelName: v.author?.name ?? "",
+      durationSec: Number(v.duration?.seconds ?? 0),
+      views: v.view_count?.text ?? v.short_view_count?.text ?? "",
+      published: v.published?.text ?? "",
+    });
+  }
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+  return out;
+}
+
 export interface VideoData {
   id: string;
   title: string;

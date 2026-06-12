@@ -1,0 +1,1810 @@
+{
+  "id": "321b79dff723",
+  "name": "East Coast, Sri Lanka",
+  "destination": {
+    "name": "Arugam Bay, Sri Lanka",
+    "lat": 7.7167,
+    "lng": 81.8667,
+    "zoom": 12
+  },
+  "createdAt": "2026-06-12T06:17:05.041Z",
+  "status": "ready",
+  "progress": "Done — 43 spots on the map.",
+  "videos": [
+    {
+      "id": "VD-a106h4M8",
+      "url": "https://www.youtube.com/watch?v=VD-a106h4M8",
+      "title": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+      "channelName": "Sheneller",
+      "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi/VD-a106h4M8/maxresdefault.jpg",
+      "status": "done",
+      "spotCount": 23
+    },
+    {
+      "id": "sCu4bFyvR0Q",
+      "url": "https://www.youtube.com/watch?v=sCu4bFyvR0Q",
+      "title": "Surfing in Sri Lanka || Your Ultimate Guide (2024 & Beyond)",
+      "channelName": "Dan Harmon",
+      "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi/sCu4bFyvR0Q/maxresdefault.jpg",
+      "status": "done",
+      "spotCount": 15
+    },
+    {
+      "id": "Cw76zqBl868",
+      "url": "https://www.youtube.com/watch?v=Cw76zqBl868",
+      "title": "Arugam Bay: What’s it Actually Like? (Waves, Costs, Crowds, Etc.)",
+      "channelName": "Dan Harmon",
+      "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi/Cw76zqBl868/maxresdefault.jpg",
+      "status": "done",
+      "spotCount": 4
+    },
+    {
+      "id": "NwQBoumZnxI",
+      "url": "https://www.youtube.com/watch?v=NwQBoumZnxI",
+      "title": "SURFING IN SRI LANKA - the real deal or is it over-hyped?",
+      "channelName": "Kale Brock (Kale Brock)",
+      "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nzIgl_7Fvxdc1iX2PHNfU6sMFN_rqS5AT6dMyw54Ekulw=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi/NwQBoumZnxI/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD2uRnG8tiPzL2FZ3ZAAoI3zSm77A",
+      "status": "done",
+      "spotCount": 6
+    },
+    {
+      "id": "o6XD5okXgMg",
+      "url": "https://www.youtube.com/watch?v=o6XD5okXgMg",
+      "title": "You Won't Believe Sri Lanka's Surf Paradise, Arugambay 🇱🇰🌊🏄🏽",
+      "channelName": "Purple Living",
+      "channelAvatar": "https://yt3.googleusercontent.com/92CTstFLOwgrXQYL3lqmmaMPzCv6u89K5zGbQL2dlqdYopV_X4h6B0I1dRagIPMtqDTAYuemt0E=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi_webp/o6XD5okXgMg/maxresdefault.webp",
+      "status": "done",
+      "spotCount": 3
+    }
+  ],
+  "spots": [
+    {
+      "id": "de8375ea-630e-424b-ba67-5452705ecff0",
+      "name": "Elephant Rock",
+      "category": "viewpoint",
+      "description": "A scenic surf spot popular for morning and evening sessions with sandy bottom and 2-4 foot waves suitable for beginners and intermediates. The rock itself is worth climbing for stunning views of the ocean, lagoon, and sunset.",
+      "lat": 6.8098767,
+      "lng": 81.82427589999999,
+      "geocodeSource": "google",
+      "placeId": "ChIJCdoBy_W95ToRPzgpk3E9GPw",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 271,
+          "quote": "climbing the rock for its view is really popular even amongst non Surfers and I definitely recommend it during sunset the view of the ocean the Lagoon and the sun setting is truly impeccable"
+        }
+      ],
+      "thingsToKnow": [
+        "Gets busy with surfers and tourists",
+        "Best visited at sunset"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMf33Gjz2N-uv8M2bCZq7BVCgtexPvaY5MzF_x3At6-9hR07w6zBh5Rni-wJtT3RX3Oi4PwGX1cmYrJjNWvXxOz1Yu-XVd2Zn2ZGcGJer2VvskN6R_oQWrLljVxOiucD0Be1uU3bGTBISOUouRN7QL5=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMf33Gjz2N-uv8M2bCZq7BVCgtexPvaY5MzF_x3At6-9hR07w6zBh5Rni-wJtT3RX3Oi4PwGX1cmYrJjNWvXxOz1Yu-XVd2Zn2ZGcGJer2VvskN6R_oQWrLljVxOiucD0Be1uU3bGTBISOUouRN7QL5=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJCdoBy_W95ToRPzgpk3E9GPw/photos/AaVGc3kUpq4wAalYS3gR0UrxYwFxacUKmIQ5dgZhEWp8b8ArDa6JxaSb91qSTmmRu-Ie_XAom7pEi96ChRudfZ08-C9ZIhMsACMTv20CrI5w2-u8MiitdFxXT2glEvqtcZEyiLgfnILJdj27G_GPsjLlEkdbTHWTP4SmqySE9aE3yeQve2flN-egyNhlisoei4HgMb3JZkacVCsSKdw3KrqkbQztCU8S1e3gNT8eWx5Ii48Ti8LAY0WuoCT-_fknbjQ4cSBVS4HrUPc0deKlztEGAYCSa4CfY1lCzLkr33mp6EA0rxAvVs23TtUae9eYUi7z9nI4JVaIlHQmnh3CCTsIL-FzLokarBKrzXuReCwCAtUuVeUDZ9RBOge_9p3aRSCVNlE-iM8598G1SKiAcJvPwt1MN6hKQfdD4JzzDYRhwh1n1ZxuwYzsyG__2ESnZA",
+        "places/ChIJCdoBy_W95ToRPzgpk3E9GPw/photos/AaVGc3nYXmC6plQZcX9zeovS3iuNqXAI-J0G10vhx1gi9FwjpYhZgYHZ63M8McekZ03GOBFT-AsDqWEaV2ezQfaJO-vwSIkZFjy9mMitL9OwJ-bfsZo5Yq9zVDFel1Y80q4EkjCQ7M48fTh_zEerx6yfBCoqZOYtjuzX6CpQczAlovomUz1YHYcd3HaVCoiIdifzAGMnb9pgrl-MxG1WJx8N4Q5E1HJBNFppnt2gh8RzrUDLewUMKCKvj3MlHWxAGBTh8a5ytfcMjIFo4tr6PsPUb6gLrMW-4wY0Ftt3rYRmr0bLfv0b-Tp20DS8Di8r0FsxC9i1hKVUd-b6jBt5ku1LYzApvCukXuvdYyyakGhQkffDcEmqw73Y7ZOyAgM0XJMMdzZb3y4A4zHy8UNhLLOe2HseyWpQVtONCFEG-RRsd_M9WDk292qoF7pX-OlK81bX",
+        "places/ChIJCdoBy_W95ToRPzgpk3E9GPw/photos/AaVGc3lzrkwy8jYacKY5ffbBP2vi5iS22Q-i8M6PObCZjqqENWmPT5KQEBndkjc5vA-SJ2o-2Apk9YESkXMKzw53-ENJjtKdKc-L8mQPUXhJxeiN7MQHYmQ9bxfitbxX9QyO8DT5gfZalGJfIG465DYxzx0W6u95bwolphYhxKOyvHQDeajVBsrxjRBPDewDCOULEfFHaHTZsWzgE2g3jZSKWKfnVx2OTqD7m5e0MsMiBBHNonlKnXaFv5RZS78q0bXRW1TEAF20K60v4L7vxM1gMZuVftEj1DTVCv0tkRAVnF-rZkmbDw21XY6nvNnJivVmU0J3cI5lJ6tPgc6SieTn1V9zY_X2nMq2y0-Y3_kPYbb0ZOjQoIoK4pbXcT4uuZzvntvKBlhefrjuc2iIJVU2ZlgIu9SiveomT4YcvCxT1bxJAfIucMcRHWQDvVPYUjzV",
+        "places/ChIJCdoBy_W95ToRPzgpk3E9GPw/photos/AaVGc3mJwBlfFwmUaPlBUCHS68wZ6l7Z17rgtM3LzA8uAUxYEGvyYOgVJctObr0NIvNUrawrKzqN1LAFpsfwq9__NulG0l3vXy4D7HigdgsWIUo2-ME4S1pyF3KIQGzEhw3T90hRWLJYhlroFRSvHa2Z1fOdnQAs-g_xqsSvFxgb3VlaBXVTJFIdyKs8HSwuith3ryNKTpMQRzRgt6zTFyAImPM8g9lWhxwGLNgTDg0BFLPt1W8V8aMJvQCoBNlFHzd6AH3qKByzxrnmCvNuQkm8p-28Ejrwub94XynGulMQC24LhMRw9gqd7hShCY_FoHViyCLHeQpyiHDe_dR3E-iR3s07uQnfkH71U9xfUoHGetGIlysVBxYzhinVhGuc1_saglwrwoVpOfqqzgZXKWdxYHhR472IDUQ1TqjbSq3IoamR2c8"
+      ]
+    },
+    {
+      "id": "56899411-d83a-4906-911c-8af3967bb2e7",
+      "name": "Lighthouse Point",
+      "category": "activity",
+      "description": "The most northerly surf spot located by the crumbled remains of an Old World War II Lighthouse near the small village and lagoon of Kari. Better suited for experienced surfers with bolder sand bottom and waves that get faster throughout the season.",
+      "lat": 7.0243828,
+      "lng": 81.8770095,
+      "geocodeSource": "google",
+      "placeId": "ChIJsd4xSG915ToRDTHXkn3te8I",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 299,
+          "quote": "Lighthouse is the most Northerly spot out of the lot and is just outside the small village and Lagoon of Kari by the crumbled remains of an Old World War II Lighthouse"
+        }
+      ],
+      "thingsToKnow": [
+        "Best for experienced surfers"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMRkqHGwpkPVOCY2sgQJS_MSlkgXSZJg5tWt2B9hCL4fICPijO-WkaaTV-fGTdc2cAXBS5GPummpzFppW7YyuMNcaXGHZddAjvo-8djIRhwl4W-pFkQ7N4XtQMG9HC6qzoIZ74qeAYLYjmxxQ=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMRkqHGwpkPVOCY2sgQJS_MSlkgXSZJg5tWt2B9hCL4fICPijO-WkaaTV-fGTdc2cAXBS5GPummpzFppW7YyuMNcaXGHZddAjvo-8djIRhwl4W-pFkQ7N4XtQMG9HC6qzoIZ74qeAYLYjmxxQ=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJsd4xSG915ToRDTHXkn3te8I/photos/AaVGc3nxpIyM6BPeH30nBFL5FAM_QP0odE4Ij4-w4AjjXcYQVR2DIYf4stN3pgwVH0DihYiR69AjQnhnixsR8rtFr6NR9Vub6jvooqEl5nx20WdWdGAX-tVQCg65TW8mvA6aLVgy6xmzVWQhlTrg8_eZ0kQrUOrL398glVWLoJU9k1Pr4R6dr9PwLsjH97GpC9wNJRiW_MvbSAxxBoridcn4g7HsYNx9meWdY99OVFiV2BxsLKimV4T3J4aHS5dlWr4fNqhryIbDLD_UsfESywUTBpC3NAspGpc9Fkq5AOXcsXrbocd0GM-p24UAmmrlHpsiDuCkFShuaWavM9xyAyLUZEH2X0T5EjXOt2Sh9lUaPfuBxSIWJsOeHUpLynPKzjx8P9koUcA2n6s9x-hnLiJHuDB6jQHmEmf4SysIlocoR8QfhVC0DPms1Gxuxsn4iCVN",
+        "places/ChIJsd4xSG915ToRDTHXkn3te8I/photos/AaVGc3l9fRlG3CKJTvNQ2i6NoThNncwCMmaq27OKRMM5Ud_Gv8difpfigPey9yTo2FX9kBC6uZO21HWLEMLVlhyfP5JjptJ9Vgh9GpFuB_UOG_iFZ8jnqyi8zkcEzhQ1uwVzOBSxqWYs1Z-2QoshcGdqI1Q0e_QnEflxxspJp5wHZwt8lNXQyH3n2j9f2dxvJ4W3pejLwMbjBS-j2HnHK0D97-P6_ZJgvsic5KR5XGIIv6a45BV00GS1TOTuSLUtPXldhPC3fcqmDKgXZj-8LNB-6n6ZrMwOfhXn44NKRZvVK64LnhTCx56Ijxd3JlkQG_3sJxHYFw5ndS4nLTkKSxYzj2KQ-sDBHE0JUGYSWs6Dhbux0YgRc70HPH89xFoFDzGYl_PakSjiWQE4ySgvKERpzOvTiQUnKjxRjMvjx6a1AfQWvQ",
+        "places/ChIJsd4xSG915ToRDTHXkn3te8I/photos/AaVGc3lu_G8IuVbmwx9HfwvCs4IXbHHnwI9M-PUjg8DfDogumPil3L3lmdfLp_HRGRwtvgVXeJSfOl11Ighj8aW2m0qbQCFiN9hhqGlDsMLZ7_lqF7ljAess7BPqLXPHEtCiqaSD6qW7KkwzYJyh-hKq5XBFkMo7Hz6B1EHgqv555oB3dEmlZuccAeGLeE0KQfJ4KHFWcwgG5xgiwNlXaMeB9eKxycijI6OqDado8ci_D1tl38ltuRraPPFRoxNFtIU1n78kWXiJZcrYxrQkLinNcNWWhpdLjbP7gwr3aXNe6KKv6XcUoNtzGTCqi_o40PKquKxvLlR7huVGmChnSj2Yw4eFUEmhhB9m4P23JVYWSl8S0FXEqvqM-nIe4iiDm4kjXAhGwTVJQ1OCGWqk5U-2CWSENrAQ5Nr6-wUE0IdZY9PRvK6E",
+        "places/ChIJsd4xSG915ToRDTHXkn3te8I/photos/AaVGc3kQDP8_mQVjdeJ7dxPzIz4YdQ90Y8G2pKuGMqgtrVylEJ1JkZz5p2bk_UXthuIkKzPdepD2d3ekG0e18xxQML4otazV5fUiRwZ_3wMkLCfxIh1Cs7UunaCYdXuAZv3Wc8xdV8L3O079gFNr1VZ40V98WpFzGVOxFTIngbnFZC_mkEOBUaP0f2tdWGofY_IeZdMSirroYFGvlZX9cZ2oXQ6UkFPmpaw3YinU950uuz4KKNqUHdiTuOR7DglmlMWUV7iNBLpGE4iPdHWNzyjiRs3su78wtpc1jVeugSwfsUAyzUaMcT04G72-rOZeiCRtmMlig-PjWutJAfPK7GFfPML8KwzZ4-DYqubs6k31NdqtQr-Z3zimtndf4Bv9eqzBhA1ku8VmxYM8E1tv9aQSZiYtosLQBfoW7_SR8ilYSR-eGw"
+      ]
+    },
+    {
+      "id": "ddcec4ec-ea82-4960-b056-def9b038aff3",
+      "name": "Pottuvil Point",
+      "category": "activity",
+      "description": "A nice intermediate surf spot with a mellow takeoff and shorter rides located near the former Whiskey Point. It can be inconsistent but rarely crowded with only 5-10 people even when working, and is best when big swell hits the east coast.",
+      "lat": 6.8901011,
+      "lng": 81.8429276,
+      "geocodeSource": "google",
+      "placeId": "ChIJfdWB7_Si5ToRd7r5g1IBLW0",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 323,
+          "quote": "pille point just a short distance from what used to be the famous whiskey Point serves spot which unfortunately hasn't been working since 2019"
+        },
+        {
+          "videoId": "Cw76zqBl868",
+          "videoTitle": "Arugam Bay: What’s it Actually Like? (Waves, Costs, Crowds, Etc.)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 179,
+          "quote": "There's a few other waves in the area that I'll let you go and explore for yourself."
+        }
+      ],
+      "thingsToKnow": [
+        "Can be inconsistent",
+        "Rarely crowded",
+        "Best with big east coast swell"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM3O62a2svjiifCGG_SO5rLNfx6OYR7Hx3NcX8JBLZw7CzCDNT7MO1LHpVJjd8a6ysminrhXUIEa4LD3N9A-94gCiGYUlFDBVXxrxSoEDsx1wlsRbBBTw9QoEwP7VrVJsPQJAT-g0alSYAr=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM3O62a2svjiifCGG_SO5rLNfx6OYR7Hx3NcX8JBLZw7CzCDNT7MO1LHpVJjd8a6ysminrhXUIEa4LD3N9A-94gCiGYUlFDBVXxrxSoEDsx1wlsRbBBTw9QoEwP7VrVJsPQJAT-g0alSYAr=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJfdWB7_Si5ToRd7r5g1IBLW0/photos/AaVGc3kLAEdRyIF51vfYomDdBfN818i8IcUAT3JRwNSTssCDDjkpl-2V-VqEdYNnqqCYJMFnvzOnrt8KbxdhHpbE63FfKepCait7req1J0-LXLs8H3kkAP0YUzqkKz1esYN2eD5mTOzMDd6MPddaE9s7iyFD0TmvoRuGPjAG_WJAFc9-HC9qPdZzX9ovkSCsDYpWI-Tk3KrPdTYsjQ8rB20YpiJT_Lnw0QYxiTSGNo-mMxxjMcsTDTYOwFTcFdmF53i_ZOGZ6zfk6Nufy7dVpDX3eXzjJy0CnOh5Vn-hufg-z9K9MEMzGdgA50ToNRHzgTAUbnBmt-tGlnwb31T0Zwl2QoYuDm_NiqnWZQIh3IYDemO1zCwuJ7ogFzoMOa1Icnc4pbfbEMghf4vK3qMhY5DozMnFgDDvCan585HFAjqD4ZzUbQ",
+        "places/ChIJfdWB7_Si5ToRd7r5g1IBLW0/photos/AaVGc3kXHd0rv_TfN1i33o8ljzCzHwd2yp5IoMRY7-Z_hmsAM8FGHA-Xs03a-917u2eOuHDOn1neLydZPPSWCqRjUmhYZyejsVYBGCPpTBZMdEJ3CEPkTs9CxL33jgVS1rCoypSZqUCY5z9ZWZLoveZ9RtgnodJuHGCMQwosoX4HyuSwLRp0stEML6_rDCuXL-4m6xqq0VUbxGeLKex0nMLPBzPPud5qvUhIdVYbVcdK9rgU_oiGsBhPs3XGfdeL5kYHfE9eXQBTds83Q9K9K1RQUielxnjAZXDF89spPqgoE1KnEXbFnf5CoI7QB3vlWN5z_A37NnCIj149-H8M1ofP6XIFl4XHAROyWpclAJmXB7eBcBTpzTMIIxLihVHVaHCbms8xy9_5rWtPjlNh_5r_tdPljDew-MK18v2_s38E1GNbm41M",
+        "places/ChIJfdWB7_Si5ToRd7r5g1IBLW0/photos/AaVGc3nhX63WCwPKAYJ5Z-BVHxQ31efUPWVZimIGvpnww3BccMTtVqkFC8fRdmBdBDiCUc8rOzRi0IKLR0HgZA7eeLU3N2xyceYPcKcnUazud1Huf2wH3ZGSbjwRHi7xwhZ_YJlppjAFJs9h1dquqsgW2Kx4DKBKXnSB2I63qVC6UhaLT2aQBoj6-AfAT7UxzKwiKXEb5Pnm__I0U0UFXfk__-j6pnfmzLoZmCckeOe1c6JUbGlFajnhZO5im-XbB4Y0JPdhUHthRjYjEkNp6XZDdCpwn0Qa3uutMS9DDj0h_-CF_NxvMl_gVr909GvNRvREKeP45LGUMO4Z6YdGcldfs9w4Fmpl2p9QM6-XHrtQMhhTZeKcpWYB0AFT7FKF1IChzJxR31E-7IVxHpsPl01B3Rjqcg2Wus_hI2X_9oOlsVspmA",
+        "places/ChIJfdWB7_Si5ToRd7r5g1IBLW0/photos/AaVGc3m1PLL01JhuUT1Mo74qbnkWryzLT197wy_sUAF0ZVlLNHPICakk0LXQPs8DcQ5xTTcaDcKwiy8bhZ6Ya5nxmlpDObTZ0a6N-s-665QhJkC9UlZz4B5ofbZfFHu5B4_nQv7Ua1Yx2Cg5CBJATNuY_dpRMWo-I1ryprVwjxRYJ36KrpJ04Ch1rA2azZlAcvXfqraa6_M97zYALSS1anVfsqRHVFqrJE_Ft-3cnspObSGUo_mephdrEETJMkqpH3PJC3kAWIVxaQL7t36TzqaUFHT5yuLjhzSlJOoyhkSu9LNU0xq7T-KGccGY6ayE96W3vklct8LUSkBAnrqpbXqVaAZh4KVVQrzG0kGJiH5zH6FWXIYp3xbnt716XqS49yGx5rHpK0FWb27amNawvHHuknGrAZdAw0GCtM3z0PlTXVs64Q"
+      ]
+    },
+    {
+      "id": "520c7d2d-2883-4235-9a57-db3378c954f0",
+      "name": "Peanut Farm",
+      "category": "activity",
+      "description": "A fun and popular surf spot about 20 minutes outside Arugam Bay with two peaks - one safe for beginners and one for advanced surfers. The advanced break is more powerful, ranging from 3-8 feet and can barrel. Features cafes, restaurants and sun beds.",
+      "lat": 6.7964208,
+      "lng": 81.8214115,
+      "geocodeSource": "google",
+      "placeId": "ChIJr7aoOE285ToR-48cmLtBUpg",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 356,
+          "quote": "there are two peaks here one that's safe for beginners like myself and one that's better for the more advanced Surfers the second one is a much bigger and more powerful brake that ranges from 3 to 8 ft"
+        }
+      ],
+      "thingsToKnow": [
+        "Great for both beginners and advanced surfers",
+        "Has cafes and restaurants"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPAqwko4MjdHW3AJ_r-yh8xvi5Lop2Z7aiF-MnOFp0q1pGWSG4eJ0q0P5HKFNmIzd_zzP3SQsLJZxWLvggM9AGW_8Gf3QjfVY2sYF8xL8XqBol_ne6VHmW3XmIsPGtWjSfSiUIcG0C9QDo6ID_XBVEk=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPAqwko4MjdHW3AJ_r-yh8xvi5Lop2Z7aiF-MnOFp0q1pGWSG4eJ0q0P5HKFNmIzd_zzP3SQsLJZxWLvggM9AGW_8Gf3QjfVY2sYF8xL8XqBol_ne6VHmW3XmIsPGtWjSfSiUIcG0C9QDo6ID_XBVEk=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJr7aoOE285ToR-48cmLtBUpg/photos/AaVGc3mXRm-PYOeCYJM4PWtVZ9hOOeV7-Ki4vjvW8CNzE96XXRgoQ7ui-lfj0ELWd71hn-WippGWxDHCUtx2EqtLvc09jDHTLBt1uKbVtpKe8JAdSRnPMmhmarFjsnrsCWNGgLyjJ_7fZtTEdUlk4mvYLHahtpt_vUBeZyDSKSLLZljxABtg2N-gVUT0V3hC6-de3myZMhsHiJ6mkL6yR1KYq7dJWkQagn1Cet-eBPkKIo-uoENWpxcXxhPDDvY8zkJ0XnShSExccq34y6RwIWNSHwFFIIf6pWH5xO1Zys1Rteu48CsrsFkfV2018x8UDT0clfGnztskc1AQ1wEdH1ssh41ukZwJfsxGJSeHEfhJSPvCo_oUU4faLqr19j9IebxN6SbHz1-DdjNEobCXfw_Z8HnbV1pKYGeKp3zU3UW3XLnLOw",
+        "places/ChIJr7aoOE285ToR-48cmLtBUpg/photos/AaVGc3n9EH1bTtOMDaVGzN_lSjhr3v9HLX6KcBgA7TUMqc-meRIOxMaqCtTRr2Vd1btLa4a9Wzcqpua4x_5PohttO942gQ1URYXCUv3lrVBBcOaakNwKXyvG2tW8wCzu8X12LztHsYoIvGcDoO1LdkgiupYyOWm9QOzQOTvkFksyp3o_Y-Iddz8EQvkdduvXt2oa8UmhFaaKx7WIKKepMQhewoypjcGAMX61N7PJUBN9MFSD9kCcOLpHAs2Xt3hP3IQPaybVSDPUFG0CQxjcjzC0xd8B400sGvttxQTrofMS0Z8T-nyw826yuEEZD6NDMh6Il1nn5T-qZvU3J8Xv1mUIxjwG56N6YukDwCyjV8u8cTbgjRKyR3866h0HFiJYQ_EAdD7B4JVR0SwbodhNwX5ZwrNsOW0lblLA3iN8sUQfS2DpiFmb",
+        "places/ChIJr7aoOE285ToR-48cmLtBUpg/photos/AaVGc3md34uBdQkOEMfOZxR2O_aAkAUwAQpe45PyzDwyUhQ5pZL67yHnKm-LDdzFe99B6nc0nGT5AcTy22W01MftwuyCqR8Bl_ocpzxOSyXYwgic6ynDfqZ_PWNj9NrbLGfkAa9HKXAtbC56afQfeRd6c4VqV9TCxH_SpkfTPvfcxYPGBnAwV7_OP56WYCzcqSKqr9eACNwmwhRZwJx9uGujXYcpRhKHW8pZq1fth_pg5uwZVhBXVJ91OkMBFTltaDJw7x_HKdoG52B9H2aBTqvYwUW1Bila8IvVpRla20P7n2R5iqqIRZR4dJ4C5O4Ne1KhlRS1ZxLwEHFqelx93BzKKEwT3T9tztI1_kSm1uFrEgOu95K013VXraRRPEn_YLlYYO_Y62RorBrVWWWQxVGAf2vhzZ4l-oi90H7pqQ-4MW3nEnQLJItL70fBB5Y5ycHL",
+        "places/ChIJr7aoOE285ToR-48cmLtBUpg/photos/AaVGc3lAkWp3mqcAid98YkvmasU5-JrW-wOg9ny_sIFDtFIEpFqPnFufr_dW4x7EbZtu5pFJSBSYkb1AGnY7j_GRaoHgJbtR0f76_qYIhv_2Pty6v8Pwm95R4bprruL5_GVoSOd5vh2G73Ykp_coEi6o8PghUIJKa5zcGrosFbsAEP7YNRdQS4Np0NyYZD_YvddASBUrLvvEjeF8UrhMfnIaTAWgI4sd8pZgQcyo8ifx33d1CTBbaP-zA8732in3hbRHR0kyrRZSGcyXcscFpBzxk5BR8y3Zi3hDbriyeZbxRiCRvcaloL-PF2dunTfS6R90DUGzgFbI1Ru3RnWQVh3r3Mlx9tzN4PbxlMDXGTedui4w6t4cImSrka-wffcXNvSD6HNa7eSC9XqbYgwKuK47C4IkOU15xGTtgViQ91_AjIw_vg"
+      ]
+    },
+    {
+      "id": "cd579bb7-8f8d-4626-8e4c-fd5a23b3b744",
+      "name": "Baby Point",
+      "category": "activity",
+      "description": "One of the most popular surf points in Arugam Bay town center with smaller waves, making it easier for beginners and intermediates. Within the main cove and was one of the first spots developed in the area.",
+      "lat": 6.8403154,
+      "lng": 81.8366164,
+      "geocodeSource": "google",
+      "placeId": "ChIJx_3BXwC95ToRhwG2aLjBDAI",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 392,
+          "quote": "baby point which is one of the most popular surf points in arugambay and over here we have main point which is another really popular one"
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNsgz-EJIpFndh0kTn5yKaeMohAxFLJk2tvD7d-oOerMcSvQVAySNqLlAp8RqylPMuwMCWqczWMPTPg9Sy5FO__7Tdj_LdOLkezZnx5Qfg-kqjqqgPsoAHggPJujK4ll6GGDM-vMsfUm6Oh-2jvQKQX=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNsgz-EJIpFndh0kTn5yKaeMohAxFLJk2tvD7d-oOerMcSvQVAySNqLlAp8RqylPMuwMCWqczWMPTPg9Sy5FO__7Tdj_LdOLkezZnx5Qfg-kqjqqgPsoAHggPJujK4ll6GGDM-vMsfUm6Oh-2jvQKQX=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": []
+    },
+    {
+      "id": "76216e6e-a742-49fa-83bd-c682949b3b6c",
+      "name": "Main Point",
+      "category": "activity",
+      "description": "A really popular surf point within Arugam Bay cove better suited for pro and intermediate surfers with bigger waves. One of the first two spots developed in the area before branching out to other locations.",
+      "lat": 6.8428378,
+      "lng": 81.8313847,
+      "geocodeSource": "google",
+      "placeId": "ChIJOxJLVhe95ToR6wi6QB4U4_4",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 399,
+          "quote": "main point is for Pro Surfers or intermediate surface there are bigger waves"
+        },
+        {
+          "videoId": "sCu4bFyvR0Q",
+          "videoTitle": "Surfing in Sri Lanka || Your Ultimate Guide (2024 & Beyond)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 107,
+          "quote": "Main Point which is like obviously the main wave and that's the most famous."
+        },
+        {
+          "videoId": "Cw76zqBl868",
+          "videoTitle": "Arugam Bay: What’s it Actually Like? (Waves, Costs, Crowds, Etc.)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 2,
+          "quote": "The main point is the biggest and most consistent wave, it's a fun fairly weak point break for advanced surfers, it's sick for turns, and for intermediates it's a really really sick wave."
+        },
+        {
+          "videoId": "o6XD5okXgMg",
+          "videoTitle": "You Won't Believe Sri Lanka's Surf Paradise, Arugambay 🇱🇰🌊🏄🏽",
+          "channelName": "Purple Living",
+          "channelAvatar": "https://yt3.googleusercontent.com/92CTstFLOwgrXQYL3lqmmaMPzCv6u89K5zGbQL2dlqdYopV_X4h6B0I1dRagIPMtqDTAYuemt0E=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 349,
+          "quote": "This is the main point which is like local and other... Kelly Slater came here two times... Every day same like this."
+        }
+      ],
+      "thingsToKnow": [
+        "The reef is sharp in some spots, so be careful getting in and out",
+        "Try to stand up early when exiting and walk across the reef to avoid being dragged",
+        "The season runs April to October; outside this period there's minimal swell",
+        "In peak season there can be 50+ surfers out; October is much quieter with around 10 people"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPCKRkRRhXbf_f6aXURJhlMruCYBKkppsbAl8C4pDhlmJV5l1fMoWhCYugDi5hG_q9Jp2Rd7fa5m3jD_G_i-h_CxL9EzYMZMnKUpebKKmiVzLe_5O5w3X0Uie1hveGyAZSemKW3pK5NkgoEauwutB1plA=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPCKRkRRhXbf_f6aXURJhlMruCYBKkppsbAl8C4pDhlmJV5l1fMoWhCYugDi5hG_q9Jp2Rd7fa5m3jD_G_i-h_CxL9EzYMZMnKUpebKKmiVzLe_5O5w3X0Uie1hveGyAZSemKW3pK5NkgoEauwutB1plA=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJOxJLVhe95ToR6wi6QB4U4_4/photos/AaVGc3nzvYcwF_mX4LDwTMl1jB5qob3wizKl7PrOp21nJ0YDZh53wDUISLO69JmiWO5B4nuMkkZ_nySwmz0qcrtuftswvEqbQqZQpgsEZLadBXlUD4xcHKYWw7TW-HMnJ5HtISSLapDQq93g2EG8DPKHYu6US-k8vzrlIShm--xrOZtkKJr84zjL9Syr4ZlWze5pIJB-hWJpvct5mQ6ABcznmzaGtDFQcW7x5Ea75FfSBqYKZ0QY-clgp78P_f-pUq4kVZtFuMb_tPS_XtTGvj3skDDGLb2SegbHaU3tGRtE8hNdm3LQPHoxxty6eOLSKJ-0IZ-ONl2KGNDGUhjMQHgkEI4dGCJuaRhpdCGDd9DriYLLHSn3sdqTgyxcGnCuuJ-KRHqu2pxDp60ypdlQLB1uTySoq_iO1qwcgozJSQEcgavRpg",
+        "places/ChIJOxJLVhe95ToR6wi6QB4U4_4/photos/AaVGc3nNEQjve5sGYncxe4rVhVg8tFGcwxJnjB_JhaGkORcOmSQG9gKl4jLgoBoqx56x51f047xeXFCyFS9f9t6I4Tfej684-TMd9KaKnBnxTSMdPSguELZJOA1SCENpxwmTnEXtjAFLnHfIm4UaLOd8JC1mFG4iZXJ5TMsDVa_Je1A_TAes2TGtVHWqEINOQ5DWQj6sC0xafsNssrXFf11lnqJ8wc6L-IC0gQLhW0-PGSvbR-RH56aF0c5miFTLHQ0PNjs5hQRrYTd_vkOe3TAoOh183n9sFilroA2Ft9WYxR7e-fHw3OwAe1TUxGqbGFlAiGR038Or1Ar7JN5qG_pv-1sePdogEE0tmVTKCpLloAgWBzxZUu1sCVGVnU11EIWWF8j9hDb91--nivtOPtsENFY5HUa4BjQVbJulLfn0lhRvus-8S6wK2zF2SqxRnJqk",
+        "places/ChIJOxJLVhe95ToR6wi6QB4U4_4/photos/AaVGc3mF7w55APBxGkaJBY2wZri5SyPiDMjUnu-BLZJRCtwKQGsZyzkrX4SMYXASZvSmddV2mDa5Lsoq5BIYg1D2JYNxuKXmnFXy6laaNOkXuvngD0GyCSfz5enXnK3n6VFa1cjURIvG0NnDo410fWnx_07THrJDo_G5SvWOzZzGUL4ojqQPhJUACJwjleCSh-OGMnLGtEPctJGTu590GqbMqlh7HPNcrPdPNvvlS_DNty9o2QG5_m_oZRAvm3NFGuEBELQ6-wuK1hHkvFPBUSmn6uBfKanQgjkY8JI8TPQSj3O5VNKpzM-V6WgbmbQzVKiZ3b5C0vP5UVLm2R2lutqOGbp-9oYd7AnfOFzMOLrhpvDls671mzBw-Y_PrVPvxvPCPIiWVsmpX0of3PCb8P34YJSQUu8L5OLcbNbHYQ8R2KXjhH9G",
+        "places/ChIJOxJLVhe95ToR6wi6QB4U4_4/photos/AaVGc3kKDJ9ZX418gIphGBKuMCSUrOoDSaYeowt6RBe8C-TADyiCuVrd7s8pjPCwZGatFQRtyUp9se_UiK4hw-Td6xZhIGSmWC0tB5SHaUQOMOOcdFzgK0ADMysv9xhhMV3-DAu0KfBaPdJBhBqYIPP3PCPvhB_Jg-1u_3sxJbMC-nd-6sPZ-K5aA6MTTGbSXmEBL6p0eXRLY3-BwUaL1e3KkV0eMHFVNc9b6mo2fqgc2dH41vVVHTlH62bHd5NEL18bEBnYVnKizZx1C6NyjoZn8ui7c4ZmhG6jU0rWZLBR_asawCLRHcubk6DOXxKRLjZznFESKa8unHzipbqmvRsJb0fKI9sNqHjgvZrXI2uuMCbdhp8f8brupIBCGw8lM5oSw3G5Pj9ov9amrahfTfKWxrUYEBZ47d28fPz_Snt86NDEUA"
+      ]
+    },
+    {
+      "id": "f797dfa9-a081-4339-8e56-249eaf52bd30",
+      "name": "Self and Sun",
+      "category": "stay",
+      "description": "A boutique property that has been around for 25 years and was one of the first on the strip. Very close to nature with creative architecture offering individual villas for couples and families.",
+      "lat": 6.8410008,
+      "lng": 81.83233469999999,
+      "geocodeSource": "google",
+      "placeId": "ChIJlwGpWiW95ToR3-2LvO9UA74",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 133,
+          "quote": "the property we're at right now is called self and sun and has been around for 25 years in fact it was one of the first properties on the Strip"
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM8VQCeSyCi1y53VYX7LotUUyPr53QZbiuQeDA3PpbIT5Sma9k6LTAVdqX12Odplsgy_7xaGld-mVwdUeMWhJ-uYxtDANKUg1zqVYSmWJg5DK-ma9GXnoWVtixKwV965FP1egUJ0LcuYFHuE2dOUgpgpw=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM8VQCeSyCi1y53VYX7LotUUyPr53QZbiuQeDA3PpbIT5Sma9k6LTAVdqX12Odplsgy_7xaGld-mVwdUeMWhJ-uYxtDANKUg1zqVYSmWJg5DK-ma9GXnoWVtixKwV965FP1egUJ0LcuYFHuE2dOUgpgpw=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJlwGpWiW95ToR3-2LvO9UA74/photos/AaVGc3lXB_Vk7rY9m7BLbaMh33LlBTmc7_UxVQtyWriRejfLVFIHLasji2Lg0Cip0b3aol9-9roFclzRIodiPOYcIv2UTfXqcOo3VztrJAwznxqpeSXnrnvsh3jMrPJGc5rBL_jl9Otu_d4ZqEJj5mj1MxLvBFL-Tc-_vk1hW1sPPtawof7Hfl59iElM7sGQ_nkhdvflPQnmVEzEwdJZpPU2LyaT-FNQdeB6yUQz-elbnAk5uRmmsYpsZ00ekadt9SclrvsXVGrkSBrxFnRmD2cHOAAEZu1rnifWxVSpxPt_T1vLONeDorAIi6mAMB4b9TR142nL_5fJiLKdWa8P5D2fBrwQY1O6pdgqCwk5a9LlW4nof02nQcML5t0ucO70Sf-QgteGjDuc68Wnoq6X4bAYkJR3hmvAEGzdI0qX8oSJjhqUOadP",
+        "places/ChIJlwGpWiW95ToR3-2LvO9UA74/photos/AaVGc3kJcGKf_fhBzpLu5csSZKo7bsfQqt6flci-R8y9aiRuT3QWjWQ6LSJ07UxckP4POi-uvYc7a-AmfH6ifd5hMSGoekPbvbRu6Fp_jpG_C4KpFX9TBkiKXUGfr1Kl89xTLtcMr_nLEGhhLQCpL-tmdZckkfWV7ApqrtNQIOBrZn0z6dVc9MsZog0mLM60MfK06p-tJ5zTCMzufJRDCsLclfmA4a-C9xqtLRIqs_ziTyL_f-6opzlkF9UIlIxQlsVhxk3q6BsI4aO9guKvTl2AipYw1tIGw6tWIAyx2ekMXt4DODD1-rYxpH2u2RUdxhsU3tTbJbp8HHd4pYChA4mkXb4mi1sHNonmnvMiIAMt4qji3JXDol48guWh3PkbBkeQrXq2pwjGIAr9KNmbYi9Voeelh-tKGr6LhBN9x_pnklL3E8s",
+        "places/ChIJlwGpWiW95ToR3-2LvO9UA74/photos/AaVGc3nAb9OTZ2lHGaRDWmgYZxPRvDYzKXb5hNcFGAZfnom8rIHhcw1mSgm-_lpY1-KCAa1_sUxachCLIvyhXlF4hPbtFIYgFX2nZ1Rz7ei_HEpxSkktQnW2AmDrgiJxiaXomq22CgyzxjltDhgzN6AHkh3-Kgt1gf-qVOkphJ4U_wFovYPc5F9140Kw6i6cA1c98g7MiKBDCfHLhs0DeTgqQHTFt5P35MNTYtrdKzuceRwRb6geh80KJhTXhU-C7v1f-C6YDhVZBjWLnkXvaJc7v2S8h4Sv-0T_p6wPz-hOca3Z1is6f3bHYWfo1uXete9xetqEEbXJ2ySYCYOMYWfsCtCJtpvWmfEh9kURQVWSH22WNuLV_YGP-ZZRwTPyA4C9DO38vo3tVV0uWbWXu4ychnWK1uHg2NbnONocD1GhB3XFC1wV2-y3CZE0DvmQlEc_",
+        "places/ChIJlwGpWiW95ToR3-2LvO9UA74/photos/AaVGc3lM8HDPkzPeWzrWpKa6qk_JqrAzpRuSF6TmZMzYEMYo-Mu70ImG0wRrpVT3gnH5ZvWoIgru3ZS0iVb762arUHqK9nFgELQBKoqkKcZ0UbqSYWH5ictZ-nTIVqXwpV26Gn9EQkmF3L8SE7MEOjCvQLfqFWtZA__QOmpYHRwwqpA45v1IZO9AUmCod1kLoIui3S1sMw0q5OMAAG7l5l41Bbi4gOhhd-RHmiOFxnRaTMjZIY6Y1kdW_uTpejKCUtddqfY76ZGOf9MB1VzDlMTFLL93ERhtV0FUoTLIv3BW1ZI7_tPUN0BMopw9j8NQQfb6b3cSHp4xzwBNTaW55xw8O-S2VY97abqUwvypFkAAkFJ8ULDFP_XNxCfE-6oPhRSAtcPnzmwJABYwNJ6feyADC3dU1SJ3XXLW60H71khCcPg3kDelVSwnu86VefxCu6ry"
+      ]
+    },
+    {
+      "id": "cb49ba65-1aab-4270-8384-aa50780fe476",
+      "name": "Jetwing Surf",
+      "category": "stay",
+      "description": "A luxury accommodation option about 15 minutes drive from Arugam Bay cove, offering a perfect base for experiencing the bay while retreating from its hustle and bustle. Features a private beach, delicious food, and full amenities.",
+      "lat": 6.8795811,
+      "lng": 81.8434859,
+      "geocodeSource": "google",
+      "placeId": "ChIJy408wR-j5ToRzrrzQt0Spz0",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 155,
+          "quote": "jet wi serve which is about a 15-minute drive from the arugam bay cob making it the perfect base if you want the experience of the bay but would also like to retreat from its hustle and bustle"
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNvizR3mDZsrGuhecVKgu1BCGOzDTkTMcFkiSQ6A029zjhL-d_aA1enauY-zOykLh5az9EHiEPUjeRH3bzSxAipAjF_P8ynq9S5Z6JWQttiVKuJmtISZvw5XasCl2bDYuYTAFdMGZYJA6m22DhHLCv4zQ=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNvizR3mDZsrGuhecVKgu1BCGOzDTkTMcFkiSQ6A029zjhL-d_aA1enauY-zOykLh5az9EHiEPUjeRH3bzSxAipAjF_P8ynq9S5Z6JWQttiVKuJmtISZvw5XasCl2bDYuYTAFdMGZYJA6m22DhHLCv4zQ=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJy408wR-j5ToRzrrzQt0Spz0/photos/AaVGc3nlGn9EV1axcbG-5fhyLg9weihjHuZAGo6zcSn1aa8ZjrAvPqgfNF36EhnFjR_6ElWm3G1-ur7u_gdYO-ukSe4LBHKXiPvXtShl4vZh4_ba6sbnnGhDam8QKzo70UZLNriRB5r-knMZcsoTG-7lV-_WM_pK05m0HeNjFzIf-bPVr6yUBV69u3tSjDEmxMW7mk4KSmJeGmRkNtCmwhlZSYX6cR2Q7jC7MxzFR6pUpagZEMuUWdiecVwWfVhbQSUrUR7ZhhVKjQNshVJ0YeVUo2RYhSCcIOOo9Ajqb0cv3GeQmKd4mWh5EmRpgpmmgPjD2YzzO4XuWQXLfGZGMA765X6abEBVuJe8maLeoa1mPhGuzhJNelEB4YbFptFwtKF7wNtKM-uJfEUwaOfATw7gNTMzxtYvWLan4Q2fbNvuzx-2_RWdViqe-OdMFiaZwX3D",
+        "places/ChIJy408wR-j5ToRzrrzQt0Spz0/photos/AaVGc3nOVMpWes8nX1QCDYmzju2pcr47xu0ycfXLb3gqEd3HEW70O9aZ66dAqRnbTODIEP6xEDMUYDKek5lFuS9NqISE0cbegOxrc0H12bG5nteVrFwtz9E9dVY7rtWdwRXm1JEntwS49GnhCkpQy7hEOFXyWA5SRc2Moqxu8O3L0iwEK42AvwrvWVDII8mtVgwuDssO-_SMUQUSIbE-Kt5YDZJFviAJXklRfDzymUFjpynJ12OFanisLzf8-1nJlhgwgDnQqGh5rJ1aHiUPTrGatcanLPIBG57F3-asQFqIALYWr7nFQpb3BoglajkAI6ptWPiOctVrHqEKF49JvAXsosCv437NGCqBpHSCgIiNmQO3MgRb0lueosfRzpIr9gf_z1wMMx01Qbl2TQJvApIw9fsFGY55-VjzxUsnbfXTv3JAvSCbfDaa-nWmkhbSXGl-",
+        "places/ChIJy408wR-j5ToRzrrzQt0Spz0/photos/AaVGc3mplPc8e-hYg6HYZy1B679ivpLBPHdMkjilAN35tpu8x2DzY2J6fIBh0AOnoyEuyKz0PY56WDr5s7Ezs3NxmfKRoNtib48oXR2-K_EB4cPjgvRdvci2Jow_wGogW9MpJ5Taqsxrzo_DTa8pFRoaXg_JQeHwPHa9bqU8wOlT1vQM-le1QzsckH6mfwEHdKu-piUBZkv9Yhv7mAnhgA4ERlOxy1_SIkh7uvLzR9JE0X-hQHf1P6UE2uiW6VCG2b_ay5BcurTsHTycU3dS2wIbfuVxA2q-8u4aF_8rAIwgMm0YbuXMhL6CKOEcoJbvk4AwKs4tAIGo71pxTf7-S6iIc-10S2UIzl31FXqi3vMmIX2Jjl_YZQmZT2kMdSWBlp_3S03_NGnRbR3XeLjQ0THyvpmHJb7TH6Bay3zVDYTudqnfP3iK",
+        "places/ChIJy408wR-j5ToRzrrzQt0Spz0/photos/AaVGc3nHQVBnpaIJwfMDyNb7RYYfFQ1ABJOVxFUqa4H_TuPPEinO8OzaICoRP2dHwNvNsmaA-hRR-hwhy1Ox0CtThyp9SuJYNpvToQQpsUy4NsmvsFb7gV7KzoZeqpgIJx-0ucIoH6BTrakUFN9yyV1pSvzOTNnt7n2EfXrwR_vP3IzCFbKHYchPWacBLPo67hxRzO_54EZiOE7Z4R2hGTLAuoCaeb4Pfe6GcPo5Y4T60H8bDHfhaKpi8T4UEOVFYXDoyK4T2pK10ND1-D4uOYK52T4XK9UgsHkP6LTtOlAvOfyajHROguIPPQyrM2rJhcZXQK2GBncc7RvkKXwHPRsE2ooJnl3X0Y34WouMh_FCU9_UqPivtZTR2tCFZbELHXz77ZnG1eRC1zjAKa_Fwy-2ibqm9V4Sbhj5671Ja6PZ6fHrhRBCXuJdpUd0E6FMxg"
+      ]
+    },
+    {
+      "id": "c47d5ef2-967b-449c-9673-4cf1590cc731",
+      "name": "Bay Vista",
+      "category": "stay",
+      "description": "A great property located on the cove itself with easy access to the beach and cafes. Offers a variety of comfortable rooms suitable for solo, couple and family travelers with a restaurant serving delicious food.",
+      "lat": 6.841667999999999,
+      "lng": 81.83227529999999,
+      "geocodeSource": "google",
+      "placeId": "ChIJbc6VcDq95ToR8hLr2Wzkp5k",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 192,
+          "quote": "B Vista is another property we've stay that before and is a great option if you want to be located on the Cove itself for easy access to the beach and cafes"
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPH2GEBKMdju29eUjf_X_bxZL5vk-y2d_RIRrQQ8kp8Y56JJDpR2crR5vwFpP0jC1_IoiCRi4lo2kj67edEtcYSkYGqL_8FrrzmaNYrf5ecGWsD8L2JqGTXZ0V3JY03Ac7s5SXgCcp0pfQcOQ=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPH2GEBKMdju29eUjf_X_bxZL5vk-y2d_RIRrQQ8kp8Y56JJDpR2crR5vwFpP0jC1_IoiCRi4lo2kj67edEtcYSkYGqL_8FrrzmaNYrf5ecGWsD8L2JqGTXZ0V3JY03Ac7s5SXgCcp0pfQcOQ=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJbc6VcDq95ToR8hLr2Wzkp5k/photos/AaVGc3nnowlPbbJDj70qpndOwGaFvt9PB6stZ7CyiQeXRD6KMcCTD21-2cpCZmVYYy7UdfbJ64GqQKpuTBYO_WjKuiM-oJTkvBvcKiZqJTKtRV7kEkpL5W7bT3YzEbGidXVrWDSAMh5SE8zyY5V4frzOO4BVCGhLV_Yez9USYGMgBuxEo0b2LG0LZ6CSvo6x0iAAbTQhmXvd_hwsiFHwsQteUuSo2m4JZno6Vb-xYdchiBWoxB6PLccIpdXEyBfIYM_95POkcPEOjv1PFmFjJVbx1LwmwSBH82QV0UahzDRzedI-xRISq98eOXq86pCcPl77bFAwu4cyLAYMQMPV7ibyR5Tol4Hw_41V1XrNTOQ6y3qR3_2hdX2qJacpWqSl6gtfzMBkg0CQBnvnazR7aanpLPfIzgTu4PWuH0B8MX3YeouFnyJ2",
+        "places/ChIJbc6VcDq95ToR8hLr2Wzkp5k/photos/AaVGc3kr6b56apwyawA_PCgaowOjb5MyC0hn1YporyarmYk5tI9daOpO-ZhHpGf2HCITarsQX59Jj_89DBIELnyrkeSkAL1dEPtgEDBmiPM2fF23n3b0MI8n2A3mbsEzdWIFYN1MdiKs4U7VTgPmq3XXGaqtDCcBtr7t604YDB9whEPJf3ksv5-vzJ70ycwgvWnNMWdmIbL09FC9Xoq0J41Td6Nwor7UcPCaAOc02hIDxfymK9YpWNHAzpN9BJrAeTOk2vRLGM1Q3qZ0tWNm0BW8xjfcQebIWK_nKi0XNr9lUXI-yaVgyJxSsQhvQmicfYjqGbSGw4RAGP427vT4LbBpxNtxroC4ZuzCsE8uzD9FDiONf-v868oWpdfZ03HV8A5JrO5BZYrox1Q1JMFZ4IdL_rjoAqSj9my3TT5XjUc9jxbdias",
+        "places/ChIJbc6VcDq95ToR8hLr2Wzkp5k/photos/AaVGc3n0NSYnpTZaO_2adp4F-echhqZPw0PGwbQmHMWpBLg-IPk_ZuTFM-OadQBTDjjQbAJOCnk1Ig_O-aKeZh1Z91Sk92CX0z5vIRHScOHgkk4jNcQ-oBgMqQ31xHmD9iSsJZ0FL26Ogpfr-gN3arYh3SBr1IKUeVGkB-zQK3vrDvalcc9c1Z8YcHqmFXBsJt69XRoLkCep1sAtSv608wqUyBBuYn-Ufmja6xDKXgupb2z_0qcw349i5YIQi11w6F_KHGQEBaKtTl_0baQowAehRdl2HkxPBhw8sI79kaA-phzHiGx971l-Zi1Drde-vnPcsEu2poEbaCqHabXuKNZw48EaW563KjfpoKhObX9MCrF8DFsMD-q5CtKaM6SdeYyiut7yWf9geH9BGJgaRGj6vpj0j2LRrwoOtv_vem8ZwSKPog",
+        "places/ChIJbc6VcDq95ToR8hLr2Wzkp5k/photos/AaVGc3nnV9KPQUSE0p0nucN9HQ5fuufgSOe27exfU587T61RV0jIqHllbkdhXlIdXzeBwWgPPg3Xg1ebAJ9TPJjxkwJgqnpdrZlny7TdvJs6yuV0S_AmWSx4yJ-IuFFn0PFo1OQOoGDNVywzmPt8lqV6QfhUx2e3MJdYTgkFdqb66OjgA7alOPwN4c1n1c-grhQhXShycH4e-GaV-KN2mqiUrICEW_lzif1O2LO5iQ_J7IX1l1vCoh9j-GhQnR-o3glTMg0KUCGyuCaLrsDxU18LZkW2MpKrFUvNT5B3gBtRpMwaE2ZlQg1l0LCZySFzACj2i7z_pvNnKo0K0IANEkZNNGMCmsvmKkPpoYXiHd9fDuiFviK6p8IHogibJ9yqYMrr_wf9ATiV44nR5sqJSoJTysKXlHozIzBzBjH6mQa8vA_fS-8Z"
+      ]
+    },
+    {
+      "id": "7945f8b0-3359-454f-89ec-f38a2735bbb4",
+      "name": "Kaa Guest House",
+      "category": "stay",
+      "description": "A really nice guest house located just outside the immediate strip, representing the newer trend of local homes being renovated into comfortable accommodations for travelers.",
+      "lat": 6.836234699999999,
+      "lng": 81.8332715,
+      "geocodeSource": "google",
+      "placeId": "ChIJ9YLuQgC95ToRzGEXNAga7_o",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 220,
+          "quote": "we found Kaa which is a really nice guest house that is just outside of the immediate strip"
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNRTkWt-BLRfzXR4bQEpi_kLuz-_fwmaEx2i7L8GsdcishRQ5kYjvefpzU1WWdNmNadf-XzoJ2yhXf-hVcK3BcgcFdEfZ5SL1ZZdwxtpV37cOGbPR71mNVrYsw8CaWF-VfPsFhx9Y1d_ux85HnhKqqT2A=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNRTkWt-BLRfzXR4bQEpi_kLuz-_fwmaEx2i7L8GsdcishRQ5kYjvefpzU1WWdNmNadf-XzoJ2yhXf-hVcK3BcgcFdEfZ5SL1ZZdwxtpV37cOGbPR71mNVrYsw8CaWF-VfPsFhx9Y1d_ux85HnhKqqT2A=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ9YLuQgC95ToRzGEXNAga7_o/photos/AaVGc3lurXOcihwcRaXv3qWSSbRbBpyv-fqvpPhyO1-TdJ61vP2oSmEN3Vlo6iK-muxX5_4M1rip59CfyV3muV-PUo5nZQfZZyU70X4MNHJLFNpVTN65aLqwMFJxKCkSI9mI6k7UdbtCTtZaQ1JUbwixyL9tMZfZrqyCyYYhCJ8b7Hsf1qDsF3K03eC3ltp5pOhpXmuOZaMJkcSpy1-CDnrQYT5-vYRsdbPdQtEX8v5fDMG-PZpmmyt4YV6_-BEnNMDmV66gMgGxpfnaUGBemK7__3iTATBdlev2R6pVeeDxeZ64AF7pOW6Y49h8wCj6cDLuPtw_xDpcZc3t-YdM9aUmAPtu_Xq4sQaw8ifTxJD6qogaIBnV84Q1hBD2mq-ASWEvGeVyxLT2WQFeUUXBWvF9LKX3TE0OHg-izBLqSEpFIajYFM_Kbdsl7sS86J33kg",
+        "places/ChIJ9YLuQgC95ToRzGEXNAga7_o/photos/AaVGc3njyth6XfUH3_q3dMP06W2S76efbgT8Xjf18RMVvPmPmd84cYcxapnjtb6D4hjgLRMK3R80eUWzZHztP3UqEIFGdXOZDo8C97Tj6ZWcIJBjyFkz04iNfBrqLrBkkQeS5ooaf7oGhiqVAzbhMn9vL2BmnZbbrYLZWckUrxvpTRefacRWQwl4-9gXgDVJB9CWWaU2l2l1IaxyPxRezZEfGwFBecbNqKO9x_2qTxtvEbPQmpugVM-rafjeOVsKfONmFrArFtDkMJNt-5orOOZvlx1Vp2K5YOoCRALWsxxxoaDv17y_6tADxVDx25g8bGimyrVC2PeWFa5BRH9NWWv5oQx5Tmk1togOp7ieddBPIbvv37autSn0l_JuW_g1uu8NcNkRpbw-UigmXdzEh8X5GxGWJPQn6c_U12kl0NVVIwtqa2p2JzjEs6H1rtV7qT6F",
+        "places/ChIJ9YLuQgC95ToRzGEXNAga7_o/photos/AaVGc3kceQEsF3M0wB-oXJ145m7eN72qH35Voy15Ngf9zYBRuRJOg9IMos1bAcpf0H_8hw_8ozJDDEAM7WXIwjIla7ZUAH5Rn6W5g16OsXp9u1boUjaCwgalRgVuP9bTAWRmbvu157K9VqRql_lEuWg6Xepsscv-kxWxWC4T4VA7Y9MzF2RJKZqPBsFftvz65Ix6f0Br3eNVEnWhdflWYWBFs3rkhsreb-gMtx630Lbj9w0mdR9P2QgAmJNaQ_sACxfKR7skDG3fC2JND9tDSJ-JrIyIUf4jlymv4Ta6I23D_TMtssuDVkTJycoYd5Jn-TeUmFdPq90Q9Ye-wNMLFmctFLnZhHzClon0JO3LmhiNYzOfXXZPqN1yd5uIRkCTnlLkECXZfcv8X0Q8dyJNrR8eeHAXznYchrJwQSzcjqA63881QBw",
+        "places/ChIJ9YLuQgC95ToRzGEXNAga7_o/photos/AaVGc3npYT40GyKgkd-9JlXg-o0oHb5ZYHrFQE2DLSW1ro4pZqEYoI47ztzxv3d2kCE7U607Qmagb5ZR9YNXge6BZv3bxNe9sh58sRqq5BuiQiQZ1G-m9jZQqsorWiHtRWHN18_TOYfQ5zS39_FIzEbeOBVFxzD5dSEa4yXSQXVOgH7ugVqn0qZqIFsEK-T4N0KbF3KzB9MAFsxh9NuQ2Q0FbgS1Fmenww4Keob0Zy-i7Apzcr-R5elyeBnfTg3q_ozzkaQp3_qh1D6_Qim2HqdQyhKNS-YCuOqEs2Qf586v2bzBCzweX9adQ5Cw7MePr1w1K7R4rCL_pp2Y9zrWGqq0ANXCSgDzXKlIL9fd789yWlrXao1j4gE10C7-LHrvchIkUuwNCwAHf_RVkiZTrFCN83WIvT6fzLvKLxfcKOgSuPQYcF1p"
+      ]
+    },
+    {
+      "id": "598c91a2-54c1-4675-9bb9-65f80ce77fad",
+      "name": "Shady Lane",
+      "category": "food",
+      "description": "A restaurant with an incredible menu of vegetarian and vegan dishes available in Arugam Bay during the season. Started in the South and now operates seasonally in Arugam Bay with tasty flavors that don't feel like typical veggie food.",
+      "lat": 6.8374513,
+      "lng": 81.8348611,
+      "geocodeSource": "google",
+      "placeId": "ChIJsYap84K95ToRRTONrrCSl4k",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 538,
+          "quote": "they have a incredible menu of vegetarian and vegan food all their dishes are really tasty"
+        }
+      ],
+      "thingsToKnow": [
+        "Seasonal - only during peak season"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZO8EyGQosTsGwWQV98lVxWLht1rioRFJtM6kUqKXl4q88yE8aOziZV80pbXPnr0LSvoh96XcfTuSHdGz2MJpN1Unru6ysyiaYKWoMs7cyJv1WpOWUmzJEVp4EIvoRFH-r3U02YBe6QunT-_NA=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZO8EyGQosTsGwWQV98lVxWLht1rioRFJtM6kUqKXl4q88yE8aOziZV80pbXPnr0LSvoh96XcfTuSHdGz2MJpN1Unru6ysyiaYKWoMs7cyJv1WpOWUmzJEVp4EIvoRFH-r3U02YBe6QunT-_NA=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJsYap84K95ToRRTONrrCSl4k/photos/AaVGc3k-eVLUIDQqj728te92eNmtHMLeNfut0dyByY3NGMlzwKkdf45YWKWjrtbMbkQ-e8r0HgfQQfiv-3sMgClyrg03omM3YH9jUqNacrNAGXQyIHeKH84jNmPKXy59oTFLIoqQIUHfI0TETbWFqLhm1oHbzwP07fALOL6TCmz9-baxbCPBuZh7EhQ73Qsr0BOO0ZfQhNI311A5ugXlSLYQK6GbLUNb-v_6CuYnPEdkxB1xKt4OzE1u2D9YspbrGwcO_SUYBjOQwYAoaxPwA6zrPWfdDV7vzJn-WZntVUk19NjKxO794Oe0UEPVXfBtHsi8e3tbPDIak4Z6Kg0ktl8uIEGUMkttIz5mnIIeEhdumMMwFqYj7yuTQw-zn80fWpjJBq6Qwzn0xI3zkIxfBXg918r0gHEfhsQld_PUp6Hzol0OOw1h",
+        "places/ChIJsYap84K95ToRRTONrrCSl4k/photos/AaVGc3ksT9XAcZqLjkCPBOlgsOIp17lkNBj6T52KG3pLDB_jSa0HIqDRnCMdC_D6bgR33fnAq9pJpLxFweVwhWlq7cWdrfJ9c7sy8AWdlEv5LEoVtIbXvLGzXsTfl24y2V_zUpUWoN9mDIRmf_mR93WPmvnhWS_Yw3AvbVaoLwmQlqNPdgkCkPhwgVg7gCWN9CNmcyu_5p7EYwhtsklLToZvY6FctRe-o0PLDbpq4LGpUYDQRDFdMakoCnBIPfZvj27dI7kW2EohT5HElm2ClN59yAGXdCfJNozru30jLpSBuqXcqp8BKpAHMv9DOYjH-ClMLZPO4_z5rJzophAI6dK1Sk9ieRpRIKXSLjqEAtUDzkyR5D3FQ0o6FzXY1LqTajiDLfB-AcPNz8ZieV3hY8UopdO0eBYroA3Mc4klOhgTVbDO3GmkMXF-p_fUbaa7bjgB",
+        "places/ChIJsYap84K95ToRRTONrrCSl4k/photos/AaVGc3mAhMt_vodmrN0CA8xH9CURI7GRQv9ksFCMtJpxVx3GyG6D1BFpmLQ70aPffXgyGqc3L8ZMor8woDqvLi9ZPw1-tf_jUzXtvhEN_t3ZmMM9NBAr-l-prToObQP0k5b5Tsz9dBpYHtvSh4V0FlP0k4G863IxYw1DlRimfnAbGcHq5IUFh8P4q1tRpTFwtRzASzVpmmVl6jfeMVSwmk0zWrkThV6qcTXenGlmEIogJ__GQFe3DdtdfN-HDmpmEk9F4eEf_pslDC-KK0RldjRQXSIjW4c3g79xS9_bFNpnhdzqUuzjeCBdXyQ2wpW3goJkxmNFJgHkX4-ywJs0qWroOW6DpcGHveNVfzEpTfgj78xfA4DWmyqaM0t86-a1sL_CDQ28igo3Fi4kiCiFUPPwrYAhTTgNu0R3zQjCdYb4alPuxtOuI0J35SXas16KoQ",
+        "places/ChIJsYap84K95ToRRTONrrCSl4k/photos/AaVGc3nUfzKgFO9WjTWzvLhQp9i_8Opdr5r0BJULSKkxZB9JefAV3mgdeh4srTkpaZq2wIC2HBmIRsjjGLsPxLsQcg8gPhxq9jowcaelAAdv4A4eWQRCdzBo2jGH9UUzhXHY_PSNWWyINjwEVXlEwH1Qfj0kfDxmhZRLuE1ucwlkJsWa-EP6haiJV73LXtJURzYQCioUDTry9TMm5TG8FMWRLkgU-IxQNcGLeJf_FsHixonJEOA5HZSQc5YgGyU_4y1Tw1du_QL_fotgnbBFHU6MBap8j7H2A_dRNty8HIo8BgySGo3N3dDq_1zATp-AKyET3sm10ttL_CgUFFXPeXccZXgGEXxBcaLGhl9tDjGLSykvefeuXM97DMX-eywei77Azli17N3irvaw0CaEuQOG2ST58ROPU66HqxluJlD3gm6r6XylagQa34-XkADFw2Dw"
+      ]
+    },
+    {
+      "id": "d80dea2a-db09-4723-a538-94b5dd093bf8",
+      "name": "Mama's Restaurant",
+      "category": "food",
+      "description": "A busy and popular restaurant serving shawarmas and other Middle Eastern food. Offers good value for money with reasonable prices, refreshing drinks, and an amazing buffet.",
+      "lat": 6.8441411,
+      "lng": 81.8309015,
+      "geocodeSource": "google",
+      "placeId": "ChIJz8i0bb695ToRYL37-4-7vek",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 622,
+          "quote": "one place that was really busy and was very well recommended to us is Mama's restaurant so we are having some shawarmas"
+        }
+      ],
+      "thingsToKnow": [
+        "Popular and busy",
+        "Good value for money",
+        "Has a buffet"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNPWZocx9D_HF-olvJfkUAABvKqUQfw55N-dnAoP5AY2-41lgYWAx6qIhO9pKvRVg5xwiLbL8tIUD4_dZKZHFRLVMXD1iaFofDqciAjcVMk4HdnDbUr7wKVypoBLS2rm-lKwhUejmtKpG9K6w=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNPWZocx9D_HF-olvJfkUAABvKqUQfw55N-dnAoP5AY2-41lgYWAx6qIhO9pKvRVg5xwiLbL8tIUD4_dZKZHFRLVMXD1iaFofDqciAjcVMk4HdnDbUr7wKVypoBLS2rm-lKwhUejmtKpG9K6w=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJz8i0bb695ToRYL37-4-7vek/photos/AaVGc3nzP0rZRNz-Qk3ft0nD7D7tH3ffyVYNI8fy52pX0D2fF8pKNIiRVzl7iZsou5Aha_xabzixwQuDK2BzqHqlHGroedUUjymoYZAg9mKNG0Gd5PkeCxpN_Ixu1-YXUld7LbE4DNOfsRUT7Nqx_5fiUkU2XOvYccfNcF7BBfQTPPC9Rhm7LWnNtM5fMiH7R27rAdKj8pPa1m0yG3dLC2FwikEfx8OrTTDRzvp8Pzsku1y77bws2JY5tKTpWhTwmKcoebnXH1pJ2sA1w7zkeHoc0Yo_JaTLA10QSGCyS2t88ueEcfPADITbKsspxhrsqmy5uRjG2QfHvD5zlujTH4IuHM9h4a3CqU_QEYkYjFjtCdubfpZR--JPI2uh9yRTJqZbjUkhtkH9ekEstuwGCY7rwZZYjnQ6IMaCITWgAjwotUgvtQASJKz7DpFM9u0Y1Q",
+        "places/ChIJz8i0bb695ToRYL37-4-7vek/photos/AaVGc3kHDdJWcbsQnGehMIDUssVjM46rXNXv7R0rmIVpA66Fn5XzIYwLP5c9YR1DNELRrKV50zqDS1bCYdcV-uF2lVPD29wY2BS9jfg_gFF5QrIgBvX3WI7OFIE0Sg_Na0HPChcc3QKz74dy1vvtJn16qUv-P-xe-Lznwy2yG4QgeC4OCCUW5ZwxmQDGrV7awZytd4_btB6wc8dBU9XRr28XZzcuQ-VlE-w9Tk0AIWlhjgGtMl5bmHfoxL_bBEC8tvXLl0KupfnkwieoHfxCF6-6oG1vd-C3LGzbppPJzT2uDomjce3XfcWwAUVqeBjwfN4Vjz2TxJe1qoMRpbK71XtTLsGkrK8tN6rZJfqYHEJP_cJJi8PYRoOaIXx-nocYs8EAmRwBBG3K0KYoYd5s-_woMsZ1Ms_dwXTlmWgLj1B9kwtPRYSH",
+        "places/ChIJz8i0bb695ToRYL37-4-7vek/photos/AaVGc3ma6wK62UUhYNaRxfRNXO7xi3TMBI7j0yNGjFEtotYiqX0KW7aDAv95Hd3wPFZaMu3PadPYdfRdvoPYErY6XGMl-tuO5MAkgozIJIGDm-KkPf5ce4zYEk4_t6wHds_hc-kAjBoZL45eC3Z11R_-qLzbhGIVxhL3nI78tucTfk5YptoeeZs_NauP0oP76nbaty7kStqtUFSLiDfTR4WRwqS_PJ7Qb7WsjFYsrzB72MrBebM2XhPLUPXCC4_y16kbSvLGB6y5ukq9VdgR4oNvoRKZFvvp9lpGLe6CPbh50AU5Bd7bE6KzIPYCHU6xVoo_yQ-3BKkCFpbaSKAgujLMhMknYVxuSvAQnMj5Q9SsySjV1v_W-WP1FaHTUpWkKmH51-wLLMPzCMXLFbC0wnvgSEXQp9gc5-XNXVI5jiu_qpQqZJHf",
+        "places/ChIJz8i0bb695ToRYL37-4-7vek/photos/AaVGc3mzMXNkDOT8YggnYEpvY9EPNRZe_FU_AKw1tI98BUN0oCA0vMgT3DYxTFsgpgXdLwwrGjNqNHjC2uRPTxXlzWW082qn4cIg8RapZP3DJMM7J3el4ybkLOZMidqyr6fUUAQEZglX24Q84HxCM_yMSmcQrQe0lAfUXXG6oEj2hLTpGpBRCJazcTKlo2XJT0Jchb4dICOpKEf1oiQ8nXED9Bp58l_YgiH2IAhS3Ts_l-I5vWyZp0t1fsipfSLVRZiltVx8tO9TL__GvKRTUoNlWfvE4p7CUJWU9SKE1Fh_aBVjajsnimesTBqcrX8xJSPj3hzHEbYxaMiWem8LsvKM-aeu_2l7K_IBxcRCcZFaj3WtqqU-SIUhyMvaT_ai7ZCxl1dOiDGNUy-rajJdK2Blnp-C2JbSIOR1iz0fk15EaYgwLouCSkovlcNzxcbdxtrn"
+      ]
+    },
+    {
+      "id": "ca897375-9224-4970-a12e-5c2636a9b145",
+      "name": "Fresh Seafood Restaurant (unnamed)",
+      "category": "food",
+      "description": "A friendly fresh seafood restaurant on the strip specializing in grilled and barbecued catch. Very reasonably priced with crab, lobster, mullet and other local seafood options.",
+      "lat": 6.848214199999999,
+      "lng": 81.8302246,
+      "geocodeSource": "google",
+      "placeId": "ChIJ1-G0Xi695ToRXutFgJYPV3Q",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 666,
+          "quote": "they do have crab Lobster mullet and a lot of other types of seafood so they do barbecue and grill and a bunch of other things"
+        }
+      ],
+      "thingsToKnow": [
+        "Fresh seafood",
+        "Very reasonably priced",
+        "Friendly service"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNyJUbFUeVp7VmLkEu4OcAQVXXU6yZ4nlj0jeFUSccCavX4mZdUY8Znjip-B6FmHsseAmhel4ojghOGnfZbzekkWljqi1WgD6XWsftaWaiMkXwOz4Djs2uX_coo0kRHQBWrIgBZWIWMW30BDA=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNyJUbFUeVp7VmLkEu4OcAQVXXU6yZ4nlj0jeFUSccCavX4mZdUY8Znjip-B6FmHsseAmhel4ojghOGnfZbzekkWljqi1WgD6XWsftaWaiMkXwOz4Djs2uX_coo0kRHQBWrIgBZWIWMW30BDA=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ1-G0Xi695ToRXutFgJYPV3Q/photos/AaVGc3nVOTXo8LQjoswxjmKS2QX4oFSTK95De1xic5V9gISkQT6Gygp3DLubJPVTaPPjl7v4zA12bSXucEM_rUp1qiNHFaPDwKvpI5Ilus05aBlzrL8iFJBEvzKqZYlvxy94lbRsvEd-3bexS01qAF_4l5c4ZNZDPbfai05_ebZ9VzYVE13un1aPQEMHu6qKAAy4ZfNgDH9fcDvz2roROTLVAedbI-vZYm481SoE68FFR84uySTUqj6kqBYAXpLAlXzmKzNhTdQZYqGNFjpfMShCQbQvtyQRhaJKKO5OCy5XwCplrMuFX8Jj0mKbDEolRyQgY0b-HJfIl8BidnwTmuhX9fyKvkYYAjbM5GUNB9jTwqtj2x8i-BqOAuSxj5cuYFik2EUXg6WZJiU1hwQC6_WtaM_OMySI5c-9XbvmhiG8N3dGtrc",
+        "places/ChIJ1-G0Xi695ToRXutFgJYPV3Q/photos/AaVGc3mgyuJA3QWU5lUSW1fwFZ_gSA-KSWrecli2krllLGdXTlmhsmBNXfcovm9CfHvh91SzMx0JjxK39l28aFo5rznVJTzGLpZU7kTe1dN-PtDHgtY2u5mt6yssqhETqC69-OavcZNGTn2-1BnGvo1NM1v5p375jpYaLfinbGYsTk-RHh1jKR-7J3U5nJqFS4krpK3ETci8h0BhW9t5tPawB8oMM5cS1bXnd663ckNPmUr56oQtKtO-xKc1Ra6erOLL7WRdWUjQPZp5Nl55vX2skLCu-O6tOboTzo0AvsD2rNDuecFwMuMjUNCqdPwkdl4PPzrlbqsY5nBxKgGnC8AkYXcE4uRZznLNc2Zv9pcst6KnvVqPD4LYnjM4rraD6RDtFR4yGnVDtnUKZU0gOPJnifFtKpIgnsKeH7QzzWPCzOVYi9u3AzqUupVCB5EDKTaO",
+        "places/ChIJ1-G0Xi695ToRXutFgJYPV3Q/photos/AaVGc3kaCPjwsC4_AhcPWcDw2PESQcZL1V2wJZjCU0InrpPdiCSz4WFl1ivPRsLR69FfVkn07H-3E8u0UZFxIUfE-qwpNZ3ARtSef-vIpfMI5kzXuOOKqMovzx3rr2rFr4nrcVUskBPe_p49uzc4uBxznu5bywzQI4HhLZEqAH3naUS0az2DKkIqSSiG1I1RAjK3blsgEZ6jcHX8y-HOLJqhEAi9zaY39XyhojypEZ2xCGm9ZEv5VW6GWYJk_zbfZ4-rjc5LUuNJcWJDQXXWbIPMcE44tTqtZCAa0YC1cKidh6nkgZ_RAVO-yFsIwy3Kk0E8nobLK6ctzpWpl4QrKuSIQYpaxgBbYrkMpElulHOKxQAkFTkO7K2UYiKkJpOBNDIiIWxBSiMVg0HoAXLF8wm45CIeGcJHhnsXIMCkzW15OYJP35G_Z5IGUaPZ-dYVdMvP",
+        "places/ChIJ1-G0Xi695ToRXutFgJYPV3Q/photos/AaVGc3mgJr5rG-IYsGxbEw-1APYhEJsn6LDdo_EhLpti7p4RBaw4WNeafbxPs2e5lAAcHfkjMx0rIjV_gBiaRUE9KVM0qkf-zu949ELq9xqYiEIm1WyfCclSRa9cEYdW8rKPLO_Swr9jeY49aBQb-4U9sqp2KxLZq_WUM4_Duy7wd4BrbDar5vNWxqmZorCbauOcJUHM6AgGz4GH8byMzY-LizlqJ6-Eqm2OFU5GY7iNFNmqUfGhHkDRAia57ptrafYd5ebpfxH8lB1NiVfDAhbB-x9_z9PHyt1g1KLl4SaxqUhC0mvsOcZ6R_mwdYyOIknjMcibAbbyQwYkVf6ttTGYvR2v7kjO4-hFJ0ciY1HkUuuPbTCwWYqBOHe4qCKYfFDwGvSK5SpVKNxmQ1OtUPT-Ntc7GMi4cnUZXZxfukRbV7KfhDqSehKomQ49_9PZgboY"
+      ]
+    },
+    {
+      "id": "c0ed7d07-e316-4606-b1cd-f983e48c0b37",
+      "name": "Salty Swammies",
+      "category": "food",
+      "description": "A must-visit spot known for amazing coffee and a concise menu with variety of meats. Great for sharing small dishes with friends and hosts events like open mic nights, evening music, and conservation-related events.",
+      "lat": 6.8421065,
+      "lng": 81.83209,
+      "geocodeSource": "google",
+      "placeId": "ChIJoU6EMTS95ToRmFtk6ogRO-I",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 730,
+          "quote": "salty swammies for some amazing coffee but they also have a really incredible menu it's concise but they've got a variety of meats on it"
+        }
+      ],
+      "thingsToKnow": [
+        "Hosts events and gatherings",
+        "Good for sharing small plates"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNPIbHHg89gIpZMiHqFrfQLbHoS_91s5ufmlozeBnEJ35QWKgh-FdzsXcC0kBoaMFd1johehCylIkAiGL76HF8d3et_l2czEGOumxueVP9YgKfwTgJd1RGwPTcZosK21xRM589drPhrMFIp6Q=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNPIbHHg89gIpZMiHqFrfQLbHoS_91s5ufmlozeBnEJ35QWKgh-FdzsXcC0kBoaMFd1johehCylIkAiGL76HF8d3et_l2czEGOumxueVP9YgKfwTgJd1RGwPTcZosK21xRM589drPhrMFIp6Q=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJoU6EMTS95ToRmFtk6ogRO-I/photos/AaVGc3ktR3AwMSPRR24CLYU2Z4n3C5QlvbK7y5lw7zh3laH_MvuowxHgpZW8_9fUDXJtXKwY_rNEUGCqd3_SPzETh9X74m5Y48fMJkVkfTkGod_PlgVXdN_EeXUZHgzvwSkVuymkJaxEZFKfRRUdC71kOY3YZYjrioVsevBljVyG7hNq6gME_jNUoxa7sCSsnT34iJkdBEcYblBmVOCFYXoRRilovneb-lZxAPXyIRJ5948LdyAYShCYWoEampCkHojm2iUTolMNlJDOANMe6oTO-8hg_Gz_Pml_PQehZ-A-NRxEVHaHnTVYrCvkuWEMooAgllluhn2QRkSHP7GI80oJBFf2K5CPNAK_ExFB-RgBJxM59b9m_RwUPhNaDL8jnYAZ6PW86V8FFmqTgt8DfLkwWMLBa9YwHspwfHc1KR5HwMc83qYDo6IMSKqAJpm7MHat",
+        "places/ChIJoU6EMTS95ToRmFtk6ogRO-I/photos/AaVGc3kRuihF_AOE7Mw0hRd51F87aGVV2lPqGkYN_Gu3aRpsT5jDL03vV1JGg9J0vgKT1Wozh9Kne4i3yQ9yZh4yORouRaYkM6yBehUIUx1EX_QognaHo69Hnf4oSn_jpRlyo7ZYUdbD1ZLWGvH9QVkMw4AdyalltGXeJDQdeKMebbacUKPKs44JcoochFz0CP6MAtgc5vuEmMN5KVQZZwaloRMQDCebV38KTxCV-G2ewZz0w2vPZ6h9exeUpAu07yLGMYw25FrrqluiJEwJOAZPcGLMmfetJW9aUDFtJtB0Pj06890h3Op4vA_0FITy22uwrTf6am1dIoXMEvvN_Yxu7zkyskGCq_N-OpPAs3H8zdNnZtahtV1M_H-AEMG8n0l7rCF2InqKaqPTEgIehpL-oWr-Jwf7_2icVzQ19Py57w44IYy9",
+        "places/ChIJoU6EMTS95ToRmFtk6ogRO-I/photos/AaVGc3ktRERg2eqNke-qgrAwiQvW1Keyy0M2OK0VZD0Kcqpz-L6fM1xSjJ7wgutBqD45fXu4GuR5EoAvnrMdejEojLCYVBQ1Ks1KHaayvZHsMsjQ4Tk00rIRFcmLaV8QiyUCckH7VceeR7vvQEO7dYl70-l2UvP-SAWtuf3JcFN5xp9JqAiA-8-RYPBPSoPafrHPzi3yqNScvC_SBQw5rVRGgQmekekksxh62kFujeHp0PBGiUwPc9R6fsucGQ2UCyC8RGoOdXwGOucw-49TF3PLc7CIKoPz3Y4ze12rn43ewOwznOBsgVWMaEj3lWFDCtPgDWCo7Ear0s_WCfa_93PDbwwBUGx8dZzkoBjfppHuRPDeCc7yNVM_aYOOxM4krR4uBvzUQ6K9_vtVSuHbI0pZHnBqXgUyZAzxg8Nx7GRk3g9yEgNhS00EEeaT3zDwQCU7",
+        "places/ChIJoU6EMTS95ToRmFtk6ogRO-I/photos/AaVGc3kJ0GmeIGnU5q1GSXrm6GVA0yPM9eiHjSiSEcd5u2KBmqHatTOYzGeMiJLoomURuKVWvOjCbwWHdZ2HIyckAplKXF2umk4Ioc1rDJUqmLf-zkRIcW4rhT5i1v5cdSMrfWWePKkQfZK6FX6aS2n8-vfUta95pH1uPK6tPDYsbP7_UhdFghQmvPHsnryAyQjOTSh60G919lhb5e-DF6Z478EivmvF-_G6H3BRsCSpYX-v45Q0ktsLJfpXmDrFaMcaryLEawn5sN_lbMRVByFV0LDue5Sl_ikZFK6pK89CyM6sNs4aXnKuw9RUchNqGYd5zkHUOvn-qHZA8KnCDNPzeslIFU1BJYcxK3CmU1Wmu5CD7UUB8I01jXeYddROSu1MMXgzqiQ5gGtfB8Nlif2QqkgCgYlKyCIkSeOfQsDolG7mnbeDMsUABZozOpPirQ"
+      ]
+    },
+    {
+      "id": "fcb38b67-d70e-45ca-bc04-2038fd65c2ff",
+      "name": "Integration Coffee",
+      "category": "food",
+      "description": "A great coffee spot specializing in an array of delicious cakes and bakes which are rare to find in Arugam Bay.",
+      "lat": 6.8458233,
+      "lng": 81.8304989,
+      "geocodeSource": "llm",
+      "placeId": null,
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 793,
+          "quote": "Integration another great place to get your coffee fixed coffee specializes in an array of delicious looking cakes and bakes"
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": null,
+      "photos": []
+    },
+    {
+      "id": "ba6e7805-aabd-434c-a38c-8c5ac5136190",
+      "name": "Hideway",
+      "category": "food",
+      "description": "A beautiful restaurant with nice covered space full of trees, creating a secret garden vibe that is cooler than the surrounding area. Serves Korean fried chicken sandwiches and other varied dishes, with a nice atmosphere for dining.",
+      "lat": 6.8414511,
+      "lng": 81.8315277,
+      "geocodeSource": "google",
+      "placeId": "ChIJMzjgki-95ToR9XNdfig66Vs",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 865,
+          "quote": "Hideway is full of trees and it's at least a few degrees cooler than when you step out into the road so I really enjoy that and it's a really nice Secret Garden Vibe"
+        }
+      ],
+      "thingsToKnow": [
+        "Cooler, shaded dining space",
+        "Has Thursday night parties"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZN1zgSpabzxAdiaJ4lxtL8K1DGDlS1pRIzD7ssi41o5PQCg8f7ZEOH9EabMREEeFj9SXjnVanY8LZuq1s_py1VMpgjOcQzpf11IndR2CXqj2xv1hh49HEsUcVoWMgXO0XGbFGCPYLPUkgMQDvWoojtGvw=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZN1zgSpabzxAdiaJ4lxtL8K1DGDlS1pRIzD7ssi41o5PQCg8f7ZEOH9EabMREEeFj9SXjnVanY8LZuq1s_py1VMpgjOcQzpf11IndR2CXqj2xv1hh49HEsUcVoWMgXO0XGbFGCPYLPUkgMQDvWoojtGvw=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPAUhP9K4ozfsWOoJZjQH2hsPTfyZ_-V_7spRgHs4e7blCNEE8Ct-AlnXCkBXe7BEKr5l26Ca6_LvfmFMYdB1mzdBPQ0SuEuwUh8N1FHKJdJzYNnNe-T8n6YkDvcYjvw25Lqi4OVTsQ22K9sw=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOyzSyxfBoIifBPiZcTRaKvnoTjgdzUkkVXMZT3x0PCdxfYgHi7rKe-Mk2R42C7kG8lN9trfSLIz1f2vDTD1vcG-ckveX-hErEE-ghk2Xux21VXz23GHRV2Z0pAEaCBW3skml3qany6xSVbFw=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZP95uY7wVr3oag7a7HYPD1j_Nlkc0LetEGYol0eOm-xl7Cz_s0SNmzjflJlgBjDFjx65E19i4kMtfiTK9IOfddXNjFqR2Vcv0tI3dpgw0tAeFhN604xx41eP-EGySqKYrAlv9jJB0_pO1brJseKzea7nw=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPU-eNH6wGa792wV4ShAe3IjNgub9l5-LBESguBKnTCRkwnjdmNTRstzpCKh2uUPft4pt7Nw0QYi_duhyNkhZdL1bO6ms3RureX5OojcLmy2vAdZdiRXRMjier1819qtTKZn7T48yif_6D-=s4800-w800",
+          "source": "google"
+        }
+      ]
+    },
+    {
+      "id": "898d095d-42d1-4b8e-9a27-1c706d44d0d1",
+      "name": "Kumara Monastery",
+      "category": "temple",
+      "description": "An ancient archaeological site built in 246 BC with a complex history and one of the only surviving cylindrical dagaba in Sri Lanka. Home to over 200 caves and currently occupied by monks. Best visited in morning or early afternoon with a strong sense of peace at the summit.",
+      "lat": 6.6721243999999995,
+      "lng": 81.743149,
+      "geocodeSource": "google",
+      "placeId": "ChIJAQAAAHvH5ToRg3L7Qy_Bt1M",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 916,
+          "quote": "kumala monastery which was built in 246 BC best visited in the morning or early afternoon this unassuming site has a complex history and is home to one of the only cylindrical dagaba to survive in Sri Lanka"
+        }
+      ],
+      "thingsToKnow": [
+        "Remove footwear beyond a certain point",
+        "Cover shoulders and knees",
+        "Climb down before late evening due to leopard and elephant sightings",
+        "Wildlife present - be vigilant"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZN1HZ8I6mZw5uqXISZth5xz6gN9BuIAJOTkWnP7klhMECHcfBnvKoC1-vPsGMJdA5ntuKehT3R7L1Hcryn52Gl8e305aPJN2G4l-k6YGecUK1UBbKRhvXeZKnDER3ongbCkBgVGADw=s4800-w720",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZN1HZ8I6mZw5uqXISZth5xz6gN9BuIAJOTkWnP7klhMECHcfBnvKoC1-vPsGMJdA5ntuKehT3R7L1Hcryn52Gl8e305aPJN2G4l-k6YGecUK1UBbKRhvXeZKnDER3ongbCkBgVGADw=s4800-w720",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJAQAAAHvH5ToRg3L7Qy_Bt1M/photos/AaVGc3mto9hxAWzEBpWxVLAqIo9UcvueymVNn-K4SMWiz_Btzrf-8O3uN1FzIsCoPaZE6pv2iPuvuWiOxnBzUHqdKvJJASMJEylGl8K8ybvmIZKNlHubT5CRp5P6vIbLj-YATSBGHyev7bMc4fQCj0eYPGKH87Ji8C9TP6z536bcLeLdAFpyH_zzBXTe-Oc1IJnKpDnfhn49i5nvwRj9uqQOVtbQemy1d-fCEdGkGL78I0cJ6N6pLKF2EzEI4ciwY0pQOvnKQVt_Bn8B4zH_RA73pR0q89pbs_e2KgbZWGz5BZljH1M2c_8RQ8IURAYz-LW2Z3NzHSWaOK43ugHXyBGNYmk434NAJWuDdD_4rcvHG6IIn0fjbh0J9IYM_JWdz3IAL0ILLuAsF_36czQIvO91bDbuafxibaQGQDWAiiElPlLmfw",
+        "places/ChIJAQAAAHvH5ToRg3L7Qy_Bt1M/photos/AaVGc3l32YlB7qx_YYZu3q-P8uhMpMJPEXg05PBtsIQuWbdN3kHXETQFVImBQYRSivaF7Y4AWs0tTJlolNhx_68b62IdSXgpLlg-_yEphsBPpNUUojhTBxx4zlv-zfWglH9Y_zTHVEJn0eaMyW2B7Vs2qH-ciILRq2CkImW_b8ZcGsGf0I5RQqYC0S58jvVfCL2GT5TNS_XOg7bm6VuckJRegD6xaSGIUy7pnCFHg2RkKn5WW9QSvsvoSQBTVLQUgloj2mwcMSJQJzJNgdrzxt4bQvK6AhVOwlJyswlQj0zBADF4OIAd-Vu8DPpid26RlEmJB8iS01X6ZEKVBQp8H5JwGeWbi-MQhoMbTixRbGXs2tu3VkYkivGATAxj0EyxwOJTKuvtpSIl6LYT_fFiI8vvcqHswWsaUp6jkKCcuT14a-H4iuRTlBdF-LE3VqIukg",
+        "places/ChIJAQAAAHvH5ToRg3L7Qy_Bt1M/photos/AaVGc3khosd5EHrHPI_SBtKUZQYyjxV01vtzkT8hsxuKAEzSH-YTjDHUiKVdGHPRb2yOYku2HL1EJf0OvJ2KhqopaaWhgWFTEptzPOALdT-6G-rb3kaYu0WehcpCIqOUtWjdqm0q22zsuk0VQ8K9U7XClJsQfR5LPJm-jg_vJkwcdymUL96j0bUS5OUMlaA4u32npJjPDS7qRrgc2n-53gPvrRaF-yGMWZAGC-4zzjhEDa8v25y4h2GqY5_igw8ZmcDf6xY48F2cqEiUzjAqa6f6KJnsScjprckficm_Vj2KOs2dJO-O_kY7TSxLOrAy-xuDbVCRLqgplqJIu22H--3L3_v-AqSII1bNcbpTeLqIUT_YXhIkznZ3xuLlK1CEuknrX7LHtNWknEYfjBAtJW6CQu74ZiJzT3QCBnNceikw2zjC92vhsf6_Dv0huL86k36t",
+        "places/ChIJAQAAAHvH5ToRg3L7Qy_Bt1M/photos/AaVGc3kSrUy8aLiwZRGnffx2mL2kB4J7EBdpoqQvXlkOxHK2XA-07vdOxnLLYG6qxIefRHmlyi0xrrNW_J6S3-dwvzcmSZ_je1fl4npKWvjh8_bF2z2BcBP-AZlgZWhiFN7JUOGfIWYgrndb--v42NBYSYv9wFRko968NBTBMi_UcrLLgtn1tYMb7a9sYwVmIZHR5rs4Cd1jnVforTOxgXnxUaEDPie-90HCrZiJjOx3Ew2WWk2zFpw4Bz4CCw8uFuHxkIfTKB6jTfEc67GXMSfvt83fZ7i10byduQ9Po9Tz50Ghe9i8m7KonUa6vIxAjI1q_Z8418AJu1iwl5Tcf1g0TmKtjN0BFyEIZu4DkoTUahY2K6PuV9HFO0ipnQPbRu1aGpooI4J97k6c9K7ofndUVhQaGlPAPSvVBtpJDdJ6Skx_Ag"
+      ]
+    },
+    {
+      "id": "34002577-d698-4f72-9dcd-4b4dabdb1e55",
+      "name": "Kumana National Park",
+      "category": "nature",
+      "description": "One of the most incredible national parks in Sri Lanka where you can spot wild deer, endemic birds, herds of elephants, and the elusive leopard. One of the only national parks in Sri Lanka where you can explore designated hiking paths.",
+      "lat": 6.5729598,
+      "lng": 81.6692532,
+      "geocodeSource": "google",
+      "placeId": "ChIJo1ZxX7XI5ToRGiCAu8xbYM4",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1010,
+          "quote": "a day trip to the kuma National Park is one activity that really sets arugambay apart as a surf destination you can surf in the morning and by afternoon visit one of the most incredible national parks"
+        }
+      ],
+      "thingsToKnow": [
+        "Designated hiking paths available",
+        "Wild elephants present"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPR9zNV23z3NhI3M7Z0TLGSlyxlcsWa7WE4tLiv6GDtmmuaixTJC9eHd1D3LfJxtKt7Fsr1ee8zqh1wSbcWfpc_9WzOKumwuSg3tiPKLh-_LrBki9VP0a-Kg_G8gqRtuZAj7VL3YslHbEsN=s4800-w534",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPR9zNV23z3NhI3M7Z0TLGSlyxlcsWa7WE4tLiv6GDtmmuaixTJC9eHd1D3LfJxtKt7Fsr1ee8zqh1wSbcWfpc_9WzOKumwuSg3tiPKLh-_LrBki9VP0a-Kg_G8gqRtuZAj7VL3YslHbEsN=s4800-w534",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJo1ZxX7XI5ToRGiCAu8xbYM4/photos/AaVGc3nInhhRtLGmHEEyof5gkjGz3MCA619S1x8J31iwR4rhmqr_glzZAckr5nJyOm_bT5rQAExnXW-jSxVSo2DwMvx-btpKVvuOg0R0IFbA_EMNyjh2Bi4EluZxElG0Af2n_mbmbeRBLrGSeC47vWmtYR9kGYUWCSV4rpKwZMj_FOkWIOx8T0KR1xKp15QryzWpnbKEabeMamvu_XY6JbmJqY70xzIPV6eYrdFRtkTfqXDeVuT0Vlh6goxQgyQ3-1QTkD4t6rPnyMO1XIg4QjM_GJ3VmwD0WMcVAg8paI3iNfXJqKn6Whm_WFrwnuKTXSDTY8Kc6tVvtIEXmYyctQiE3Y6Jq467B9tXjlz8mondmpVp_EV2N875wHy3-YKaBgD5fmGxOsOyNZjwYxVlOlW63d98BhMWWreOs5NveO4h2ax4Hg",
+        "places/ChIJo1ZxX7XI5ToRGiCAu8xbYM4/photos/AaVGc3ka3hhepPh71xpinFsmpIZBUZx4SZBhgw1_TfeguQQFlb9KKSlCKc3Yi5erzBUdQzDsH5HZx2_0YXnHAP7BalkHU5GS6HBiNyYteD57Rd9-MfPxNd7ohpt3kokKB-ooXpw_8XQ2qD6SFrNn6FgtQSsjxIYAzt3Vw9m3HCJwTXo4r46d6AP4FCQ4k__sEC1MUYAGMI_glc-xGLM2lI7HE47jsdYWfQJexfpHmxJHYmTTgqf8Q5UnredThauMFTYDPAYQZH312KDAfKt8tzUIBMtL_TK6LLFuve1VMy6jlkblLIzv-NK2SQwQAIy7Sztb7jnlMMbzGJN9XsAwlQTpHKC21e7o7Y1_5GXq-tcOmH6ABJUtM47jUJ0Y49eCo821VQFTiFdmethjelQCxAMcNLMISXIaoRgfCylF0qVYYnA",
+        "places/ChIJo1ZxX7XI5ToRGiCAu8xbYM4/photos/AaVGc3kMOwKVPgQzYQFcG2fG_9oOpSEsqqICLyOyGXadlGgLtsOyJs5W8p7gBFdI9LJU3NmEvtEApvYGpiqT-oeatEe1E3MBOk0ifrSs25pc2ibXNAwCNoPB8tY0ctEArHQqbkI5PpVQO-WdaHNDlSOhqr0pIMykfQnp5N_SrclZcc_jtD0qY2rnVRgzAYwXJMz1p2UnciSjqFu1tqNkOg9TaTW5gkJ4dNg5omDeHwEI8kJtRjhPfiEhi7Ojhy1xz83dhJBbNVTBx9QuNyPVmusJWwtYoTOaxR-jjQPFAsjhLU6ee7MOTB5kgyz0yWYam6qGIEPTdqpwt3oRcRS8vezy1q9acug5BtbszCuh1N9v-WE-5HW62WjhwglkdzMXnFg_OSJBT0IMK1fCr8GrOIqlC45qfSrz-yeuWT9EuhkwL2KnSbQk",
+        "places/ChIJo1ZxX7XI5ToRGiCAu8xbYM4/photos/AaVGc3n_XhM75Qog5ziAYetAVRU4id4W5xf-EqRozihG7nXhjOr68TbGI83LJwWbV7cqa5QMiNZGJS88Rrs0FCZu1VyT5eQF9_NJo2zRtVdGST_gWcyZDxFNpjIbVpfAGbMqTBe6anMRWwpRZBH3dJQRorF03wDnFGBXsSFKR_3KvSPlQlY-3HU4-WGRWZ0dexrrz_LTortexH8Rq3hQdoxTe-Xi4OF8DIVChTp90V9lqJpsVhoSeTTCe_d-bHaariz1fNCu7FaF1I4XFKxMRzMPIhBB20GcT8DV3WKGpILwVWuxjmUWBxKlzF6r8Hhbi_s0ONJHm0v_27JuVKMqt-KXHwqlyRflKR0lFWza44BNivPVtlYZC9kcPFGMLzS24sNjnGLCH2jXT30XKqhKL7yQhfJ7huX1VJH5NLklT9s_pJwx37iv7ppAfYOL2bCge_z1"
+      ]
+    },
+    {
+      "id": "98e853b2-30c0-46fb-9afd-7d92d6f7cd85",
+      "name": "Crocodile Rock",
+      "category": "viewpoint",
+      "description": "A large sloping rock on Kakalia Beach named for its crocodile-like appearance from above and the real crocodiles lurking in the water beside it. Sandwiched between beach, lagoon, lush jungle and hills, it's a wildlife hotspot that requires cautious exploration.",
+      "lat": 6.8196154,
+      "lng": 81.8233288,
+      "geocodeSource": "google",
+      "placeId": "ChIJkTqf4B295ToRdTZM9tp-xgo",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1060,
+          "quote": "an evening visit to Crocodile Rock is one of my favorite things to do in arugam Bay this large sloping rock on kakalia beach gets its name not only because it resembles a crocodile from above but also because of the real life crocodiles"
+        }
+      ],
+      "thingsToKnow": [
+        "Real crocodiles in the water",
+        "Part of wild elephant migration route",
+        "Explore very cautiously",
+        "Do not cross animal paths"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM3RsPZMgXXUJUJJJMwyFMwjaxtUfy9rFXKxEfj4xETAZLq4zCO68nFHlOljFtShmqxin6SnvqMpPTvd018wkVLTtpfwylmJpwgIXzX-ZqioZq4sPr0GtdmgK4XIaUbUflYxoCLTUReoxLOtr0=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM3RsPZMgXXUJUJJJMwyFMwjaxtUfy9rFXKxEfj4xETAZLq4zCO68nFHlOljFtShmqxin6SnvqMpPTvd018wkVLTtpfwylmJpwgIXzX-ZqioZq4sPr0GtdmgK4XIaUbUflYxoCLTUReoxLOtr0=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJkTqf4B295ToRdTZM9tp-xgo/photos/AaVGc3kJHPlsDhS9o7jlH9adVcJpLEGf7vicbsCKiVYsDgbfo16dqtjXWxFy6ShDbzT8o7LDWYjS7IAJkeuxOFp7Xt9HcT3RFl8MD6uRSUytSFUjfauoAtP0GAmgvtImHpg-QldFFYo30KoFVOsNr0M6hPSXg713vPj2XLCnskIGgEgJSWEAv1vRCuzFjl9q2ZQkULkLD1aNRtNM0J3DZm6zjDMd1WdJor2b-HJ4l1_Mm2z2lqKUKj2Q5nphlhac0oDGSgGUr0FYj4-fG8bOSW2U1o5t8SAvw2kepTPqiXXGW-YEZMmknh9lBKjd12XFH4lC4RvxlHHGtfobbP0idAnlQ4p0y7qnz9IPuanFNGaWFDwMpm_lCoUnk18VMshZKdURpBUgzmnfRK5bziV-jIrT8ckA2jvigTHlTS-GJdCVIKdTkg",
+        "places/ChIJkTqf4B295ToRdTZM9tp-xgo/photos/AaVGc3nnHe_JEd5Bhlhp6ip99wv02MFSUKW383Jqm3wl-nnCfPcNU-CGzQvYuQQJYiI1I7CuAlRgJFI9kQmdOAJemi1AaEu8ueIZicafTcTcDfdHYQnOogQ0FLl9ULNkPjLMSEZIZfRYqoWCpPkFSMnptMyv4aNLgL-KK4LxU2HKiJbGU5xHo1hfqnK-ZMYas5p5nLuC8t1LmzdSIgDA4VXeo0mG-4VisgXIKD2KPZ8d7Mu135tHDWRuswKOgfe-QWnlCW4HtmAWGOMZVtT_CuZzV-3Qpx4INyclYp6Ytt_d1Wi0Yn7ti0RW8chjOQKdwblXJ22mnDLmSp4MKhE5EFnweH9uUhpx5EzwpdYkTm_VPn2-p_6y3-LzVukxzFAv47nsS1KzAMjA3fcH0IngTWeZyL1eJTYKP_6ohz7tNir-NZ2QOmo",
+        "places/ChIJkTqf4B295ToRdTZM9tp-xgo/photos/AaVGc3m2MaQlrAT-URBT2zQlPnQ38QPFAKgsXsGU1skwsz0ot7d0jg9kzpusAPggYtTlxAtZFKrO-0CEWx9OSUC8BWu1ZDJQFH4NHHVM7TW7WOHgFrQia6fxmbHByzfp7acuPK0o442dikNStVm-WyqwOQttSyx3lr_ZgBa1idOOyeaz5ltUbWjj49JAuNFuU0WkolpBBwme4ni8Z3NeEi33jiNuCHLvmwdCTuVYovgqS3T14cVUNcdnMFXNHbZbxjL0u9fjYPfOAKJRhVPqwoC34QsLq4xxgjXvCDV8oIVEtYUH_fd82sEkwWTNcLK-L8flW7I-iDrRmPi2gXN2GfcgHw5i0oBIoRlxixtLgi_hywgJOwyb3XKGPih9VeJ0wVht9AMfPcLJCFw7FedXoeGmsW4B1t4eTEaVTkfY98Kbsq3ZEA",
+        "places/ChIJkTqf4B295ToRdTZM9tp-xgo/photos/AaVGc3nEKAUq-jpTa4RslQkjoR4X-68zdkdTuMyUqiOKzCjPFORPC_1Aj-ZtmGcMGLsxnlRkskjGtlScxHMmxnzkEPSnfZ_GsrLc42inU7KAfQC0I9aDO58xqHRTpIGoIt2eTRHfH-LvWAksWPX3EEnc-zEN72WvcCT_nm-w5DdkuhhoQ98koup4fYuzHIK1l2RHnUSJvc_EFsLtq7GZtZCZK96FN3DABb9TgYx9Fp3Qf32csBWIkyxM-z1D6FaUtqhGnHw8ahBoSzAIEqpjxJFp5VtYo905pne_B24ZSx4iaxpcfuyGhTWBUugVqeY-jCrOtFlm0DBTMpKTR6JGNR1CwoWvAy7dBNrPr__z6iNwzrGAV_vU7fKrKReHoxLt918fXCXAKVLy8x0aMuu-eB4Rs6Vop15wHgA_q2-p3H-jZ151Ng"
+      ]
+    },
+    {
+      "id": "b355f984-3674-4ff1-830e-afe9965cd7ef",
+      "name": "Yoga Classes (Arugam Bay)",
+      "category": "activity",
+      "description": "Yoga classes available in Arugam Bay perfect for yogis, stress relief, or stretching sore muscles from surf lessons. The sound of waves lapping on shore provides a peaceful backdrop for relaxation.",
+      "lat": 6.833284,
+      "lng": 81.834814,
+      "geocodeSource": "google",
+      "placeId": "ChIJfUWlRQC95ToR6wHM4nozYs4",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 982,
+          "quote": "there's nothing like the sound of waves lapping on the show to lull you deeper into your relaxation so take a yoga class in arugambay"
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZO22khKSftp9Xir04geAf0ZFMOKjodcCWfpJcHDAk4m5TmXSn941YOlS-X52gRenginTm5890Iah8t07E9dyPbsATdWU4xIfRJoaeyX-sTtHZpJphphUgI46lpe__DIu6cwZgWnqod-b8wpzg=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZO22khKSftp9Xir04geAf0ZFMOKjodcCWfpJcHDAk4m5TmXSn941YOlS-X52gRenginTm5890Iah8t07E9dyPbsATdWU4xIfRJoaeyX-sTtHZpJphphUgI46lpe__DIu6cwZgWnqod-b8wpzg=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJfUWlRQC95ToR6wHM4nozYs4/photos/AaVGc3kyRaLzGRPg58x-rAvpS-3R6BtpOEaKPP9SaR5vHSpzFJhQe2qZ13ATgP_JdRls0F_vCIMlGiabO_9HPStQXK5fZXkX7iGKUbmtC846_MlsCgC9gsbAeRx9m9PAg2y-tL18tfSMgmZckfYmysvdT-fcG8hzq53QScaaKmt6rcl2Cl3Ba5GyMHIDXVScRmCmjJdbUArVmywqqT08U1eWEjv-9_5fJo94nq0dc88Nz5BFACNTUVItaRrQmbTyjI_vKiRLxabHcV7W-cB8tyviboglGG1YbPIoGqvzOBPIa-WBHV9MCofkRdAb7v5e4-DGE0dhEfMREdykUdNx6FuqDcdbvCTi6rNgUZzAM6NzFEllDoz4I7vCLBd0dbI0l-3ZnEkS6AFyJEkWyF3xtY4_KE3Qg4dU9HB4r9cNJ-I_u63t0Q",
+        "places/ChIJfUWlRQC95ToR6wHM4nozYs4/photos/AaVGc3m3bNrzGLUEDFrB_kxOiarns_EhkcqTTeA7qX3HldZTBEhbJXDqn3BK_m2fRPU14fLrgnSYMh4Bkh5PgxjN3zbxtkMcfVRhIXRFx55rvpqHwj4IVgPB8ChJdlDsugvHnA_ZaL89sjcHw4HWtoIR1HMd2x1iSW-iLs2euBln4D6FAIhfOeU7guXRkWX4qlHqhi0GmOe52ylS1BQN3bDRpBZfU2rm1JWqIHE2rnb2MUxKMsKmExI7gNGLByMGQPj-3nKMIZ77Ov13cP3-vlkSYdDxKG49dHmR0Wp_z9tzBq4ls82xy4DZ8jJ2oDDphCyGUWk09q3FLy67ODU5Hk1K6Pva4GjoLMS7hpwVRUNU83rI6pryJGqRfMPkTw4LJ-kTofJVkuoJzJCThHVt88ve3fvtl2oJxrQr5WDsOWjWB6KShNOZ",
+        "places/ChIJfUWlRQC95ToR6wHM4nozYs4/photos/AaVGc3lOEnWs7XDyvYyhUsz0wfzkitlbtocSseHXW2cEFcUU7y0Ue_84Xl1kYwOGaqFagReE6vhXMxnzWD3ZBSQP6SHc21ReM-jDCEJlploXKi7otrqK3L5itjtinMo50OoUFRE9Uu74yJ6hR-N0cmVQ0rWZch9EhesXZdELCgthWQLq7Stp6xalnBVtB6T0DARTd3T_sXkXEUPDIv0-g8yYvL6s0j1NDz5CkmdF7yY-unHhyTZlSchOBLWAJcJnujxzPaLPWK735gDRlLRLrR6C9nGPqCa2NC9Nrz-epib7VjNUXsO7V5OU3XM63PtVB_YHK4KMk-P0U7hOiCF-UPi0n0z-wQ-JOQQ0VPUzHvZvpRJXHLY_1RbiH31prf1_5VLSO8y51U0d3osucn5UrgOi7gcvvIYfxNLQeiVMS-lI081N8lIi",
+        "places/ChIJfUWlRQC95ToR6wHM4nozYs4/photos/AaVGc3kE4lktcaLMu8Zcl9c24GUqJZL6AlTW26GGtE8yvrPW6_kLfPS5LC9t4aiHSin7YT1H8f2VJD3phQTxf3u6okRqBQsdOPM6IO1J-3zGJMA-msr5hQaqH827gSVZmlPesVnBZNQMUuLYeh_lpLwTGnWJIzvsmdMhrQmhEE7gOBus7K1ZJ0qyihzfQDey5obaSXOM5tWHTOshk-iXhQhihkYZ10u4fQN7BKteEcaC9WrPfFGyjuVw4u4y-xirRXUP1Y03DV-eKkfg2JAopiPpPfREL_4T2x0FBkOqP3yco7BI_6bahEE1mOQ3O3WljGSq-RSFbCH2Q-AwjfxiafDuyZ5HppvauK5ir0oadRvhZjEQRPgb1Eiq_2nCFNUFVE4Ya6lXOiu6qAQEcux8RAi2SO9OTPaeWjKtTgMo8DErlBcvww"
+      ]
+    },
+    {
+      "id": "1cf18d13-9d81-40d7-b2ad-6ad57417d16c",
+      "name": "Fins Bar",
+      "category": "food",
+      "description": "A bar with delicious drinks and good music featuring talented performers. Serves food and has rooms available, with a fun atmosphere for nightlife events like ladies nights.",
+      "lat": 6.839169999999999,
+      "lng": 81.8342658,
+      "geocodeSource": "google",
+      "placeId": "ChIJdS0eJwC95ToRfO7WH8rUCsc",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1223,
+          "quote": "we started off our Explorations Into The abay Nightlife scene with a midweek ladies night at fins they had some delicious drinks"
+        }
+      ],
+      "thingsToKnow": [
+        "Has ladies nights",
+        "Has rooms available",
+        "Live music performances"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPxU2-p5QwnzW14z9PdBQ1OZ8ndzJXERquaXxtbj3inD-J2ZPL3RE1DjkhH1Z2Y2L8XBxjxV9v4NbpznBkcLbsVIRbL8Or2ojkjoN3t4KDz20xatmeQ9mBXHF-vNgOKin88x6DiHxGaiISO=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPxU2-p5QwnzW14z9PdBQ1OZ8ndzJXERquaXxtbj3inD-J2ZPL3RE1DjkhH1Z2Y2L8XBxjxV9v4NbpznBkcLbsVIRbL8Or2ojkjoN3t4KDz20xatmeQ9mBXHF-vNgOKin88x6DiHxGaiISO=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJdS0eJwC95ToRfO7WH8rUCsc/photos/AaVGc3lmUFM5YfYK40z9LFoR_oPHMOqSMXOeavuUnTn04H4cfXjIncBBYQyLlCemu5qErvSmWSNgQ6CJuAtzEyXf0Q5NXUAwyDBFlbOY5L8RNRun1gLtiMpK1ua30-FNachBWvjMO4U46EFokHLanBog7LFrPM9yY3NzoLYEKXQDVlmfsGFufC9pjvQ7p-wJut81ZJ9lXaHH0ciuuV5e_bGPFTOLHk-8IHSpaQePaBheLLy0775uCbNtgr1UQffHKvSWf8w2qYH4k-KIPTKVscdr01x8lL9SxGQu48Rhuis4AleGuaSBOYLxkYO9ZpVk1AX0MnlId1nutgLqyTxcKUL1FdTk0I7tM-b9msPcpO0KRFGuQ_w6pZ_6nmx3eYMFjhXEhavtKEGhDqlkSHimnQu1QurwYShk5naccXxtxGM8jV6s26k",
+        "places/ChIJdS0eJwC95ToRfO7WH8rUCsc/photos/AaVGc3kyXbF_eKVhoDPQAXulJDk_qiWV1HWciJpN9QGuMvh9-CTZ3oiYK274Kt1595sn0sw265dpdv9xo-SLZDNBswm6FJSv5uvH_ecGB5iMMpEN7IobK45teqwi5UlUEuQ4x0k0fQwTDpDU_XDIAd5KbliQNA6WWySxl9eoYX_gykhfkWCGoxtk1wodqubr4yEUsIO1NPfAXLEzUIQOLLz02Xa8tt1kvCO9t3_eNB0kBJsFZBUBc_Y3mokREj8exgWCHRLhldf2R29D5Rxi7QvHT-reJ9K5hlxi32rTav80s0F7V4bbumvvPX7F8LReIRLYBopBX2Z37jVqxHHNSkDS_sBFWV8RAv92GulkaGjIGxyixSWPGa83Y85hK-vtZIKQkoS48oROtavU7WeOxTzIDosG9LtJUzeiLnxcv-wjgu5RnQ",
+        "places/ChIJdS0eJwC95ToRfO7WH8rUCsc/photos/AaVGc3nkzPmeNms7xf4QZ29_OlC1XV7HFo9hQvLH0d8lDH4tVy8hl8wMOWStlJp3w3soHeFpCR61keEZzk96iXPtqDKRsQD41UQI1YdWs1TmAkA9622IUW_13h_e6uSNDzfBt99vZT01yfc_fBClxA4FLTMovjvugCREaRvsMl80L2LzKwFIDk3NRjRlGhiyud8eLjp0JX9zAY8sZGFOQqCT242yDEZn3LKTox6YdAoO2EUpdnr_D0KPXsHbA2biLsLa6sb59jz22XpWk5QXcE9plPbgElp8AJlkGSRN6eiWg4LyFDe254WbcY2rW-CJ_Hjd06pNqfmxCwnNy4ZTum84g4_O-4a2HzjFcEjzNLMR9AxGGxgUgQ0K55HwoHqQO2w7k7sSb7jLNS_Ht6hetLGBC8E3lVqZKjloypOk8Yv6XMW5HQ",
+        "places/ChIJdS0eJwC95ToRfO7WH8rUCsc/photos/AaVGc3lr4L5m_D0_ThBjp_Es2g-6ZlE9D8bzhGTwerjYx6w0m9tC1C_x4XF1aNM0pH_umnM1Qlg-hh9Q0nbRsdLAEBDAKITiSyUKLudzCYhri3U0qADISNh-6PKVwbc7Kny0uLt79egU4-HUCZVRGl4KSVILTWCShZBOsnASsMBNwIRd27oBuTdEpYKDoZ7rKKt3NdX9F84NsEDtf-L2JneYHqkW-dvWSK5WUBvKJRalXbaFtS54MaO-MeYtDOLDCSSGpskReDg3mqlSeiUvpDMFSoPPyWb1VlYVa7yh_-CUT97UQLyM0YIp8za2VIuKQF2m-jUSGiCLUHn4u36Onejt9t8W0ir63iajPB_IAkDxyxptxltc-cpTAUcsNlb3Awf-PwaL4aYuXysHcFUS0iYpmdE9ofY_WVVOY_UrXszfNgMQUA"
+      ]
+    },
+    {
+      "id": "802a6cb4-d6ee-452a-8f35-b5ab67d83af5",
+      "name": "Kaa Cafe",
+      "category": "food",
+      "description": "A cafe part of the Kaa guest house known for famous open mic nights. Great place to hang out with friends, grab food and drinks while listening to music and enjoying performances from strangers in the crowd.",
+      "lat": 6.8412413,
+      "lng": 81.8323219,
+      "geocodeSource": "google",
+      "placeId": "ChIJze_-8y-95ToRIM8ZtEPsAxY",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1253,
+          "quote": "Kan the cafe also part of the guest house we stayed at for their famous open m night"
+        }
+      ],
+      "thingsToKnow": [
+        "Open mic nights",
+        "Good for socializing"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNcXsLSIZOKgLG8l5E06ylc4RygGiOamO_MRVbXFza1vk1SRMLKdkJbKNg2JnlWfbvEv5mcIQlAyIm5I4XeFBAciMYYGJLl-6ayOGJmLSw92U-wLF0ox4XqvezZIMPD48TSUQ2vIvX5-XFh5w=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNcXsLSIZOKgLG8l5E06ylc4RygGiOamO_MRVbXFza1vk1SRMLKdkJbKNg2JnlWfbvEv5mcIQlAyIm5I4XeFBAciMYYGJLl-6ayOGJmLSw92U-wLF0ox4XqvezZIMPD48TSUQ2vIvX5-XFh5w=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPG8N11kQFpaEtkQi-_TZrQGAG0ROmxvfiwRSwhhMdvBCtAcQKXxThG0E_S7DccIj0Rl1ZNFSqvIk7cOWfDSoS9s6lDbfTTkj1QguXrDjW1nAk77nOGMwZ3GmyNKDnURwuFYgVWhwpGk-y5dqI=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM_dM4LU-Nc0eQSQ-Z_79vY7rdoP1elIeGkSCbrsP1m1YvNr4J4gOALoHfD-Q5cwwAbCJS914II51O7QN6MxsG6JFg9u6wtzhrR_iT0wreezMqGkOSqaOX521mXbRxThLWB3VHWICk0bQjzr_PhUeEJXg=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNz9fIgkZVQJxB4Hf5SEBAHEsN_ljkiUFX9CS-nvK734aMy9b-w9dy4ZUDX1riKlR4dKuvYs7P-SP8XMLDsgArINXZMpbBmHFYFd6kHxfYp22mU-a2pP-j-7gP6rd45XLvvXZezWcbSSaxjADq7jBcqOQ=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPzw3-a7ha9eiXgoORjCEa9IjCb2kq3cwoTZ392oUNAZaFbwEHNszQ1Ca6mdJPxl-WkZmxUvco_sIAtUxEwWQ5ZVqT18rLBmMyqCK4SLork2fPCXKqHJi3wQ17NfwjCiXicfU9pYL-98UCAQUPurtIcfQ=s4800-w800",
+          "source": "google"
+        }
+      ]
+    },
+    {
+      "id": "c62fe5c9-3e31-407d-b5b6-76bba13f0bd1",
+      "name": "Funky Debar",
+      "category": "food",
+      "description": "A popular spot hosting the big party that runs from Thursday to Saturday nights starting around 11pm. This is where the main nightlife scene culminates with dancing until sunrise.",
+      "lat": 6.8425296,
+      "lng": 81.8322213,
+      "geocodeSource": "google",
+      "placeId": "ChIJhfq0Onm95ToR2iJReOjkXec",
+      "mentions": [
+        {
+          "videoId": "VD-a106h4M8",
+          "videoTitle": "The Ultimate Guide to Arugam Bay Sri Lanka (4k)",
+          "channelName": "Sheneller",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_mWGe87kddaoOXpOnASDsZ4RLIleK1UqNJrDdwcj414vg=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1329,
+          "quote": "these parties happen every night from Thursday to Saturday in varying locations and today's one was at a popular spot called funky debar the big party is pretty self-explanatory"
+        }
+      ],
+      "thingsToKnow": [
+        "Big parties Thursday to Saturday",
+        "Parties start around 11pm"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPzJzg_KpRxfbE3YxRJAfy8yRij-Kx_9y6w3YiW-0nqrF-6u5DmFaKhPspt_yosIAUqrsT_xayP4JYwz_0IHQ_aLSWPpaI3H_ODnUuAPFDk60kbSdt2TUnPP5DfGSWY_GcikPspjDq76tsp=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPzJzg_KpRxfbE3YxRJAfy8yRij-Kx_9y6w3YiW-0nqrF-6u5DmFaKhPspt_yosIAUqrsT_xayP4JYwz_0IHQ_aLSWPpaI3H_ODnUuAPFDk60kbSdt2TUnPP5DfGSWY_GcikPspjDq76tsp=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJhfq0Onm95ToR2iJReOjkXec/photos/AaVGc3l5lFmA90R4s-HS6QPWwbvFQXJdQWR4SX9TGXAi2rAvYtjo57lO2e9OG8XYh1sOhAmYzcRMfyCKbr2JgNBa6q7ib11xfMTfR4PiLqC64NcEkp_xLtbHjZn5GuyxyWjbmG4vdXtefSVWmIaTnWi01SCqp7-x0xqPToyw5vuuJIBQa3UBYcZjs0IrOtn28gcPU3YhrR9dX2LwZ7s1dubgof3ubdbvG6xKHt2zSyYxXvMMHKdoiA2nI7tfsyz6NgjuCwwXsImVvafrEh-LZSNeaBoqjF8DlFcgEQXiouDGyYlaIavskk8SFe_3rmHmTZqgSXXJ4LUPpkUWN_tTwLnt9PdcqJeWmYagI-S4_IIhqFozVV7k4KldQWP9JzIuwo_Zc15RO7PPVe25zs8J8EfAhLt6C4kc9HVmaFvOnKtZG9DU9PIh",
+        "places/ChIJhfq0Onm95ToR2iJReOjkXec/photos/AaVGc3kjYJxDT57eWIQOvST8P1DMBxVEcinWjVC_5lmIq3YC_CEuJr-syAvDRNFe_PtUR9UFQjDK7-8QVSu445KouFZll_L3yswrmLdtHwbndbGvMz7ZHOnzT6VpD7F3b5Ajmrv14KREAVzUgijPMLhVgk9pJbK2j8t_Wgo9Rg_XX_1VYQGHgkmyDQtxoVTB4Efg8bXpTcAwLdLjdZIvSkq-578h5ElfYnTn7fJYzACg05ZGp_bhqPDPJUiJODwGWQdTqIFKRrFeWMv1u2n-d9tkNzNmkrlUoFAsxGR64EsUthOmaM7tIqhI0gV8pJTh3j6d9seB2alhVtDmWLQzSeOEKtuv-D-nm2KHVCFxCs8Abr4Dzu4elBX28tmFcWOZSswxxQZfRyqm9zaFpjY8xCHXiAoMhYPVTE9y8ndLA1cFapGUIHvJ1K1u4lGyVSmQqhOu",
+        "places/ChIJhfq0Onm95ToR2iJReOjkXec/photos/AaVGc3lPfio3n1l4M3dENG91cDPosYdvHOrvVz6bJxQlDHJUG1XOi4XRL8DBPlmrutEmekxNW2-YHZ2pje5owZEpR2qLkxGs9KgGWF-i-6Mggq9d4TzIUj_65W07ALpi9_8wYlG7UdBDQyUWsChQmzgnFjwwsoLKKhWtymsWN0EFXEB1o8ICaM1W2IHyKFwh9pZ2E3vkhqUkvBHRHC0GioSFtmKi7zlfkR5keL_nPY5rDlzOiccpfzxqEo3W8APKOrD1XYAsUkiqMDAEcGRCdYbnKEZTiAuu2T9ff1gwAsncKKhNSrU1bv_iXSAjgy7qHfJRsYtTMJFhgO5r-trYBwH5OYOVwZoQcciSm-KpJjmTAtaYZ8afiM_pqBV1KbLaPpAk28WsEJPUUjnTT6ACP6oclri0lzigVlj7Sn9GGphUxPn8_V3wNVpT4fRXcRspzU-B",
+        "places/ChIJhfq0Onm95ToR2iJReOjkXec/photos/AaVGc3kt5VO2P43gETbFNNm4aQUnA4ye9IoNzSdObNwe7fgfZsWCikwfPX9JBSles8CW2LfZgUDQ5eoq4157c3Kgxdj_6Om4fduYTfxaebtLUB2Wc40UPCYP_SA7oOUZVBxKVAsbVxmcDjDR0AMGyU5c7O-YccT9ezaVQ533Ck5pT-ka7P5usOywczP04iNuKHlwoebfhQcPGkthqd29zXRnfddMS6ZqXJvuatHby26lIy2LUZWz9-gcXOAnXqwTWNHf7Iqxr13j6r-OC3OcmulX3v0CMCxFVNaABrSBnjgkZaoKfcUyJh3IhVe_WmQiBAvUiADZWLKLVUKDFJT7dO1m-0WaAqE92tvrILDScniY7kUel5skRS0F4oSlxq8yZPXjaa-lkLhUf7RoBo4PKNCHM4e6iLnM3hIppLaQ1aHPFZKRTA"
+      ]
+    },
+    {
+      "id": "a6add47f-d91a-4578-8d67-8038d4b61301",
+      "name": "Arugam Bay",
+      "category": "activity",
+      "description": "The best right-hand point break in Sri Lanka, breaking for hundreds of meters. It's a mellow, user-friendly wave with sections for turns and occasional barrel sections, but gets very crowded during peak season.",
+      "lat": 6.8404077999999995,
+      "lng": 81.8368478,
+      "geocodeSource": "google",
+      "placeId": "ChIJv69ve9Ki5ToRNNv1nbXW78Y",
+      "mentions": [
+        {
+          "videoId": "sCu4bFyvR0Q",
+          "videoTitle": "Surfing in Sri Lanka || Your Ultimate Guide (2024 & Beyond)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 60,
+          "quote": "Arugam Bay, in my opinion, is by far the best wave in the country. It's a really long right-hand point break."
+        }
+      ],
+      "thingsToKnow": [
+        "It's actually a sharp reef break despite looking like sand from the beach",
+        "Can be shallow in patches",
+        "Gets really crowded with up to 50 people out during peak season",
+        "Best visited April to October"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMptz-oSYav60qzXwJNulzMcxtv55fwOWksxKjfDtDFH-LrssK4Z0H-fbVpc9sF9NZjxVrmgVQr15Jvn38zg9jhH3sZo6Knnu0vrIUWqCxFX565mK4_zfV1dZeNONakneLe_z8SbGyO7KAjNdc=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMptz-oSYav60qzXwJNulzMcxtv55fwOWksxKjfDtDFH-LrssK4Z0H-fbVpc9sF9NZjxVrmgVQr15Jvn38zg9jhH3sZo6Knnu0vrIUWqCxFX565mK4_zfV1dZeNONakneLe_z8SbGyO7KAjNdc=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJv69ve9Ki5ToRNNv1nbXW78Y/photos/AaVGc3maLiWga3_4coi7HMaCzkmkmGVe0zenwcz9DrYZtDbcZg_wJ_eA1_aiqMIVM3c-yHK2O5VvZdTITK5JeBmwugqLABTgjyGMePg1xxlhtO1kCZcTPNpMAbRomUPVbSThvlocgziYykhm10RR8CnlRYtcHf8_bMmT2rgHDU3PxM-84CxSHYRV5y5jPGlPsP5bTzW_b_StXcHoY2gpHTNStEZBrIETbVEJqrt9zVggNUEHJAHCo_k8l3REIj86GmbEyUoIhZ2luz7K8OWhgRRMXsw2qJlEY4mmYYOpSsg9H2d2sBo7__wQI7BGxDiAc-e4GpIDFIzuWlkwuS-bXTkmai21cClx3oh7MyYNjlWVe-Y7ro6_d_tojrVghsBtmGF7SLg_f96LVaTCgwW-rLc9m5MhTjDXnKQWMPX2oflX22swJA",
+        "places/ChIJv69ve9Ki5ToRNNv1nbXW78Y/photos/AaVGc3nCW7i-3XV3jGXOHj0tMU6KGHbCywprQGX7n3HOCaFApJXLDxH4QQ0-55yaY0l1gD2YDKXlcuUG-1VLI903dggE_cUV770Boxk03KB6MuHsaAjBQpeCPBUML5VC4tJbgET3B8-dVKSE3jIcS0zDRU_xRfcBSM4ZbW8RlQtN_SSY9bb5UR81loygT4P-mLCJma6AaMEeaTZ9Wfo-Y7pMA8jDdIb2SYTE7xkMJERaF_1cCKx-YVp6OThXmC8m-8yEZRwIut-ems-MArtt82xSFg7RPJtXQeP6FZTJuTdm2q4Z0_JsECgFkJ7jeiv2fa6TP5rc4tmB1ZN80eyHzixoQqRAxBX_1YQfsxdLGqR3LRzufMlZWO6aiPRGpoXecqcnyK48xC24-CqVM9BhFZMbBEAoKFA_BwsWkFt2E_4ArbHUoQ2i",
+        "places/ChIJv69ve9Ki5ToRNNv1nbXW78Y/photos/AaVGc3nVetpZLlsCx-6BXYFa7EFPhRORa09s1TjiPbdvMSrYm8Zh8_Negjp0eq_jOJv3Yzqc0agHZ073bSE1oFVeiqvnJP2DlBTfFXnF4hdBhBtaFJd0dYL8qdN7EQanVTdXYcJUWUEXSNfQUD-R_ZPkix9y4ifw5ORYXHt9GIV4e6_FeZIWYbq1Xyo__Zbj9G5Ab-4TKd_XH3d8kehl_HoCjDYUc7xxK2vfFx2HaALCBovltCBUhApcZcCa3lnqP2eL5K5vAFXNy5JPV8YO_5S-HFPdUuvzLjhmWeixLZgOnbYYVwAj5F4Cl2jcFnTW_rT_WGoHsgGT22zab16y7md363eUpEFHgi9PE_UB1-C2JE15vtmnTbfXnc6j5bvPj685yqxgQuXGuqiVfvVqnXQXEwtOTG2H46k0OJ20w50Ry1tO7q_N",
+        "places/ChIJv69ve9Ki5ToRNNv1nbXW78Y/photos/AaVGc3lVHAJKXsxVqLzT10lyrkR13NLPkOQl_pdMVArydulCtWrPmggffj5TSdq5uES-Rnu3remgoCGFFF7NHRkzW4cep86r6gOomMBazfRjAd9Uq1hjiwN_3yIiMzD2v1mHBY-7vo7BXsHvgmb2ClwDTqPamfyW45oWfjoHA5c35rW6lMuN3EiUc9YSxKduaNvLoQP_UqT8A0o7DaAQ7GQRuAHqNwzECJprokSOtUMl_h3kdN1F2k9Fg3IqdoNQeAN1E2Cn7XcH0zA58plBHRzqT1lnXEE6NwSG01SQ4Yi1ZE6nUXw7pCsjsbZs1bH_oKDrkkfWYjl0LgPZhtNqB2mbjYG2zOrRxCxiQL3qnkoaQjL_T9pCKbHFXp_L-mxxA6KBBHjW04S3PU3zgzEtodF3x83JENC0iCmz4oWjoJF8lKE"
+      ]
+    },
+    {
+      "id": "21f90d01-616c-4955-983f-8d5e46c9f16c",
+      "name": "Midigama",
+      "category": "town",
+      "description": "A short stretch of south coast with multiple different wave options. It serves as a hub for various beginner and intermediate friendly breaks in the area.",
+      "lat": 5.964726199999999,
+      "lng": 80.3908611,
+      "geocodeSource": "google",
+      "placeId": "ChIJu7qRTcAU4ToRVAMvJNaQVr8",
+      "mentions": [
+        {
+          "videoId": "sCu4bFyvR0Q",
+          "videoTitle": "Surfing in Sri Lanka || Your Ultimate Guide (2024 & Beyond)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 123,
+          "quote": "Midigama is like a really short stretch of coast with loads of different waves on it."
+        }
+      ],
+      "thingsToKnow": [
+        "Best visited October to April"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOaGcSoVgorOXf95uu1Cn9vb8q-hueiio7hpHy9gudsocNEoomEGYvkXCGcyhkGMUXb8ta_C6oc0m6hr_CyaHLUW7exjKx3xlE68ANH5u5Azc70K0KlWpHtFwrlmC-giswsgcDbkURoiFEBCg=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOaGcSoVgorOXf95uu1Cn9vb8q-hueiio7hpHy9gudsocNEoomEGYvkXCGcyhkGMUXb8ta_C6oc0m6hr_CyaHLUW7exjKx3xlE68ANH5u5Azc70K0KlWpHtFwrlmC-giswsgcDbkURoiFEBCg=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJu7qRTcAU4ToRVAMvJNaQVr8/photos/AaVGc3ke3e3xWQCFS4zgGSBSSz-FjOpcX9BbFpwNe2uRdPZv5IWHMfKLWJc0exMREj_8kyJn-OyoczQ4cH5qvM7SJkecT8Pape1q51cdWEoK_iohiaHABJhsSm36xzcGu-rj2hTqgO1HFcD1XF5nSHHaomiyVyD7cf0WJH-xfPEQmlFNAKAkzvazuN58Z0eIeKV6HqTUpDMe9XIqkmBKUc1BOOH-GU-AcwCEy1Jw0wiODQR0xaWthmaoESJKYbGWzSKe7d9ccdbktpQZ2BeHNnlgaL21L5UXun1wp9iG2ggK06FyogjnIBMcwnwqVWYEDf9z44TwImEezftDAOY8v2RR9XY3KKau1crp-t_xSw0fQMH_2S-T0kSCJhjKl-vTTH44IRQHeK9MQiyizPNhT6NQiBIvqsqyhamX9luicoredl26EQ",
+        "places/ChIJu7qRTcAU4ToRVAMvJNaQVr8/photos/AaVGc3nYahl0_DS90R7G5jJfao_IOKYQjXd37asy9KdyUgM3-QOiy6ugN32mWBBOXvMHcUfKpsSy17X0v9-LOR461rBSKyiEHX1H638pm9bAihvtKyn998YS0lmFoV0bzu9UWEJGXBgcJRTn7bobxoP6SB2eHtY2NZjUTuQETEhXzIJRizG3SpI96VyhbYy8afmNtxovo-Ml04dVCCWjfVfk_SWL6qi_5-xRrdf94JwbKe5I7GxQhRzrdbdFBfef3I-SfFMzJqzfUKQVRTGa7JzZ_H0VkdtVLap3tjGf-rHHwVtQUQTJXT4xIEZ9T44UNOMwLEphKKdNAo6SZjX_fImsV_v7zcoRPhqS5p2rmgMfkE1dEcf1uYHzDr9A2qFzi8mX04bzO3qnGocWOVrcrfPijhUoZd_AD7o_kCz2Gf3iyUFh9g",
+        "places/ChIJu7qRTcAU4ToRVAMvJNaQVr8/photos/AaVGc3koT2WsaDTVcuhTTAR9PAX93Rzy1LUq4nDqHm_aVcpC9Cd5KqozE84mZto0q5BSGJ75rXxrG-MCaXcEZizW4hGx2Dvi0pW7YSMahCXzYPcLgFgSBvhX6fW8zMVDYI6DkucUJzoG4pX7Oqz7f1QRPpFjswY49GWzg4O-O3deQdayrcVm2RmRSJJGSjgJ-Nh1f85pSlWnNO-HCJSLIz7pjxKYkyKAO-FT6pIsxylaRW4P7DqqZ-NDpmxEiRnbouugpi56hy2yG0uzwwvxI27hZDdjWViwrdueD--oxCbXGo13J518jl4P4vQ32VBPozEq83I99GFOWGPNB_ClKn5sSRSsiiDZrKxj4tqIUSgI7YPNiMSVIFyjKBriqasGqPGMxAtGHRIuKNxP5LjBwt2_YJclZtEbEgCDcVMLvU5eLGnl9-gX",
+        "places/ChIJu7qRTcAU4ToRVAMvJNaQVr8/photos/AaVGc3mM0mr7mr1xBtFMl50hRqnF_zoHYOWc5p6qkSE4Lq7emvFS3o2xGJD7h3QTZAx6xNY1-CUd2pLd4k_-8Xa2pHZqgtUyBdav4q0Ie6NsyGqlTvtESGcGvQTI1dOOx3HtLfke-goDNGO22E_XhIPjl1_To0IqZrES1fUu1Nbh9G6MONdq8ewMCVEPGnGWZDXcJ09zhXgtj3JQ3bqq8TOhGeOgSrtVzbjyazexBZM8vlnQcV6MWV0j4LjG3R9iywvBViyuWhz8oXot160v6IJPqHCnsrNK48Xyw64SVoWLESK37cUbsvdNx2X0hh0nCWL3gqh9Rux5YhRDYJ8UdxaF2FQKldmw-S7Ba2RFHadZzSXf1d5qO-irfVfKDsvkANv1kAlV78IMP1h-HaD226L1WNOkyFAKuuhYo3RGJSQ2mP9irNln"
+      ]
+    },
+    {
+      "id": "30d51c7c-c80f-4a05-a631-1ddd19dfcb19",
+      "name": "Rams",
+      "category": "activity",
+      "description": "One of the named breaks in the Midigama area, offering wave options for surfers.",
+      "lat": 5.9628953,
+      "lng": 80.3940289,
+      "geocodeSource": "google",
+      "placeId": "ChIJg9UjJ9cV4ToRGitvirEjwSw",
+      "mentions": [
+        {
+          "videoId": "sCu4bFyvR0Q",
+          "videoTitle": "Surfing in Sri Lanka || Your Ultimate Guide (2024 & Beyond)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 130,
+          "quote": "In Midigama itself you've got a place called Rams."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOfBSVSWadaNOBtbEb2qcILIyMgJ29lNFVhkAQrRSMZIOWc_evAIQPl_yt9qSQlTEnJqfO1b13MQHt1-99Qfk-KF36mN85xdPYxy65DhfGzpoSO_euorb2EN7IpNcUaMZDb4cy4z4_lqeRuKvktszsvqQ=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOfBSVSWadaNOBtbEb2qcILIyMgJ29lNFVhkAQrRSMZIOWc_evAIQPl_yt9qSQlTEnJqfO1b13MQHt1-99Qfk-KF36mN85xdPYxy65DhfGzpoSO_euorb2EN7IpNcUaMZDb4cy4z4_lqeRuKvktszsvqQ=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJg9UjJ9cV4ToRGitvirEjwSw/photos/AaVGc3kEtT7Z2IMOWZw02rDMVIWzSwhZ6u85QUE4rErcL6ZjTwqIPsHdiTqqa3Uw4BQc_uv7AOCPqrfgalT3P9STrjAq30k9eLgD-IlxyZrPljGZM1P2Drj4hGcu5uDOFUysMFHV_77GnGSjCN3bkIFVEk32fGmwaTmx2gyvemIMS9sWQv_KQuDK8hifY1q2gvaidAEcoQ98BKtYfMv6BObU9Fl-V48THD_AEZ-r1DJqUo-Vpdc1BofUmgAzRRVb8rbgKigH2B6HYjAznTKoP_S-HNhoZY5eyJDPdscDU1Y3jwdOa7jDj5WGn0a62r7fhZvvKiKTimRsTts7y8aLh6df1FwOK3oIbU9IMgPMnYm5ixm-aGjuqecAlXiuo7LHLrVuO1-CSvwwA8tsa5bsmPxxcDwfh_seRs7dUQQqp2e2KWrSA73F8k1zZQS1yrIkj9d9",
+        "places/ChIJg9UjJ9cV4ToRGitvirEjwSw/photos/AaVGc3lXEQQrClpGbRtx6zo7DAuy7nbJUKb3E1z4d0arqWQhSR13p-fJJxTGmaWtCaz31JAOfakgfdpwcil7lJrmFLJ6AXBCfS3jEvRoGJV2HkrMblFro4R78Hn4h1ahLDVQrucTp-Q1sbVefg6Ecx5rf2NQa-50mxMsjpem3ao1nWA4rWv3ZWKjKlGDSYIQVuLaHb56h0L7_2hAFDTX4UelzrSfwESqo9v5ZjWnzbgMzmk1BshbLBZ7tEKraF94JE50vyWdeQRZBV4FwNifU34RcnDCPkV1hwlFcZmy-hTHUSwknBtSI5u2tY8PPop3RmkpTUrBYB6lyF1SlLRpPzWiBrFXEC5Tr2BmhFV59qQ3OBh7uMOhJloSS8va6CoN9mzD3MhqMrx5_toikF7coi4BoSsj52l08Sg_AXTJkJIpSuvDrfm2F7ryDDv4e1m_I1Ss",
+        "places/ChIJg9UjJ9cV4ToRGitvirEjwSw/photos/AaVGc3n8DZAwKsawqWkKVrDsDorrrNOe-aNwteS8kEJ9SUq9TnOZxVridq3xjcIpm0HnlBfgXnkmVT-_Y2IOUe6IhErcV2xnVjabWjAsV_tl-hHjkE63aReN8SWkPTcFfmdR8HgXNITrn9jWDf-ssjO57tjOkMX4q1Jlsg41wvvs4oQe07pAruS40w_n7dDjnCULoWX0d41FYydK5tezq_vtJgcJcfDC6cD2Tlp7_5EK5Pf07Ha0s4rxWLPz0y2Hp2PBLZEKbzsMjSF-_FwDs0kPvr5N65x15gsabuywjCXkL2McTYIOIq7ldSVN1Y8u7nlhd5RKQI3hQzr0YA8AvuWAOuoK7nYOJ9q7YthEpboUzqpn0of91E51mojrVIMFosLi_nK3cU7x1SFpCuzVydblsWSOiNTo1qomOSKFkXQJVWnN4nu1wK9IFQRngt0GY7qw",
+        "places/ChIJg9UjJ9cV4ToRGitvirEjwSw/photos/AaVGc3keU-ggmc4BCG4uOGxio_PwyAqBnwQxL-rdfmQGHkbmbXeYEWK7Pratzp2eGAYyzON7CLSGr10ZghxsIpSQY6e7kgJoFzOlHG46SR20UA9Qf64Y1bvnDLLivowM7oYI8D7bzOSNDVIBOTMOlgsFuGLSMoKoXHL82RsYNKhoRtlPZ2NsvR7RYnohGbzb9Tveb7G3emTqxsyUdO0Jm6DkWAZZtieDuhPeC609mg6ch-wvw2YT20a0QyYMa8P8fak-ULF4pIkuXMBN4wGlRMl8AJHe6zFvwM1LxirhsfJPtbL0e5E-3HYeIy-QbJ4Eq8a70FlNKjqeMd2E_jkQ3KVgPUe9_BM-pp3-pj8NwYaLNo8yJKqjaW6MzldMn_YTnBG_IukS4s418b58BuYBxhozyn6ymvi5dz_FfVa13Jjb7k0i07FB2NhRcQSBJRFome4N"
+      ]
+    },
+    {
+      "id": "3ae8e839-49cf-4465-85d5-b40e7c628b6b",
+      "name": "Coconuts",
+      "category": "activity",
+      "description": "An A-frame peak break in Midigama that's a reef/beach hybrid suitable for intermediate surfers, described as really fun.",
+      "lat": 5.994262099999999,
+      "lng": 80.2961929,
+      "geocodeSource": "google",
+      "placeId": "ChIJ6Y2aYABt4ToRWB69-_lsMuo",
+      "mentions": [
+        {
+          "videoId": "sCu4bFyvR0Q",
+          "videoTitle": "Surfing in Sri Lanka || Your Ultimate Guide (2024 & Beyond)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 133,
+          "quote": "There's coconuts and plantations which are like A-frame peaks."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOBcqmVqIS3JeMAEvQyjn0-il2blB1BUG39qItHLSaHUbYBDr9N9LnDsXEw-qCAj3wB9p6431U2CSztc3TK6rLXrySkLzqvOzTuhm6MumCVuSJIpay6xPJLUW5kgrBorfWhA10nRd1G4jGPz1Ac0fd3ZA=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOBcqmVqIS3JeMAEvQyjn0-il2blB1BUG39qItHLSaHUbYBDr9N9LnDsXEw-qCAj3wB9p6431U2CSztc3TK6rLXrySkLzqvOzTuhm6MumCVuSJIpay6xPJLUW5kgrBorfWhA10nRd1G4jGPz1Ac0fd3ZA=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ6Y2aYABt4ToRWB69-_lsMuo/photos/AaVGc3nTwjQlK_emNLygfeFdGej6_Wi_uW-trTEsLzta9NAnWeh-HxN5Hz-AkNdM-t_FFcenC0cwO14E6a7otumlVSRnBH822_ShE0yMWSyP1rfk9tmQzcInK_JB7vAAiBXy7nH7Pan0-BdcWjwS_S5qBbsUgpA1sbQoH9rHTLRuX39OCr5FrQHlV-eQGYYSMhrCYFNHHZC2s_9XKlf1DBlbF2wrlCi6YtCy7k3nvBxKKg78IP9dLLFgSJK9YJoUAOWZaWACa5XaFwN_8rJYPHG-N4uD1rfxjtTH4gccbakdQbx1QameBbBS0Jfc7wcABjYN3mjyzvlR01ji7pXGcFOd47C25Ic5F4CSvkS6pokPqYNC6gow8e-09VoLAkLeBDq5m5CxMUnGryx2cuDjNHjqHHdHvxFQ5R8JwP-4vTORARhi1DI",
+        "places/ChIJ6Y2aYABt4ToRWB69-_lsMuo/photos/AaVGc3kEimfC3DdnxOMCIKZCTPbnIJ9Xcg3T7ioXhs7_JwYzd-jMVmFmqxsx5DVlfwnsQWoyDYRGs9n7Wd1TJh7NWkyVPesITs2vbrDGk4D4bQ6Od8bqGl-BtjOrro6-M3dUs4JDpPsSfrDME1wOnetvIn-ec_iC0Sz-Uf6AWW6dl-IdUvoivFJ6yc1kqYIwemqXkDVNTXtEjNfKbFZNvjNYsHZNZ9vtOoMeU5x6t_lYyeA8CIF1MH8BByNSB6f33Bv7wjpLwNu48dE8vRXdLLUfP5dKpaV5jI9mlTPbA4_rZFtCPdq3vAZ8-zfLQcdCpMuI_NUHoTXNHXXLQTuzpD0Q8NCMfCKfD-xSs190hFn9tVI4-kfkY1TN2Hxwgta7TrpjuAg_MeSxQ-DBhrAgt25-PSA70W6qXX9Q8umh3gJJ4fF_CXbFGNFTeKVQBozS4vHa",
+        "places/ChIJ6Y2aYABt4ToRWB69-_lsMuo/photos/AaVGc3lO7AkLuTQIudG9olWZ_zz47K4ed3aIpOeSWf_UAVtRTw44E8dZYnpyznJBPYLT7SoEYgOsr_4XkcMEDc4QoNbPRjJG06MPABNU8ueomjiw2-vGCVXnJs74bqZbXMH9wXKs1npQuJvOvZ-rQnM7tWj_AwoaZlH3-mJnHgHmlw8sfIEIEThXR3ie3So5Bj_ShBdLsz4BeuyYY-7Sok9rWoUcY8IUs80TioDbKRCZFkvdMvqFtNKmC2OxqZe7QxOwON7erckf4aMiG-Ul18RfCqSS7Vj1nEJMrNGSLqLX_hp1pp-DtXNhrELsp4g__ZlzCqLnwamfvDUCZ8d4uk9CPdEDFiejBBHCs8WycNuxfntvntrH5eWxDt3iD6hxiwej21RSYZtM4DObKPbKTiqsQzBPZVtx3fUq8TByzVAaaXf9KEF_UddU8Z9r-NFyrj2o",
+        "places/ChIJ6Y2aYABt4ToRWB69-_lsMuo/photos/AaVGc3keJ3Q41DeHAPyxJfI27erdDJ1y1Cbqx-7q9tp68cjWORMFpN4VWjbQWqptfBbU02KsKn0NP6o_JKUXPbCsRhA2KEcoWL6FUutByKZWZwKoK9ffG_Pzdo8VJbntau2x9GFe8Hk8F0BkkNPeZZ67hNOTloXhA8b52-qIs01q9IrJo4T9Vpz-Hr-VHKCFPMa_yMu6aB2kJH5Ul-QfJc9BYVrMoj84uM8oo7z3oB73e8h-fCztwoh0JBlitwkNIwF-e23hbGgRpiJwaWHbOzAdBjaXhONfADi-N6OpkWCxUn-YhbAVFcWBlTnt8PJ5n5cmeeBM-m5nU7UXJYDPkQfw-BMlg9Z4FIn8_iB-Wg_9Qe3ctf8HJG3AH_LOTiN-9RWQfPpcsm8QwzCcYNnu2LnooY_O4mEL182erXBw8o_bG1tCROJlywdh5OmO8FpIesdx"
+      ]
+    },
+    {
+      "id": "38d49d47-7e74-4cb1-8c7e-ab1e940253f7",
+      "name": "Weligama",
+      "category": "activity",
+      "description": "One of the best beginner surf spots in the world with a long bay and multiple surf schools. You can hire boards for around five dollars an hour.",
+      "lat": 5.9474903999999995,
+      "lng": 80.4270885,
+      "geocodeSource": "google",
+      "placeId": "ChIJWQqmYgkV4ToR8QTHAgPVVpc",
+      "mentions": [
+        {
+          "videoId": "sCu4bFyvR0Q",
+          "videoTitle": "Surfing in Sri Lanka || Your Ultimate Guide (2024 & Beyond)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 142,
+          "quote": "Wellagama is literally one of the best beginner surf spots in the world. It's just like a long bay."
+        },
+        {
+          "videoId": "NwQBoumZnxI",
+          "videoTitle": "SURFING IN SRI LANKA - the real deal or is it over-hyped?",
+          "channelName": "Kale Brock (Kale Brock)",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nzIgl_7Fvxdc1iX2PHNfU6sMFN_rqS5AT6dMyw54Ekulw=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 609,
+          "quote": "I spent most of my time here recently around the Wellagama area, which based on how many people are there, is the hippiest and coolest spot to be."
+        }
+      ],
+      "thingsToKnow": [
+        "Board rental available for approximately $5 per hour",
+        "Many surf schools available on the sand",
+        "Very crowded with surfers and surf schools",
+        "Best visited November to April"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMHG9GyN_xixVwl0pNvvNoglrVMjIMH8G5zlei7n89joZgjKREp-HBOikK2p--uEc2flWdW38Tw144Qqku_S7J3Zj00pxqGR-ntwD9t-ip3M2gJIYR9xlMcdbqk1BQB_bFZL0CT5EXowLUApj0=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMHG9GyN_xixVwl0pNvvNoglrVMjIMH8G5zlei7n89joZgjKREp-HBOikK2p--uEc2flWdW38Tw144Qqku_S7J3Zj00pxqGR-ntwD9t-ip3M2gJIYR9xlMcdbqk1BQB_bFZL0CT5EXowLUApj0=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJWQqmYgkV4ToR8QTHAgPVVpc/photos/AaVGc3l9yIpQZCg7FuYy0fjeN0ox9tLS1hDeapPqZsHTOAQeaU2CZrsGiEDACZX8Y5I4AiK_Vo7OxzIAxaB0bSFGP4L_nsVlvMxXLCEHybQFFjazbr48F3w5Fm3aHvQWa6m_SC2qXIqRc6WdEXirE2hqpLGeRnRnatAFQyDeeTgtipLjYoBIObLHN6FsFktpxVrXprVBxggXHtRZV5aWGkFS2XX0HVdSyw2oidaKRa4mF6xCNdPb7wq4sL3N52MArEqLrsiz_8ZdvliPyIL1RaRVth99RQzRVOBWjau88I76HtIpXvJE0-K4-yfwF3710o-Dd4L8YL1qZdzwEp6hitd2O6E3NA1ZRIYHXQ54NyhV4QKxI4aENLvfci_ppoULP8jUgY0ljUH41Mg2BiR2IaUMCoYwvftyX6FiPUomy3eBDybg0Sck",
+        "places/ChIJWQqmYgkV4ToR8QTHAgPVVpc/photos/AaVGc3kxkSWu-JMaM-bw4EZ-dndncDWjGrS0e39-u-rI_Hd4dKn950REEQpLsZ5I8nocczNSO0g9hpn9Y7cmXcXZMSVTCMeX3TinaskZHgFfhY26YMacPQJ91g3PgSXkRM_9-Hqbr1rlT_XeI8eJinn_rvuRZo5USXVdYKdIXE_-TXZfFSTqZlhO98l6S09dZ6OccdXnm21H7MLwBRJB7ejoUl7B8NYvqCXPzw5J37LfC8K5nu-SV6-qS5fNwVGlhJyymltkEYNEo4gKhpB0sIK0MX7Jqrb4vbjr7J6Ik19E5MDMU5x5Sb9kc5UQ6cDOOVCjykV4P4fYvBayQRYHwTpM7L6gWjhC60fLSdcXo80DHJaWGI0HTtbjBl6Qc0oZx6wmIuH7sHtYujQLT0IywZPSFhGrLI_4hAQOr2te_nJyPANpcA",
+        "places/ChIJWQqmYgkV4ToR8QTHAgPVVpc/photos/AaVGc3nr0mVJeFm7OOp2av3-2n_sokJTVffAmzD_r1dFHkcJ87SPF5hwTIuNPbsaA16cOUr19gjM-k_viMOQ5bcnaB2jrhGD156M9Y3sPQpoBDdRfouUnqbO-ttEspswNC1VGiT39v-2gZxXZ_zgpgnih1-0gSXhCRrT_c3NB2EZ7nwRIv43NEB42ryd4SHsxA2gXlJCHO4HaZNW_okpWl51d7VKtxAou8qqUymXhwb18oGCas8CSD9_0OLm3trxTMhA7heXcRnkDkTZ4_Mssg9PSxlkPwMiTIgWW62MGYV9tjstM7N__kQN759ajhcMIQ05K46i4Ol-9F4VyDFguCJQn1FREhtymv3Wwy6HWuB4R84ZhDA5MBxWhzVztCKBd36eXnuG9sLf4AzCeV3SSiek0QnSm6ARiXswD48ga8Aww1y4agx4",
+        "places/ChIJWQqmYgkV4ToR8QTHAgPVVpc/photos/AaVGc3mdLcG6Zbp6p1BehZeryze-Fh-VyoMHF_Z0eDsF9tIoDvuUxnyl8oLd3bDfReymKc_oSkOtnUmlDRn6vfkD2iDiHMRGIxsM0HKTgXwMfijAxuvqRjOXKI6e6UazUMmW2YY-ZmL2PxwfRgP5HVW9cc1mEkbM5i9DwFy_nhzgBvp15AZSSoPkmYSalW3BqLZQWaciZJAo-Lw9PweC4GgTapzddTuK367bB3bsRWkcHfRCg7KXM-4bb-KQfDrQNMpnXUnlUuUTVy7v6qg7OdEhCDfMpYkP3sEjtml4UWSq63KUXSmj8cwDEf18ZQzllB6edR1b4kHMNcRo-g08CxK3ci6VgUGEHjlATUKyeg14qUnaRhyvUFe9jb_6SgQfTKcyB5jZ7uEN3qmVD3JTreAoQoLoqi509y9kRkNYt3E4QP40EQ"
+      ]
+    },
+    {
+      "id": "2fef10f3-b3be-44b3-9e60-dbc3ef824a84",
+      "name": "Lazy Left",
+      "category": "activity",
+      "description": "A mellow left-hand wave in the Weligama area that's good for beginners and intermediates, part of a cool little zone of breaks.",
+      "lat": 5.9629772999999995,
+      "lng": 80.3907096,
+      "geocodeSource": "google",
+      "placeId": "ChIJOxnyLAAV4ToRK3pomZj7dJI",
+      "mentions": [
+        {
+          "videoId": "sCu4bFyvR0Q",
+          "videoTitle": "Surfing in Sri Lanka || Your Ultimate Guide (2024 & Beyond)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 157,
+          "quote": "There's a place called Lazy Left which is is pretty sick for beginners and intermediates."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOBgcTzA6_jDKABHuEqGx8p8rpfXbRXxwPgi7F748pq1uqISzI3r59OeeJJroKkF9Gb_v016isN12T1FK3TycumGarGcVmSdf90ACfZjX0MwHe_qJeh9nySlqVYh9zihjW5hxzmNw8qb3gusQ=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOBgcTzA6_jDKABHuEqGx8p8rpfXbRXxwPgi7F748pq1uqISzI3r59OeeJJroKkF9Gb_v016isN12T1FK3TycumGarGcVmSdf90ACfZjX0MwHe_qJeh9nySlqVYh9zihjW5hxzmNw8qb3gusQ=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJOxnyLAAV4ToRK3pomZj7dJI/photos/AaVGc3n0G4hYy173x7chtjWm5sDUL2aN9sWTczjPdUpqUpCwaJM_FJReuVU5jqZSdY7wGAWN-Eqa8UekhzNLyQDqZ3cAq6ZBe4ALxvxWZtuVxLnTQNWRJSMkoorGBGvROl5vfbKLdlf5AKIrYYWhGnCuosZzaGHPP4I1ahA49T1xMf3TJJaZbk1grVlTf1kI92b8BvM78iFqDiQvgHcoqvg5PrJ8zKwtaVoAmGH3ACVcaNIE7gaMtebaCpI4vSGe2QrySRTUls8c-TZeAybC9lyGjEj-9gmFH10D37kP7zkbgtpYFSJszjBtlVD_odN9HvHmB9pRgn5ESrCFrMCNTTsvF4iSjJPfV_9T0MUxKov2yjjf_VspcPk3wgAUgGUnY7kTh7McmVAYEUsvn6sUl0BRm_XQ3-nXg255Z3Jwi5PqPq4Lg02k",
+        "places/ChIJOxnyLAAV4ToRK3pomZj7dJI/photos/AaVGc3kMzG47PcssoqmKZgEAPFvZXM7GUOxmmPBUXZtY3A0RKthJAmUCdD5X-avfbhmF5XozA3VD3TMqusSfULr5daqPdsMqxt2QKo9zKJXyiS7ecYSOJgfGPmq8wvl_4Xasq_D1k1JeQW0K_PpbAyRiU_OKjHNwHhRiGeAMc5LDmPGASxV8Y7BCoJlQPKiB3WTDEi0W58LpqDVR75ylBu76mT-1XWlcbHKdhXh2nMH1zWphGnKvkfjxmxlnAnC8b6apQl4CnDVQcXBdh6Hkubtqa9V1cEVq-sQHPaQF0auXTBsPgga6ln-CyhxMD8pzAsyCFTLXLBqObiSzZy2S_O1QVYZN3KeXyTbYvAlvIn_UzasLSlKWm1A4QqfOzssR0ZZglAzf1rzddZ3JqIlj-YQLm1JN7V4GUVal9E1g6LFyNH--N5pUlMv4e6qcVzV1xg",
+        "places/ChIJOxnyLAAV4ToRK3pomZj7dJI/photos/AaVGc3k6WSA3Vu0Uc0_M3Cr28K5MFx4USHNlSem1s6ZjILZyZ8hTiF-ydRP_g4Ar9YjfiXXqRRIJK58-O4zmsLWrO5GWGb0WfPq33oA2mLxy7yH8zduih9FO1oRxNNdK1YPnSZ26izPM4qdClxY8QzoMQjxauEDR9KTCtZ4vtTp9D46UgmKaSGFk7LzXo7egSfw07qC_Mq8B7ZspazJvLU-WXXplYug1MHu1AeijR2aSkoO9R0HbS8aciTkR92s-OMw8t5mzKmGxK_pjd0sWlDFgJtYPKbNbdp6VqPPr5GDllomIGMMZptD5hdfVKxDAVb3VmnSVGOWkPuCNiWHYweM3vrP3PY-aOdFQUvL0r0FEbxV6-nldQlKTcU7DNNyNrr9M84UmDjYIS6ZGM2kfAAWPLdsvgV44-mnFPfwladGeVgVMHvM-2o4sui27Yr0U6w2z",
+        "places/ChIJOxnyLAAV4ToRK3pomZj7dJI/photos/AaVGc3mHCs2KCZL27i4SA24ZQJJrxQooF70J3FY0rXYjX11o952TBEiFMO3hE7ZP1kKnn343aXKRdrINF56Dt2wR7Foujofq4qKDqCmLw-HArnRNgP6uKOenn1Dti40TnHXtLlylKA0NTrhMJqjq91SQjVpGGYYjXsvHxRj_8zhQkStYL3G6mEkHJTN7Zryf75RFNtoqq0L6BlRJ3UeotjHUSY_ePnhHeZW87XvyZAfFfcPhmAiqr_cW8L2LDjGLcrJaU5_MzdVm_tBGjuH2mxhtjg0sd936AlKHE0rIiY8x7FFej0mrT1obTDnzP0Y2NK0YXNC3704aKIU5Nd6O-VK1S62S-BMHhrZy4rXmCcU8VXBYM_EMt07v_CevxJlBfigiXpqj5YZtI1tfZtC7WHzblTn7cK6T4nfL8M51ALb83WhsNBO85ALN9Sl4yP8Naw"
+      ]
+    },
+    {
+      "id": "9685f9af-683b-466e-aa1a-6beca5533e1f",
+      "name": "Mirissa",
+      "category": "activity",
+      "description": "A right-hand point break in the Weligama area that's described as a really cool wave for the region.",
+      "lat": 5.947722499999999,
+      "lng": 80.46114310000002,
+      "geocodeSource": "google",
+      "placeId": "ChIJ8bSWIT8_4ToRGzucxOKN05w",
+      "mentions": [
+        {
+          "videoId": "sCu4bFyvR0Q",
+          "videoTitle": "Surfing in Sri Lanka || Your Ultimate Guide (2024 & Beyond)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 162,
+          "quote": "You can also check out Marissa which is like a right-hand point."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOxymTNFXBBlN8mRy9QiTcTCDCLOlVbJ7TKky-O94EcmQoAxVh8i_a4DZZp-0q_NRjYMSI-OFwOnMAVF9ZflM5y6IYKN2lBe0llRs8-HVr54U4Nn0JOgMO_3P_XjMX2s2nXwD5BOz825-zr=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOxymTNFXBBlN8mRy9QiTcTCDCLOlVbJ7TKky-O94EcmQoAxVh8i_a4DZZp-0q_NRjYMSI-OFwOnMAVF9ZflM5y6IYKN2lBe0llRs8-HVr54U4Nn0JOgMO_3P_XjMX2s2nXwD5BOz825-zr=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ8bSWIT8_4ToRGzucxOKN05w/photos/AaVGc3ktfpC92fthf4V87EQivqJVnP6p1FVD4RhhsA0BIX-VNIhsK7SWCf8xln6pVCzpGG8axFqJqmKDD4ulIe9bOozyP1cH8hLuAJvunmj4gC3GdMS150DE9Nxnj6iZBDMwS5adYuuP_G2Uzpj7atXnfsae69jTh9OAlOQcs0Ph0_x_Ni9s5TpghRthtjV_g_B3XdDO1wrtJ7a-XglN8dAWWKIOfuq9uBp1YELuWm8MYEwHuaiI7Brt3mx2Owx7_3UyvrYHm-nyKtQHLqi0X4lwue2QA18Mo6eIHRAtyxNUm8q3Lbdk7S_tnB6JvcvIlBT3a9NsQQr588pZUiVbL_Ni8MT33xHjGMxYH53RBgtdoKW4PwRHWDc77IHWvSgvrQS54bQxlAaC61Pf_oPpD_DEBks2rsA-kwJ8fC745sfMMADUYxJ7PBie3XYJ8jX-FsB3",
+        "places/ChIJ8bSWIT8_4ToRGzucxOKN05w/photos/AaVGc3nfUz0OuqIyf_KawNXHi0x72m_U9Ti_Tuqa_A2ujC7ZVlHHsdq28EMDYVU5wH774ekxPIxpBnshnNUpeeACr4r3xWauVv-DIwmIe_r4rBEZYxemDvpW-pTm2HIBwiKVXUQOYSbSiChH72jWv2FODHWGF5oPdmH-zwlC8-HrIv0Yrhuvfb0guxCd294sNUaOvfWcmYFrDZSBZEBmnn6nb8BjqLt5j8uDyWw84N4nDtcteqPhKQcUCZC5Sgxg-IcLApESkwWaQWmiOtgoN-cNDdx6f35O9xi6TgPmGFJkIG3AG_4CdigKHwKgSowN_xBu6OtmdlRWX-JPy1SN7I6K9b_GXlb58KsfbRIOCVoMZqr5lKptUu0WQm-61JCbCAaFq4T2W_J5ZQe1s-mSuCmzuEOaF8mkNgf3kzYqUCVQEobiA1oO_EOt2uyfPT1UG35Q",
+        "places/ChIJ8bSWIT8_4ToRGzucxOKN05w/photos/AaVGc3mdD9K_SYkhWfM0G7V6T6MLZbGnP47lDrNIg4g6rBlLhPcIg1D26sjSJ8jAJ5PFXbKNU5vvKcWkbmxicmyQyEoS2ZzDSEHJwlO4QYK0QeXiSUKH7nobvSQaW5P1la8twDvKY7fFhGquzPnvlcDlPyWV2XAoAXauTvol03fJzcFDy6GydDxbyDXKy_OTb1H4LwgDlpVm2q58AHmxkf3cQZsoMVK43br0RqgPRaXoHILSKC4mq-SXNS_2la9t90RLcGUzJEvB1efDDIGVWamlgpC8yrewxieTbKDsSCTUqsD3l4oTseMH2KBaE5Xb3tNd7YrmOOaiy7wKtSueuHuy02nNZZm-0pr8wTBX58NPtlbeP1OEyNP7TV96ShHdVQ6nfTVlzBVyR6zoLdcikYPD7B72pQZt01Xk27zc-w7cb2f10eWrIl5PC0ORwgT4auRk",
+        "places/ChIJ8bSWIT8_4ToRGzucxOKN05w/photos/AaVGc3mylybAFOBeWyuvswJ-tir88JOa6hZ8FJ7-ZsIaNC0bUp1sUx6D6D6fespm_0hr84_W41X-1aKHqqwlHBC3DI89za8ujqyNaJZ6rU1_QJR1qKdjOXewEy8ew6bgtlplVbREQTkUaimh-Qbg4WHeuCbyR0EkOTfI59YzlLcLzudg44MVp8AXlFvEcVIiHh8ISlCZSMQmZk0YaY2yRCLvT_2mKZlYz9chE7-m_ZKxrgaqwyc-_lNtgiqiI4vN6xbal4wmmi32Ixsv9vWQ8iBX0RxHu_bI-wgt_fIr-7QOulLxGdbqkNTWhhNurAL9dnqpzR_5JwW97YXgGcwVdbGpDbFohZX28oYWiYDk8S51fYQbHmrdS0CxfMN2FL-uDLtiVOKcy1LTreehvPpIPlcp6tDcnoVb0zWru59diioEKqw-EpF2-HMS88sMRGpeejHN"
+      ]
+    },
+    {
+      "id": "100d5b3e-7957-465d-96c5-d03aba405f22",
+      "name": "Hikkaduwa",
+      "category": "town",
+      "description": "The largest and most prominent surf town in Sri Lanka with multiple wave options. It's quite busy but offers beach breaks and the peak, which is the best wave in the area.",
+      "lat": 6.1319035,
+      "lng": 80.1002803,
+      "geocodeSource": "google",
+      "placeId": "ChIJc4vqQ-J34ToRx4V63QYGo6w",
+      "mentions": [
+        {
+          "videoId": "sCu4bFyvR0Q",
+          "videoTitle": "Surfing in Sri Lanka || Your Ultimate Guide (2024 & Beyond)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 174,
+          "quote": "Hikadura is by far the largest and most prominent surf town in Sri Lanka."
+        },
+        {
+          "videoId": "NwQBoumZnxI",
+          "videoTitle": "SURFING IN SRI LANKA - the real deal or is it over-hyped?",
+          "channelName": "Kale Brock (Kale Brock)",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nzIgl_7Fvxdc1iX2PHNfU6sMFN_rqS5AT6dMyw54Ekulw=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 670,
+          "quote": "Further to the west is Hikadua, which is where I stayed 13 years ago. Now, I actually went back on this trip just to check it out. Hikadua has changed a lot since I came here 13 years ago."
+        }
+      ],
+      "thingsToKnow": [
+        "Best visited October to April"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZP2H4AMY_gC-TRz1gp2rRzIFu68Gxko6GGfB6FaZ2ES3eR00TiPtA6glnbenwvjt40xQVjtiIaJRhvFdryPT8bsYmMxUrntEZwNiqhqVWT1JY5yQgHnIDrVK10OcMa4jgPW6Pnm3W84zzgYGw=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZP2H4AMY_gC-TRz1gp2rRzIFu68Gxko6GGfB6FaZ2ES3eR00TiPtA6glnbenwvjt40xQVjtiIaJRhvFdryPT8bsYmMxUrntEZwNiqhqVWT1JY5yQgHnIDrVK10OcMa4jgPW6Pnm3W84zzgYGw=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJc4vqQ-J34ToRx4V63QYGo6w/photos/AaVGc3n9e6C9fM03aUdm31wDHjWcjlp6PQSGN-31HDyh6-dv_Dohr8RiV25g2lcfvCYYTHnU5YYGW9qfmEFy2cnY_y6CMFSPw8wUJ95W4SAAIP55knekfK3Hj7JLHKrHmVLk5qE03RfnxSnLdmm3-hvUDs7E6mav_3Opkhe4OgM-gpKf3ZeUjc-SUw6mClPCCOz6e3ck-owKqdR5k0nUAaWWoBHTctgj9eEVSeAUVtqucspHFagPunAud0pY7wu8mvOqSMIPAjb0hS5NUymNjnqFMtTM4NQx7twoJNXEosAulQe-mRpPjEaMRlQzxLcRRjA3w82HLSgRld7oWFYGZ7R-u86owjofuPZF_-P7WG7wEaYA31UvQtsg3yP7gqaO7zaZi3dCEog6ohdUQfSmZ3tUDUKh0w69bxxxtKkYbFea66D2ACtI",
+        "places/ChIJc4vqQ-J34ToRx4V63QYGo6w/photos/AaVGc3lRr1Y-0HzWL9QZhwOjOLPEcRnrf-0-kn7Rfa73OF_xVpeQu08NRcxHHxj_jS1sRNeHGHUje1y7h9_ule28RcQhU7lge1RvQCE8t4dT_u2YnEnIGHvHw_QbVGPKvgH4KZerzbVE1XPr-3hVGxdzNHjMSLRzFWevxEX9Q97UBQjX3ZoEu3EvKbI_ChoGFLPy6CT8FRf8eIQKihZLW9V_hW1hfTvF2km2voZd28EMUhHMT6GBvaEX2qaZOo57KpKX_-PSUUHiag2bQv1R8-hgqMDjsoZVQcqjxWQMKYiCHGXyMAeRHrG678v26ue19vgMejKjFF-qa-pSikHsz-1Msb_YNaY1J8ZLRvF9yXRHUSRVbOnVFy4CqHU5dvcolypec0GdaU30PM2ycryWtavhEOV6Fe9xexV8qED2-9U0LfyzDI8j",
+        "places/ChIJc4vqQ-J34ToRx4V63QYGo6w/photos/AaVGc3nDf0uIxOn_4qmuGOQo57GLi7L08tZuE7JuQURfi9rq8QdAghcEYEUtMtxEzIyaZzT93LIPguc-zbwjmuBisqw108xK24r-dNZqHBsO2q0yBmkxQ3_Qz0l-BiHrQdmWWjF_09xI69A9keet-xA8-LK8uwSTZXj9pCx1WbygZea2RIBPVh1LfeY2w4nWiUNeKqSbwTqQEsA9NNKIh5p3akadTtSZSLucITDXKkOQwTC7QKGhkzNvn7BRykuMiH0Lokh9WWhmPKSOtV6KrQt1TlqKBvmGTqYeTckJ215dEof-fmLyoauVklqIiAGXShgPDknImucIQGEFj91QpCUyJyp4M5qlXbIDUjSZ0UX7fGiboNKASW5Rsy7i599f_b4dzil0ysSp3iXlKnOBwy4XRefpizCgoDRc34aYIn2tDV6EYvvh",
+        "places/ChIJc4vqQ-J34ToRx4V63QYGo6w/photos/AaVGc3l_73zEyA5BZOVBiTms8gRWOOw3OUTiuCb7J5BzdKP4KtJEz_zL4Oacyt_zdVfEBj7178OFhQo3rrEo06GfG9ZJrwhHfXY22iYAPHatyz7HpX_xxf-S5PKGGBqEB_KGvG36GaYtgNm92V8rfNlZPjS4FhBdHOQGrAftYeg2U_1Wo-_jb6ywNGJtZr_humWtz1ljjFDMgUEamDRNUgpltT_12_d--tXCFtiZTfKIbcYw0Kr3UDG1WciptFpOARy6t2ErTMkLlyxM_iO4oG2ZsOHbvSgzCOS2hSx0siMUSRdqfdFCDyJb7wsDaBCr0W1dk6tu0YoOAYJ4ln_1_MNRnvv1G2YkyVduhGE_WWRvUBzmC6QYWYuYRk-XlT7tbJFdGU96C4eyx-AphB3wNGIzTMCKbEunhVtKkz-1dh4LqQH_bA"
+      ]
+    },
+    {
+      "id": "2e09e3a3-8e8a-4450-9eb9-1997be1e9d09",
+      "name": "The Peak",
+      "category": "activity",
+      "description": "The best wave in the Hikkaduwa area, an A-frame peak with good left and right options. It's a powerful reef break.",
+      "lat": 6.8651434,
+      "lng": 81.06317899999999,
+      "geocodeSource": "google",
+      "placeId": "ChIJiz2YxPRl5DoRZ_IhD7Gzx3I",
+      "mentions": [
+        {
+          "videoId": "sCu4bFyvR0Q",
+          "videoTitle": "Surfing in Sri Lanka || Your Ultimate Guide (2024 & Beyond)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 199,
+          "quote": "The peak, which is yeah, exactly that. Just an A-frame peak. Really good left and right."
+        }
+      ],
+      "thingsToKnow": [
+        "It is a reef break and pretty powerful"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNVNoAqhLCXU_kdSIvSGVvz-83ll4ia74luqbuUmsyO-yaKFIGoLE3RJNfn12mX1BhT8KKxRw16qjffJRLzPe87wYrSAqWPW_pSsFnWZT2qOjAvinSUgoun8zIQ_zDnQ8KddU6J_Elhmz_M6fc=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNVNoAqhLCXU_kdSIvSGVvz-83ll4ia74luqbuUmsyO-yaKFIGoLE3RJNfn12mX1BhT8KKxRw16qjffJRLzPe87wYrSAqWPW_pSsFnWZT2qOjAvinSUgoun8zIQ_zDnQ8KddU6J_Elhmz_M6fc=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJiz2YxPRl5DoRZ_IhD7Gzx3I/photos/AaVGc3ly9kNTTz8AZ-DibBV2XdESdzVJOI4WAyB9yiX4mnFl-KpZWH2E9DrREf2WlmWZ_uVwzuBUopExW5D5j3nfPQot3WsLzxv_eMoTqdjXd-coxQ_TDFVBDcvACAiASqkBt3vqa3gVg6mIpJXnnnClFVlhnlMlR2E8gdJ3lqM6LDsg9doi2xiJJOpFfns6rb4IR6oqi2CDra0KsYKUudbFSk56PxNcoQzDG2cOIcKnbt3WavZFQp765m6FZD30j_b2vv74Ful50gC2QynyKoVI9OIWQjNGo5-H_PgmDD6ScuuumRHhyyEZYhd4al2KzAHWU7smXzC15aaj3QEkPnu3k1FLGqOVl-a4-5C2I2GQJEEfV42hQh1imXDXIkZrVWvRQSw9U6od9ttKPnlgIMlsLQ7q90v8_ZdvQ2_xOV0OlXcnJiVncOCAyM1wzTXQnCeI",
+        "places/ChIJiz2YxPRl5DoRZ_IhD7Gzx3I/photos/AaVGc3nY0WFCDxZAQ-6jd99tP0QDlW8UHth4NWIbHjq0kP0sNY6DkG41IKEItDrUczIJFdf1uvVDJUxS-iPddhTxdU4XWPrHubZpuJ0uJPBYtbnT8Ja18zy1ggtbaV7d6GbWMgqJOjZJpb_OChmpkHv3Hj9cqH-ZIxSaY2rrYD54XULWxvC3Huvb-HycirJDnUFeAXeB8BCTDr-7dc9X9aq_gpVpt5MufzKVydFl7jRxXAj-YQGcyJPw0I2XYMg2_MQ_z5hfubQbsdUgNM8srMvFHBfM-O7ubzUZ6YO1jp9VZ7pXFX3hXwRh91O7ZFqCQSH1-zA5TWfvw0Btr7pMDUi-b3qQ_r0zrje_k24t50QSwo-S7nwDM2C6C4aHeGyTeO6rX3m80KQ-ZkqFZazGEpefESV_kVZu5pM_4Cbx7vfl28JEvDZn",
+        "places/ChIJiz2YxPRl5DoRZ_IhD7Gzx3I/photos/AaVGc3lo5EckT1SMnDHXEZVC1-cRLjZ6CjBfMgAQMGF5q3B99WBVDYjxBmcJws-7X9OtGhvah6_CxLkmPy3Ay40QBIWJCs9iriUBaEvCm9R_e8AP9FEoxctfWjrApJpT04orUA_ukxhhpPFCFzL46Vd8POHuhLaSHpKcfNVvG_kZ3xZTdS92fEyTFIXWDixg_XrAWJLLomEkHd-zprlwC6ph3YaPUAUdmJ800mgRR03wad4NAdjRJYFNUIHWRAORqcZDXEXi1kso2xYDGGQo9o66WWJbGIzBxOu75EchoVzPUczP51avzaYJC74RtiTy23Mp41SFNLRh7yQSqGHiOMOODZZuacg7P0qS-ybtdyWh3VSArsoSJYLyniJg7fPbtUh4U2kZ0Oqj25e3ihaLVnyHGepZ3deCsfMl7F0bdpXAj8pZiC1UAViqDUzzInBsKWMX",
+        "places/ChIJiz2YxPRl5DoRZ_IhD7Gzx3I/photos/AaVGc3kIQ8kByDXsGecUyFNZjJXfuTK4Is7gTENU_40ogtRhEHDFBCYWaz_h_UuRnYQMpE1iF7HcUAbCRWsRgKFExQZd3duZsIdQsfXEYJ1QrgfgLAQSW6m_vBoOIGGmvfYvM4OF36aIA4Fhnv5SJnfNkQtmct7NPJAe2U-QbDcN9QCEzYOmF5D0x9j_0ei0TCj9Iam-tPyTYWxBjJBY77S1uA9r8mcsLQs7KNmsdN-YvgfVaTiCU6N1PgBSXiUVUnZSXCyYt0pD9NtZhcsfOcjAIzY3AFpM2-tlHUdHihxLUwK5kq76u1ldawxzEqLytXwhmyGJM2zuIxrJ-AQHfBmjtLNL1fGptLelnLLvBzO9sbzFJPJiSjwgXGRb-5pVOsyZDW8Zr3-KeYIVE8WIiAcZ-UHRL5z0YtMBZDMIaLc4_TZwRoe0"
+      ]
+    },
+    {
+      "id": "863c3ebe-2156-4e1f-b1c5-d46d7c2422d3",
+      "name": "North Jetty",
+      "category": "activity",
+      "description": "A long left-hand wave near Hikkaduwa that's described as pretty fun to surf.",
+      "lat": 6.1401,
+      "lng": 80.1508,
+      "geocodeSource": "llm",
+      "placeId": null,
+      "mentions": [
+        {
+          "videoId": "sCu4bFyvR0Q",
+          "videoTitle": "Surfing in Sri Lanka || Your Ultimate Guide (2024 & Beyond)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 210,
+          "quote": "There's like a long left, I think it's called North Jetty, which is pretty fun as well."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/North_jetty_rd_6793.jpg/960px-North_jetty_rd_6793.jpg",
+        "source": "wikimedia"
+      }
+    },
+    {
+      "id": "f504e5bc-d31c-47da-8562-c9bd515c2557",
+      "name": "Udawalawe National Park",
+      "category": "nature",
+      "description": "A national park located about 2 hours north of Midigama where you can see Asian elephants, monkeys, crocodiles and other wildlife on a private safari tour. The creator witnessed a huge male Asian elephant within minutes of entering the park.",
+      "lat": 6.4746288,
+      "lng": 80.876319,
+      "geocodeSource": "google",
+      "placeId": "ChIJeX6IiP8I5DoR14DZ-5_nEq8",
+      "mentions": [
+        {
+          "videoId": "sCu4bFyvR0Q",
+          "videoTitle": "Surfing in Sri Lanka || Your Ultimate Guide (2024 & Beyond)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 572,
+          "quote": "I'd highly highly recommend checking out Udawalaway National Park. It's around a 2-hour drive north from Midagama."
+        },
+        {
+          "videoId": "Cw76zqBl868",
+          "videoTitle": "Arugam Bay: What’s it Actually Like? (Waves, Costs, Crowds, Etc.)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 522,
+          "quote": "We traveled 3 or 4 hours south of Arugam Bay, entered Udawalawe National Park to see elephants, and we got to see some pretty epic stuff and got pretty close to some elephants."
+        },
+        {
+          "videoId": "NwQBoumZnxI",
+          "videoTitle": "SURFING IN SRI LANKA - the real deal or is it over-hyped?",
+          "channelName": "Kale Brock (Kale Brock)",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nzIgl_7Fvxdc1iX2PHNfU6sMFN_rqS5AT6dMyw54Ekulw=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 750,
+          "quote": "You can also drive a couple of hours to the national park nearby to check out the wildlife. Lots of elephants, some really nice birds and some crocs as well."
+        }
+      ],
+      "thingsToKnow": [
+        "Private safari tour costs $30 per person",
+        "You can see Asian elephants, monkeys, and crocodiles",
+        "Guaranteed to see elephants if you go (unlike local Arugam Bay safaris)",
+        "About 3-4 hours drive south from Arugam Bay",
+        "The accommodations where the creator stayed organized the safari, taxi and everything"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNmmQee25RNXzUcZXNzUe3Fyoo4mb9WIr06_ZdYA_FJh35q5cdtScG29bR48Xdp65XiuRIDXWr7OuMCILCKCKfPtOPW1LIf5mTWgo8tD3XsFU2WfUmazfKvRDKZGdvHstoel_OpaUsj2ZxVudY=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNmmQee25RNXzUcZXNzUe3Fyoo4mb9WIr06_ZdYA_FJh35q5cdtScG29bR48Xdp65XiuRIDXWr7OuMCILCKCKfPtOPW1LIf5mTWgo8tD3XsFU2WfUmazfKvRDKZGdvHstoel_OpaUsj2ZxVudY=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJeX6IiP8I5DoR14DZ-5_nEq8/photos/AaVGc3nxP4kr3-egTeXUkm10CfWify-GMk8Itdw1-SM7yreZ1y5J7-T6KYKhNdL2fncynXWBw7PFte7WTaQ1rC1d3CdVZl97nSBQPJjXwbsZLfyif5sYtsfVfUg4ZDESAw9aMNT4aXlcK8ynhQ2cEto2yFboAllsYma6oewMqh-hCbJqXmP96yRnU2ohMo10kaOFS5k6-4imSD6CYISrNNnX7JsJx9SvL2x7tbuhKTIBt0C0bVpPJTAK7VbUYYKrYay4jy5T9_Rh9Nm8El1igmnB_h5EsEvX1nMK_IICLFqgF9H1_xM3riNxJD77LXCMROh7eUrzcMOZCUyaiVF7kzFjwws5KKRbmp8f2OJCPsK1tWVP0UMp-ae5v6dZL8zip4S-8lTD50RP5oA5o33Ys30ocIEhu1OYdsgANBvjvdLCWtM",
+        "places/ChIJeX6IiP8I5DoR14DZ-5_nEq8/photos/AaVGc3nUmUJQF_0tz0xII4iIonyAQ08YJEB6dXpXaHCXe1Lt4naOwHXlaPQ1GM3KwXt89qtLcQoDI06nJCeeY02CBnVRuT3RXKutkDlvOJIIUunm8OVmdwPmJaHg4pfc08fNXFB9TFOfD6OP6HLrtCt35paCVkUI3lVKywtuHylyOJt7miNSStUIUWg5RLsZCY3pnLMM7JVSoGOxfquaouQgnuM26n9MpZk9HVk2LKDTbj8PCc_g_lDcfK28k5oGTqE_EIq0tvfPAn5RRSPrP9f-ufxQwmya75wmu0uw-ABWVyflVc-2YNlGu3k6Fs0EH-PV1sRM2pymvFimRfHg_5tsAJGYTbs5-jlJ-jk0eOCiWK7nD4bWXw9C9BwsJo534l0-lTl0G4GkjXCbiJCfxwyZQB42Z7N-LpFf_A_7YRmPE7LTC-s",
+        "places/ChIJeX6IiP8I5DoR14DZ-5_nEq8/photos/AaVGc3lOEQPAVrE8qnC8DPqbH4x4D0mqhu5pIJT9pi0ifPzAlejOHq4YIVBPIQSk25gBMnWlU-KWjEhSgPPBdLldQGxg2owc7tNrmcog09zHeFsWpUwjn7nd4UWt_22JhA9CDW0nUwjag-dp_BDSrGiNomcUyRHa3w0LeMkTd2K4rDM6dQwrHkE_lygsakUKQWO7IaQ0EBR2G-lVtAOrmm7diKoofjiNzYA13vm3P9A7bYgoufzCAzY8OfEXYUqQ9iDkKQZjI3xoJPcANuWKq12YYGWF6EaXdliByTU23kNztTJwjRVhzZbJL-fnk9JGBhRBBUSOJSVYnM31nVY7MtILl3syi_-AaFtlUGE37X2CBNG8t_z0MB3WG0tP8TQ6Jdy-QhDfRl6dz_oJcMPPToFDhKSFbrw8gi9jmLnJC5z29kQmFN1MO0kGcrx7ENxidSM6",
+        "places/ChIJeX6IiP8I5DoR14DZ-5_nEq8/photos/AaVGc3mkopPrgXIqxCQTbOI5UP8fjKmQACl0Rtt2IhUaUi9vz7iTGTxiN5HShzmArySu-99fu56NAp2l4u1sS0CdvEUzKBBkOndN3z02ER6t9GYotD3Zkie14A1hxqrG6D7Xvft-7htzzmXb_5K_QZtoVNCPza3eRzv3hrX8C1p1IaRdl-j_Iqfr5eBA7NaspOJZnwM_eXkqXIc616OGPa9N6hbl3qmOykEeS07qJzGTTOIQRqogkpMJUj-8L48aCGiYaFdAxKgetAHICiArbFhwA1qXFGy_fezSgEybKYRDxjR7AxNkM-qDILibDjvGSH5jHdcB3nB-SSL6DKfX814iYCiS2BxM-iU4je0m7TT2BHuqk2nCoKe50Ci7jC5nkN0c5uk7mrf9-3Ixjo3kc6teRVxKHNAVT33qQMf9UVW3vmm-pFKEoxwlUNEMfUiTrWTs"
+      ]
+    },
+    {
+      "id": "85a34de0-756f-42a1-b570-87f9be11384d",
+      "name": "Adam's Peak",
+      "category": "viewpoint",
+      "description": "A mountain in the hill country of Sri Lanka that offers a cool climbing experience with better weather and cooler temperatures than the coast.",
+      "lat": 6.8096429999999994,
+      "lng": 80.4993882,
+      "geocodeSource": "google",
+      "placeId": "ChIJWUsjiXWX4zoR3DdbHUetI4c",
+      "mentions": [
+        {
+          "videoId": "sCu4bFyvR0Q",
+          "videoTitle": "Surfing in Sri Lanka || Your Ultimate Guide (2024 & Beyond)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 622,
+          "quote": "You can climb up Adam's Peak, which is a really cool experience."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMpxnqWp1ZJ_Zx9ZoEmmhiHs_84v910ksz7qlIZaLs0t7KFc6CD2JeczswQUA-UiuXalodQ_PDyCbdPaGo5L_ph5tZjiY3Rv25tnn8KRBaPFYdodvr0xlQu2a8rU6fUrY0N2iKS2RfXxp-Y=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMpxnqWp1ZJ_Zx9ZoEmmhiHs_84v910ksz7qlIZaLs0t7KFc6CD2JeczswQUA-UiuXalodQ_PDyCbdPaGo5L_ph5tZjiY3Rv25tnn8KRBaPFYdodvr0xlQu2a8rU6fUrY0N2iKS2RfXxp-Y=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJWUsjiXWX4zoR3DdbHUetI4c/photos/AaVGc3llb4m-dB40E4sHzg6m3U2U_YuSFEojRL12AqKjgZ56NAznPxAk3WpSCQ7tctq2iLL8QlAIIFV9Qvb26koseUVytZkz5axqCa4Eoa7LqU6Bzl3JzsM4nfqHoinBsICKbKYP_iM66J9v-KKvHJ2vZ5GU9GhJTAHikDd7BzNCYSbvxpOyttXhTEj8owuMP0DJa10il51sAX8k2_THnNN2SL4hrK5BJrFFEuYf6cmZhPRQu3lfJzvT7BygB0u09GXmyLnDjW5zv2y8rmYGLADR8Ucc9mS7CO0z5pNOo10QGndWoxzhe_raeLuoDMuONpg7VRGS5Bww5AO2fUpQiHtge95X14ANbYVRTRmEgxGZxyMp_td-Bj1KwsS_Uk1znIGadIBUb-FJUxKOp3DQywNg5i8SNP6MDSDDdoT7Z_KK-wum3k0G",
+        "places/ChIJWUsjiXWX4zoR3DdbHUetI4c/photos/AaVGc3nF_CKfx8bLbmGAB-9q1JH_dXdAvuMW76j6G1hObUls7M_D8gDEONbe-wLX3Miwyf7R80VulEVycEXtOsxOuXvWp91z86rSB9jEXGJs8NDUeo94HjdULTxYd0fokeRXBzqrU3AWpPYF1hbk5ehHzZUk2pZihj00etSTJLNITuP75GdhIpxlQV_1vAjKwfPbPMER8RFLcQmueOY-ZaV9cCP2W5Hs18jvqSY8CIUPwzUywJ440RFsTJjyk0zcBuoXOkfl1IbtE9Cto_0lQ49v5EI7wwoWAZLWGTVbUoRO4j8MWXlO7iWdv6T9bcE-9AJGgDur-NtRkh2U_6tEJWtao9tgF59-v9-oPXNMNi4OIYsTTEacnzopVwYXDinh2ca0DHxahu5ne6R6JvhnRo5liYXm06kHNxGpCTfaMOsCzpNEqly6",
+        "places/ChIJWUsjiXWX4zoR3DdbHUetI4c/photos/AaVGc3nlQ3bjqqoTMgWYfTk0yJ0-xE9a9sll5Z9liq8yC5R26XplcYNl0oJUzpNmhhF-6fLtNtYteL_LkN4NJb8drZ8uI7V6ojtHE6pm37zKwHbyg29_ULSiCtzqp6wErboMy4xedKnbGi0yYvpiVnUKPG6_0jcQybIpouJufVZKohTYWWk5eDuVz5vmNMynrPVWswxHnth8aS8Ndr6s68kLWYODGjtmHggU-rolalbrt5LhiXkUgDKEuhXEJKPMIKOVuIgE2mzRmkoeP0GAukOA34Bmqn7yrgkM9LIN-Vw67GDe4EKIGu4rU1utDDR7AIGh0EweXK5oRFZN6pnl70_yvhDp8iVmbJrUVp7nV5GaRl9x1mi6GS9qcJ5hkZwbnAwICoa7pmkGSwoJueXN8ymlR7jqvxvDMOzEECafQMrzMq3KTw",
+        "places/ChIJWUsjiXWX4zoR3DdbHUetI4c/photos/AaVGc3lkzmf8fwIZ3Q9YOzbslTUvv5KflTaIUaOhj9nD5bvOLX9x2yxkjekONRo5DJ3VZKk5a8YD5LmRy6qtAe907BRqUwIijbUUg8doUX2rY6Ieu5_GN4rDf8_rsj7dsLRPq8MUHRqab1kFitHUmqjREkWgEblz-8CVCugZOqEC3TKGuoMIjSmNasvNN6r2xl9Rqubbsn7mGMfmGuxO8ziLGnTErHp10_Q2gQwooRVN9D52drahFjKssoLd1i_saMcvILJdKWC__uzDSG4qmmI08yLJP1R9rBomB_VBGNfshFovLwvP1rY9wLttMalBdbjESRp1uXcnrr6WCfokpT4JRLUshILIYkBrdia9Z-6c4PwpIxYqUCN-_PQE70nKWyWUkLtOM6eB-dAzBvR00kjLC0H2HS46n39HLCsNiVkVUuZg_A"
+      ]
+    },
+    {
+      "id": "d841bbf6-30ba-4ab9-8e67-482120d44f52",
+      "name": "Temple of the Tooth",
+      "category": "temple",
+      "description": "A temple located in Kandy in the hill country that's worth visiting as part of exploring Sri Lanka's cultural and mountainous regions.",
+      "lat": 7.293609,
+      "lng": 80.641325,
+      "geocodeSource": "google",
+      "placeId": "ChIJ9ftJsS1m4zoRh-gVwQrXZYE",
+      "mentions": [
+        {
+          "videoId": "sCu4bFyvR0Q",
+          "videoTitle": "Surfing in Sri Lanka || Your Ultimate Guide (2024 & Beyond)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 626,
+          "quote": "go to Candy and Temple of the Tooth, do the walk at World's End."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOYzA6Zm7KA8tt9eGhWQQn_FEJHKKx9rhs77-o8H-oWQUtc4zNhjnw_Dq7zThStoaKWYRjSdt7AhL334T84a0NtLpCAmRjywMsujaslqI0EHWqdqVblttcfDrDL8gYl7_uhcRQf_sLryzfl2Q=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOYzA6Zm7KA8tt9eGhWQQn_FEJHKKx9rhs77-o8H-oWQUtc4zNhjnw_Dq7zThStoaKWYRjSdt7AhL334T84a0NtLpCAmRjywMsujaslqI0EHWqdqVblttcfDrDL8gYl7_uhcRQf_sLryzfl2Q=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ9ftJsS1m4zoRh-gVwQrXZYE/photos/AaVGc3l-8mQ064oo4epZebDWpgD7nsVUFT8heQaWQcIOzBWhM7ynEWFTgbvvIk4jVT4JpeHnZpRNY_gzJlh_67WNymWb0bs4l6BGek1qTWkY8AtlKiFG5qhASBbWqqvBwMtzKQPAoPQWOR0iflUY8x9EruprqCd-f5w7M3suB5BmLV1NEQlSrtZLEQOADuVfQfEebxF3JydVIoQNk5_ta96VobhtBJI4_VBmQSRFR-BTJfHZAHk5hwWuvmho02E5rZE41l1EEzC-6N7uGIq3XtMRl5nMkSoO2FBFdrF6wiKyL5qkwP6Mtk4Ofu1_jOAiouxxKClVcMaqhmMs2WPuGeBXOF1qNL-2AlYZDm56QsmxKZ_cjuWEmYNVNbzIkBGCaC6oy6Tr4n-HJD4VMk7GFPyjuQZdElLQpOXGB40pciiOn0w",
+        "places/ChIJ9ftJsS1m4zoRh-gVwQrXZYE/photos/AaVGc3nU_qHjtgLCA_pBUNLY2z74zjpmJBRw1QBVROsYwIzO-mk6Vr3DMk_LdWFtV7TT-CgnYWgbPEE1f8HAAWCEdL6cwiGURnq4EjrCBoaL3QGbjk9QaG8EcaQ0-84fle3UF-_gn99iPmAU5rMEIsRmds7RpTRzAKMD9pdWCKjJCy_1uqMSvg0cVIjI5MCXWN705osoIpzLVCz9AjFko5y3AOoJqPW-auFBCqRiXj0dZuomAgfqXq8VKGaQndSpn1GyJNdtrW4idsElR6tlvz_VQp4CKIuPTnav7vibnfqKrJ2w60JDEvzWQyRaGl2LkQUBYGH1C6_g--vTcuo0CHHxzoDZj3RpGkK2_1PaJwZhjglqNfB5wzeD6WhsuYAVWm2e9F1Swo_TDnhGANOP9kHbptAy0DQoeai8ymWyZKQEyfiYqQ",
+        "places/ChIJ9ftJsS1m4zoRh-gVwQrXZYE/photos/AaVGc3ntdeZq_KiB949OTiHO_Na9hEdN9BdXNRVGU5kTJDsYuPhcF-P1aJkYXIPq8v574atAqL15FHrthtrFJm7fHjeF3FHUBNNgdH2IM3xhdEOeRR_T6h0BOIrmeVZfFO_yjKHg3st4oDQ3iYPnKrwMkYia03HTBinznaQ4VcqXZdy2RQN1lsKYGB0EDzUgzsg4NrFLI3AHzSJ5KeaNHxU6Exu6ajG_MpGguAO7mgkIRX94u0lP3C0lvaKVlzP-7DGSCD-CFDuSDYimAHYLRXJOK3oqy0oFpUs_KUTNVYf_jgD0SFRaUyskGXHODs5BPslq3wAEb1-4fbzSiVUG6kII4DbQ2KjC5t4lZB4-qjINS8KUSxUcdokSChQ3u5yGD6IounbpORp9BnPV3MfE9KAOFD4CvUJmtWll7d-ar2_I0qxogu0",
+        "places/ChIJ9ftJsS1m4zoRh-gVwQrXZYE/photos/AaVGc3k9t8a3nsZaNuLpTpcd9M5VIVTbnPALExlwWEohFWqBeeXCd_cy5zUOZ-ogZxKN7ZL-pQP4vNSzu_e6X_kA8PwtZUhI5CPzhRXANoD9JWs7RpAvqwZ8QMFkRIG4aA8cbGqh5SzQo8ivcaYlfuDbYyyc2s4226540XXOguu0KNrPFcpGi-faHDXFhhu_1V7weqCnxYZlmTAZHDff3I1yIwfoU4-3X2Oi_6RxqHTpJ-mDy6XuXOFdrQwTTvBUex8cYBTV47H46IcOxJMhC9WqxO87aogc3zUh2dhhVYUNITNl2R3TFifmCkQOlGK2MQgSm42CyJuSMjCTpigPRHbQ819H3fnPeRUSiJCoaLVjAyOwveznzqh_l3Sa4APuWPfJ8dBQBlSfsFuNN9bM2kpdCPwkLS43tQ_5pRYTfoo0rShYrKPg"
+      ]
+    },
+    {
+      "id": "6473c39e-3c42-4a76-b2b0-dd5fe45dc985",
+      "name": "World's End",
+      "category": "viewpoint",
+      "description": "A scenic walking destination in the hill country of Sri Lanka offering beautiful views as part of the mountainous region experience.",
+      "lat": 6.7802554,
+      "lng": 80.7944672,
+      "geocodeSource": "google",
+      "placeId": "ChIJZz_LRs-J4zoROmcyKrszjoE",
+      "mentions": [
+        {
+          "videoId": "sCu4bFyvR0Q",
+          "videoTitle": "Surfing in Sri Lanka || Your Ultimate Guide (2024 & Beyond)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 629,
+          "quote": "do the walk at World's End, and you've got all these like tea plantations."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOp-08t1Jrpt35N1I5Ghp835V1sb3L5YxgLVzXLoKo3YyrS5aaGmD9dHoOhYbPP38qtLbO_CParGWyG8XDx1ZCFDeMCgUULT2FyVrcErDLYeFuAthueESxs4VnmWLBMd0YBwiGnO4TWAOxSkA=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOp-08t1Jrpt35N1I5Ghp835V1sb3L5YxgLVzXLoKo3YyrS5aaGmD9dHoOhYbPP38qtLbO_CParGWyG8XDx1ZCFDeMCgUULT2FyVrcErDLYeFuAthueESxs4VnmWLBMd0YBwiGnO4TWAOxSkA=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJZz_LRs-J4zoROmcyKrszjoE/photos/AaVGc3kV0K7vMeQ-7_8uzQBjACHvvBDUwvZdtwLtizmAjLTc3-8n3NLH_HsenoUXeq7e0MKWbrcmQDGwDNEb-Q8PLNiPzZEwGSh1JoCcJWce1VfDvgwQgZhN2IgLaRLV3IK65-YHWpBWRRvPreo724x5ZWhPdl1AiL_hXfoULyKpZ1melGzhlsf1IBPHeIZj5w7sLiCbyEVIUMhcKqLIDiGaU81h0LE848YLyOxAifzpj_zf3SaWegBZDGG8KY24j2KEDZ3ZU0I89-fvb6DFR8_V-2ofZXIzf1I-2RQjyPVZ7s2UE3I0pytptlnC02Fzj96XpY8HyCkQ3PqNnQO0z6pJGwcmzJjbM_Islrv70t_WyOdh9Gv2OfUfBLH-kP6iFpBqsUjkZOKTtLNSchtZNkq_gnBSaG_nyUShcfjW78dKQ-bCWIgn",
+        "places/ChIJZz_LRs-J4zoROmcyKrszjoE/photos/AaVGc3kuX_Moodjcu2WpfEH9sUwtT8bvG2EEQtIPDZarOfoRxGodDNBBhMYqiU6hFRZqvXNVMZvZoDbdDd1hcVIUi8w-nqO_XcYOYLbX0XrTrqNjur4HD9pZ-W9GdEVO2xmUBOE8YhnR5l4rMVC81I6LSKNf7gRUg21vPd8-Em0raNE-xT3BA8IHxVzUuvoq7PKsEmRWfcFezW7pGwG6CWuJp6ifegbHdXSrmIzf0qFI_UamFLCmvG0hPTO0-iFp9e2nfjZrFm6pdFQYOcf0pnQOBshvq-_OH5tjfAkrhqhf14NpiNBrlMuCAm_BdqE9WX-Wv8SxttsaiQWyRySgKOD1Zz1RlGrceU6VkACEK8ftL0zC6w78S6km6pHC49u_Tev0z_a3nXpXKfH5v3NPRvSVGpNjCAfitKa7-wkrTG1Ase4Hzg",
+        "places/ChIJZz_LRs-J4zoROmcyKrszjoE/photos/AaVGc3l8aD4J-G3I-VcEpqi-NBN-uqDUz2eflXEJVN23wQkGzD7iCscGttZJJYPzx2DNOXbr51PwR-Tg2Y0Y1vEOzHwJmG-Dw7Udn-ebyjxJnZmZkZZFqqnO4hXuLoLVZWkr6p9qk6ttENKgZgP0UiJ-Y5k35tiodXHHwQDOSH0qozBnRnBMzAS1PeL18ZOICWed4OSSPZE9mHbc8T19bA9iZ_zDdiHiqNAwm1aRprueTSMzP1TuGKVfgLvSBoIxU7z5lgpVJmlbIMEJCRFfQEQB1UqjvP4n4CVpcno9uNrAXSE2trHonJW2vM_5TgCoAfq2_1-s9yEmoqFg3Xw9UCa9X26xmGg01U3MIjHJlm1yINeiQOsKR9WmFkn3H5pRF7eTGz-CwOpLCJDBnb0JXW0AhFQFR9Sk6k-q11UBA6_s7FAmIyUX",
+        "places/ChIJZz_LRs-J4zoROmcyKrszjoE/photos/AaVGc3nAxiAj8eVdTGvBZ7pavnM82uzlUaKND635qpcfG8q9rAzpaz2L249bdKGRdUfCz4LsR-WBZsyw33yysFSyYkKeVhn5KDz-9-09B6RAj-lXXmDQa4TLmNkSxpbtLVdeFGJs4o1795HB5Kt1DD9WDUfbvse4AOZdP4F8h0pO8GJ0XHGKbiILnMLjDYSSdgX7gcKqemCKEfD7pKWOL4jDF55GvxacfEn9OB6diPAEWleuxwZetC06uXmt-UQtJxZzCt2QA8NTEG1zMTiYjFyf7hroV0R5flfoUXfPLwXG9ZpCA7EwaMm7xiuLnSntVfpW8GOBOuvNjFSnK6Dtlgd3g1V_1tc2D8eBBFvSNZB97tL2MzI_C63xV7camJFxGZZNS60MNYDHUxhgH6qkotxVEfU1m4rWujYNQSRQbDA2uLttvcmP"
+      ]
+    },
+    {
+      "id": "3850ba50-ae0b-45ba-8023-6f38912316ad",
+      "name": "Poodle Surf Resort",
+      "category": "stay",
+      "description": "A budget-friendly accommodation option in Arugam Bay where the creator stayed. The rooms are basic but functional with good WiFi and AC. Located about a 15-20 minute walk from Main Point.",
+      "lat": 6.841365,
+      "lng": 81.8324266,
+      "geocodeSource": "google",
+      "placeId": "ChIJ9Qpi-SS95ToRF5ntZP0Ax-I",
+      "mentions": [
+        {
+          "videoId": "Cw76zqBl868",
+          "videoTitle": "Arugam Bay: What’s it Actually Like? (Waves, Costs, Crowds, Etc.)",
+          "channelName": "Dan Harmon",
+          "channelAvatar": "https://yt3.googleusercontent.com/YljLGCvvBSuAtLmwkD98BkNZlhJ90jsrwwDA8ESWAjTz7rRyemfmJmAuhN412Kr6kzW_-hr9=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 269,
+          "quote": "We're staying at a place called Poodle Surf Resort, paying around 20 bucks per night for a room, pretty basic but it's got good WiFi, good AC."
+        }
+      ],
+      "thingsToKnow": [
+        "Located 15-20 minute walk from Main Point",
+        "Around $10 per night if splitting between two people",
+        "Has WiFi and AC"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZO9cwFwoIFEVN7v1c747Zf1EA8yaGxznGOOzcxpj8jiAOgF01DQiR-bTey7feDiMYBDRJyvtqHQme8W1etWgADiXGJqZ1xsPiXxqpzRee74zhZxtiSKfVQFaff7gMQqkKCLiEUpPxLQxeLCGw=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZO9cwFwoIFEVN7v1c747Zf1EA8yaGxznGOOzcxpj8jiAOgF01DQiR-bTey7feDiMYBDRJyvtqHQme8W1etWgADiXGJqZ1xsPiXxqpzRee74zhZxtiSKfVQFaff7gMQqkKCLiEUpPxLQxeLCGw=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ9Qpi-SS95ToRF5ntZP0Ax-I/photos/AaVGc3ks2aBi6co7JGop2MMNBgIZGBdZwSQKoczSnP4oQuV1u0BOx4QjEMsU1rvkIwvTr0rI6vvIKoOZ6c8zy5seyEJ3pqz6Vdadgn9K-Hkd-iHKI0U2MM2aF83gKdLZq0Xe-ZuVkQITmC4pi3vYLmU44cqpro1TBcMLuDvK-UFWfMlHrnjEDCasXrU5gXezcen3nuT8-7Kd39932MxUQ8NoxnHw14VtzgDLcMWV082YrtGrTQ4NAFxhzza3Ctz2Uc4MujeQm3iSc8qrZMWJsbigIGgTJVzCbeahFrGXif7lfJwcvl1cV3VKYfw7EZrT28_kKwVLsLu1CJRpK9DPpqVJ5BxxP0uwxxDaVeBZOrW_GWgTUse0oskTI_SKcaM4ptxf84rEQlIIHRHOHYY45hpZ0Wfej9vjKva8xyeNjl-kXBTbcw",
+        "places/ChIJ9Qpi-SS95ToRF5ntZP0Ax-I/photos/AaVGc3n0ecm5-VW1FLyS809iuQkaG2VwhLVWGEqrR00KlPz_Q9O7n7-8rfcWwr0i6ae2-oRegtDq6wpe6ZR4QCKs11nLgHoZBqSJqkEohH7uiRdtrvGximi9YKrlcwIdPpgijhEBsQxqJCwFx6Dyt-GrDHia8fOoKk71AHTyYK5xyujSzHuw_QDCUpra9oFgrFSzzp-GNDhvimYH9EAZOhEoCDo3qAKvZkEGLW4hgskNB3C_JWLo_IlwzhSH_afKId09x77rwzAA6SciBjNPziqaXCYSgK9wdouaVBa2HjE6qbAFncOk7R6Aui6Te3MrAXEPpHDrRQqVbgFXxnNU65A0zQch0x0bX3ghrjOh2eijHcO4qHnJ9YWolsoaaBqQJLDKAsmBk61FTZIKILDyy9tLDt8jgOL6AxMy6hy-2op5Kj6tyykH",
+        "places/ChIJ9Qpi-SS95ToRF5ntZP0Ax-I/photos/AaVGc3m4P_Os676uIXwIDD1-RlZg1rEWyxtEbEPwZYsPBRgTp5mMltfl5YLFnSoMJ88RoNn2A6R_tK3hIEIk63rJpwW6_l9O227hyRoXKVd18AaDyJUkzNRBba10mkLOB3Ez8Wm6SA5O0AzxKVjvzdliQEUYgY5yk2QbNT4pGGXLczuxdyy7Q4q6fjSnz_Kwi-rEEtxXLVDPJ10BJPrLXeGsmHPJC0vYoVSfFCG7c20fSxfcuUcJaEjRR-Pg65QHzeRx6JIcdGNmA1157L1l-NnCUsE-ROBk30PjucIG8HNsYatuvG1PbiOki8lPX3JQzq43SoD6kTjivTPQvUabydbh6PZsvgIN97msLTC0JwLNl2jybCPWtHdOmPEBuclWf2hqvnBORxEDkpmpPe1RbY2JuZTKBFPk-Ntcw3_3hdytQR0r4To",
+        "places/ChIJ9Qpi-SS95ToRF5ntZP0Ax-I/photos/AaVGc3nbsC4jLQJVqlXglBR59dDT_miJcU500RPnia6hW-9wGDEbxeiEWvJAg7e7Mm8LWx0c8oGg1z_vKSTpT63T056Tycq7qquw_vH6cHbU74yVLBiXr1IgkR08DESV0e9yqJCht_D96IBb_VboSDaLVzzB5jc2s8NSQW78zMqFkpkrQq4N4ciTg1XHaIxq6OdZy55Vqyvna8Ntp7VKHw2pm3I5mwJNo5j_J5_HkpwderJ_fH_ykJOdHsbC3BmMZVCvoJ6AF0flpBQ5r8QCkXgLP1QlH1KtyjNTivlJ9guxvxGNyVmtCYV692R1YrNaVOTAeNqHOdQQ5VcoCLJRs4D9Rc_v7nH12BK0PbtMr8EIASq3-5TRJLAFd5zlRLjz5zQ4SAmkMLlvzHeSkhmsnGiIFLLZds6QzctwhjvEQ0cYeAm4cg"
+      ]
+    },
+    {
+      "id": "c61daef4-0ec2-4317-b21f-2fee054de6df",
+      "name": "Blue Waves",
+      "category": "stay",
+      "description": "A beachfront accommodation in Weligama with waves breaking directly in front. The creator stayed here for most of his six-week trip and praised the excellent coffee and cool location.",
+      "lat": 5.9652641,
+      "lng": 80.38044169999999,
+      "geocodeSource": "google",
+      "placeId": "ChIJy7WfHQAV4ToRHVfZ-vy9Tbg",
+      "mentions": [
+        {
+          "videoId": "NwQBoumZnxI",
+          "videoTitle": "SURFING IN SRI LANKA - the real deal or is it over-hyped?",
+          "channelName": "Kale Brock (Kale Brock)",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nzIgl_7Fvxdc1iX2PHNfU6sMFN_rqS5AT6dMyw54Ekulw=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 617,
+          "quote": "I stayed at Blue Waves pretty much the entire time and loved it. The guys have the best coffee by far in the area and a really cool location with waves right out front."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPGtoVY1C0EgAaNtyriU-hSh2-Ywca_syVgfeOkRsr3djkJ2xkxvO_x51fn8rrrD4EcLli0JIdOfOeq7lOXpmZOYQEQCu4-Ho2xwku4_LZw9X91wHEZvejzAx8liS3y5OtA2rC_8w9xpXueSgY6jvjjJw=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPGtoVY1C0EgAaNtyriU-hSh2-Ywca_syVgfeOkRsr3djkJ2xkxvO_x51fn8rrrD4EcLli0JIdOfOeq7lOXpmZOYQEQCu4-Ho2xwku4_LZw9X91wHEZvejzAx8liS3y5OtA2rC_8w9xpXueSgY6jvjjJw=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJy7WfHQAV4ToRHVfZ-vy9Tbg/photos/AaVGc3lgbp3Y2xCKPeCuGOU7RApovkumVoKMXYxQskUcOk6K4VJDF2YjS0WiMlcY9mcph8ZTIMVbBqPuMU_XD0PyQXjBc3hazF7g32AzJg7s8sR_Icz8sd6yAx1SfK8DlwreMgwP5b7JDuma0ZtUjUoGFizpDykn_NCR42Hgm68rVT6Ae9_b7Tw9xBuawjBBm272aICLdXL32_2zgVzEzSoalZZZxH88kQJR20dTIDwWW3eOAR5PrGnRRGc2KqoVwjoixNDM0aAjc3WZZJIifEah_-rZLmLp6UTuFiXDlBIAJO8qmR-5ghDR-GqamtUpsc_ZvD3IHlRgpxe99UCbtEPmutKVNQY1oq_7-LxEX6YltY5rCh7ZjV2ecd2Mm0JVX2Mk7kMlUXBT8D_86h_W6hdSMTlAD5na5bLpvSy5jT8_RVQWS0-m",
+        "places/ChIJy7WfHQAV4ToRHVfZ-vy9Tbg/photos/AaVGc3lAYJFtdo12KQweh_bHISXcSIM3Nzii3fDQKKKjNuVeThnHFo_U7PAXfkpZnLHNkI7T8zHhgQvDlI2J1rpaoaBJvA3BzLwxZmhYKJtwm-9OSuRqjDADEXoaUigFsGb3uH9YkIy3qNF72yD-HOCExoGBLt6psoBvWen9hqq63E9lsZge1Bv3J1deGekCk1vHCaIjGZTETecIyEuFN6Z9HwmLr-Juh2wx2yAxtanEbaM7LcugbaWcpyHaVNcwvE6ru4YvGE3uUInleWL6nwPWkTsaF5dgeftxwyQiXR5MOUqBRzpyaiFyACAPxzvNakaX6r8qIvYa3HV6DzAnsqWWsQbuMNhwgxCTXRKtXYWuGkPNxrMCu674LvQ0202QpFdLtvcDGO_5Ya-QjUIS1_g6WQ1XlPpl1SpVNEzY6LzOxlg60-LLIZAfOaQ9f0pcBw",
+        "places/ChIJy7WfHQAV4ToRHVfZ-vy9Tbg/photos/AaVGc3ka4IEYvRTvQ3Y9CVQkLTwj6c9xrA2x9tOpH8P9kDxV-S37Pvr9gXY1RAgn2UHaPNjXVJspV2PDbpnJY16EUP9elZJCZ_K_GNvAj2B8QBQU6-PLGZ85TR0oZdOuwNuVDA9ccLQSE7cIu5c88w-yh3uLN02gMxQRiXO8L603mVDytyTSRh29zMlUkEDiLrkCaqHaIQNjPaYXFk0HH4xuk99R-dQgWtXD-vh21-yUoZhhXRfwbEjk3ELwd87ojeMI5ZXdRBKzey90XYUUXMZkEdZIXQWBbtP3qPBQv_QgclUiRAinGmxcDxZpgczokmNn5IvKalv_Lyv4Zc_GBr5ggyXXMX3z0f4i5rs4-nX0ykOonBR_l7MkK8nVOTKk-oYP7XDK8n0PGjzUA1waTaOjEeztkzyaap1eRDof8l8vuiOrq94",
+        "places/ChIJy7WfHQAV4ToRHVfZ-vy9Tbg/photos/AaVGc3lpRP2HLUU-X75QIa0XZErdbG-YLFrgr2R8ENS1ya6sGURI9XkaMyVogKe1kK-NXA2yNLRZjyqMdeqw9LziP9iVRLYlCAtX1QBQ5iYIWFT88-AnkGsrrbL8Ff_uGtn4JhP5OmPTPXKxjd5BmMeVrkGE3yj2OkfzWt6smLO9WtvflaRstQD0W-nIptNSpLet_Abc70P0maEixhfCWDgAhiDhF4Y-pU3P29gXpMHcoqqf64evHZ-PSm9hbl3f0mKUnEU_Lu3l8M5BcmhxbgWMPy6cL3142dgmrNX2oS4zAAQdecNi0vNZHRBtLSDtmTTkpsvpRf_r0_cdYqpvrKcMZ9UeDAhRooKQyCNjgmEDgRZ9udjJTvklclwPG_Ht2WNZsEJkw5dRATdld4tkUrK40b-rgEQF0WIqapoVMukXXpt4aC3t"
+      ]
+    },
+    {
+      "id": "9162083e-aeb6-4b5f-8e2b-6c2913290ab6",
+      "name": "Kokura Surfkate House",
+      "category": "activity",
+      "description": "A recently opened facility in the Weligama area offering skateboarding training and a cool hangout space for visitors looking to mix up their activities beyond surfing.",
+      "lat": 5.9833232,
+      "lng": 80.34459609999999,
+      "geocodeSource": "google",
+      "placeId": "ChIJRxtVS2ht4ToRSC9zWtInAOA",
+      "mentions": [
+        {
+          "videoId": "NwQBoumZnxI",
+          "videoTitle": "SURFING IN SRI LANKA - the real deal or is it over-hyped?",
+          "channelName": "Kale Brock (Kale Brock)",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nzIgl_7Fvxdc1iX2PHNfU6sMFN_rqS5AT6dMyw54Ekulw=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 738,
+          "quote": "There's also Kokura Surfkate House, which has just opened up if you want something different and to do some training on land or just go and hang out. It's a really cool space."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMm-0RowfnyWNMI0tIC2rsH1vIZv8_9ZpBIStWLEi873D9wYsiLXI4DlGm1htj2pDrHzzBCu3fb4kyTKtUcKc4OcsmYTZMUXnEocDuNcC2m00e9F2gyLOyUhmfBzojqJ4nh6sorM1oXqQcqpATjdyuXig=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMm-0RowfnyWNMI0tIC2rsH1vIZv8_9ZpBIStWLEi873D9wYsiLXI4DlGm1htj2pDrHzzBCu3fb4kyTKtUcKc4OcsmYTZMUXnEocDuNcC2m00e9F2gyLOyUhmfBzojqJ4nh6sorM1oXqQcqpATjdyuXig=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJRxtVS2ht4ToRSC9zWtInAOA/photos/AaVGc3kyCzu-GLxVyNPgXVL0zONupY6zyxk9wBAqreEEGqxzPG8fzx88vv_lOGT7ac9Al8tpQ4NUTZhtSgrvUuLMwK3dWT9s1-NdB3su0ppO6yqTF-PjKF6Y0yaZX7d6mnwgwRq_RaJkHjDbnTP2_fY9HFmFzOl9pOM3tMQCgyPyXiYfRuaNm2_cFoB0j51FFRhqRO9eN7gdbTj16oFb2yjJj1wH9ThxqfjOTbbPQ9mu3E5tXP00dnP1AIzIEtxXz9_MQd27DzQafem4FmIKrtfhNCbMvB0yPXgJea7uNJtfWOV5L1hYFpkMquQeL5svWcrcoTq9yQJjep_3-P49uj9z1-4atPyvyybG0pL7ufrGHA-sCANjc9my9LdMEqLbwAtJI_XBO9yEhPIqoO3kYzdYcU_tIyhCO62WDN9O_LKbjofpgf939gmkUWNFxhmafg",
+        "places/ChIJRxtVS2ht4ToRSC9zWtInAOA/photos/AaVGc3m3YKS_I1FC1xpBE41za74FTgXSbmrdVxFNQOBltP26TLWU0_qM9ppvyX87kNYilQ3N7Sn0tsdxDi698fTgDypHb1ZTHnBBnahcHr4hvq8K-IQeAqfk8HjPqAC3SVRtlkQ4opJKF8w8qAGTQVfPLPra1PuqDguUGhSUhbahcNgenRR2wZ-VuaiDyREuoA7SLh3KU4tD-dYgD3bUMSjdB0Uu1X2BuvrXsEMpZTpkqcJtqRQGSXiABoG4QDm8n8UZYzoU3R3YIiiczc4RMW6WcW6FekZOg3jZhvZaOB5VsfhFihAtMByODknilAamszo38uBmFNZa98ZNn-_BqsuB43rC8vIucg9HxIqeTKfTAawdXr20MpIIOLPDSEXfgIPGR17aH2DIRw32IitwVghtCplWl0aVDMDnuvXrNVQDiTc",
+        "places/ChIJRxtVS2ht4ToRSC9zWtInAOA/photos/AaVGc3n37hdcw9ylU1RYc74LEP5qaE6RcupIY3PUg_4nrKbSeisOghOsqMd-r5nB2utxGk-pYWodP1ueWMG0G1-9r-7kMKj2_QsPHn89MIRL61kpQkKUqq-tR0l0CFRBnPKDHTS-fTDjPE7blsxeQ2szu7rZJm9Fua9AmbuHPhcNxC70OPvtSjJw74ucGgzVtmvMQXvTVKIe34eEmGXiyaVUY7Pv3kvrLlNRdlZWbgATjlQ2a9vVXHJYFfpg3iAYgLfE6WdNBPazng7ZHWQWveanu4-SnzD-cJwOyFYm4ZQXNrWrrweZ_jRKxH7B7viKcrhfUo1MtA4zCeCfluCRdv_XgPfLeuPF2HN3FVQgY6K-IPcBoyY1zbI5mF1ttVNywtimtCmUup0ZiEoIZA3U2_17F896lQluJWnMfBSOQoFanTGFOGiOrFEVYqKyRU_q-l50",
+        "places/ChIJRxtVS2ht4ToRSC9zWtInAOA/photos/AaVGc3nPfRPnF5JYvlfoj_5ISzX-SgvRqBYOiWlcUl1LxavgrfGtX45kdfK1_v2wFvdxjeLtOXY8h2_JxAEcFcgU2ET_2RaytHYYMNPVSp_BlBnVuMvlsExtRV-U7iAfUooNoxQHSiKoHQaLDpq5vlHWC8_PjIo3NzafZ4tkke6ws0A6m6M4wQYSr89KoWwp7hW4ZIptJHC6rnPlHsYgHsLpnVLNr9duXBDYmtRfIPkcRoH0SMt5xiCUvPqUoDpo3nQSMyvl1X9wIXYhC2ENf0iwUdchgHWmCiiM_vsW425RzRB53fekJdUu5VFEjLjp9Nm5JW8b8q87wN3QniI3cnNXGHM7s9WJZHxPiJnW-EgZ-eXt67MnyFAkGxCJ5QXkkKHWSXY4MiPJAHDrGjWdM0IByLT5oVdx2VXtHcHbyq2Ganf5eNPH"
+      ]
+    },
+    {
+      "id": "5c31d7cf-a799-4824-a5dd-7bd232c00b4b",
+      "name": "Maldives",
+      "category": "other",
+      "description": "An island destination only a short flight away from Sri Lanka, mentioned as an option for visitors with extra time on their trip.",
+      "lat": 3.8494349999999993,
+      "lng": 73.45469659999999,
+      "geocodeSource": "google",
+      "placeId": "ChIJmY_FQZqgQDsRM9Akg4gsxKc",
+      "mentions": [
+        {
+          "videoId": "NwQBoumZnxI",
+          "videoTitle": "SURFING IN SRI LANKA - the real deal or is it over-hyped?",
+          "channelName": "Kale Brock (Kale Brock)",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nzIgl_7Fvxdc1iX2PHNfU6sMFN_rqS5AT6dMyw54Ekulw=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 757,
+          "quote": "And remember, the mald dives are only a short flight away."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPWyRaD2MqMFnJO18JtHpYJ_o3Ge3Bt0GhvhvBscIA64Ul-2KURW8tSFL5XVDL2IXRkDSY5en9yT58q8h_j7fx_XmyT-DXQoanhT1ep-jP1nmRy4oUryIE1ajjnknYWOXwv00sg0uAKEUM3=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPWyRaD2MqMFnJO18JtHpYJ_o3Ge3Bt0GhvhvBscIA64Ul-2KURW8tSFL5XVDL2IXRkDSY5en9yT58q8h_j7fx_XmyT-DXQoanhT1ep-jP1nmRy4oUryIE1ajjnknYWOXwv00sg0uAKEUM3=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJmY_FQZqgQDsRM9Akg4gsxKc/photos/AaVGc3lwowkudnks3ntRiPTdYfGaJOGSNfZTnEpoOWgbpfWGMBPqw1fnpkW6Xo0dgqIWB6AR6mUcW4OvO508A47GJ-JlZKTSv3IylWwQFDFNlkHaSVIdC5ubPsM5iooy8goWqPswMUe3pv_CJo6LwKqY0HBMPioKIoAAUdvN3ETVNA5EjWOlGnNfRX2EEmYT5qvzB2WIwTHqoYrg7ju-CMnjroKqB4WWzwO6fZGp9iDVzhidn-tlGhF4ZEfHzmyWKqVMs7AH6nW7kmDCbbBWPu6M_3PXNuyTVAAupSth2_G3n7uwVQ59NJvuCYQEgtCzw4IzOlz5_cx7cWG_w-pdA7yLDCcKaR00UQ6addyqkRKGqCjEq6oRy_MyFcARtvtTdQqOl-3h_vuiAWgvjbwvAYIth-I08LjsFm9MTbYcEab7dnA",
+        "places/ChIJmY_FQZqgQDsRM9Akg4gsxKc/photos/AaVGc3klD_BpS2IihXF-YT_UjTecj4Bv4WhziJpO9XY760QLZzmms5MBUi2mtgCOEJ2z-kRT6aGhF_RF9Ys1OWZKnHWhIr2GUKH8Wr0bB37bETxsqsYvmxoIfsssWCscOkvI6PPQuVY5NLA1VoqdD8MWsZIehCr8bWBYRTL62NpqY2cR8M7NgBkkbS01_9J16R05j3K2g5qBUTYMtrHlS-tjZmBjfA8CxD_6RQVLEL3e3g67puzbiKJWyzaU5eyqKdkoPYKjNHTpRiDXQwa3IC7_ol9FOrpSW3ochGO_ZeSQFV6otpHyxHqWL5EX8LFEGpKM3L7mttcRXay278NebHsfmCGkF4F0x-UFzQtV3qCX-0aO0FdRRTy2-N6sDT3UZ4LpgXF3jDaEkq1aIwtpnpenl8W-eEu8Fy1RlXX6KKg_2tE_PzvK",
+        "places/ChIJmY_FQZqgQDsRM9Akg4gsxKc/photos/AaVGc3nEETOVjI0PtSNePLs3RLdrGJmSZ9RYsn0FbhgxdQzjuDRBfmHTLlPRB3RK-zknndvu7fORi0UjFpizeymitQ9CC8Pr3doijG18uMdDvykwBCTsizED8ssoELBpQFcIvObMsEmWVMcUNQJmNzclWuoTlzzxdYEwMRvy0SplY4JX10KytK-1h6dyJxG2mB3ULWH-fUKJZGDjy1WFiXqyXi0TGasJa21WqBrr31H68ygwTKTRoXW4HY_evZZtoRhWA-jjWLZ9WnN9L6TKfq9e-EvJxM2g1kofLe3epy6fB8XHPEhGxqwOZengf1IBbHDqCsnt9sMwH8AQr4zqQksLL0lCOsATluPVWRsHcnc2VswgHKRkfApXKWff1KwqdIdUDF5ESNrg2pqKCqEY6HNl6wok6FMhTY4YZ6xJEVICI4G91g",
+        "places/ChIJmY_FQZqgQDsRM9Akg4gsxKc/photos/AaVGc3n9tibrGkZrnRsDKwRCUALe1ZGNvnOMjqJn6BCbmQavEPKUg9quGCHBp9DeNBgDqwVvqto2iPOV7Mw6ACGHh1JA2T5F949NTv00cHPLHzCZFoXmYeDuv7vHisWv2uxygnDrDrZiSi22NY3MLmppdl0y-M7LyNWPUBdn62_sxrrr4vKhdrmWPQW-h5Q4RyR9aDmXQAnYMfw-OT86Q0z_VRbjiGqi2q3nYxuoY51vUvswT3jPiA5bOScmJkamcM2z9KlNsoKO7-i_tMkG_4YWu4OlDl1ZLv0QmJAOilMOe-YivWfmuE8tf5n7ANhkcd9sWkXzeVOUGOW588mM8oTMQUQ6lst0zo_N3fJym579Ri8x4o9Paz_jaCdlP41dBh6vBuQWYv827bxsVoPi_ncG9Bm8tyDH6khOlVRD1QoagC2P0bdR4KOLbwcSrpQDnLtH"
+      ]
+    },
+    {
+      "id": "c1115440-2b3a-4de5-94d1-dacbf31f18a5",
+      "name": "Ravi's Samosa Stall",
+      "category": "food",
+      "description": "A street food vendor making exceptional samosas with a light, crispy pastry filled with spiced potato. The creator called them 'probably the best samosa' they've ever had, praising the balance of Sri Lankan spices.",
+      "lat": 6.8451963000000005,
+      "lng": 81.83082200000001,
+      "geocodeSource": "google",
+      "placeId": "ChIJD4lSKMi95ToRbfpOdKK5_No",
+      "mentions": [
+        {
+          "videoId": "o6XD5okXgMg",
+          "videoTitle": "You Won't Believe Sri Lanka's Surf Paradise, Arugambay 🇱🇰🌊🏄🏽",
+          "channelName": "Purple Living",
+          "channelAvatar": "https://yt3.googleusercontent.com/92CTstFLOwgrXQYL3lqmmaMPzCv6u89K5zGbQL2dlqdYopV_X4h6B0I1dRagIPMtqDTAYuemt0E=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 50,
+          "quote": "Probably the best samosa. It's just a puree of like goodness... The pastry is so light and it's just like pure elegance of Sri Lankan spices."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNQMS6QiXZjTw5i_gv7yx0-WfFr6oumQEHrdTrasIdLfFTlSF23-fzQAd1Sl7wNny0Z23_mKh8--T7Jr-dmA4iZm1a8ZAHQAPpb_BdKnWEnM6P7uqjs4gvm0PRHHE9YdxkOIbI_QoeBzuLH9RT9P1JMMg=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNQMS6QiXZjTw5i_gv7yx0-WfFr6oumQEHrdTrasIdLfFTlSF23-fzQAd1Sl7wNny0Z23_mKh8--T7Jr-dmA4iZm1a8ZAHQAPpb_BdKnWEnM6P7uqjs4gvm0PRHHE9YdxkOIbI_QoeBzuLH9RT9P1JMMg=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJD4lSKMi95ToRbfpOdKK5_No/photos/AaVGc3l8n0-gSfqDQYh1fZCUcA9B75dWoodQlGNVHRdNQxvjRByy2qB9xs2jQ_7FQRiN966HqtOuyWQuXF6o3RYsywfjESj-8ovo3rjvrWEorkoNfxWBaivm4AmEcf3VxXe7T_K-uGU9HhWsHyoG1sB5Jk0p-rTJYSl0mkfz_xJXm7OBjUkXn1NxDOo3ez5pbppYKEzkGTsQFb8fXlkqb3juMi66Hmdb7UQDvUbLJ6a0kebJ0tNrmLmpRFVAUELAqTc1uHdqm2_2mbqKLWvABPEVFD6FOxYJM2YcuwZ0Eja78NqszSBnufm5BA9vlLuc1RC002OXgJpKEp8_-fuge8j5mtNrAcoOSojWEvixg83ukaQr6SMhLpzkLYjKYod70sviE60gssOfuwrD0dZ0Zkj-YQTj6OGiY4Jks5bUAGLwHtpQF_p2",
+        "places/ChIJD4lSKMi95ToRbfpOdKK5_No/photos/AaVGc3l7Idv0houIMEfyfMgxT9NaF2W1mYrowJqUUDSn2a8IIcJDdpLbd6Ub9hZwjg3dlS6sB3rCarnnaYYX-U-CXXGVOP_TModE39hCA4cdiNoZoPMK09VDTlmkAh7MTNxZVJ6VNReJ_aDWnn0K9CqnnFTC9eg0d161L5EJmWC8XVo9qGnq2_Xf6BKU-UtkM3eRwvH7UMm3tYTNP4FNDggEBPbKBkZfW2VrzEsBaXC6LyGoiU_yAxtOo6rtIeX3-cjECk0UfIZGQwfT16HrZJc7aH8-Qlar5JQhdHj59ZSYdYHjMLJe02orNrldoMyxd9NO87ed0FvaZW9BT8boKnCMNezyNg_UYgeVa70l2Bv06Stv_vz3w-GhnHfhQo1B-bKQVxxLvW93WsNz2s6Ti_qGDu5Z5y2NRWzJhf6kQcIhcA9VYWokupOMf5s-nXAh01s0",
+        "places/ChIJD4lSKMi95ToRbfpOdKK5_No/photos/AaVGc3mW4nmw4jmwSmi2_ND1p8_L9nStQGuXSA-ROyXIHVDDseKvCJdiDKnzFPc3TEH37MArRccDaglUI4nB1apRBNdKWOJcFRcv5ed_aGpj4WhoV3gryaaLWpefeyFC_j-EZBrF78ePrC3Crw74muZVHJaoCPAE8LOXsrHduEbMuhTmt58ECxnMsAF4ZlAglldXZXpO8Iee8zYq9J3Z2sePAsKh-7HflY8TcSZh50Bh6m_pb2eTtLj3-qFYGbM9kz6fawDU6emCRVGKmX8R-vhbiHO1Cczc2VTduHspSco-WByErkJg_ZphcrJuaCFtBnzuaSlrTi2st3iwZAMqNysPqEaOC7p7IE7TItDp7d9adGMksA1uIKjtHPJGRHUlkd_K4W9l5ef7W290MK3o4bvOaomyM9IEst7272vqge33RsPhQg",
+        "places/ChIJD4lSKMi95ToRbfpOdKK5_No/photos/AaVGc3n8Ympfq6uE3Y48Q3GfvvrRPhIWOZsh-QXs5MDv4mMREgw1qkiynWSDNZl3wUwcmxJaIZuuKJ6WUvQVlcH5B9xh3EyX-k89wEitgiMQhbkwmO3PLWuRxi71zIBrZIhzr0REOdNjWnyrRN5EdnbN7Xa5mNhwER0E4mNCeaITr6RuRseVPG8ZdaOLeUVNSXOFaZeIfdtMkokr53xa7q-Q_CIVuxO50x84zy0XL7WunUeyK_lE4iTARZz_Jvexu--V1R4rvga1KjWz2sFsqzxGAWGEKLleAcGDeTQ9_nTT6G-HVK3myineEqYiwv3QN6oKhy4cbXPzypO0KrTLAX9MEX6gBL7uwavPo0aWefIINASnDD06zHaLdQuzQjZwxB7I1sV19NZgSPC04QyZOx5U34FKz_8b73jRcIRXs4PHh8Unk-l_FZ-WELQCHOCeqQ"
+      ]
+    },
+    {
+      "id": "14667324-f589-4168-9ab6-21dde5c69cae",
+      "name": "Fresh Seafood Restaurant (Arugam Bay)",
+      "category": "food",
+      "description": "A beachfront seafood restaurant in Arugam Bay serving incredibly fresh local tuna, lobster, and curry dishes. The creator highly praised the tuna sashimi for its freshness and elegant taste, noting it's different from typical strong-flavored tuna.",
+      "lat": 6.8418136,
+      "lng": 81.82756909999999,
+      "geocodeSource": "google",
+      "placeId": "ChIJV6MI3mS95ToRakVhQpxeovo",
+      "mentions": [
+        {
+          "videoId": "o6XD5okXgMg",
+          "videoTitle": "You Won't Believe Sri Lanka's Surf Paradise, Arugambay 🇱🇰🌊🏄🏽",
+          "channelName": "Purple Living",
+          "channelAvatar": "https://yt3.googleusercontent.com/92CTstFLOwgrXQYL3lqmmaMPzCv6u89K5zGbQL2dlqdYopV_X4h6B0I1dRagIPMtqDTAYuemt0E=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 462,
+          "quote": "Our first meal in Adan Bay. The tuna here is so fresh and so good that I want to eat it straight like sashimi."
+        }
+      ],
+      "thingsToKnow": [
+        "Negotiate prices - the vendor may quote tourist prices initially",
+        "Shrimp curry may be overcooked"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZP5B3Y4oFr2kcaD3st9PaaTUX8_CyeM_1idjZXH7XPMFof7HAcCTCqYTdFa8Jl912lPD2Ou1izp1eMur4M3BE-Z5giCRaLUhPF_VAO73Hq8KyD1H6BtTXO5L09m26htHNd26x3pCGRAXocdN2o=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZP5B3Y4oFr2kcaD3st9PaaTUX8_CyeM_1idjZXH7XPMFof7HAcCTCqYTdFa8Jl912lPD2Ou1izp1eMur4M3BE-Z5giCRaLUhPF_VAO73Hq8KyD1H6BtTXO5L09m26htHNd26x3pCGRAXocdN2o=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJV6MI3mS95ToRakVhQpxeovo/photos/AaVGc3nVOLuQTUQYvdgxaXSfPGtapbyCrReF_871Y5r044yWLOPmZdeohDFWXAJrw6kJ0QPXnMd9UYRF3K3puNRyl6gM9whQx5ywVWgygXM_kbTTbNNwy0cp1YMxz159WMSRYdAjPPPtgVCvBXYgzA_24gtr52iH74zedH8XcGx_vG7bu6Hsje05UQAJaTZTcfV2mgo3g9TEeKp5g0Cwjxi12Qt_D-RrEjzvA7GbuxvAZaYNebH2c5GxmT1x0yxO2vnfThrpMAHKZ5TOt6lErrnnegGVbBw7RgwImh83Hr3186kMUAEHefwbl1V5c_IweYQsHiRY2vguA-J0H34N1bd-hPSDEPjIl3MIPHfrlbVDg395qv-95qIPkI73O0Duc1HTXRqFKdivyTo0Z0PXgGEW0xr2BkwK0zd6tCgUJuRTzIrPxLA",
+        "places/ChIJV6MI3mS95ToRakVhQpxeovo/photos/AaVGc3lFFGgXdHvSgGtMEm70TeSSK7jakZWPz2jNKDtZsgwKY7lisbLMO59BcSiWZ_qedLDVz1LUSlrj0kgzEoMHaTAf9PsGqa5Wy8hSwR6uhMwLhYurepaXyaGj9hJ3-C3ffqUQfWG7G4XAulANbGOyuTlzpVt-sw8l2JNtchvhzNWZ7UsKOtEHBhCDOdfvQ5jNtuPyOep_0ur80-jbzP9KoAxLfS0KEo0kn3qrbGKHHTKevZbxDCCqZK1bCAWUR0SQRzaOZrfBTqja8gvA_hah63AtzJWPArJzygOOmX6M-K-UGqn-NcR3cwdo8KAiYpzh-MYO2hrUjYFc2RoMpB7SUTZ8vvyoD6ouiDXM9PpqsDe3OXxdd-MiLxYBA_gAZ5R7onvcYzhwoYX617c0GyBKyXiUqPtM3al1GuBoupuYIADVRdY8oWFyWj_SSONEGg",
+        "places/ChIJV6MI3mS95ToRakVhQpxeovo/photos/AaVGc3l9tUzsuq_h2Hck2daSprAgXWrlkc3ejhCKM7nd1IsUbvmzt_e6u8PEXaBGczw92EfH78ts9PsAkFX3HFX1KJLEA0EddnkiEu1OurOQC-1IWDpzWld_usCOBCEdfvt_B8qakplJqJaJG6kaLT6lQryklbdHo0mtgOtVfz27rQWlKVoS82jx5TNMy2bP1UGzfSlX2Ymx7lju7ZNHcCtRUTakCDwGPdaeXV68ABIiLWOUG8Tv46gmOO2MszDHSCz4zfCzizlMnM3asEorTgLAeMofBuRRftCS2oCQSk57CnFIMSWsCOhNIo1cOojF0k93MyzuOZa1WDXV7VokXhSxcUz7Ct-3aZ3O-hczrqpH085cRkf31g92VGl0542i4eyqb3ZcSt4mzpV-hGivosx0OvmVD2lp-u96uyU3pQDeY6J26ZA",
+        "places/ChIJV6MI3mS95ToRakVhQpxeovo/photos/AaVGc3m09xz6AaN8BuFpB5R6ysLBljh4E8Wubd6ILoZJyq7UvjEwtKc1qcOIwgPo0pe0yeiecghgFluQEqqwmH6DoRUsuRWnR4OaE6MGp3VgdqDh2riT3lh9y4lXVF3a2_1wLZsGw5HEJPTtxNoctpIXbD1JKQV4wLHc21I77pQ0-gGx4HwqSMhfbvSb5Zw_LTtEVBVdbC9vHzulfbBJ28x5yC8N1VW-jiTrshfeDHM9bn02FWiAKMjcrFPGI3mEflC7TlEy4r9m-sdesbsm9OTwjGfeQEoqqLuJSJJnbpXDQnF1hESvE6CnRmbytll6RujUGCSDCW6tdYaOJdK8eXPKKF5hgIbkRnJ-BCap9up7iEkbWRcJglAYSLTgXzrk0wUrR5AMCu4enBATxWZI416VcIBAqJEFkH0RXYrbwtq9v13mRA"
+      ]
+    }
+  ],
+  "query": {
+    "destination": "srilanka east coast",
+    "interests": "surfing",
+    "resolvedDestination": "East Coast, Sri Lanka"
+  },
+  "bench": [
+    "_AJSRk-c02Q",
+    "Ws9Jvbi2yH4",
+    "f5-K96-UG6A",
+    "9C_ISYSB9I8",
+    "cXiEWxHNAus",
+    "YReeaMuov0s",
+    "i76bEafb2Bc"
+  ]
+}

@@ -1,0 +1,1696 @@
+{
+  "id": "8af9344deacf",
+  "name": "Hokkaido, Japan",
+  "destination": {
+    "name": "Sapporo, Hokkaido, Japan",
+    "lat": 43.0642,
+    "lng": 141.3469,
+    "zoom": 12
+  },
+  "createdAt": "2026-06-12T05:25:18.062Z",
+  "status": "ready",
+  "progress": "Done — 38 spots on the map.",
+  "videos": [
+    {
+      "id": "ANaFXfgzzpk",
+      "url": "https://www.youtube.com/watch?v=ANaFXfgzzpk",
+      "title": "RAMEN NOODLE ALLEY TOUR in Sapporo, Japan! || [Hokkaido, Japan] We tried Michelin Guide Miso Ramen!",
+      "channelName": "Amanda & Felix Eats",
+      "channelAvatar": "https://yt3.googleusercontent.com/T5GP0xRRFbzdyoGodYPHDqVk3cbp5x-U7qjgUcJTo8RQx6DDWABD3iOpGCPr_Ww5OooWV5nlLQ=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi_webp/ANaFXfgzzpk/maxresdefault.webp",
+      "status": "done",
+      "spotCount": 6
+    },
+    {
+      "id": "aS99O8GOGec",
+      "url": "https://www.youtube.com/watch?v=aS99O8GOGec",
+      "title": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+      "channelName": "Kensho Quest",
+      "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi/aS99O8GOGec/maxresdefault.jpg",
+      "status": "done",
+      "spotCount": 18
+    },
+    {
+      "id": "RV538Aj6MJo",
+      "url": "https://www.youtube.com/watch?v=RV538Aj6MJo",
+      "title": "I Explored Japan's Best Kept Secret, Sapporo Hokkaido",
+      "channelName": "Patricia in Tokyo",
+      "channelAvatar": "https://yt3.googleusercontent.com/fsBFdRBHro6Ly-CXU1YglfwAimd8sjpNyT7hPy4m74Xi56PRjKQQk-GUDblOe2G_itQGOfcN1A=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi/RV538Aj6MJo/maxresdefault.jpg",
+      "status": "done",
+      "spotCount": 12
+    },
+    {
+      "id": "ElfHwXXS0GQ",
+      "url": "https://www.youtube.com/watch?v=ElfHwXXS0GQ",
+      "title": "Rusutsu ❄️ In-Depth Guide to Japan's World Class Ski Resort ⛷️",
+      "channelName": "Lost Then Found 로스트 덴 파운드",
+      "channelAvatar": "https://yt3.googleusercontent.com/7tEu1rWOD5eX65QhxdXx2p0h7O87wzFOATKWN0pBY5FQX2NGTJU4JotERCmQP9rDCgzkqQeVh7M=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi_webp/ElfHwXXS0GQ/maxresdefault.webp",
+      "status": "done",
+      "spotCount": 2
+    },
+    {
+      "id": "34vE-ABqqmw",
+      "url": "https://www.youtube.com/watch?v=34vE-ABqqmw",
+      "title": "Winter Wonderland: 10 Must-Do Activities in Sapporo, Hokkaido",
+      "channelName": "TabiEats",
+      "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nKMxsKFYExPvkjt_H--4AzJk8lK6enlKgU_eQSOtIIMw=s900-c-k-c0x00ffffff-no-rj",
+      "thumbnail": "https://i.ytimg.com/vi_webp/34vE-ABqqmw/maxresdefault.webp",
+      "status": "done",
+      "spotCount": 10
+    }
+  ],
+  "spots": [
+    {
+      "id": "566c3cf8-21ed-45d9-97b5-ac8a2fc6ab4d",
+      "name": "Ramen Yokocho",
+      "category": "food",
+      "description": "A famous alley in Sapporo filled with specialty ramen shops. The creators visited two different yokocho alleys - Sapporo Shin Ramen Yokocho (new ramen alley) and the original Sapporo Ramen Yokocho, both lined with bright lights and known for their miso ramen specialty.",
+      "lat": 43.0547934,
+      "lng": 141.35429159999998,
+      "geocodeSource": "google",
+      "placeId": "ChIJSyzMXY8pC18R-ecCwIykpC8",
+      "mentions": [
+        {
+          "videoId": "ANaFXfgzzpk",
+          "videoTitle": "RAMEN NOODLE ALLEY TOUR in Sapporo, Japan! || [Hokkaido, Japan] We tried Michelin Guide Miso Ramen!",
+          "channelName": "Amanda & Felix Eats",
+          "channelAvatar": "https://yt3.googleusercontent.com/T5GP0xRRFbzdyoGodYPHDqVk3cbp5x-U7qjgUcJTo8RQx6DDWABD3iOpGCPr_Ww5OooWV5nlLQ=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 22,
+          "quote": "An Alleyway full of specialty ramen shops lined with people bright lights and the smell of noodles in the air"
+        },
+        {
+          "videoId": "34vE-ABqqmw",
+          "videoTitle": "Winter Wonderland: 10 Must-Do Activities in Sapporo, Hokkaido",
+          "channelName": "TabiEats",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nKMxsKFYExPvkjt_H--4AzJk8lK6enlKgU_eQSOtIIMw=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1299,
+          "quote": "This Ramen alley started back in 1948, it has a long history, and any shop you choose you got to get a pretty good bowl of ramen here."
+        }
+      ],
+      "thingsToKnow": [
+        "Very popular and busy with long lines at popular shops",
+        "Multiple ramen yokocho alleys to choose from in Sapporo",
+        "Many places may be closed during Golden Week (Japanese holiday)"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNIE09t35dcMnVsXZR-yWNRVj8fsN0Q64ni5UvNS5r2WWrAaqPAsbMYrwF2gWPm5OL0583ctKvjxCHV6qd4gYJyc-63aUwbtZpYi5FdPusqA9yzOq6kfVbHeCBUvYG2oeTjR5D0MN9RDGZrLa5R97Q3=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNIE09t35dcMnVsXZR-yWNRVj8fsN0Q64ni5UvNS5r2WWrAaqPAsbMYrwF2gWPm5OL0583ctKvjxCHV6qd4gYJyc-63aUwbtZpYi5FdPusqA9yzOq6kfVbHeCBUvYG2oeTjR5D0MN9RDGZrLa5R97Q3=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJSyzMXY8pC18R-ecCwIykpC8/photos/AaVGc3kjBfKIVr3iAR5061zKFkNMDvY_BTz3G4D3FhMDoxeYc81fiuP4PJsxyLSO_45h91lV5dfbKpKcqNmQYmIjHAkcM7FvdS24ulZ1qQRPrObP6P2_GzKy7ySz4TVugzk0UB37ZIM4sRC0d7xrN_YMFFtAJl1KzhwLyBW2gKOpbNqnf9LYVIklvN0OqS_pl9hrBWKPn_0k-TsiL7xgOS72kCPqIkVo9m94Ckgb9H-z_f3UGYPTTA9vyB9HYwGApcGLRPj-BYs-KI_22jgRVU3tXQwOrLEyCDXk5_2OH2ghX3nBQnB7UOi0H98O4--RxGzWIhF8GXFTVOiMLnNV3YS1ZKhov2fnFftdmt3BOm6UbsW0ZEIJRzTrPZH0jWrDg5_aWh2daCKIeZvXbsbRM1hIRS1qQwavn2FkCeufQHLquP-r3Q",
+        "places/ChIJSyzMXY8pC18R-ecCwIykpC8/photos/AaVGc3nnxIlYjkoIRfwV-x0O6-RGDGSVxpMN-8gb23ozU0OQvDzlVSi0m5PEP06rjGs_S8pr-yCjlwBzpo5v5m2E2LOWC5F54jXEmh83E-fu6L62u528T5oHZ32eio3jtF0wjxmt35MyCXOvUpdT8y5ZPzEbk7tfsSytHdk8TOIePAYPzaotHkc4BkxY5MtzqMoOi5VaoRaiV6lzK5PA1lFAhU02BMg81Cd_aNrOzOQZYtBGfsVFnWmNA2rrV6S0D2qxnm-cHFco9u4O7KNsOjegoQr2H7X3v27g-GwHKM-6FpHboTRqPx76hR-or2TICqgpJlE-Evfylk6ykb6LIyJc8McW3vqbbHp4t5Og5CrJpGWNlSCObpitEC92clreWV2J5gdT3W9GUBIuqXprZc-cnaK9FtFyWRh5WkeirgcAakoutDuj",
+        "places/ChIJSyzMXY8pC18R-ecCwIykpC8/photos/AaVGc3nlnwPmk24lYBB4pEwqtE9QGwadr-jQ4e3LRPPgnvNi-Fd2prK02_i13QWCzTP0XSlaS2HCGrJ76ZgpeB8yVAkNPv7ciK0BHSaGqrkzOA0heT1LAc88qaz6DN7NUmW8mfWj8it_YOpbesAg651MWchEa4a_Xh6fwLU8tFYOE7ANWoTd5HByY9XFRoQ6Gf85BkuLYwePUuNdcbs1IfNpGB1fjhWJ4GrM4qMFDPgDmN-WbY_ahEcBRtUp0wWuM-tIXjUkFU20buiz0DjYGi0oYraS6CaUTT3wHv8klLBX2mXJZSeAzO3t0L-OGVmJIQHS_85sjcJLucORHBWeZWKQN8Y-Bt1m872SpiOVKGeJueU5kn_2M6GujG8zR3_xhBnBoDq0LJ-ZRiTzgL4TE6Lbw0azDc1OmtPWywpu9TuGeYbJ561b",
+        "places/ChIJSyzMXY8pC18R-ecCwIykpC8/photos/AaVGc3kSfR_dT7IiZkO0c-LD5OfUe-0hRLvtwVdaidXlwJCaCYPT0LcBq_81K8ubJpQ3-aVB6Lr-ohSYZa8N7ImKtkHJ6_LPGTEaR3-3BzeJ-ldsPEBCV1pBaq-qsswoLYzlkLgK3vFCrDaDeLn4LdlIT5f9Gkr5AF7M38xun4ZMoVciA6fiBUB9NEIEbX7B6NxFbW7zBi2RhzrosMPpo7NBPThRkLOrpR7JKErm-nucRwzK1fV5CY41tnwfrV58TVi0Etf3ZvmHHWmHHUTLhsBWExxukS1CO7KOyBooshvDqBYIbkAPG_Z2qGoM9bes7ERhZL4QlJ6GyD7pOIPP6G3JjNa_Ildtm93ypwdGOabw094A0104Y91ktOBUckZuKa5Zl8ah_vZhsC9zvxDyYCM2d8_Kt5l5Lx9y6WV4m9EWRBacu8qZ"
+      ]
+    },
+    {
+      "id": "c9767fe9-bd74-4b8b-b8ad-51619c35c6ae",
+      "name": "Fujiya Ramen",
+      "category": "food",
+      "description": "A Michelin Guide Hokkaido 2017 special edition ramen spot known for their pork miso ramen made with 100% Hokkaido wheat noodles. The creators tried both the spicy miso ramen and black shoyu ramen, praising the thick curly noodles and savory creamy broth.",
+      "lat": 43.0553375,
+      "lng": 141.3542416,
+      "geocodeSource": "google",
+      "placeId": "ChIJX8W5PYQpC18R3rVU78F9dDs",
+      "mentions": [
+        {
+          "videoId": "ANaFXfgzzpk",
+          "videoTitle": "RAMEN NOODLE ALLEY TOUR in Sapporo, Japan! || [Hokkaido, Japan] We tried Michelin Guide Miso Ramen!",
+          "channelName": "Amanda & Felix Eats",
+          "channelAvatar": "https://yt3.googleusercontent.com/T5GP0xRRFbzdyoGodYPHDqVk3cbp5x-U7qjgUcJTo8RQx6DDWABD3iOpGCPr_Ww5OooWV5nlLQ=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 83,
+          "quote": "A Michelin guide Hokkaido 2017 special edition Ramen spot known for their pork miso Ramen and they also use 100 Hokkaido wheat for their noodles"
+        }
+      ],
+      "thingsToKnow": [
+        "Very long lines - arrive early or be prepared to wait",
+        "Spicy miso ramen is quite spicy; non-spicy option available",
+        "Made with 100% Hokkaido wheat noodles"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNxCPDRvWTcyWl_l_2VaBQUtXCWhtGQASTruTjcVugbnA8WQq9hGF8T-47wMfS29nWT1n6q4umnClgXxSnh-3XH6U3ADXYNWEPM8pLdhUSKJDJ6a3qOEuLBlCwAwrVNAFYEeyUESNBMQ6LfYCQQQbRfjw=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNxCPDRvWTcyWl_l_2VaBQUtXCWhtGQASTruTjcVugbnA8WQq9hGF8T-47wMfS29nWT1n6q4umnClgXxSnh-3XH6U3ADXYNWEPM8pLdhUSKJDJ6a3qOEuLBlCwAwrVNAFYEeyUESNBMQ6LfYCQQQbRfjw=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJX8W5PYQpC18R3rVU78F9dDs/photos/AaVGc3ltp4qOXdtIr158z4CoGK8Ze2e9u-hZlNdi69gHK7TV1SZKuUGMpYZP1LD3RSL2T37-0XJRGWHSzLd2ygNtRuQ6_zHYpudIF9cOeJI2n5D2GICcZXWg3To6BrRMM4b7Q39gO3gxl05uycKuxxSPmA--pWo_3o8U5wUwOd2LtUXMwAbWZkmVZlYXk9YTNN9qBx6AVucQQGGVocDKnFfqaUBlpWG6RSyeWiBiEEmU4JpiPSLKZ9FX2tykIppug_k1nlPbjqT9-GlSnrzzVmdXpy_q8d-MHkAc59AI5toWGRohMT5HlMRxdZMN_37gPTXvSZ-piWl9maXYqkqGUgARAlRO4WnUJhpVYsQP7JiAjTB7OYBPAdyOK-5JuRcdtxPNOjDGvQy8BcbhX_Dm_2wDxZ57cVgF7HV0a0UJEnzLemt9kbPuvmRIyWDrR_uUr5Yd",
+        "places/ChIJX8W5PYQpC18R3rVU78F9dDs/photos/AaVGc3lG2nXku_dcGK9RoIJabdf286IIdn-6fW2wqBO22Q_9HL18x9YV1ze8bxjWkcZLFzuFMoa3rmCAXsrKI9vN15BepMVNpXTEa-8Ufc-ytmdg60XOVtD5I5g0kC65m1HDnxYndBk0bmjsVgYdqK7tUgxfRkgfdUSYfeY39532XB-qzZ-l5vdIqCN3UYqkAcXyRj0gLUfDO917G1u9P-epIXEDLM2DEIS2MtHVs0-JpDK9Y3sLjl4-mAhwAo4asPuu8LR0m0uPSk6WdbH_3A88ZFkAV4cvJJSygCeT0OYY_wzpBjj7jcWksgltrsX60RFrvfLmzcXEEejXMF3u1mMC_-xZQ6frLlWtM5MWimc41v5T7Bqo0Nhnie-ToNDaA8WegBvklesbiQNDW-1UhoG7tVK6er9KK2imvafXIjb0zHN_65w3eBFerkZjxw5AIV_x",
+        "places/ChIJX8W5PYQpC18R3rVU78F9dDs/photos/AaVGc3lfY4XFK5mxPZTaX2FxiVnKslJzXlN64jNwqO5pdwJ6haws4CrpvTIk4WQlfykfuAnKoim6D59UzjwErZfGZZt_5kHa2Cfa0Ky_fAte6I59YYK1Oss6wbo7iZH_U8AeezDL3IzYoyHkzKdR-kRwE7qC6l5ETPJUUp5DQlqEIxo0Vp70FWV9ec5ZWSsZ7-hcltY2ofRfWUyLIjzImYD25UccxeX2zZ-HHhXmnloxQkumI2DqQBxH__Yf4BF7ejhkxfbdnkdb4Ati1gDtMSYFdmmjHNskZNelOb_2hS4puNdYOt_dwbmI-HmQ8UOMz5R1tzz46gT6zu872TE7LNZv0tjzh0mv4WGZNKmFpfP4_fhgfjQNapFDe480Cf9q3b1ccInnI1utZy98iPo1Z60z50NCZgK8zDUurFPB3VvfZCgH8e2WUkjjPxPiuJ-7RA",
+        "places/ChIJX8W5PYQpC18R3rVU78F9dDs/photos/AaVGc3lbqxTqqq8sYDijD9qOAf84ZZqHSmrX1H91aQxBNi1Pht5JrBLKC9OJKhsKw8GYq-hMBNBOAb2LCdqT6jo33i3anhbSkzdKvkC4G2Bu97Qj6ZlM_Q4MHBFfdZW1xf86TyRzCRGHZInaXxGWg8ZO6gXPOSjR7D0vZkA_frG-2LQ12qAnlbNJ7Z2SdALEcavu6Opg2fjjEyULY8hQvCorqcFi9F1-Bhs9NP2RZKNYtzeqrozXg2_OaWujpVuRFBh1p2sLA21ce7MjjlYrRcVWXTQolQW4wNyZBghDMQpa3oM17vjGKbn3hpiRqTz7IhNdcauh7l4cO-aqQBHCZD_AZbHfeGZsIpD32egjgY8xqQYHTrdsoITRSkNdtpqsEi0vgFTecgi0EZ-N_0uMXJd3ESas9p1WwpGx6kW_2M42Rw_9Ig"
+      ]
+    },
+    {
+      "id": "b4fcc127-b657-41d7-b8cd-44d5ae51cb04",
+      "name": "Teshikaga Ramen",
+      "category": "food",
+      "description": "Located in the original Sapporo Ramen Yokocho, this restaurant is known for their charbroiled chashu (grilled pork), miso corn butter ramen, and shoyu ramen. The miso version features corn and butter, creating a sweeter miso soup-style broth with plenty of toppings.",
+      "lat": 43.0548706,
+      "lng": 141.3543394,
+      "geocodeSource": "google",
+      "placeId": "ChIJ6bhSnYYpC18RK6nWkDV5tKs",
+      "mentions": [
+        {
+          "videoId": "ANaFXfgzzpk",
+          "videoTitle": "RAMEN NOODLE ALLEY TOUR in Sapporo, Japan! || [Hokkaido, Japan] We tried Michelin Guide Miso Ramen!",
+          "channelName": "Amanda & Felix Eats",
+          "channelAvatar": "https://yt3.googleusercontent.com/T5GP0xRRFbzdyoGodYPHDqVk3cbp5x-U7qjgUcJTo8RQx6DDWABD3iOpGCPr_Ww5OooWV5nlLQ=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 314,
+          "quote": "Hokkaido is very known for their corn butter Ramen so we wanted to try the very traditional style butter corn Ramen and teshikaga had it"
+        }
+      ],
+      "thingsToKnow": [
+        "Charbroiled chashu is grilled fresh right in front of you",
+        "Miso corn butter ramen is a traditional Sapporo specialty",
+        "May be closed during Golden Week or other holidays"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPLzULCcKnE0WWRL23YTMblLto94zQsaVupMNW2eHiv7beSqeHbCROAThDfUSTjeMbyvgpmMDQRPJwaUB7lC_2_nVmDsgvJh3OridRo5_ub5evWN-7QBam4m5iR_PYNbq6dKt3Oz10_LIXRlebb3g6w=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPLzULCcKnE0WWRL23YTMblLto94zQsaVupMNW2eHiv7beSqeHbCROAThDfUSTjeMbyvgpmMDQRPJwaUB7lC_2_nVmDsgvJh3OridRo5_ub5evWN-7QBam4m5iR_PYNbq6dKt3Oz10_LIXRlebb3g6w=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ6bhSnYYpC18RK6nWkDV5tKs/photos/AaVGc3kEcNDOgghAiWf09lbnDMS6ISlmx1Qx8Vf1OM2b0rt6Sj-NdaCN-nehQ4kfQQTsLH079ouD0Wuyugy6febnlpaOIlRE_1drwHbdYfdTzR-tXXfkKehej8bbFZXsndjUWLlrmkIV83vX3UolplyEC7tJThVN4zY45RYfDjb0Lz7mhNpDXw_DCcbgtW11niyDgaFnPzscm0ZBHbEh3jleSQ5CZfaeeAsMrwvAhBTAPsN7uHoXjNkdlz9iSBHW14SoD_CFMzVLU0t4CqgrW9dlSMJSFB97lNq8TdzeGZWFZoUpGohIgv-8bMjdeKlQK57bIx1okB0Z5CCtHmiMsRoUpTnpK4ekFXhGMW385zuS1ItBwNJrjQzN-OmoK09g7O40Lo3B-lqWIYGdRgT8P3XkqxyfHYFV6CV21Gd0ACzt9PHX66cZCd8rv1s-1zBRZNaU",
+        "places/ChIJ6bhSnYYpC18RK6nWkDV5tKs/photos/AaVGc3lT4QhSIvq5N2J1GkSjZrUsq4mqKxo955E7oIkIKu_5NkhT6d4m2n4wh5V6LadJT1CRrF-vsrFXTgXZrXUQB-TcBcug55Pxv27nK85fCBaAvholSC6mQA33WNPs8ilOMw6dYyxTjFhbGR0xXwYtRGnfu9abdacWSLX_YaZA_b7Pmv5Aie65JmxXs-OxjcgVr5Yf3wXoI8Nx7keuIAWSzabMUd0xxmarfwkihRr-3pKpk6UmJng6UFhvYwgGm8t79mNfC1ai2-jngb4MtZ2Xp7gxGphBCip11OV9ButtixIuv2qXNbH9_kZVuC6ntoYGhjijuNKH_1jdCFzNp9JQC6cKUXCLfdkmhJWfDEmOaS0y_0y6gBvA4uwdaTVcikxYqJ7uUSZXGcYldoCC6YgsR5v6PWHeFYOF_133TCd2-BC-Qm3Lae-2oqHS1ql3HmOB",
+        "places/ChIJ6bhSnYYpC18RK6nWkDV5tKs/photos/AaVGc3lpn5GQMpfsg-l4B73vxTGM3_FCDfH7N1YbIzjaJiCv73F36civ3D2A_m2KFX1np_ChJLhlYVMWbv2YxoH5N63FTB5Cm_mQy7qKMDtAj0hmJdi54fO7kdcWMN5MXNK1NOEpBXLmxdyF8XIsJATW5ofkc7Uu99AtK5upNzQWJfaN76719c5y2J0sb2VaUzWV-r4Yj8D7DhcvC2Ju9W2VknMfLskpsbrjsCFZi6oSpvhUMGvnd5XI3i_1x3ACETu_-rEkGcxPdpPIsIowFWmqzZyFROS14MSeSi1QVYTx9zus0_LqG3-WR-tvd5noJISL8WvGuvHxdIm-62xoQJfG0McA1PeUEUEHEz6vn2DEnGUm4vRUHMBvI-TSK2G46W5zTGY7ODhBHGKR8RL3a6IQ7Noo3CsODiSPg9IK1_dmKXBSJV0BzfMlex27vSsaXQ",
+        "places/ChIJ6bhSnYYpC18RK6nWkDV5tKs/photos/AaVGc3kFaGltOpcAZappfDpqC72WEKNWfS-KfDicvgT7FJko7qjmDrdmB8LzqdwB0j8Wf8MR_uHS0H4DnW0riEDDFCL7UGIlt6tdntkKh-DlnpB_k2K64mI-551yM0sdOM5pWn6k-9Cy-J5JY1smPJbvH4s74g4jtobkQzhsKmwjoqYe8nWsIxSj_KeGHdZIs2TxPxfWF0vMEN5_FHTZUg8WpvQyDDVFTfOIDA6Q3TP93aUDyp-lLlHOJE7T1AzdVUr2e_wFLkGolajrcNJwanx4VzkxYBAENWJjZLNRbHETKVSD-fgYUkzhS2FndCUzPyLczOIQoslv-jgGpcAmjyi1RQe0gsfSCL7AuNozLOe1_XYM68vAtzkJ1MPtrwPlPRbASs1yVjnuIoygvveql61A8oqkZ9mnU7vcNHxr-TcVPFJSkjO8cdyX2ldjPgw06wEZ"
+      ]
+    },
+    {
+      "id": "90379b8b-82ad-4c06-b3a1-f3e62e397ba9",
+      "name": "Haruka Ramen Shop",
+      "category": "food",
+      "description": "A ramen shop at Sapporo Ramen Yokocho with a very long line, known for their unique parmesan ramen - their number one seller. The parmesan ramen features a miso broth base with parmesan cheese and pesto flavors, creating an unusual fusion of ramen and pasta.",
+      "lat": 43.0549506,
+      "lng": 141.3542979,
+      "geocodeSource": "google",
+      "placeId": "ChIJ07FgJIQpC18RYkRNPfQgdvw",
+      "mentions": [
+        {
+          "videoId": "ANaFXfgzzpk",
+          "videoTitle": "RAMEN NOODLE ALLEY TOUR in Sapporo, Japan! || [Hokkaido, Japan] We tried Michelin Guide Miso Ramen!",
+          "channelName": "Amanda & Felix Eats",
+          "channelAvatar": "https://yt3.googleusercontent.com/T5GP0xRRFbzdyoGodYPHDqVk3cbp5x-U7qjgUcJTo8RQx6DDWABD3iOpGCPr_Ww5OooWV5nlLQ=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 524,
+          "quote": "Their parmesan Ramen... it literally tastes like pasta with Parmesan cheese and pesto but instead of pasta noodles it was ramen noodles"
+        }
+      ],
+      "thingsToKnow": [
+        "Very long lines due to popularity",
+        "Parmesan ramen is their number one seller but is a unique/non-traditional specialty",
+        "The broth is miso-based and lighter in flavor"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM7WMAJykQiNyjzL9eGDicxVRVUL1rdrXdPAihzwF5YRfQ4ey5RUl_6oIjDMxqGOZiML6721QO1IoPt-LjmCjqy12X_NTz94G99Fb9vXp97TmY__mw-CqpBK5qZyJo70sEhO1nuLyAgiSn5HA=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM7WMAJykQiNyjzL9eGDicxVRVUL1rdrXdPAihzwF5YRfQ4ey5RUl_6oIjDMxqGOZiML6721QO1IoPt-LjmCjqy12X_NTz94G99Fb9vXp97TmY__mw-CqpBK5qZyJo70sEhO1nuLyAgiSn5HA=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ07FgJIQpC18RYkRNPfQgdvw/photos/AaVGc3lyyHfhVCK7adGAHzKjRsp87oPcgwQUCrcXzmK4spFM6uJpwIEAW-MIrOb0VB2RdVUcvjPY59NB0DUnpZRD3HKI3LS6oXX6oqv3fRG3pGKCAG_vu5aoIEHD_y0cA-4iVkYjCjOvRZV_2xWohzjTCgwd3nFcdn_txF0qhJavL1d9CS8U239QFQ06pjEVpsp2bj93rAE_w6lHBZCLOSZ1psdzjokWtDsBijQ1GroqpKOxCGVIU6nI4iACw_5cHttuaSUm0v-U_a6M0sm7r2j9DCT2YTtGC4o-gh8jpe6M8pAkww5FCdp3dxUqNo5O0p9o8W-9j7HZmHATGpFDrVkAXE5AN3Mn1S1yUUFdn4ovN2mL_k_HQ6Zh6hfyAwr2A_B1Qn5d6G9gWJvyQhNh4NiEvaL16DvQ33f1L791bFkC4PKP6Q",
+        "places/ChIJ07FgJIQpC18RYkRNPfQgdvw/photos/AaVGc3kUKoU4TyFthdq1k_iCxPA0AqKlavmmt5F4F4_TubAgF_A5hm3G5Fxij56bXRiW-OAMUwd4QQXAiNzkLno58YE0UAUTORULzAbluXKlDYfeIpqcbZsyNjOwCpXotbD9FGj5c-_Tm7xJeiS3V1jYhPa3psao5B1euOgAPpn14Dli_WG9GD-nF5VLDdhHFhYi0ODU_oZ004sEA9mI55X8ihI_jchGoUQZ62bMQQu7-U5dxU3XQr6_qwMq6D1Z7hE7BI2p2zKk43KTusSx9VpPAnRz08ZJQCy5FfnFZOovx8gp33MuDXL2AFjxjP3-vcwMhhJBaKqXiZqKWdy1AyeUMumcD2VNL2lYvFdHW2SrrbWYiWgFdKUHOc0lZb8zhRk44cRPyrbCuIaGaZcc8M5VsHEURWrejrDg0saqujyYRU2mPQAVqkvbTDGy3ziM",
+        "places/ChIJ07FgJIQpC18RYkRNPfQgdvw/photos/AaVGc3noKblUp7Je_sD82QhcXKhLi15-lB1zbKLzeTHkRVuqNBMQOmUV6tsXelgJZ_-ugNw8lSk5z9BI0APze41Sg4kpaCApNq2edGIHRHyo4VkLT54Z8KRkpe5PvGNy3ci5zdryY4f2JKB0ANnlEOHP3ItWiJoBp5vOZB2e-HYV9fqYCjVUYCRz0wOpl-sM6PIJaiRQIVKI920RSJekzcBRX6gEo8TevsjgPLmDbdBCpLIxK1nTETQ3RdfwRfRS7vhrag5tnQlM7uIZ9OGfLSv5fzKncDzZ6-l6C6WlQeZ6AHcQst0ycloE6tHFZRJyzEXEQOQCX2pIJkrrdlmJYa3kjJdVDmPJLdi3LshlI2AlOo-H4LHFzc6VB2eqGGfhMocMzHDXMutv606tgUHEGx4oqhghwWrew9qKklywThCTvSZY-QVnRY_wN2kHwPcmvAIp",
+        "places/ChIJ07FgJIQpC18RYkRNPfQgdvw/photos/AaVGc3nanGAaiZYnMa7gCmxa0Po_7TFE-MDT4_gVOV3xw4EjQsGlrvYo8egE66Q1-WNfisQ5Gi8prUVuoGRUH-rWmnJMyge6GHIdilcAj_FyKh6IPVG14VdVnf6zWdPu-I4rtQKTSlTDsyKAK20acrcZH4tg_gBqOORy2iVZbFiRyh0sxSfUlVZFlfJUznk1xVIXQzhOuJ9Mph1WVFfuZtAxNq93mv2fBOhb6koo6SQ5t-afTnKpWi8e5-loP4iuZyt3mJfL-dcFHLyZeL8X_jzLXxHrDeZScsz7RVffzScS2l6XcGDep-0ZxWP5enxVyhj-K42mRShRKp2wytfRnvAq_oYIL8kpT7S3MSixbr5fdszhr6j-tW8M3c_xY_dg3ASdALZEcSeZteHbh_c7TfEZfVXZEZCXa3Vshx6jBHJSJ_MN2CaiDbBMXMcyQZ8lzIFk"
+      ]
+    },
+    {
+      "id": "b38f5b12-a481-4cab-b368-a1e3967a63be",
+      "name": "Crème",
+      "category": "food",
+      "description": "A dessert shop in the Suzukino nightlife area near Ramen Yokocho serving soft cream (soft serve), parfaits, and other treats. Hokkaido is known for rich, fresh milk-based soft cream, and this shop features seasonal specialties like their spring Sakura version with matcha powder and mochi.",
+      "lat": 43.0571489,
+      "lng": 141.35121139999998,
+      "geocodeSource": "google",
+      "placeId": "ChIJJ7N36oQpC18RDqKL-jnVxoE",
+      "mentions": [
+        {
+          "videoId": "ANaFXfgzzpk",
+          "videoTitle": "RAMEN NOODLE ALLEY TOUR in Sapporo, Japan! || [Hokkaido, Japan] We tried Michelin Guide Miso Ramen!",
+          "channelName": "Amanda & Felix Eats",
+          "channelAvatar": "https://yt3.googleusercontent.com/T5GP0xRRFbzdyoGodYPHDqVk3cbp5x-U7qjgUcJTo8RQx6DDWABD3iOpGCPr_Ww5OooWV5nlLQ=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 652,
+          "quote": "We are at a place called Crème... they serve soft cream parfaits... Hokkaido is known for their soft cream or soft serve ice cream because the milk in Hokkaido is so fresh and so rich"
+        }
+      ],
+      "thingsToKnow": [
+        "Hokkaido is famous for high-quality soft serve ice cream made with fresh local milk",
+        "They offer seasonal specialties like Sakura (spring version)",
+        "Located in Suzukino nightlife area; many nearby places close by 9pm"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNQ7xZWBpb5LqKH-DZ4rMICFzjBWLGdNFMKreH1TSvHR1dEtjizvsjLWddQ3N6-R7KvTzFCcezYbXFbeYbh660Pq7hq5uXTwhMX8YPDe93Gx-1NwqGCjR36Y3UXJGj1pGSBGYMmT0PIeivbbLI=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNQ7xZWBpb5LqKH-DZ4rMICFzjBWLGdNFMKreH1TSvHR1dEtjizvsjLWddQ3N6-R7KvTzFCcezYbXFbeYbh660Pq7hq5uXTwhMX8YPDe93Gx-1NwqGCjR36Y3UXJGj1pGSBGYMmT0PIeivbbLI=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJJ7N36oQpC18RDqKL-jnVxoE/photos/AaVGc3meUhq7rl5jGZTrXBxhlnZciyoF5i3lDsxrClrxFxyNgbcs8sX8sirPtlznPvGq5I_TWs_4sX0ktJdpth3S1n3LE1fN09oi8vMQnK5rIW5bJgRnkK56sSI_P-O27zdbkq4gUvmsXrR7cNA5qI053dpROwzZ0B-mf6RoMsLe7a7jed3Np7kYTf81X2XtWaLcpfRqX081HzCDdKp77QKle2mg0PKceAjaf6EmJyYYoaSDGPFQeM7wxdzoY4dfip4VrmfQnasVi8QQp9OSGzg2cgchTDzvPV3SZYOHWqUdYk7mAWC5X079cGQT15fwLxbJ88WAc6PKLHKdW30satpLuYP2ZU96aIk0p7cGTpW0g5RjZXPdyu6f_7CPn0VpsEBvcSc9kLyy6ts7qdB4-NyYkpdiHuGKyogPH61CTamvzkHgUz9aXbZ1O0x8_IU4MyN4",
+        "places/ChIJJ7N36oQpC18RDqKL-jnVxoE/photos/AaVGc3nW8AJKTMhDm7CLHuxeXQqt0MrOrEq7CcJplGKILYPk2aNIfifrkaBk8Ar_FWHzGdjKI6lHZgPZf9FYmaVN6kBO0AD-_QWsbPFdJhI31mQtfoZDs4co32T1zlRqmKaHptC-3yowSgSRybS7dOrWR_Umm3WcURpfh10ACTK_F9qc5seWsoVc1ckXVffUM1S_jMGW9Ok5nVQxP__burkGPzRHSRTU_FHSc14WKsj15HoOwHTdA4Uq4jEoaQ5CfqBRR8Y4yDEZO8up1Epn-ebt457xvvkSUQ9y3FLZoUb9jQWt4sYJL-zc6743iKdCMPmbPBfRrFJHsZTHCZJzDb6sCpRLNdPKW6B_I9r3H6esnw9PAZt0nzzZd391P0oSQ4rTEWbp1MuTK1zE_kB3vuz_02uSccc8sPKzPManJmzdQPs2ffC-6mOy8ArIKd1y5Jbh",
+        "places/ChIJJ7N36oQpC18RDqKL-jnVxoE/photos/AaVGc3mrs2ccPJGGBhrvKg-7bq4wo64GwJi7wnce9Hb9R7Sb-bIz1NdR46E9rRZhc_cZ9vK7PC-gIORvzxRYPYf-Wm76hwxybJQGz4-dfCIPknBai-q4tAYbxGQnsLMuWGfIx9MDfnysDtmSqtmHx8z20pIv4BDWH5cW2NFYzIvTm_L4Ms4RYKhtTjCGKnQS7HCVMFViD7GgpPzgH61v0DGZlK3RnfhX4uMn6kSkcI2hUTHEWHdUlIbve88cwfo8WhMD9BxOg-asv7aGgQ2OYhtOI3pbq9RNwrLrK0zY3o88Sfi312MVNvH7eJ2auf7ep2xMFOsWiPEZmalF5Tx3-U_HFGk_-3MCX1hanFrdpJw5YE28A_5S8zD5wE4-2sS5W3qutXsTaByveSYZduNrvWzFNTCAWj0tMyoXh-JAf9Uoz04uBKen4aTrTooZrpyXqhq3",
+        "places/ChIJJ7N36oQpC18RDqKL-jnVxoE/photos/AaVGc3nUc7KXboeArquHTm_2RYqboEIDlsyji_FJjOk3mlGaIkthvysN3V0NIUEiaybSG-sM-6kGOGJ-i2Ehd4IXO6v7DdFRnslBRPlh-J4AgczY-HRxI5RtH7uuxkS8uEfSMSCi0ozVISffkCo7Xrej6C-eXDPlsBvEg8Sn6hviv9AwF9huvaTnXFlYE9s4_Dm8ZirIBt8KeJHWOZHfErU1OF9AuJ8KrRzyttciDT3jwG1N3G3OAWzrd-HA7Uskd-qaE9-qKl3UY-uFBgSNC50P19Fwce3Xk4JzOs34_GlMn4Jlp9SOvPVY3FvGM5aIZFEiapnNLNKETSijnQC7fWIGXOAQS4UzyeX8002PqQgTuEUAKShrrNzewdqMmIJr6LrJfYDaff-6iWjqb_gSIOZKgUlidqgDzWzTVV2drGRXo0UtVT86PK5XA_khZESR5esa"
+      ]
+    },
+    {
+      "id": "84654056-c576-465c-ae1b-b9d68b7fca8a",
+      "name": "Suzukino",
+      "category": "town",
+      "description": "A popular nightlife district in Sapporo located very close to Ramen Yokocho. It's described as a lively area with clubs and is a bustling entertainment area similar to Las Vegas with bright lights.",
+      "lat": 43.0536195,
+      "lng": 141.3522267,
+      "geocodeSource": "google",
+      "placeId": "ChIJzd-iCoYpC18Rn6CcS5lNMU8",
+      "mentions": [
+        {
+          "videoId": "ANaFXfgzzpk",
+          "videoTitle": "RAMEN NOODLE ALLEY TOUR in Sapporo, Japan! || [Hokkaido, Japan] We tried Michelin Guide Miso Ramen!",
+          "channelName": "Amanda & Felix Eats",
+          "channelAvatar": "https://yt3.googleusercontent.com/T5GP0xRRFbzdyoGodYPHDqVk3cbp5x-U7qjgUcJTo8RQx6DDWABD3iOpGCPr_Ww5OooWV5nlLQ=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 622,
+          "quote": "We're walking through Suzukino which is a very popular nightlife area very close to the ramen yokocho"
+        },
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 313,
+          "quote": "Susukino is The Nightlife area with plenty of bars and restaurants"
+        },
+        {
+          "videoId": "RV538Aj6MJo",
+          "videoTitle": "I Explored Japan's Best Kept Secret, Sapporo Hokkaido",
+          "channelName": "Patricia in Tokyo",
+          "channelAvatar": "https://yt3.googleusercontent.com/fsBFdRBHro6Ly-CXU1YglfwAimd8sjpNyT7hPy4m74Xi56PRjKQQk-GUDblOe2G_itQGOfcN1A=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1028,
+          "quote": "We're going to Susukino, which is known as the crazy nightlife bar town to go to our very first bar in Sapporo."
+        }
+      ],
+      "thingsToKnow": [
+        "Very lively and crowded nightlife area",
+        "Many venues close by 9pm or later",
+        "Close to the ramen alley areas",
+        "During Sapporo Snow Festival, the area is filled with intricate ice sculptures"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMI77QpurXNEq-3qldqx5iNMvUisNqvKm-q08DB5KiU7kBv-vAde0IcZ-EnuB3ulH31vJv9rrlAERxKiVziACKmTFnC3IW1Em_2SzpAySL8j9VvKAiggGoQluKsuPY1WUZeGV_5n6lv60SfFg=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMI77QpurXNEq-3qldqx5iNMvUisNqvKm-q08DB5KiU7kBv-vAde0IcZ-EnuB3ulH31vJv9rrlAERxKiVziACKmTFnC3IW1Em_2SzpAySL8j9VvKAiggGoQluKsuPY1WUZeGV_5n6lv60SfFg=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJzd-iCoYpC18Rn6CcS5lNMU8/photos/AaVGc3k9Pl443hN0u23craZLmg71mGoK10CWQEqd79nQ7MEizCNNqf7po6HPqPipqXUQxmLlwseuZGPK5Qsc1yqBj1KvaEyUP9EACzuPQFW0DrVGdPC14A7C6moJaZW_KDyqMZNxM_sYDHh9464V8vFR_W4vhPJdb1EgT9cUqXCCHp8BSKJe7yKCVA99WtmkgpA82x-_ZPFZQ_lV7DoRyPg_bELqFbfKrd0OPBdfyeYN3jnBIzMNlSjOUFVDL8ov32ppEuG6UJncLVaGLI-GvGgLageajzMUvu3I-V2vxkmEZ2ye0sfbxskWK8DlIymh15ZUIkOMgurh3AnjXYAgNMTrU4tJfNqVE5sQS7aNyMlUEn1zSzIbTm3lmB-e5G-pmDUsdmKIuIvp4OKm8JhO-d6djsa_36kw99PCCgwZlrgceYfumnM6",
+        "places/ChIJzd-iCoYpC18Rn6CcS5lNMU8/photos/AaVGc3krTeeYrJ-ClNEn9MD_mO3iBdMSuQ7IonS6Uw5lepH_jKahU1SXzJfZL9gaT_3RTxlAQDdF53mjtMAOwsEV-sL5U3PRAXtgahFtBRzv_wOI6h1uBuA0lRHC8Wnj-_cDyvnyNpN3wWzHuC5N1GdwTfdvI-8pYzXJsv_VX6kJP2yol287UC3-pB5_5pOyPZDWPhlbTkxywk15hTblup7eru-GGVbWsk-SNTefaAg90a98n1GAXgor-E9PG-ulN1XnqQlzFCc6JCsLDhsIiXowlyP3vX3CpKE6jbtYeY3MdxlUCFQDeeblrFiwikIO4IZevwSHMGUCx8Qlru2MaKh3JQ1K3XJhNV2NfZfQ4WGhx_odhDdxJfvKsWVsKMVvol4Bpu7hCTc0olNpSV5PRcnBS5DWkKvpaDdebnvvGzZONAl-5421",
+        "places/ChIJzd-iCoYpC18Rn6CcS5lNMU8/photos/AaVGc3knKnvuvAUfKjQ2PA5GI25AOO7hepUrzAdZG_Opl_4WY4OywD-K-H4VN7gavsZvZ3rqyohkao0gSzKebwr-wvz2_XPeUQZ-kTnh0gjKRDn2rv_x238lbyNkBmnHzEgm7BSTN4bHkxpYSL0ntEEFbTm9COfgd8CDE24uf9HyJrlMxxJOnun78jt2umAvfH5LHCwMyUyu5POuQToxgZX7SYUFV74y79h0pq6L64z6NUe-VAtAwoRy15QWy-HbF_usnYI2XQmX3RnQ13qm6V_TI3Fc5xjj6iOnqYaLbBd9sRECiVSqQ5m4uo1rmDY5E089Rr6ibkKBB-OYq-vIbykuTmTP560GHo-PgFW2oZjfETdLgvbv2fr-J7q4ssZLIkeejuMwDGntsK8KlII0YU1oXvpS9tYCU8tTM22OwkBz_9y59W6R",
+        "places/ChIJzd-iCoYpC18Rn6CcS5lNMU8/photos/AaVGc3muqkslczQtDI_9CgI8IHXCeO-czSVEWb8M-pVrEk0nhtW-mLpWdiX2k8E0CjLIYnLh4mknvPDYY-nDYM0UodVXbuEoY8vfwrT2X3CFWGq43FrK3AJy4mRW13WfUFy3sxdASsKUyaQ6ATdneYdL21jM3WSKmc239i0Khv9xpNiHv9ls_OcPfSPJf62BdfJDVDqngWG2cpGQF_BS5TK1p_MGsFmgcIwH9cVnELxTU1OtS-A-aVyIm7e-XJmuCvzUrOQ0rnFvSMaBh0qptw_RLt1b9ibknkh9YqV51Y4sO1WrBF8mAnWI6zM-tX_C_vGOnD-uJ6zy4tHYirJ9WUbC-H_4HfyXBdHEbnOTOLNoOHvqyMhFLVnBONYEQin4wDtXgTUzE9v1fk2-HoZsVDBz52-rJolRtzByLTEw3ObBEm9fMw"
+      ]
+    },
+    {
+      "id": "882024f6-769a-4609-b3ce-f857e0c1c892",
+      "name": "Odori Park",
+      "category": "viewpoint",
+      "description": "A major park stretching east to west through central Sapporo that features snow sculptures during the winter festival in February. It's about a 15-minute walk from Sapporo Station and offers beautiful seasonal illuminations and markets.",
+      "lat": 43.060752099999995,
+      "lng": 141.3544308,
+      "geocodeSource": "google",
+      "placeId": "ChIJKdPFSFEpC18RnuAg7TaybA4",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 245,
+          "quote": "Odori Park will be filled with snow sculptures to admire"
+        },
+        {
+          "videoId": "RV538Aj6MJo",
+          "videoTitle": "I Explored Japan's Best Kept Secret, Sapporo Hokkaido",
+          "channelName": "Patricia in Tokyo",
+          "channelAvatar": "https://yt3.googleusercontent.com/fsBFdRBHro6Ly-CXU1YglfwAimd8sjpNyT7hPy4m74Xi56PRjKQQk-GUDblOe2G_itQGOfcN1A=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 83,
+          "quote": "We are here at Odori Park because they have their annual beer garden."
+        }
+      ],
+      "thingsToKnow": [
+        "Sapporo Snow Festival runs February 4-11, 2025",
+        "White illumination and German Christmas Market in December"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPCws8r1Dn3QwYSWvY3ghh37ZjP_rseFu6HQJ_WvRsy6eUx3MlrKjVY0ZtguszTolIdxSISkA69RKVy2N5m82DPIBYFKZzPukJWmQYbJwT_kk2RkkAiUpISLTPbOAsvc_bZaVzAnChR-r55YeL7ZIC7iA=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPCws8r1Dn3QwYSWvY3ghh37ZjP_rseFu6HQJ_WvRsy6eUx3MlrKjVY0ZtguszTolIdxSISkA69RKVy2N5m82DPIBYFKZzPukJWmQYbJwT_kk2RkkAiUpISLTPbOAsvc_bZaVzAnChR-r55YeL7ZIC7iA=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJKdPFSFEpC18RnuAg7TaybA4/photos/AaVGc3mcwxKsPwJbpdNtCR-xzsXnaDcHgcIwSXeRYnMCf9iaSfzmWghOSErEbmfJyQ0Ufkk9aXdZM5PBycgjW4M6OtzOVAnifGpoon2Umg5uSNtl9YS5g-MSf9T1q-u-FnCAshdgfiDiWFUu4OG99Jj3PqkHzILZiPENVCIce4gFemVnIhp6vpRFrm3nOcaNrm65KDhwwUQ8gEPM4-cgUElYhqMXjR8C-i1t8okZTtskwEZ3b2uJRu-hRvXyh1CmlAgb4sJCmRNVYiIz762f-uCf5Q1XBK_j8Uo1u9K09S1pNpL2VB-Gjgazw9k3PxQH3SdxZMTMfyrSH4eHkEIPERL2ygxocuscvIxsGCqxJhr78yknv5Ac6tZROJh-xv_qJeURM3Tz4Rm_pCFYXQm-h97g7vH5i9rSZRrvFFex-LdsAUcI2uWY3FDvsp5VtNS5O1ej",
+        "places/ChIJKdPFSFEpC18RnuAg7TaybA4/photos/AaVGc3msV8aNVRS41tkIhtlcNqO5vWw1F12BAX0m_4VdtBSM5_7BJVLJejwAcnqFTVakznAR3wruyOgnCH1tCHRLOtyg31x_MiFF4odNPxTmGccR0ntqztS7FW7NxONG28JBK-ZJTUaNDKOYTbVs5fM9hFccd7_NPweBMdAFmiZjtsaNqdw3w2ZrfzJEiJXE0R2QHInyrVSf5eiduB8mW7WUtpH9LO5rZgk2WGHjLxQtYluLijfV28ah16WepwoQHX-e2Yn-BLwObiZ_yEolbWCJGGLoJERGCpj5VFHCDXx6InuQUVSRyPxsm17DMB4a4UTe9tayM4NpaAFM1mc-RgAuPMvq02wTo0kh6jpkcjF09KCO5-2V-zGb1q1G3wnYa98dByLRWrxZVFU8smYLlKkJyvhu_xUwrZN0LUwRttys4LJmgnr_eKFAsBuZm-XVuImi",
+        "places/ChIJKdPFSFEpC18RnuAg7TaybA4/photos/AaVGc3n_Ekf0lbjcROfMsRJiHayO8LPXv3O5qjYqsRIBOaMwcs_w5Iin8rhWjaTler4dcdiIJES27sAMG5_nYTCDmtg-vYWPFJNB_lgwzlFGS8vrZ5zrfQt1TUxsaXaL-wvjkDvphHlI2yoTgQHxq0IPcUHRfiYZVYdUYWleGlZp-5h21y7RnM94vtr1wUPlVHBt6NdSQ_KduIA8R6dLAuKUvzD4MSwyq8ncqaUmJQ4Dr2Sqp_i84-ojxQhvghgg4p6UGrWw_bBiud7vY7B6jkvEkRUkNxh_SIgAWETHQMl7JFBCDQ8b-gL745OaH0uEADkXz1emVb2QpphZh3GjKc7-apbA_DrYaMOaK8AE2PlIoRYqVsahnPI2Dm6OsYHbbs1ZzLgm4YqsM-ihNtieBORrDVwIfWP24mhK3tejIaOSR6fTG4Hd",
+        "places/ChIJKdPFSFEpC18RnuAg7TaybA4/photos/AaVGc3nYyq5TAHhdcTBXbQgVSnsOBOK0RYOYj2lPhEaZ0N3V9imKoyhaWz5mqK4sn9LSjRHPPCpR4zkgfD0SlKYC9Cs_BwKTdyr3Yq9JUFo70L2J85tbuchGuqMKhwso4je9teyUKE8W4KZPSidnqGyz2qk7j9XhLt92ZU3NrU2ObFbuw_5Et97yPQ1gGefm-WNfGEsRAZUVVGOYCsJbt42Out66g7SI9IV0Okn071p6TFRKN4l4fiMaV5GCOb5Z0Htz4DwJmUhKASzo7b_OtdsxXKwhw-7z4GBi0APQG811hClA73PVGIV6hPy0AEM4_RPpIGpC6wfCZ5SSlvv45kjNnv6AOEWW28ba5f4MZz5To9u6vmBrn1SGRi_LmragM-3p1GZ1NmDzDOPPFyhEXCWjVRLQMRogLfOTjTSIutLBogY6ciMj1IzC4_RtLUc0XA"
+      ]
+    },
+    {
+      "id": "5f5e7115-0ff2-42bb-885f-84e074ce28ef",
+      "name": "Sapporo TV Tower",
+      "category": "viewpoint",
+      "description": "A landmark in Odori Park with an observation deck offering 360° views of Sapporo. The digital clock is visible from the park, and the tower is especially beautiful at night.",
+      "lat": 43.06110470000001,
+      "lng": 141.3564246,
+      "geocodeSource": "google",
+      "placeId": "ChIJjWSHX50pC18RMSAiw3gaBOI",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 272,
+          "quote": "You can get a 360° view of sapuro it's especially beautiful once it gets dark"
+        },
+        {
+          "videoId": "RV538Aj6MJo",
+          "videoTitle": "I Explored Japan's Best Kept Secret, Sapporo Hokkaido",
+          "channelName": "Patricia in Tokyo",
+          "channelAvatar": "https://yt3.googleusercontent.com/fsBFdRBHro6Ly-CXU1YglfwAimd8sjpNyT7hPy4m74Xi56PRjKQQk-GUDblOe2G_itQGOfcN1A=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 751,
+          "quote": "First off, the Sapporo TV Tower. We learned that it was designed by the same guy who did six other famous towers in Japan and got what might be the coolest souvenir ever."
+        }
+      ],
+      "thingsToKnow": [
+        "Admission costs 1,000 yen per adult",
+        "Best time to visit around 5:30 p.m. to see sunset and city lights",
+        "The souvenir was completely free."
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZO7E2S3XJHTQMgRlUWneR-ZqKQ-VPGyPiQKMTeyWfNIPZvKtBrsNV1qjZnOvffoEFd3kG7knH-WUev0tuc8hdS4001jAlU-VQxnQC4WYKG_pmLda0mL07PToZsaNOfnGclmDqVQVZ5lvwyq=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZO7E2S3XJHTQMgRlUWneR-ZqKQ-VPGyPiQKMTeyWfNIPZvKtBrsNV1qjZnOvffoEFd3kG7knH-WUev0tuc8hdS4001jAlU-VQxnQC4WYKG_pmLda0mL07PToZsaNOfnGclmDqVQVZ5lvwyq=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJjWSHX50pC18RMSAiw3gaBOI/photos/AaVGc3lNuz6m3PWKnjYalh73VvNk9QCssyDZNyqZeV_IIhjPrf9zQ5uX7Z5qxe1r0RVfXcyv-HgQzF-E9o2co5ws2n7QZ4QyLI8GQn83ZvcSKyB_e1h5WQzCxWzv1z2oTwyVm1K45eY_erNyiGFDjvUbHb7rGE8nk_b57w0M8hXqswNNAIFlntprc1Uc-r7E6cnmEFxGBmC44tZi8IKHzp2BIjEEx-kII3j8t8GqbBuVkL9WWIggaZ1Mtd5Xsb_nGykFxh_u4vauk6a_-Kgn9-2ua48njK34dKmtcrTA1VU5iTx0qJP4zX4yU2v1rtKM5ivsk3OPbF3QlBe7lAEc3PibpBRqImCESORV9gCRqnkTyDar9e6ueS6ljfyaZtazQ7DGLXhgv-CJFFYrmYTs7c75qsFMtURQr759wQrA3zxtxyIOzTGc",
+        "places/ChIJjWSHX50pC18RMSAiw3gaBOI/photos/AaVGc3mXVPtQFYxJiGvTGPdIy5sAOil9GUyXJeIjuClDVZC5VcOYxnoWN1QgfEJ-aEm-pFQGPFgNbhEu5gI84Ykldo7xGz9XL4s2pk_pWdYuEVT2fJXONqb2NfcoA1f92dgKgdFSyODRxLfo9gztlwjZ3IGGK6tsx1GGDOpvQfP_EHy0p3Oc4odAhlqhuyYuOkBQlZcQpMdxj5Sj5vRk4MswKK5JZDm-VBDeR6Aox1eyUe19E2Lj20Hz-qxV8EDXXFdgpld6qoDMLi4GDoS9bTH1zzJ8Uj5ZWhdH2a5V4hrMJ7IwVFKXpDHRmp-W2cM9xCkPSH4BVP6npi-rKWdPrB5MGfm6o4OALx0UwS46jUNaM5rEMOhoPW3I_V0PwrObCi4CiGb4EUfW0sUOdL7q3kp7Efd7pWgXTHM4QrgEIpTtWa1_HQ6b23a8A6-t_NILGKxw",
+        "places/ChIJjWSHX50pC18RMSAiw3gaBOI/photos/AaVGc3ny0jZ73FGv_1SM7u2LSpH_YGHwMZwIQVa71WlE8F-_8418_q_y3keFFFpQFhlYW5aUcmeNzdPlP-o_mzn3s6R_akFN_viOPqZIpQDo8ezTGz8RgnpnOT6v3heh3BfQUHgO2a5zGjuRbD0-T5yCr6awetlWLjQsPB2n4m5UVPKy32GyuEtYmf5bt292C-1_1Ted4AT672i5-jmimrF9WeAewCk-g5MuBVVNGFrPF2rp57HlV4aU87kjq0pHbKjS0W00iiLfvUb-UyyHo59MWIdZqPGWbAZcw5-GcdscJlwDe7ObJqah2HO7p4YllkVzuM7PRgSPL42VYVowlbi5natkkhKmaJvSE3b4pjvJiHJGgF4eEW3VTZloG5d1xdhpVEIEYurTWH_nlGiTWGCZGUvSPlf-3I6wsKMsCND2FxYdRQ",
+        "places/ChIJjWSHX50pC18RMSAiw3gaBOI/photos/AaVGc3lQKheTvM_F-OcQ-cZeIJ2H59k4S934uW11ymVsR-mY3_FY9SfAtH7_-fsHiHEePBaoaf_0MKGLp-OFf5kS_6mRCjl-AmjQFW2kMQfveGoNrx6NJVsycCV6vbLHivO47OJdcpQz1mxOOVSbB8L3W1vDKBmA0plIwGhfITJG-MbBd_8ERo5p6v02kAAT6FBE8Sx44MlL1AJ0vC6Xw3c1-xPl_YYrhHS7ntz5Ge99R67h_KUvD5qRsBjdpI36hBTHoHKxZcDREsRY9NS2nypxCNoYHoV0enDV8w_4YWBi9zGmz-VdchKpKW90k-1BfA6W0mzn9ItnfPEt13ZNzLRcJckKAmYiXeZxSjq9vdW0cG0coWlQ-014a4vvThMNlY4eyL0_McyFyr8SdL_1QWnc-BHgHzxrB9ypBQ-w7qC1jXWqWA"
+      ]
+    },
+    {
+      "id": "f07d9269-5529-46d7-89f0-d10408924427",
+      "name": "Nakajima Park",
+      "category": "nature",
+      "description": "A large park near downtown Sapporo with free cross-country ski rentals available from early January to early March. Features a beautiful 600-meter beginner-friendly trail and the historic Hoyon building from the 19th century.",
+      "lat": 43.044488799999996,
+      "lng": 141.3544147,
+      "geocodeSource": "google",
+      "placeId": "ChIJCQZ4viMqC18RJF1xJlqssjo",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 382,
+          "quote": "There's even free CrossCountry ski rentals"
+        }
+      ],
+      "thingsToKnow": [
+        "Free ski rentals available early January to early March depending on snow",
+        "Lessons not included with free rentals",
+        "Hoyon building admission is 300 yen",
+        "Rental office is in the car park of Nakajima Athletic Center"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZP6X3Nb0vx9WmtB6PBGfMHQmuz1U-H2j4on5_W0KItlbLFG1iLRbgkqMFLVLE7_fe6sVf-c96Sk6ykHVZPhbmaJzj_xaYAnz1TlE2oxY9H2Mk_U_8EmTd5nWE89CR6dOu_RHk89e88pFER88Q=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZP6X3Nb0vx9WmtB6PBGfMHQmuz1U-H2j4on5_W0KItlbLFG1iLRbgkqMFLVLE7_fe6sVf-c96Sk6ykHVZPhbmaJzj_xaYAnz1TlE2oxY9H2Mk_U_8EmTd5nWE89CR6dOu_RHk89e88pFER88Q=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJCQZ4viMqC18RJF1xJlqssjo/photos/AaVGc3nPlsDQRtmXFtKN3iWUKshDJYrWBFJILxwbS8ALUsG8Pw9YX6r7wrkxMu5g4lBEtjz_rOSjRp0bDwObHRY5GQ1bK9YuUpEqDIFIzUcoxF-o9Mp4eolrpfPfPVcI56bCIRVnfxwKnWuIVCc5m-7j2kYCLsGV3FY2c99RSe8LvoEUrPQsC6Knm1Ca57sUWQGkpQqVWIJZzA5Vqtk3nEAqX6B9TiS9UGMr-ZR4Z3Lo-K4Ic1JacpZ_RnqtwcCp18Mm_JoWfpqQebOTltBSSncNHu28X58w7qqYp_7BrLT_EL72dF09bcbj-EHiRZs4LtYW7nUIrY-rC9Lt2qqU2R24YcdiYwckbUcLH2_GErhWppifZ4kSAvRvHHmU1vAjmMGyOyWEOa7iVcB5zz9_fNyjgI6oFIVVK3JJlTW8QQaDlLMWU21V",
+        "places/ChIJCQZ4viMqC18RJF1xJlqssjo/photos/AaVGc3mTJzP5W7Vk2x1RlE10Ioa7jq1mUpfXi93irtZ7z4-NOLpMp5S-2igX87PmqeeF8Rlmc9ZIJvEfb9_lBh_eOBVwW5XrOJT3f5-JHJ383Q42QjQnv0UdcGw3a4YAYi4fdmKJuT_EiszcwWM3bIZy1IRrkreK0x_aCKO6BlYN4l3LtufUpECGfy1ldUrNfdtWWvuJTpgHzhPcjWe5P-5VGWIJoex5u9OlUb_hjOH4yfFtmPuqJEo8MtuobT29P5ZHzC-uqIbGpRHoRw1zBUGXSKl7wFuimlNO7zwKgbh71IP2TYy7ocZAUslR1rbqEoBgpGtfW-iqGFcj3sQznNAOaa9IiTrcskRpfwtOzB7AWS-EuokjdLT_vaIcTHVKWhQn2ESnk6yn_BJ2AAiTeoWAPdCvZ0Sa6XmDCMkG5xq-J-vA0ngYcmbBt9_KgJq4AQ4L",
+        "places/ChIJCQZ4viMqC18RJF1xJlqssjo/photos/AaVGc3lqVgrryF71CWuXkwohXOmZDleq_AMAciNUOAHEu7I35A6yzFjjlucABnAiVO25ISxX3QLrfjDq1KVrmLYrkfbBy9frptMW6Y7OEx6ALslHcBZFbV-EzWmOzTKZSAjz0lCdeiAqNQNYVV9QHxBlnHjsRRCDb4bpPfB5hCnl2KisQTfr21veYGY5JN_prfpXpolhFZkcaP-TU8-R13oX8L7jpum6NVbkS4y5LmHLAXp1-AVsOf4px3u_cuJI91mo-va0Iqgryu0mlpe1Ze5JKQRHDz2JCupXi1aP0s6SIBAb9mnTxgI3IqziGDv9NDVJnqpjXzATJi-Dut4C2WQeFT_pv0Y_ezPuWv1HLzzWINDNaJ-H6Ywzjha9l0P-e4SMF1c50F_xJWPdOVAipM5lFKWzPig44BgCtNnoUkLjpJfSuOof",
+        "places/ChIJCQZ4viMqC18RJF1xJlqssjo/photos/AaVGc3kMt4yYKkn3S6WxMzew_es_vm43xS76T4N9_Nfdy3EvrrW9-ew_shWB284loj_ZSUgyNF1AbsLr_07CkSMIEfK3VNse6dWTE-hLMZWcMqeKfykGmdpa7IT8FyS7PRs7GqcIpVbqb1TLvQWP_gojFMCxN_0UFU9GrRADORbsFgL1xDGcKvp0bI5GN9aFv6h-6t55ZpnhwskOQxlShCEHSvJiKtuVnHhQGDUneWdTqKx8Q7MLemzBU-DghlAQRO9464B1ifOhMGP_AiJigVjK69nVosu2nyyprHW03XQBhHOax8B88mbEL9f8ZBewJwotmEe7VZ0RJNkJBFyzfLEgbwHEqcLlltNjuQ5EKa4bBl2jx8b1hO-mgA2Xx4Zaq8cWWxF8tg04fXTOTXc9KP4KsXEhiyUhvByaYFGsDJX8rhyhYg"
+      ]
+    },
+    {
+      "id": "e7eaae62-301d-4d4e-a581-a846f76068b5",
+      "name": "Maruyama Park",
+      "category": "nature",
+      "description": "A park featuring Hokkaido Shrine and a Snow Mountain play area with free snow tubes provided. Takes about 15 minutes to reach via the Tozai Line from Odori Station, and also includes the Sapporo City Maruyama Museum.",
+      "lat": 43.0557453,
+      "lng": 141.31260730000002,
+      "geocodeSource": "google",
+      "placeId": "ChIJ__9bfcIpC18RoJ9c21tKf2w",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 442,
+          "quote": "Play in the snow at the Snow Mountain play area there are snow tubes provided to use free of charge"
+        }
+      ],
+      "thingsToKnow": [
+        "Snow tubes provided free of charge",
+        "Access via Tozai Line to Maruyama Koen Station"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMJ6c9GUfAf2qI0tB-T7QTMoI8q_pyqvv3HzF7_q6DbEuVEaAWN_hY_IYKVyZ8WE7K5RHWZzr2lOwxCMTSE3HnqFGilIV1vwOEwiVJm81OCSK8LNks21n1yADjhhbNBjoIkQfE83keAmO1bGQ=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMJ6c9GUfAf2qI0tB-T7QTMoI8q_pyqvv3HzF7_q6DbEuVEaAWN_hY_IYKVyZ8WE7K5RHWZzr2lOwxCMTSE3HnqFGilIV1vwOEwiVJm81OCSK8LNks21n1yADjhhbNBjoIkQfE83keAmO1bGQ=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ__9bfcIpC18RoJ9c21tKf2w/photos/AaVGc3nmfS4VjkcrVC4A6DgRLPTeOT4a_8-N0_DHm6xGA5pmvu2V1xADUcFwKRWcpaY-DwbzVIIZo4mSzpF0_kRn-cFt2Akv2TzUZmgJFGmmVZdN8N5SEDpLFXAhwFo8tnmGg8UMYDYJnOx-59j-cMh0r7wQ00QQ2w17FcQcvV0939rgFYWYDb68RsLeU_8PErgFzyPPQpQuhY52nReeXVe3f3Nwf4LHN9P6elLGDVDM-N3_WUQHwpMcED1uYZF963a8eLiZ0V6MWNZLJVIEFGUBWopZ9yRBdcq5agFyzSjqscKoNKiDIBahSpEkEXXqvdVeOp7e-l4QpQtfDIdTQAALC0ijuVO5vMsA2Rk_Y1pt5Nb7mkACF4VaCrCUbqJ_72ndFIWJTtmhiM5x1rgegwfrkIUGkt_4HErALUF4dthA41FIi4fbeURDAddnyi6nww",
+        "places/ChIJ__9bfcIpC18RoJ9c21tKf2w/photos/AaVGc3kvlg4YR1ogqLO5IHO4FoZQoz5h-yLl_2bf7AfTJwl6KrfS6pBw72MRD9beLwAXb7gd3UUYSSlTq0PDjqQvmxsoVok2AMSbhOlPTWWMYidXGQTaPRWZSABypclZwGnLSZMIdjLyCaEhGUOEpDAcGMdK_6383G_H8FRUKJb4BQxDQnEKVrwzMTtbq575GxWNweoa_chwaLa8BTlOyYKsy07_1-DlXYbXl656EPPdsgVGFAZL1TO50OV3kdK0vD8KqQYmlWULUs2DmIFUV51TIFENls2-xy7bKRoBxAdhdpLPI9NtkChzBUb7YUeOshFOkLkjJPpeqgnhMbpDCLEpAFGXdVggh3tE4T1JQCNCukh4Q2nG-7toW1_YFIey8aHJ6DHS8236iKKj7YuYWc-dRTN-lsZywJXMEFM",
+        "places/ChIJ__9bfcIpC18RoJ9c21tKf2w/photos/AaVGc3mAxS-cmM1xD3SwdMkLuQ0VvwAZzzfQlg_AeAMnhY9ctAhO9YDqd41Kjh1o25BKZzBKm_M65rMLV5rLbidWpS5tdgGFxFQXWthRAhGUwCgCHdphzNWNEGW45blGLeMijuiyeh73e8jkhVUdxYMz8Pgzz7ovsbcJgCOsJW4h09Gy03u--LJu75iQW_L2Kt20_rLvacfAgGHp8AVSGG64Jg5V-PTomkaGRgdQc8Std8GJ70Xelqjr95S-xzh7lHu3nF6qYLYBKSKmfYTvFOUugXWyiHTcytS9w2v30FeN1GXI8r64obE4QMCLgC956WS2KOsrwwhTYBzyZDyjWAGGwlhDK0z0JlmnU3DZhOVFjKiQbvBJ8ToBdQ4CCh5sr8fatrBvi3jCWtp7CaZ4IoBWS-YqfhOQIVPvYLqa83qftrWT-kyN",
+        "places/ChIJ__9bfcIpC18RoJ9c21tKf2w/photos/AaVGc3m1sXq_0NKXT9-BLxEcpCH_fb7UIHbfZKJl_hQQHym4qCWScqPQyyq55tzSmEpJds2uJ8VSlSkykO9b0U95TwoK-wYIwFdAyUGGaReWPHklf2dB5ZqcBKAJWCK154LNmcmWLVbS8WLt76l2-nsbrJRHzD44p2TcXgncapnKQcZo_ts9J2jovSxEJCvdGhwMMza5NjkKY3Kzn2QN7dZkQ20ZbapkggeQKe3_Yw4h75UlUttfEu51bBVn2Q-gTE1CJF47OK_G3ew2PC2i5EH-KImZPX7oj9-fRA_gzR2lLl0V46-XCPRbbxT-oVWQl-mtQ-CViZRRqvUY7BGLF40qUG1MS9Y58IkwlGogsT3la4X7_9dpNVjOWANwM7_B0dN6h_2xTv2winbw2JCUtNzbLPsaQFeg8R4OQuPb-46jDUbDCXiN"
+      ]
+    },
+    {
+      "id": "0b6acec9-978d-43a4-9ab6-f9e1800bfddd",
+      "name": "Hokkaido Shrine",
+      "category": "temple",
+      "description": "A historic shrine located within Maruyama Park. It's a popular attraction when visiting the park's snow play areas.",
+      "lat": 43.054333,
+      "lng": 141.3077928,
+      "geocodeSource": "google",
+      "placeId": "ChIJk6jwxNwpC18RCNdmWzXijew",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 450,
+          "quote": "Start by visiting the Hokkaido Shrine"
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMbnAUp43I50fetS7ivPKmz2lSyOpr6HC144Hkac_gZjj7HpOc-voPG2InK6K6CgIt7iLYQ5yqB5ZXSMbFYjyfk1hFJKSUsLMWDTbK2S-IHbDWWh7HAHU8W8SqklI_uxqiGHBzvsH2jB1NR_Z1L0J7E=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMbnAUp43I50fetS7ivPKmz2lSyOpr6HC144Hkac_gZjj7HpOc-voPG2InK6K6CgIt7iLYQ5yqB5ZXSMbFYjyfk1hFJKSUsLMWDTbK2S-IHbDWWh7HAHU8W8SqklI_uxqiGHBzvsH2jB1NR_Z1L0J7E=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJk6jwxNwpC18RCNdmWzXijew/photos/AaVGc3kOGteBtlYGBrO8Mwls5PuwSX54yAhufS8oUC1ddQULy1Ko-6WVkb2GTr1hvyErfWtE4bLsBuG1COCtDrvAmPwsFtiNjAXnUHGms2aoFRWz3CGDxoADPu5vTijdDDRmMrwX3f6hlg8vhpQMz-0e8ZDvHqybJQiBxYrrGI5i2Q3j9Ky0Mo0kqvuCfV2yC4LItqYURWrHk43Olo6FzVbWKDoEJ4BxcjIk8PbaI9lqVmx3K2-7kUkXwxpxDDA6rNKVi82zfDE3mqf5tu7Osv1shXrb64lMDyRkhOoyOqjtK9P75lMsS0yZqGipHUMsY_eHH5_oFglMv1wI7Kde8G8oied67P3DBzB0cgD1g09TQRHRTRGqYNm6nhzQ5AMhPkRF96bY-4I0FRZtH_905P466eXu7gEecPKNv79E9jMWuKRosg",
+        "places/ChIJk6jwxNwpC18RCNdmWzXijew/photos/AaVGc3n9rxeVjC2RHXSoTaAPoirrPrPAEubpBR5DNueZzUuQNrXb8XQClJm6rQkoEBDxGQrTSX5X8yirxcmYASNYSSjAXvWs0ZWXBzlBvrjOmmCqt-0x6dG7l_dyRCb9vioJTcw1mRuimyNIwjvD11yxITkhD0F0HpsLmc9NVPFshsUnEQNf-MvhFpUOdQ9VJzEfOGl-aNV0jIBvTEvoXbdC_LrTOq1yJmBpUydX3xdyeJjrp7w83vP4WCmzngdm1M0LoaLObsZnZrL-mx9qFYOsqbtdjydALw-zeyreV57fmSD9z05vEHd3xpza2BqnnaOs0vcTWYGNUenTgvUnI0T2w_tPTN4OgSKiL6LcCMK3n8neTR02U5ooOHIMh9DaT0iZMQeI61j5M-QbHyLIwTvIj4wAJzET9tSe6KrayygTCExC9UAUk-6Osn97xGQKQ_tn",
+        "places/ChIJk6jwxNwpC18RCNdmWzXijew/photos/AaVGc3kM5Hlsh9h_A44cIH2yIwfdgdJ3hPlzwQcUNpPKpF4InUxZR1s3bO913Fc_UN_EALzGUX3YcwzuSpDto2VjDN0oG0Gc_tOKe3dVIZzGOFkANh1ohtpXEmkHubIWkyk9awWIE27KHYtPAPEUbe8FUvO_aFidPUuyVcmoQUtM_r7MATu_Eh0RwQOJdCTnKh2LHN_zQkk15PITi0bAt70TlGVD_pVL_NrvywgP0rNVcMYWbRpY-vm4-nJ2G6BT6SVjQXyUI7lrd9drJWL4Mc6-VJwGR1vLg9HKX8yRI_YB5pOmWKq3LQLH5GK8_zurB98Gf1jhrvs6CHIHnTx4heXs9TNBybkx7xra1YAfAXwzEmX-T5vjU9HNAMK489Pq86FiZYxjOyKJHduPDTqhSUdMJCZCxRz25kYRVsmwy34wjhXRrBy-vkp1Owu5GzOvmwKt",
+        "places/ChIJk6jwxNwpC18RCNdmWzXijew/photos/AaVGc3l8-7ddpGr9PY5d9T1aCx13AoaVpWp_ngSd6WdgWQrdu8jV2miWSBF4luPC7DQhrdHr4AWDMTxo2ojpD3HXQXCPXMhxjT4QX7HNrBMXCWcRb6x_gITzj4y5SUSusDC2_Z6o8Qu3tP1wRJYpkdwM59hHRf4yhS1uyD3o7SIe89r-Pps2WmRwg35w7EK2NDJ3zXz7DDywbqoZ00TEP-CeAxWgzoHbbpDSF2C2F41AT5yPEQfTC7sXYhaEXl1sGmuKAkskvU7ORxF2HHPeyxDDj1BIk5MviyEm7K6OCmXhOyVPM4tqvztrdQ8hJ2qusM38F951a2Mm95TOBVmlslgyuW2HmbGQgVkKLhqxMAfaPn3XqvyYn96d2r2G5LhDzh1mrGLekc5uY8_-QihQbglN4PbfQ2n9QK7VP4g6nVtXTze0zF_s"
+      ]
+    },
+    {
+      "id": "a9f3cd28-146b-475f-917b-01132aa274ab",
+      "name": "Sapporo Beer Museum and Beer Garden",
+      "category": "food",
+      "description": "A museum with self-guided tours followed by lunch at the beer garden restaurant. The restaurant specializes in jingisukan, a Hokkaido specialty made with lamb and mutton grilled on a dome-shaped metal skillet.",
+      "lat": 43.071334199999995,
+      "lng": 141.3690782,
+      "geocodeSource": "google",
+      "placeId": "ChIJ__9PCWwpC18RpHEvsAli2gg",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 481,
+          "quote": "Head to the sapuro Beer Museum and beer garden start with a self-guided tour of the beer Museum then enjoy lunch at the sapo Beer Garden restaurant"
+        },
+        {
+          "videoId": "34vE-ABqqmw",
+          "videoTitle": "Winter Wonderland: 10 Must-Do Activities in Sapporo, Hokkaido",
+          "channelName": "TabiEats",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nKMxsKFYExPvkjt_H--4AzJk8lK6enlKgU_eQSOtIIMw=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 826,
+          "quote": "The Sapporo Beer Museum as well as a Sapporo Beer Garden both of them are inside this red brick building, this building dates back to 1890."
+        }
+      ],
+      "thingsToKnow": [
+        "Jingisukan is a Hokkaido specialty",
+        "Restaurant reservations should be made in advance",
+        "Accessible via Toei subway line, bus, or taxi"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPxWyRJUdY_E_-oakp2o4OoHzweUSGqHUj-zHopuxwo3JagKOoi0KPzT1NcGlKFod4XzpGA-CvYN32H7iucGKfoY5ihieejoXEMb8kEQLX0Palb_2UyesWdZBbkAfUiCBe03YpUhY8Da7dHKpg2PXAMSg=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPxWyRJUdY_E_-oakp2o4OoHzweUSGqHUj-zHopuxwo3JagKOoi0KPzT1NcGlKFod4XzpGA-CvYN32H7iucGKfoY5ihieejoXEMb8kEQLX0Palb_2UyesWdZBbkAfUiCBe03YpUhY8Da7dHKpg2PXAMSg=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ__9PCWwpC18RpHEvsAli2gg/photos/AaVGc3lLKieKoCDWfmg1H7Mc3qzRRyJrRKWPClueioSVtCQlII1WEd-Y9SzGl43UET_TexqWujOxXA-Bz2abDLZljypq5smxugqcZjWFRJQyCMu1RRUNRSMmuoS63uuFimDlORV6D4-PHfqVeyPD9WNCh6QfUC2ZaTRKj57kfrrk77cND_8qWLHn8xfr798-wzj2YXT9NcxZcuJWRmRLDKQMmeQauQcOigdBN0z4sPTcrm4lyoiXdndlp2AWZCuVmkTy967KdtaWBq9U-meOsJafV7hTzKLp7FafEzI_bb-pcpJsnxKx7WATzLoeG8_BRLYGUg1RGoHb2G5R5dn0iTz6MAW7zIqDD8UZcUOnxSXD4AXd5987MTWg44Fhtm_WmDuBhQLjT3-ceqhnjQjBa5i9liDPrxfdZs-SXV-tlSzLbBfH4PZMthjEtQYt80Mppw",
+        "places/ChIJ__9PCWwpC18RpHEvsAli2gg/photos/AaVGc3mwpPudX4ysZOnF9qztIEIspEfW6sD7mErQWXy0oGVbhp2i6TG0KPR1t7w693SMiQs01Tc4lCqU_-2uIejJ1rpDvo-T78IGhNn5duaCNjSAu5KA_Mw1Hxyd9-57rpZWt4u_2GSH9CSKLD-7l2KLKX2e7sDQvDRpbymwAMdHyxwrVyFHpc-mFfy3C6jUHBmTIO2V5OVZvj8R39FHGFBaooMMOZOmegSXLH-3OTxcSe_TiUqvgS3uXyAXonW5p8Cxm9y9RrCvScmoqxtO82GRAPBZLMFMLxi6r6RIroOozT2au2GSvJUrsLwwHB51JVeu_-h7xkX-YW-pJUYZIOsszcx5Ye1UrFEvSZIypKlS7_nr-ZY1DI1vOUO4DAMZ4MwuQrdN68zYUWzpondrioLM79Jshvwng-cN2mZZREogIJHK8ss0oPnXHsS0MXA50A",
+        "places/ChIJ__9PCWwpC18RpHEvsAli2gg/photos/AaVGc3m9JcGL4LgZb6WR-DaYpms-8yHtpap5ggKx949eTWxUlSi33zUdI_Mb1X9w7-V9hFbWNWq9HddUsntD7CNK_Lql5V7Q9RFiQRsNFoT0E8GQx7H6vu8Gi16RFcZjQA_U1T9ycg2wYMXAfu3qUlPqQemzvOYU1PE7ZQ6jrRR8GfkpTGh-2DAk1tyKeZqkYmewKDz3Fjlu_GCJV3q5EVxKFlyXhgVUD-rIiD_H1NHg5VP4iqr1Ea9xlcyr17VsTgfLZxI2ZCodYr5_UBZp_xTzBKQdlh-1OBNxpwV4f8b961UQ3gyzQwRxcnr97raWeVwYl1EsXM0LLZiLJi3014DYQNCCYvZiskkMi2zMvvZjuDTZKgumcAIsNUM-v7uWypJRv4OMZJirOlDGj7903bmuDvS0TDSHybhb5cY7Y98kNSiRowKvmdWiwOkBbnjBLPeJ",
+        "places/ChIJ__9PCWwpC18RpHEvsAli2gg/photos/AaVGc3neztO2GcI1Uo4SlSQxE6KzCxXvnaO798dt6hrTtBOOBqFRPDoh_SwII_SmO_MQctPIwgbY-36Smlf6vrUotCFQB1camynhPJBkQ2iMgCdrxfulfMDufgQLSyu-V21JF-zU2G-AC_54emaZxsg0Yt0kqcDLff3rZgTmU3CYDBkdipWqW_csLvV-cR5y3rX58rdw3YM-zv2JYbYzSe7QqufUzk1jRGwW47OQYGkktl5RW4Ljx8wSR0s1rRjnwWIQkajcDedWrbemV1PsCb_Rr_hmLeYc5lTXfmiZrg5HwG3AZpf7BNi4oImxHWYsMeRH5m5GxRu-8inGVm5sY2qLZZRZqaxjj3V7n2eYwKC507apdx2yGPrMRMb2i5O9Kx2a5zlhdbBGRHTYEblEfFYnWXM83K1tmnq-UsAC5Js5yVSdsbBBjm8npILvmWhjNXMw"
+      ]
+    },
+    {
+      "id": "52394935-32e8-4d17-976f-0b606ad57b13",
+      "name": "Mount Moiwa Ropeway",
+      "category": "activity",
+      "description": "A ropeway and cable car combination on Mount Moiwa offering panoramic views of Sapporo and ski runs below. The observation deck features the Bell of Happiness. Best visited around 5:30 p.m. during winter.",
+      "lat": 43.0316221,
+      "lng": 141.33309789999998,
+      "geocodeSource": "google",
+      "placeId": "ChIJG4fqNwYqC18Rd5EvgpNdRQ8",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 515,
+          "quote": "You can see the sparkling ski runs and city of sapuro below it's a beautiful site to see"
+        }
+      ],
+      "thingsToKnow": [
+        "Round trip costs 2,000 yen per adult",
+        "It's cold in winter, come prepared with warm layers",
+        "Access via Sapporo street car to Ropeway Iriguchi station, then free shuttle bus every 15 minutes",
+        "Check seasonal schedule for hours of operation"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPc-BslHHeDnQjCDZnuj8eH-XA72QOeIFfc9TxYHsDCqOfazp5uQbGI_lu25TphaJzMt0Z1KOiFlbFCFJfRoT1Q1n1t2qz3LwwLNkmGN8v9_XZKI12p_etP2_C7-eTdXeOVONMQu0wyUdKlBOiRCthwGg=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPc-BslHHeDnQjCDZnuj8eH-XA72QOeIFfc9TxYHsDCqOfazp5uQbGI_lu25TphaJzMt0Z1KOiFlbFCFJfRoT1Q1n1t2qz3LwwLNkmGN8v9_XZKI12p_etP2_C7-eTdXeOVONMQu0wyUdKlBOiRCthwGg=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJG4fqNwYqC18Rd5EvgpNdRQ8/photos/AaVGc3mHzNoblU38YJn0lRxdNL_dMXgc5jH77Ksz7L81KBkGHBIPt5M4JKvCHADz1bWva17FYBpl_XTRWghc5IRt5QnxWyMqQ3D02ZuhCFVr81vvFezF-8Hi43EXmPuab1Bq5LYYMWGiLc4kGHy2EZfnFkAm9tRzHmRh_N9_YXVsL-APOSM7ZqvRQY8D__SECXPlZsi6yOSkrbUFRhaVTUcRsLPCRCSsFz9Su1UpskW-RObXxbNPE-PhTIsEQEJbgyce5qlfypMM9A_jP0k2HmkwHirydQqD3pEVaOa3eQa_ZFin84cQWP94XajEWcRb183-fUoQmfQ_61uIWaeMfeMg9pa6X0mh1XQmRUdt8BeBAlCyYy0690kIv8CtOdCerQHFHW-1NhsQoubY3O5w6GvAqlEADPvl5pUPxJ0p3O5htmoY7_exJWCM4LL6T5tA2Q",
+        "places/ChIJG4fqNwYqC18Rd5EvgpNdRQ8/photos/AaVGc3maDvNudTXgHvh7jhRAhsB5hSeH7hZoewiGBSuENk5Tx1d2bKPiO0UaeXQ-o-7PaUDkRRAqflOl11I6uKBDoNJRJ_r2P4oEXIqbFAlyZpX-tITHYyi7kVflbHB6cIfN_ELgt7h35mOPeRG_Z9oFNPDf0eIGoWo3YaeabkIbBJeKW6m_o3ajFCefZJND8A9buG9OuSgMDIufxvNbEMk7iAhU2syl9yt_Pnmz48ra0Z0fW6cXvSh6fBMgP8FIo-rNcVRCWvUKZwu1dVs4FUNPfRK8gxC93XRV-rY4Ss9TriYhrOTXkMxv8yLersIxxew2FGfCFm2GCY9dnjteLxZoYhRFaEz95hZloEqHU9GKfolFTIKSn4X-VCH9JJ1cZRMBPSii6wtPNhY7RwuMopkB7zZ_eC8I7XCL2yB_IkScAsdG58Gk",
+        "places/ChIJG4fqNwYqC18Rd5EvgpNdRQ8/photos/AaVGc3mtzunxcFrAzkf-Q0GaKC1u0y_FsulKibCzDbW2alkEKMGv1Yx7_Jt6q9Djff7ZnDk1XgSVuvhKKLuDVpb-vf7KDZWsogGxpBNkhkO7ybZtFhRGWor3MSKvuJmQElN9AHahffrFHwWh1Sbf-LPlG3Mg0kVk4VsN2pI8EB_U35AtyOaxSiJRKRjVqtYAZLsdOQXID-ihgZo1WN6Ry-kAcWLirB58gl8A1r4Wd0izu2BdmyyyUeigWekVlvzT5g26tHvyfcqY9O3aS4Z8iSb1BAy0AE_ts1GVVtodGCB1Lh0SXUgI6uYtT-EIlqmdtNU9euz_R5xyi4fQHu4at5Ev1weGJJ9t12YdXTifUDPYLHMgpnAd-VFFusNHlWbtyZ7_FP3fW2YYvRbH7OpIYHvzXHpPI49Xzf37PtIHBHIpGtuxJKutLVQaCUgRP5S2aQ",
+        "places/ChIJG4fqNwYqC18Rd5EvgpNdRQ8/photos/AaVGc3mfak76tzQuQ4Hl5M8b80Ic0h8dkPANKE7AMahDlrxeOZL-0-_R2X7UNFYRuWvu3CD2uJxKS3taXLl-Eyc93pNQCaOjLa0NKgHV32iwwCEw-Kn6v6yv2-BncD9EFjc7Pho6cvM9RdEZHuXqFBYzFMMSfqxcvCxED0xJ5M8FdA4wFTI0bks0ZW2g2G0WQdDQ7nUbP0M0skEQwpYM_oKMqaG9RQ3Nb0FWNvp1mP-e_LwHsQyIdnilL3kmXhPwU7SWQUmlaRVA2LcR1m76QT9iUWcK3cHi_WffCNHSKafae3wuEB6k72mQVN_wUsaKvRZd0yAjXSF_a2yQkFp4SU5NzWdfQ5AF04qcLJatlhLxuvOmUjkGgrRgL9cF53ZeuT6JX2oXUUPGfJGoIsYkqzgJg0I0Nj5o4Y0C3LCbMDaEzDItJnA1"
+      ]
+    },
+    {
+      "id": "22513ec7-1df1-427c-a565-cf2f2f841f93",
+      "name": "Shiroi Koibito Park and Chocolate Factory",
+      "category": "activity",
+      "description": "A free-to-walk park and chocolate factory where Shiroi Koibito (a famous cookie sandwich with chocolate filling) is manufactured. Offers a chocolate factory tour, workshops, cafe, and shops with an outdoor area open until 6 p.m.",
+      "lat": 43.088875099999996,
+      "lng": 141.2717042,
+      "geocodeSource": "google",
+      "placeId": "ChIJU8vHZBIoC18RkQEK1Lg8HsI",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 566,
+          "quote": "It's free to walk around the park and enjoy the atmosphere and entertainment"
+        },
+        {
+          "videoId": "RV538Aj6MJo",
+          "videoTitle": "I Explored Japan's Best Kept Secret, Sapporo Hokkaido",
+          "channelName": "Patricia in Tokyo",
+          "channelAvatar": "https://yt3.googleusercontent.com/fsBFdRBHro6Ly-CXU1YglfwAimd8sjpNyT7hPy4m74Xi56PRjKQQk-GUDblOe2G_itQGOfcN1A=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 777,
+          "quote": "The Red Brick Building. This place was once the old government office, but now it's home to the lab of Hokkaido's most famous souvenir, Shiroi Koibito."
+        },
+        {
+          "videoId": "34vE-ABqqmw",
+          "videoTitle": "Winter Wonderland: 10 Must-Do Activities in Sapporo, Hokkaido",
+          "channelName": "TabiEats",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nKMxsKFYExPvkjt_H--4AzJk8lK6enlKgU_eQSOtIIMw=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 502,
+          "quote": "We're here at Shiroi Koibito Park, I remember my first time coming here was my first time to Hokkaido, it's a really magical place."
+        }
+      ],
+      "thingsToKnow": [
+        "Outdoor area is open until 6 p.m.",
+        "Factory tour has an admission fee with last admission at 4:30 p.m.",
+        "Be mindful of workshop, cafe, and shop closing times"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPl-K9YnZxfM-jsNZ27SZ3q5_sAHnQqjblpkYl2c-AQSoj0UGz-PpwZtokaGVi5OIIdsAvFVCq4J8B3SKkQfz72Pmc0qToWsdudZjMpcndt2NlKmU5tawkJh2I8c0cOVUBDUmPIR8vLZJbsvF4=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPl-K9YnZxfM-jsNZ27SZ3q5_sAHnQqjblpkYl2c-AQSoj0UGz-PpwZtokaGVi5OIIdsAvFVCq4J8B3SKkQfz72Pmc0qToWsdudZjMpcndt2NlKmU5tawkJh2I8c0cOVUBDUmPIR8vLZJbsvF4=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMlEfvmZFbidsNGHZUp3nsmLFEuwXMxcwCr0mJ4YTkCkBBzruGZBxSzEXGaETI4M46JLd4jESxu5SrDY0zXB82gTu-V0POxuFm9luGXI6n0gF3fBkxVOEDrh7oI4GN4R2u4Yw7HZcxwSpp6mw=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMQpER2g-HaNNbqIos2fh7khnq381QFOrZNvkUcVJM9jZWVkXcI6KEMJwMQP2KGGVxppSIySQ44Jo0j89ETRliYPHVuHT1g4NY8T0WBCu_X5LuiVhXDM1ZhpcrKcL23piZW2WCH5SPBXcc2=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNt3arxD2n7v6N9UoptSe73TfV9gHkgSG0cCZ7qoL139iRxF7WSF_eMnXXQIoUqVTrEMvSp_oS41ALqnjdVCglU1NOBgpK1of9JXZmUs8BP45APfDSp01dwXzux8gr5V54Hys1IPcswIEuhcA=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZP7n3-4qVaQT5Mlg4rwIRbuYM77_HkqIP16y76P3pmyvVUHRvf5Q7gn0iWXuHVzQKFvHgJ6OLxsKeJ0OHhz2wNtnTfulz3rM3x4lxtwC1cRYF03SE6qjGuSs9sfK0gWf1BYvSDFOx7DSKBoxMI91yiZsQ=s4800-w800",
+          "source": "google"
+        }
+      ]
+    },
+    {
+      "id": "b958e99c-b25f-4c97-ac5f-e9ea2c10ebb7",
+      "name": "Asahiyama Zoo",
+      "category": "activity",
+      "description": "A popular zoo featuring wolves and other animals with scheduled penguin walks that occur when there is enough snow. The zoo opens for winter on November 11th.",
+      "lat": 43.7689713,
+      "lng": 142.4791319,
+      "geocodeSource": "google",
+      "placeId": "ChIJyyPgtczgDF8R01OoHb3cJcg",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 631,
+          "quote": "Our whole family enjoyed the zoo the Wolves were George's favorite"
+        }
+      ],
+      "thingsToKnow": [
+        "Penguin walks happen when it's snowy enough",
+        "Opens for winter on November 11th",
+        "Check website for current schedule and hours",
+        "Transportation from Asahikawa Station not covered by Jr Sapporo Furano Area Pass",
+        "Local bus takes about 40 minutes and costs 500 yen per adult",
+        "Taxi takes a few minutes and costs around 4,500 yen per direction"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOH_rnnWkPUWkQfMCNSDGu-HuuZfjbL5k_bZnNM4R3xztVbDkm-Isvl9dB0z85KXE4WmEbL9ech64HPCHcsnXYH9xEqqHp4LSgni3Y1Ev9N9-4UjIcB_0hGVjSNCeW8SgYLDnilk9uzLMlt=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOH_rnnWkPUWkQfMCNSDGu-HuuZfjbL5k_bZnNM4R3xztVbDkm-Isvl9dB0z85KXE4WmEbL9ech64HPCHcsnXYH9xEqqHp4LSgni3Y1Ev9N9-4UjIcB_0hGVjSNCeW8SgYLDnilk9uzLMlt=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJyyPgtczgDF8R01OoHb3cJcg/photos/AaVGc3lRoxbvNYrgSK3o3x8oSV2juro8hpDVl4zx8GbTNJCO07F-WuTu0KB8VlZHShTXFWDmlTnB3Vj8dWl8hPT__5Bo7T3Re6nHs_0t69LKB31-EsNUaTUN0FrAbOUDOhjC6jFuog2ub2zslBGqz5xcerL5KH_P-A5UNpTTs6yAhVMuUyfedNuzCLvS24H2YtTfyDCpML-PoVEC0A2dLR02Ba-Aea58_qIi4aOtF0BIr72lR1QXCCdydHFgvYPP21XkiL3dGuXWYBO-aARF26TPc1KZmxQHfrzkKZMZ7u0V00njFeMm3EmPfSgu9Mprr8IQ8ceLsR6yzGMIE_vwW8XYO5VKn1lESWu6MYuX9XlQFzizCvQTqn6q5Yqz4kwbj5NyBQKhDpQCg7ZN5kauWZvj4nrh7GYMUsdvh4GcmHkNuB7buE4m",
+        "places/ChIJyyPgtczgDF8R01OoHb3cJcg/photos/AaVGc3nUsk02u6WXH958wFLdtOK0sHoaY5FNDJzsKGA72-Et84d-8plGW1a36_yqpTI_w6uTVjolfUvXE93usma6drihjQ_h4tJjVZDyHPLWcQ1DFDDn-7Iok9rPi9IYYHuNSp1NJtcRomIjkPxXYzRjXvhPFc62z_uWgtflHbK-BOtfBv3rclEXfJRQVHRyDX2T86Zieih32ry8N0G1ExAt-o4ruX5-z_yqn-xLlMtG3B5MsJkI5cCSc8rIeDzfx-wgAk3Ph4r7Cga9oirsUTIpFBsWZW-pddwp-Hj-WbXRMVsPYpExmnzyBX9gqjl3Hry2onIBnJAvKU8TGauOqmjOdY_nhlsJBCZEfJgANeaScU1gzICIHxDgA5iZ2mKnMC12oCNVOINpjfKMexQ2invgVzrakXRjSuCydOU9dko1TCYVxp0mkDM9u3g2WWXJtmX-",
+        "places/ChIJyyPgtczgDF8R01OoHb3cJcg/photos/AaVGc3k4BA47FA8hlTHpgrVgP-CG60pmRVdHFvND7zRHkLyJ57zPZv8dJqP4ArCoZUb3OU_0Agq-47rSVqP4Q698PIYyl5B6rYtSE6Ot9UY32l6n8w95cHdsjg43ZAUqDAZuxfezyEpIc54EprWIQT_WhMTa0rCotIuIdx7uwPdA2oG4_ZtfjtLCgaDndK7Jro9kJju2Zo8waHy8IWrY60YYgDwv1gM67uWrPXdL54uwAN4rkLuCGtPNYttSUWXUL8b5jWZDpMVSfJspqkHMfnsBcN7vZDiM2OGZfOvOk76EBZAVugtMoKOkgO34jOF1WhBY5gZMxmdlKIHjn9ih7f5N_ObO9_qGOzhk9qGszEOdCBvBsxPDQy-vmSNYDaKyeuoSHpf4mLQ0Q2VlTzlvNnHQR5WDX_fLAao_6RgdYXumwP-JmQ",
+        "places/ChIJyyPgtczgDF8R01OoHb3cJcg/photos/AaVGc3lV10rQyDEHpaxAmCoQz9PL9LcYqKymSbvmS8y0B1R_3cnkfJdZ_ijDMPhLyqQ9yJQC1MnP4zJTzshNndZr8QXS9Y9PGntQZbtoNpwzIuF9TbYn0yqNADnGanGmO8_heKoMyp557GJGiwnUPDf3FkAaWkNhOg2dvfPq1URb-zA0llDvHP-VPW7QfFe7zJWB6-DXvsQMUYk-q_SfkCMSvNgZz8W7HX-IS4bc3DX14btI1lmLUt-3BRGGNbMhOAXLkD9sCUeAMUv41BXQPBI9o46fAVv1dFbi9dvfYnd044MF9ofo-wft1E8-0nUfF3hsNTCRNZihhtQJGQfhjhGMegDwe1aE9iDO1X-IfK6pv4clFBPsNdKMCiKy7uyL6T8GSsOEJpU1xTbBuGlSsMNGHAGvGqqIeUPzm05j_6XigeUtcGQ"
+      ]
+    },
+    {
+      "id": "0a3649ed-8fc0-47b0-adc6-31c456554a63",
+      "name": "Asahikawa Winter Festival",
+      "category": "activity",
+      "description": "A winter festival held in Asahikawa featuring a super long ice slide, live entertainment on a snow stage backed by an enormous snow sculpture, and food vending stands. Scheduled for February 6-11, 2025.",
+      "lat": 43.770345000000006,
+      "lng": 142.3615611,
+      "geocodeSource": "google",
+      "placeId": "ChIJcdZEtRHmDF8R_nFArvppZ00",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 717,
+          "quote": "There was a super long ice slide as well as live entertainment on the snow stage which is backed by an enormous snow sculpture"
+        }
+      ],
+      "thingsToKnow": [
+        "Festival runs February 6-11, 2025",
+        "Evening entertainment picks up later on the main stage",
+        "Located at Asahi Bashi Riverside venue"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPi4D7ooSe66KiklFar71WdZ4RN8ZKskGluW6enmACgt4dL6LLS8WmK5I1_5jpOtnTVBJDXQ1qmkj31pt9PXSinn5Hu6TWVRVWnU1QTh7p7_mFsKCXkfHQNSabF03gDWwcj_VHLnhR1tXtL=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPi4D7ooSe66KiklFar71WdZ4RN8ZKskGluW6enmACgt4dL6LLS8WmK5I1_5jpOtnTVBJDXQ1qmkj31pt9PXSinn5Hu6TWVRVWnU1QTh7p7_mFsKCXkfHQNSabF03gDWwcj_VHLnhR1tXtL=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJcdZEtRHmDF8R_nFArvppZ00/photos/AaVGc3m0AVx6EMKzYRpKQ2FX7MdP4m93JPm0f3KDJwrBu6T0kyHHyfN2mRP72d4hxouwfnHJWn2__SMk0go8Aopsoz3kuX6TtgViJFKF1PeBUx-mp3yg3T4C79_9lTFr-G-QZgo-yuehP44j_AukID_AZENJUhPZwb7WihfEfmeN7I3i_9REJJLN5-OphS9vVdv37cWSu8ROexWkqKrH47mc7bkplo-BmAbEPfI6165SynssLQCWrd9xDb4q7UOYUs6CN_WHT0byJBdBDFQRAJePbSLEdZKl7Vi60mf6j0IezuxQmuJQVbGB5oBn15StEYd0rWwo2r-B0KbWRxet8L1Td6-fLvkF0DI55NtZ3UMCFhYfyZg0e-SmhK6JdlFNJoI8Cb8WrFvtn5pmJ95THN1Zy4kGXrvXB6eHK8N_gNi47kBgZrFT",
+        "places/ChIJcdZEtRHmDF8R_nFArvppZ00/photos/AaVGc3n-gagFluJCnkuXOS7cwzfHZGsqcSLEH_IsWKPAYagYR5BuvHVELCLXZmH3jqY1EZXejuAAiiNYT_v2LcH0w42992mzHVyAQfU8Ds12oVD5QYffc8utkuQRKTzF_wtN54ff6mRi1nOC7rzlksGVj73ZQ8P1d79wq--XVL8W5ib2pwMWW3HeVwcahh3Ns1v8jNO5gBWONunYuEktbOf3eLDconWMTmBl4yN3wgOz8loH-8QM2fNek-eWpuz26RxbuoNTX8j5y9vpx6OJQS9KZ82I5A3nBaDjPUkxhHmgZy44IiiH46RKuo5ndiERYN0aU_XVVIaO8vX9HI2JNzjS_tTpBnixES9fWVSEGSLdg2Dfq7AXGqZJ4pgFFBIwbxmFMHy5thL8Y5s0K1DKM6sZRr3InVLMD9hzvFaKvcublhc",
+        "places/ChIJcdZEtRHmDF8R_nFArvppZ00/photos/AaVGc3mWesBb_WekS-kW885I3oqVwyUcm9n8REKM1xQ2RwnPSqq6Arrx9XQOl6Wkwes6I2WCGx5P6f5V0jlnEcfx8-hAkgw3IuIzvgUr0gMT45m4PjcKDl8UkFrVvE1k_97NBsu7t1WuMt7ThB-8yVksFJhiCerwOlx35xvMa0cDsZtSR-7W1ElIAqI7Z7ZQvQnRPDtbtqNfC2e8XiuDhY2TbU3vmimpS-fEIUKIHy4-fCEpMIXnI75frFld_KUIuxhq_b-eFXAAlKqxGOTyyyejWBG3PbhfH6kH_gW4DV9Utwe1MqhfU4MImfZyltkk7G9E_lY3pxOQtAhg_5lRln_CQpSRPCd70ZDy32hh3vTxrm4TTB1AweERdL_aFuwPgkV6MXOrT-sHJ5CL1K35zMcsw4b6f51Q6Wkbth6En6WIn9RYrA",
+        "places/ChIJcdZEtRHmDF8R_nFArvppZ00/photos/AaVGc3mMmg7UsSsVCG6VjAwulQQAceQgq9bp7HZSo54SVR-yIjxO0mi7lalwftFNOpavFyYicsr8xofgg1ZwcKs4bD1rM9fiVbj9yR0jg8bk3rzzzOWviXH2K33I2ovjyQURpcHzexF3YYuf9pxntknuaROEVm0xHPXRGU-ZWxkNaFKcDm22VGfEtUEdH5XlFGtkLb2UwLWDrY_bj0iUw106VBlz5Xk9v-gr5AmsXanRybLElGafYcxsFZ2VXINYCOUH8xugj-bflDyqa2vEXYB-utHX2YZPXTsJryYCZFqCZL0gS-XhEiuWJ120HVR_fStgha7Nxz9gBFhEk-KULC9llgCHOwzSHzdsip9HV0Y6Xv5hRSSIzmE3HdqTlZ8CxDOwLAp9ORohPisGNjbLINXqoywTjvtxoyLh7ONydUGXmenR8oIXVe8HQR_eG0ZhR1Pn"
+      ]
+    },
+    {
+      "id": "c68208b4-be9a-418a-8010-6f37270f4d05",
+      "name": "Tanaka Sake Brewery Kikura",
+      "category": "activity",
+      "description": "A sake brewery in Minami-Otaru offering free self-guided tours upstairs and a gift shop downstairs with sake tasting. The brewery typically opens around 9:00 a.m.",
+      "lat": 43.18616000000001,
+      "lng": 141.01341299999999,
+      "geocodeSource": "google",
+      "placeId": "ChIJK3S4ul3gCl8RqOD0wRgNyyM",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 831,
+          "quote": "You can head upstairs for a free self-guided tour"
+        }
+      ],
+      "thingsToKnow": [
+        "Typically opens around 9:00 a.m.",
+        "Free self-guided tour available",
+        "Gift shop and sake tasting downstairs",
+        "About 15 minutes walk from Minami-Otaru Station",
+        "Keep in mind liquids restrictions if flying that day"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZO6mnaqhs2jTHATfj_x6yOkZLgJM1o_s8XuDdQ72jtNvRlsIQBXInkPy136buGoP107wdOERy9rEcrUPbKgHzenFEWRY8apChPErk-AiTFrdy9T3DAK_GDVX8eD2uCGEiGhWuLCGcGr2lQq408=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZO6mnaqhs2jTHATfj_x6yOkZLgJM1o_s8XuDdQ72jtNvRlsIQBXInkPy136buGoP107wdOERy9rEcrUPbKgHzenFEWRY8apChPErk-AiTFrdy9T3DAK_GDVX8eD2uCGEiGhWuLCGcGr2lQq408=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJK3S4ul3gCl8RqOD0wRgNyyM/photos/AaVGc3moaI_vq8Uc1_Mny7WzrRZPzmPfZ9mvtZbLQ2Kr-7AKSxRqr2NpY4WH7Lp20yfbuf5g2f54CEehSxT3nR2vBYAnT2pfibJwnQyuymDVYZjUeYLzBfzXQdKZDRQaiaVCtm9rl70k3Q9ovu5BWJLaP8XKhox5kWID1xkjT8QZzKOeopMTCawyjZpiEGVLQj87kwtiv65sm0x-lMzY9jerv_KwKKxWuSkwlnXmIlxxaC4o62WHIF-ddh7W0b44cQqC09SJCZIlLqoOjm4ryq2DjkWm129UmXMRS-tYLML37CG7LwGqTfTBi2Ps5AlHG-odtOEmyG0qMu4eQw3KqZx8FbbaYOoe50k8-k6oAdYIuSDP_ts_-zHPvqdeGdU6smYVJRCv0ICrAtLF5jeVyPVdSqSBCZaJXM_1KKUAO6m6wJhcHhU",
+        "places/ChIJK3S4ul3gCl8RqOD0wRgNyyM/photos/AaVGc3l2IUpsWlUX3GLMubfiQqa0HjiasVraee10qDG0c815Q9oUsXsq4s37g0_fKUbIafs7JN-Dsf5a8XIqyvYqdfVyvBuENhvqnec8pH9Wh1xNdBLKXN4rxZg6sKsCjAySZmVqoyc5MQuR1we6MBL52EEonerZIvKt60WVfl8080CLDKZmv7AM2DDemVC59pqtlAmdYNB0x-eKYUoaGb_ixR6d0ctr6gYdnKdo440dnOO8BccSZOnft2pWm1EG2-JwRRNwyqVQCdHbYfJxl7PxNoxfcstiWKRE_lwMWPblLrdQwJeBR1039Kjh6KUGzBJ7zZ05mOLzQX2HKJuCRpplODUyjAGNAX1IaZOtO2K4hGfa41RFD0CDf_1MfQbHEISxtrSsSaWmb17F0KCR0HdNT-t0VpaKghprertraXuAbxZCzQ",
+        "places/ChIJK3S4ul3gCl8RqOD0wRgNyyM/photos/AaVGc3njzwFRavuBexoml8srt0BEdybktSFlek_S0G5kn6VXOUxiAjakFdjcj1qeKxC4pDikYJedV5AjOhqGUcfKkKvCV-LVHel0lN1gkoXy_P1HcsGnFRanckoi0o1eYozlJKCRDTkNI86_zIHWAy3L6JVGaYvetsxTJhU6txJUaI6IPzXouGf6aHVWImHSzPFAvIOxhGT0EKJaPogjC_qhlAFmcWuPPyp8MfdfH-h38Y1M-prItexRV3_UIzXz-tOUl7NFS1llVuHcbX3zPSPpVWCia1v6RcjXuQ7ClqZbKElJtmUGzO9tz-gdaZ7PK6yRs3ZqtGcr8EDkRGiREcxmUvMVWBMwXKDWA8oNx2Hk3rEb056BSJ1cYiT1C3bmWpqqJQFKlJwc1Pl7NajQat3ukMFrIObhrTuUF4ZgyVxCJXU",
+        "places/ChIJK3S4ul3gCl8RqOD0wRgNyyM/photos/AaVGc3kPkUmduKBT2l4-0gqkSqXSpLKwkLS9PtkfoAxoSqmy71R4PUZS7CLBAmuYoHEvxVKATUd1HN3YtlCEPg75wVOR4aW9qsrv5rOT3vPIz5-iYEKE5Bdz3GmF74flHhjgPjl188a4eqkokfVDFIZ9qXR758v27sB7Bm_rmTGcWRaBs8sonT78FVNVI9z6XWb0S7T0M5hW2ZZM1HBTGvKi1b35Nz5ufsc04_pdpHATWIIgCE8B8bQQzIz3T0b3ujZkEOroFN53Ztm9sPYgdbKD1rIPDBfhDYQ_M9T1Y9mtytj32x3rbaaMoNYyeAi8UQUoOrBEAR7xjX0VADonN5EVsGiASN0oQWQxyXOCFhadfLPiO9Z2ShMKF0iRm-CQCOHkIfNhz3VKOL0ScOHq_EDyKD626XJKIK5jrDzNF9Ky1w7QAUwD"
+      ]
+    },
+    {
+      "id": "01de65de-cb91-48e3-9a50-de0db65b0afb",
+      "name": "Otaru Music Box Museum",
+      "category": "activity",
+      "description": "A museum showcasing many music boxes, some made in Japan, with a top floor featuring Mchi Chi dolls. The building's front offers a view of the Otaru Steam Clock. The museum is approached from the back but worth viewing from the front.",
+      "lat": 43.190528799999996,
+      "lng": 141.00797319999998,
+      "geocodeSource": "google",
+      "placeId": "ChIJB2IMXFrgCl8Rx-WS9YJOmbQ",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 863,
+          "quote": "Browse through the many music boxes some of which are made in Japan"
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNIPkJwzMofkUbYncfo_ZOyX-cC2vd0IePVCRFk_5rcpqn_vaKFfqEbEV2oHr72AALx4Yqkp8NAfYLjH0w6fpf-7VkUZPbGJNPUNFWNpMvdKPfXqGLfoXOrgCDCUZegLYnvz97nkJjHDk4Cuw=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNIPkJwzMofkUbYncfo_ZOyX-cC2vd0IePVCRFk_5rcpqn_vaKFfqEbEV2oHr72AALx4Yqkp8NAfYLjH0w6fpf-7VkUZPbGJNPUNFWNpMvdKPfXqGLfoXOrgCDCUZegLYnvz97nkJjHDk4Cuw=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJB2IMXFrgCl8Rx-WS9YJOmbQ/photos/AaVGc3kPZ2vPm8dXQ31DR_EW7hNc-fNMSdFN-vvrQaGdYhT9A6WouYiDE-pljSvDwDOTrK2Vl7zIuesx45PR_KZAfUuuWS06-W2ha7xIjru_az9VwJ2zVD6dZuJxKn3Yr5lNNnXVASGnnLR08W8npgDfbTO1Jd3GDjKEmiQHJCWuIct156c2Xa72uWwMysrFCTgLcqXVg9utREc9CSOGfPhMENiNFUmqVxgWEpk_xZG1jWf-PUHMDWP-O3tpzKuBtSxtgJufXd1MrVVN8U2ONWo7XirZGJLLQpiZ3sHEp96jNSakHSrmRtjm7CduyhTk-ION42vK3_EmXtSV0awhHoGNQxO10OVX6io2DH3xPVL1ME3TJwiUKPLnuoTV-N_wBIprjS23zxXzIoM3BKVxr_LWBmy29InsBC4cFoY74KkbTYbxIjnI1XYQtq6R3f92aNOo",
+        "places/ChIJB2IMXFrgCl8Rx-WS9YJOmbQ/photos/AaVGc3n-msJWsCYpqgdj8BUxwqnxFCRwPheNTFpercGiYwqZ_qRXNF17NVafCgtlRQC28HWq1LgDE2iYfNLMX6j0TteGmULIhsw-ZxRWCpRuwvgBg6Q1FfMmc0xNAf0nJvjHXB7g57bttKudYLm6lDQdl39adn-jOdkMJVZCv4spst5l9z_wdmBi5D5kfQ55GFjSZM2c5lUCwp-nW-R6p6rwu4yhb8tGsbbvuDqFYOpkh9siWqgO-rxmV19Hjktt0Zxd5wjYYLk4ooLHyILXVJvLzKbSsOQZ2yfzC99rgNMZVOPwPIVUACzWPYMngR5gh8ZmykAeODlGdIA4caAQmruF7Zrlb4UFtXyL9-e3BW5WzR-YBEyAiqFoisCrEYbs4lbzSKiWB8saEfesUormyMPKMsS1Ka_f0hsO5KfugFUl7nUaxkYU",
+        "places/ChIJB2IMXFrgCl8Rx-WS9YJOmbQ/photos/AaVGc3le1UR-CzzBFNJKeS2TcOWd3svKg8H1j-MkcWbcTpAorBIi8lPGHEgFiQYypvuKo3SKcmbsbD92iqqMwTjnpM07OVvrpGYjwTrUrPbOSoeFwDStHgUrfDxIDmzxjRAeWJW3aVRj3hmkwu-o-bxZATswcDVLdbn8gkM6Mei9o-qmQ_CuXczNMawLOjc1ssiLOqiKPHbN6lHrJVEw66CMi7mVXPLcYi1UhlWeMROZYTdRU4e2nzBkA8SooG5jupMMkk3HgOo9G1z0Rr8Hxs7bDZKRJ5aX42zAXoI89KwKmAOzgTh2kK_3vHzNBQD1mRQunBfO6BH6_lhKLN-0Bvvi2kmJTDl-c8nBrrOO_NXt7oeegDCgL8rRJdMyd9BjGC8RNgQr_orcuIp91zWFJEspefP_XWHN_Z8p9nGCGbRG5zrF34e9",
+        "places/ChIJB2IMXFrgCl8Rx-WS9YJOmbQ/photos/AaVGc3lXORNyhV-QW8T69SpBPrJoRdWX7qvfU-gQ4N_0zqn3bvU5otlOx0R0spUOG9HIn8qtttr3T4AZuemFspJrV1va8ECnuikCky3z4BZAn7lb79m05ASj6mUwSZBw9zwspaktoP5G30-jzQEB4xT5mYMe1vIKHlL3kIAKZoBlGTOhA0pjr-mK2Pule_m2SNl08WdrILWLBM6jSOSsZou2mMc6XKX9R-SEbC0hCD0uYwX6HIamCGTeE0osiC3oP_TroCiRUWjeuCo379TycDzn5Tin40t0cEAi5iAetxzY5oA3oLzYInAyjDA49PQcDf3zZsr404b54equj3PcdpXd8qRRYCfg2K3gKFyGdZ4Dl55ahuLn6tA2TViRlSbUaWgo4ZLd_a6Ocin1l0STcoOLtnj2VRldLyR4n-TwZI57S6yy"
+      ]
+    },
+    {
+      "id": "6100e4f7-f2b6-4b8f-b91e-c476e5328ae8",
+      "name": "Otaru Cafe Hello Kitty",
+      "category": "food",
+      "description": "A Hello Kitty themed cafe located right next door to the Otaru Music Box Museum. Reservations can be made downstairs in the shop, though the food is described as more cute than tasty.",
+      "lat": 43.190762199999995,
+      "lng": 141.00792049999998,
+      "geocodeSource": "google",
+      "placeId": "ChIJ1fHdjwThCl8RLSVur-r5qoM",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 891,
+          "quote": "The food is more cute than it is tasty plus otu has a lot more to offer"
+        }
+      ],
+      "thingsToKnow": [
+        "Reservations recommended to avoid long waits",
+        "Only recommended if timing works out without a wait"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNIt4zq-djGl3maiP0Rt1cf7SrXZGmyHth2ph_GjFddo28Qxvb9lFCoTkTjcfOkB2p_eckwnxjzo5Dzmg4BPoKJFKrheW2a1-4Jh6lRmCDx42_ENqHmfs0cfeLfV1YtOMAiDB9dMejsXJPGl7E=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNIt4zq-djGl3maiP0Rt1cf7SrXZGmyHth2ph_GjFddo28Qxvb9lFCoTkTjcfOkB2p_eckwnxjzo5Dzmg4BPoKJFKrheW2a1-4Jh6lRmCDx42_ENqHmfs0cfeLfV1YtOMAiDB9dMejsXJPGl7E=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ1fHdjwThCl8RLSVur-r5qoM/photos/AaVGc3kAkkO_alrcNRR0XNSDJX7zEHQtNWaFBIgi1CtcuRa8oXDVUeiVRP0mLZCS1AC8ZrjCgZZsWxEqE12NeZdQhHPxki4iHwWEzU-YOuefSxyMJgeBH5eee4xeGO3n4fYcHeb56cKFRCXmwTwrSeyHqKrj8lBJiM-Vj1XbvCkw8_QXzmTcoRREaqCBpDOc9W084byjGLNtnbqAsrBjwVOqo6gAVJ4ZJ31SBY3Q_yIwKbA2AiWE_wfs3WRoCx45MtxyuX1URr7xgnqxLXSm5RDU2HHml2oPwEMll578nSSox2s7P2ezvyIEO6lV7G1C-fF1NYcJCbo8rxEbckFL79JqdYnBIF1-oPfT2OFDwu5twosgKw4X4exFZYnJzVFmKI3N7jM8XPflaVrl5V3xbAX_o0PwNQ4YocaSyqvpZODgAOKaQcW2",
+        "places/ChIJ1fHdjwThCl8RLSVur-r5qoM/photos/AaVGc3mu75AKYu-bTUiuG0CdIs2QMRD-U0M6nLmOj2a_Ldt0hLiehNPNRC_TGpJlV-0KM3Cz9GDzfy80NuNaMgLBjzYyPFkyDElXbsniz1cN_U-Nypfc-Uwr8G0_97Pi9sfDLvRdbaimH9vVS2-kItseKVUH805Z2RQyH4_s00VrX9KyYzK8dNXhF4hlPxcPDSPvgRvQ9aty-X1iNEmqCa5CmUMlgwd_KSiajv1yD4-dfQ1MvHe9ms6Ahp3k5Ju4QJmb4804exh-S1WnJpBILdNp-wyHW6qi5sU7FpZBQZcfCto5N8mpL5hvZY7oSBQeOXR9ps-VKxraSPB1EvrY0GHTjsNbK1xknn3zQEdO8scRiwbSe6_5nMEx4P7tGmSfJQmc5SVwtRvrMXY5i8F71-byngdbIv_CrlJmL_75oo1kfFMTg8d42hE8LqeP9bOldrZJ",
+        "places/ChIJ1fHdjwThCl8RLSVur-r5qoM/photos/AaVGc3k9t9_MIVf-KLOiZZxiXZ37sE77cSRJAD_IjQcmV_gE4IL_lYPXPJ-Uos7jZ0G1WG223JNeKQi0D4-8UfuGAeJT3FHi3r2dvw8o9HSF4c6oCUk847UYe0Xd7_jh8HPXQt2vzcizWgDKPneGJeyaln0C2sIOOBvS0mDC3g2b48zkbJGCEw_R7IDzRsIw5wHYZxGtvTh76jRk8baevvWXWIOLltFCTqdAlrxDwZ6fd0XCRxYArnmj8_gmZTx-jKRch_x8JJytI9eu3dnld5EJScsqakw7huVY4dqLGzw1XpcX-B8J9aX7aHNuBn6-t1134OpfJddMYbpMxKiKJoRVW8eCQiDnnFKmdybLj1w1qJviLV_x-jHhD2Dbq5sXgSi-PROZaB_ERqQ3kXV-akx0m1xXeTF5p8HXbu7lxrPCw7LtmnptplF5hmMayL0uxHFH",
+        "places/ChIJ1fHdjwThCl8RLSVur-r5qoM/photos/AaVGc3k1cLl-s2DSP3wybLyP1gI88d7oHPEykvT88rePw1Tmsd9810MjNXAxZnxhoIwPU6QfTPVfDNpnBLgMIIuca6skEZjR_D_EdC-aRUu3jYv0CLGusyGTS_1sPFopDHxQxu8G3VHxCiZu4H7ULaFc3yb8av7tNduIpTctfDpscuf8BLccJgC3DEvKH3dtLTjuxKUl15w45BkIFHYBx2l7jJxeQ2xBnS_T5LEgdrSPeBZA3J4yLVTVAPSXIVhULSzX0StB7YP6gfeGNR8YE5httyRj94AkgKp_JOG06s1ySuF0piabQj-Xjzo_xTJFp6W228WkjtvrmmDJFBZFf0zB8slHyzqnwZBBI0ZVnQodK6gtfYYnkWV5NhdashGmgkGFZviU5AQcAK9CiLeVpwIWSappJO7MwSteRJptWCTNAdB_7Z2wr-urpMecfEerKtzP"
+      ]
+    },
+    {
+      "id": "f5b52365-dda7-4400-b0ab-8925eb3c57d6",
+      "name": "Sakaimachi Dori Shopping Street",
+      "category": "shopping",
+      "description": "A historic shopping street in Otaru with many branches of chocolate shops and pastry stores, as well as glass production shops. The street can be icy and slippery, and people frequently slip and fall.",
+      "lat": 43.1952832,
+      "lng": 141.0044833,
+      "geocodeSource": "google",
+      "placeId": "ChIJ-UtLQMjhCl8RxEFYf8fbYE4",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 910,
+          "quote": "There are many branches of leau each focusing on a specific type of chocolate or past"
+        }
+      ],
+      "thingsToKnow": [
+        "Sidewalks can be icy and slippery",
+        "Highly recommend wearing ice spikes on shoes",
+        "It's quite common to see people slip and fall",
+        "Many chocolate and pastry shops available",
+        "Many glass production shops"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM-xB2zm2OWxvd7uRR_y3vWJM15EWDuv3NmQ8L0XA4M-4mmAutg4RnwI60Wc107vU0rO-6O_cLekKMJgtKMv44hafZqX2l9AqB34xWmgpFQ71gWkqTyAoa3coKpZJEQezrF5mLIie4EtXam=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM-xB2zm2OWxvd7uRR_y3vWJM15EWDuv3NmQ8L0XA4M-4mmAutg4RnwI60Wc107vU0rO-6O_cLekKMJgtKMv44hafZqX2l9AqB34xWmgpFQ71gWkqTyAoa3coKpZJEQezrF5mLIie4EtXam=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ-UtLQMjhCl8RxEFYf8fbYE4/photos/AaVGc3k-f5xNUndWLYtCulJVvRaVia9bZ7_Ft8TvWbEdZOhGhzdbwuea6TzcM4H8332Jo6F-iFMV0QQmA6F3yfaOJ5kZRuFTd0T_zccc9Aj7iTA20JV-olvEFbalJ0OT8eYn3mP86Kj7S8rRnsjbmqUOw_4ABWG29bGfRDUAnPdsADnSNAYdANzE5uz61lvsc9y70mVK_pyjUXp6zZePPjkNEe3qdMTEl_9xp_uXfsYFJTvcOwxduOWk8Nbt_8BgpdMAgvXQEKGrj-zREDkl4TPg_7fiy6DlW94HjC1L2s5Wvf8F4Uyj5EsNyGIlfTbwkr3Rcg_YUQCSKIQCfvf0tsd4Lcw6WPHSUOeAO8LKBPCpBLwbbQbNixETd_q11BrrnXHwvMLbEKGYJET41tF1YlSYGK-01fAjt_ZgfehfLulzkIM",
+        "places/ChIJ-UtLQMjhCl8RxEFYf8fbYE4/photos/AaVGc3kiv01koz99kqYQUGnq2GuTcNKUHy5jCmxiJlFeils8pT3UVakam74ZXqZ8tvOke8wv18bojdD-rmXlRlE5QBFsghVDWgPi3RAfnERIoDtbtIJH36wJWpk_KFEQDfHVjmO697WxMQrX7_lOpFdGrmFIA1GwitIhZuCkoOYeqjyA_Wgegn3tWdOA5veV8PloboJ9jedBKJEf7DCAZ4XqjR3Y0lPpi2f2JBaisxnMSgX_urSypdRLBCoJugF1fYPiLCZbK8-LGAeCoyLOb0ZQnDgbw7Y-eqwH3_D5H39b_58nD9h1sOsuoz1A66muIFz8y-2mAVuMF9tVcLo-7BXjLaqyaSjbh6xKFQbxG-rDJX09O5q_eF-btpUlREpbnG7aRbz0uQpgQqiyDoMEpEcJFEoDGF0RjszGB1MOw6JgWocI7QTg",
+        "places/ChIJ-UtLQMjhCl8RxEFYf8fbYE4/photos/AaVGc3l1l6i8EiqYY62OcyUx24EYGzeKIEnVcEyxkMhzF_xi6mAAuaWto1Vmf469xd_zgVJYNo99V9_MMT3WxUg7O1pwg-VrjF7adBio9QRu6umAOWpgErlJSl10Qwu7eGGqXcAvFVRpguOvVLtCzKzw--Gj3wr8g3U-aWbDtEVFAAvl06A-N9rfbVtd1I49ou4QtxhJSh7yhPrLT372i8tU-2Xc2-JZmonIZreq9tTL0O_YilLspHRfe8k7ogQkVcgJZG2l29d70R2nQAnsXnLfge4gqWcd7bxXcgr2dLN0Pxo_7FCDS-wM7CtGs51keCszuoeZW8CdoNHVsw7ZjBVnIFYuct7ih0WgqBdHWSNk21TMBQeoINgNGPNby2e2Za0N9QT8Dbj5m8agw7oiO_FoE282nvxX6oM4BpsxE4vYf8kch3w5",
+        "places/ChIJ-UtLQMjhCl8RxEFYf8fbYE4/photos/AaVGc3nVypBUhn3kQHtAu50vQcNq68E44KI_KHW9cOUMNdyeWFcR2WRJkMgzThaqamo5mv3w9bhiTIAYjCVrhQvEA8kckvBghfzLyLzNlhGZVt_mifyuYyXpuXmYylFEq64Tp_neQT8vY-ccs7QQQ4dBbT-3UsPJxmjtUuZp8ljgDbooRWIJuOgdY5jh-RT2SAkZDOsq3ZymR4-SCzEEw3wHy4ogN-UUC4NBHi0CoSMhUkrZ8BwsVJGoZUvw1fto8n_vUGiTveoKz8h_pbRJjVWRJZDSEYKGv02mlQvcxRB9JryrtI-mVzJyScbNHZDbad2zCsuyLvXod9nmivBaGaaFiQznKAKoyaCjL572fbCPppvgN7m9U9wz7GeQ__ocLYAn6E-f-TXVnb-pO3S7fnGEg695_rhV_dpzAAo8sJrLzQE4Ww"
+      ]
+    },
+    {
+      "id": "ca4fd89d-89ed-49ad-8bf3-55069aca773a",
+      "name": "Eight Layer Ice Cream",
+      "category": "food",
+      "description": "An ice cream shop in Otaru located in a brick warehouse. The landmark to look for is the crab restaurant across the street.",
+      "lat": 43.192185699999996,
+      "lng": 141.0076614,
+      "geocodeSource": "google",
+      "placeId": "ChIJQ60FagbhCl8RlRS6ZuaXx7I",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 940,
+          "quote": "You can stop off for eight layer ice cream"
+        }
+      ],
+      "thingsToKnow": [
+        "Look for the crab restaurant across the street as a landmark"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPknOXTX7_K-QmwRFUzxyk7TE4cUQk8y-gm4cKtWxAsFbAYif2JW5dK6k3j9_Aplc0UBLVSnGM9_9AtP40DA-fw3NLBW-dINPbcw6v0m6Vij5RGzJHhQKuePTrKuR6N8HrZSClXc4MjjnTIBw=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPknOXTX7_K-QmwRFUzxyk7TE4cUQk8y-gm4cKtWxAsFbAYif2JW5dK6k3j9_Aplc0UBLVSnGM9_9AtP40DA-fw3NLBW-dINPbcw6v0m6Vij5RGzJHhQKuePTrKuR6N8HrZSClXc4MjjnTIBw=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJQ60FagbhCl8RlRS6ZuaXx7I/photos/AaVGc3lC4wKqlTx3m6Decd7XCnPuJBP56vBcBf_ox3wTseWyu5ncz5uq8vEnACeTNTIIau5LdZ6qU12oOyUFJAIc4bL-X4AjCAr0AF0B4rA52aJXWK1YuhqE7SXeWYAVqWoV_MNBMmM2g7nCI1Mfv57k89WiTJxEw2L1wD8RjMaZOBdTE8hHdXpPKR5eyYPgV5svT2YGzewt71ZS0A8eP5_7BGNFpkJ6CroTMTIfv1X37QvvPZhJcnW33rG8V8RGx3zev2Pf0YOyOTWcqaQqlbr_DTv2WOOB_rGNBolpZDQHlzJl1f-wZ4vFAqRXjawSPwNfiEGTych5C-VG1w5ph8DNgG1TqDS70N2Qw8WEYcWunbcekzzMT4JwUJYjhRX2KzeBB0gt9a2hXG_mvSRAlGrjt5rZ9WJ-6USnO1ROb9OtZEkl_LNEWda0yhouxInRnQDe",
+        "places/ChIJQ60FagbhCl8RlRS6ZuaXx7I/photos/AaVGc3l-5tT_lyp7Rm4EWRaFxeteJBcU1lGZyeKEOUudmCQMcr7QsVlJWCj1C_AW9juaVrp5uXhB4oHKyzx7QFtTANIl32SdDbbcBYp3hquFc_dfv_C2gThgv-4NQT4EZUVOyYMB9YyfmvR_S0u8Xnx6qjTWbhYfoYNNrDGrEt6boINE6TIxU-zxVEmg5rb1Ln44cp2ADeK--6qSDTI3lgb0uAzlqK5ffsSvXGlogiiM_a-JOkqMUK_wiHh4vgavW-C-hosw6IMrQEtOqXQBDa_HTGbqpwD9eoegLMNSr3uCKJKmH0EComEa0bIVTTvSUSCDkbDn6qL2WVPIyz9lvTOMaOLd2Q7YZqcGYC-K0DSRgyFPPt2U0Sz9znF36iWlioawX5Sc3T5KNH4Mlb7PJXZy7rODT2_RykYME3_H0Q0nRXg9anTiyIXqTKWB7ms_LR5T",
+        "places/ChIJQ60FagbhCl8RlRS6ZuaXx7I/photos/AaVGc3kgoCwYcVAilFrF5J_oD_QwEULDrw9XFXmP548hvaPH3rAcqzd-lO1w0pRUK8GMtDnGx6jfaRQQx2jSBnWoeJToAPWy5DMOxeKJXbHHu1p6ncEEt8wtRN0NLyOZVjbxAociZd2KgtnlTawt2kgHIJX15DSNGjf83kPmuY_V9tXBTFxe3i9lm79PepWSQgUbHMpK7VhodEul4s_KPVms01nRAhlQEW0rMKWN4IUZ5ogRUCAvbg3ixS1IEfAuq_WWhldkiGSyk4j-HLRUFbLQV3CrcmnT35xdjhrRqIN9snv7wAiutMZYktwJMe2Td2h7Ppr1-qnRb1wzIJPzOWYCikgOkHQ8T6rE45zgqnBvKG7Mf-8-QmDJJ6X0pMKg-JDztAtRrgD-3L7gj-RPiX4w2FtNO74ZRMQ8_-Ohdc5glNAEiMsH1m3qIK4sP5eOYXKm",
+        "places/ChIJQ60FagbhCl8RlRS6ZuaXx7I/photos/AaVGc3mrW__oqBQxI0Z7O2cIV7WEMUQ2Y6Yt-k3qhi4HUjOw85JvDUNFf7umn6n0cJQqMqSCtYmv1BVAZrqn880gqHzOdMBALnE4eDGXgcZDqXkFA9Q40lR-NSFQLCXkGvNaYrooZWZ6BFqO_Tg9wOWsol1j3IzJTlPUi9GaIthdr9jyyaqo39zGtOX0IFbqt71GvF8xS743o_vAJ3SzA_qz79zOo5YrQ7g9G99sw82DZsSoeBafIB7A60E8n29SzmxxkoCAw_-d9k-21eLB4b9TazTkkLVNoIYzJlY_mMhG86KHZkH7h-CubmT7weT2Dvje9cnqT14pFO1LGK-wM4YoxVVbTAkLx6uuZC12yBS9QfaEkCGLu0CoLKBvqbqukNMzw5C_YY_UN_dVYTng2kRaGtEJZrsOkcRds9TVPb6R-mfYT9L3-g8xwp6vWdprRycF"
+      ]
+    },
+    {
+      "id": "5a41cf89-13fc-4275-96e4-a653dabafedd",
+      "name": "Otaru Canal",
+      "category": "viewpoint",
+      "description": "A scenic canal in Otaru that is beautiful at any time of year. During the Otaru Snow Light Path Festival it is adorned with snow lanterns, and boat rides are available.",
+      "lat": 43.199041,
+      "lng": 141.0021176,
+      "geocodeSource": "google",
+      "placeId": "ChIJ0UxVV2ThCl8RIZdpda0H7gQ",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 986,
+          "quote": "The canal is beautiful any time of year you could even take a boat ride"
+        }
+      ],
+      "thingsToKnow": [
+        "Otaru Snow Light Path Festival February 8-15, 2025",
+        "Adorned with snow lanterns during the festival"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM4rSMo7lZa6DyJXG9kqZNwDs7OND8YGgNgR-rUt01ZKLQoymlmv_TZoOCtqJZNGMYVI7xqaixvEpFh0dTNK3aQiSvFh3bK_gvhfMjfuAWKCKRK0UQtGwSUZOeOjeHpwQHAIDcDoe23RHHXWfE=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM4rSMo7lZa6DyJXG9kqZNwDs7OND8YGgNgR-rUt01ZKLQoymlmv_TZoOCtqJZNGMYVI7xqaixvEpFh0dTNK3aQiSvFh3bK_gvhfMjfuAWKCKRK0UQtGwSUZOeOjeHpwQHAIDcDoe23RHHXWfE=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ0UxVV2ThCl8RIZdpda0H7gQ/photos/AaVGc3lX8U0Znrn6_zgKFHUWLY-Fh07fFOcNvoNBHlgVmeqS6mbhHm7UiA9_zBs3ulCJEhFciKxLVaJja5gMmyRUdUuZe8pdNgFyZ7sIqfxxUUDrqZ7XB5ecf45jPTC8DDHZo8btC_XrSZHnbdoxksXpFknxdqPxgDQrXzS3f63HppTaqK4S21j5arUMSD6pk5zxK1SZrJ7Igmjkh06froJXtIwLh3pxdUZ23GlQfcSEWoeZpeUfn1Tyxuj9ZL1M61ocFQUV5NEakRn1K3AF2v0xQH0mtXyZPu5-EEzP-THye2LojdcXtCXLA_818FyoeKRTo4TT3EK1iLI94DI-i6BhnE8cBV-X5CBBpGm3jOIZ6APW1VCZ0sIZmwq2viAtNWaKiQdO6slSV3qhF9Mgu0DpIvap45olihHUYY3jBujuapN-J3l6",
+        "places/ChIJ0UxVV2ThCl8RIZdpda0H7gQ/photos/AaVGc3nQxaJgr6f80ESF5T3bYrfiQNLDLUkHtil9EmVPsxrGYqIEVYGxqKhZuOmhr4jeCCd0uMfaUndLcDWZ84oQGoRbux4OiPnYvkKqDyMGLm8H8G2bgECCrWFnjqBTrlIBjGXEGC4_tJypDp0J2kqm1pXLwNSfpHGf5puG-GehffioUu-xjer9PJe3SWpjpJtp9QuTRltUiwFacD7ukMd5VqQ7MLEBXSyL-c9RGMDsZHnc2HTESXB0f0MK9bn8fLeEEtFOUoepiJ6W6bOH-znQa4H56CcYMXub9wnX804-NzGOsRgkjNNqGClEJX2GdhHpY9KLYDbjY5AT0-N2dkRWD55t-ri8owORSRS_UE_T0bHsNAbIT9YcF4PUbaJsRie0Ft94WDE85GN_tinvzvg_yXgmZKw29tjLdP3LHK_3K8phQE4",
+        "places/ChIJ0UxVV2ThCl8RIZdpda0H7gQ/photos/AaVGc3kjiZ1dQcgOXr96eD8Yy3ZKYutX2sdsTo75B5SwosqLWVOwoN_etKmEojWcaYalL_m4neN6VWJvkxmDAwLSjgklUiL5TtWV3fH7I978lYMl67ZfLIL28Y8-XL0KpWFwelL5SaRo6K5Pjs-nx2S3wioJEDXgfvbcnOBfrVRv7M5qr5lI2F91mP_5IkK_elW6XhaP2QFl7zxjcOJF4kNvBaLc_QLh63EdSY11t7LSVao5HD_CinrUVPQIt7LmmjU30fpPd3T0vVAuGSO3tvHDg2nhXDYmmWD21ghUTBW7J-ZcfnsGeczNGwfFoBpZ2uDGoqnw6xD8YT2m0LPFX7uSgQgQXBP2c3e4KCxIzmrBnjUf9yngE7A2_zuTO40WFm2WtgDikVUHLDus8GmqBF7JxaP_fKl_aCv0xxsv8lJakefs3g",
+        "places/ChIJ0UxVV2ThCl8RIZdpda0H7gQ/photos/AaVGc3nUoWTF_WJEaMtzdWgM1aTN524ZS9sj306Pj6VaQN3Vqj3sPdM3gWIyykedYKK35tB7vYeIM0p7CMB9jplUBExXIIuFSVaxuJiJvP5fBB1beTyZ2aW4wFamzaSnh7rJv1mwVUrGgTxmDCLUHolrysofiqe6r44ZcnhMlaS0AFVqA6ge0z08X6659_tkeO2uk11NbG2UpWsZfN9-lghoedupk0zghkm6CyVERLhlwW3sA4R7FqDsLBAziWkn3h_qZIQvrPVkWMw2OQW2vI-g5Sj92lug92kLBxj_RGvsaCLum_y9oSd9Glx44xYGU8j28Givwq9-sHbUf7LLlFt_zy80r9we6lMw2Kl2DVod1PynUYsv0c1pzjuIvesNagfCdc6InEhx5vlSj86y6EuKb2GvTPTH0UY9Az0k28BGsnmCX7l-qsjckWtHOAXTk1n7"
+      ]
+    },
+    {
+      "id": "6855dd20-eb24-4f32-a4d3-21bd2a49d3aa",
+      "name": "Otaru Steam Clock",
+      "category": "viewpoint",
+      "description": "A landmark steam clock in Otaru visible from the front of the Otaru Music Box Museum area.",
+      "lat": 43.1906621,
+      "lng": 141.00766579999998,
+      "geocodeSource": "google",
+      "placeId": "ChIJDzxM9lrgCl8RdtyExnqrEUM",
+      "mentions": [
+        {
+          "videoId": "aS99O8GOGec",
+          "videoTitle": "Hokkaido Japan Winter Itinerary & Travel Guide: Sapporo, Otaru, Asahikawa",
+          "channelName": "Kensho Quest",
+          "channelAvatar": "https://yt3.googleusercontent.com/07RxY2Z63_EYFV3g7WaRiXYV3rAxXp6AZvQnXDfTGi64_WjumMw_yVJV-7EILNHadRh-eMzujIA=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 872,
+          "quote": "You can also get a view of the OT steam clock"
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPkjHr10MAlWTlC3Hwvpkrpj0jgbFQO8j-JFOcTwuE_XHc0H3PkKkUoj7TEM8TvkEh5eRnwvG2O6ftozXosKnifT2cZbHpcuvLQHm9o5kLYSak4m8CWc5Lc1LJtuwBRuyl6g--rctfpboet9Q=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPkjHr10MAlWTlC3Hwvpkrpj0jgbFQO8j-JFOcTwuE_XHc0H3PkKkUoj7TEM8TvkEh5eRnwvG2O6ftozXosKnifT2cZbHpcuvLQHm9o5kLYSak4m8CWc5Lc1LJtuwBRuyl6g--rctfpboet9Q=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJDzxM9lrgCl8RdtyExnqrEUM/photos/AaVGc3lVY2Yr_7M7jh_URK2LTRWQjbrpKijmd0JOt2ZYyE0vbU3iBOFRbYofYx_9pyLrStsiy7SM6FXc8tXXqjzgzfDQUUwa2EtmFy5ovplJDVeho5ayq70ij0eMtzujVWEi6XC6BdCJQE3f7fAdG8N2etx3KhuLktyfK9cZ2sYSEaGu0WS7ZzJjyizsxeVt6MsN6XQL_KNkZfFz3mys9-Z7_8yUxEbDDbj9ZaQGAS-c5WYiqmStSU8Uy2t2bChOKwe2uyo46Wmsvu2ZK_hNQ3TJLWN11go27Yt03PtUPwoiPqIQGw2FLvW0xpZmDlCz1lnTsmI_8mNJ3so-MxAuDv6U2DIGqcShCyMDqrWrTI8IKeNRiKUKLSKbgZavasaw8X-t5vA3pT1x90AcTdNnJae_jsX_CWy0UDvAUab9KtIUrheZAqvl4ntsSu2cR2KUiA",
+        "places/ChIJDzxM9lrgCl8RdtyExnqrEUM/photos/AaVGc3m4y00qT0b7ucVmP6ulT-RCi3uzpxZzhPd9BicIgS_SiXylO7zHUkWLvzoRIrv7oK1ZrflErE-zQ3f2RbOM7e9W3bMtrBWDx7AWb70QQI5SJgoAxIF74cewVN7bVvEajYvUbxjdjl7qz-KCwp86f2KtPGYr0_bX4VbhFS-hIJZnd9O3o-vZHlBVUO2NIItZQwk10SJSMqj19bwzXEymvw-3YUINrzyohgPSxGEC1bEV36GoF8gmngI4c6iwsE1HNnqDjEPoeqOwiHjjJCZXCrEuu6zxpVVlU9ngDx40eK9VTPMPx6QcmsoTxefmjz-6TJaOUDtiYakd_MkV8mr0evb_4HH01A9sSAI_gXbjv6Cs7NZLY6JsDBTDJAlRojhVRONi0Y54Ltp_YKJsHBrmBl3tSxwxFfkn3JGb3qvG8zbpCg",
+        "places/ChIJDzxM9lrgCl8RdtyExnqrEUM/photos/AaVGc3nNDk3m_87b6SPtbnSAefhFqr0NN57_gpLCNNoR5HLiUmqcWa7dCqKwR18Goo0y1p_bTFHmHmgV9Sddh4XeMoKWOkK6QZbdBvAqhawFaEkUxtHQOgc48Jhtc_pQGZh2LSmvhk_pB6tPb8XcrchZ45WWWGNZheHxfu7ZYztc08mqLAMM0UVTx0XVFuw1vheC2f7uScm2wDxR4AsR841_3IyopQpxvSsNKS0PBqIunngevBt1Faw3mikszvPBJNRTpoLA-wVIq1m05hlpPL367tAqauKZAey_AHmIeDQgvoQi7jTv4-z1TQ25PRQTG8hX31NKAKhTCyVvRd3nraDRzaHta2DTMZ2nzxOHUqWUhEFQI2SyKP0DmB_4leg-kr6U879iLlNbCttTHGIMLvyEJNL6t1oqa_uWoS7-x2fYIEY",
+        "places/ChIJDzxM9lrgCl8RdtyExnqrEUM/photos/AaVGc3kraRsDW_9GcNz2b1uhgVINYC2etosRGFr8eVGubrzTT2PD6vFJTRlAjgi5GadR_F2vj-GbiGPPivWa2XdwnXdHiaFnUNk70nshOqYDDOhFZCrYe9g4mjq7H11iWIY4Q6oRA-je9F8tTQoIfAs1rCv0CGuTuFKYVkTpd520ZjfiEk-vDI5w8ZASclhm90SGewbUwv2B6VM4qHmSV_zE4opI1h4KDWGuK1w7LQWmawIIpeOBJBnT-ufIUMnyzpD-t_ymnxNH0Tv2h1VoYUXYnt0GSUxyxx-4lIKjs0SvJOcjpwtbIgwDEI1ixQR0Arop5D10oGux3aXOlDvAKi0FpMFrtm0p7HtZp-9xIk4X8-8KMiZDJhU79mKwQ49NdCk-6Dh1OJGaXZZL3wpyHkYNbE75KZcDT5PR9hGjBW3IRVMfHWQ_Kr_pGihuwjk_Hw"
+      ]
+    },
+    {
+      "id": "d42b59aa-f414-4999-90f9-1633f53e823e",
+      "name": "Odori Park Beer Garden",
+      "category": "food",
+      "description": "Annual beer garden event that has been running for 60 years in Odori Park. Features different beer brands in separate blocks including Asahi, Kirin, and Sapporo beer, with local food like Zangi (fried chicken).",
+      "lat": 43.060752099999995,
+      "lng": 141.3544308,
+      "geocodeSource": "google",
+      "placeId": "ChIJKdPFSFEpC18RnuAg7TaybA4",
+      "mentions": [
+        {
+          "videoId": "RV538Aj6MJo",
+          "videoTitle": "I Explored Japan's Best Kept Secret, Sapporo Hokkaido",
+          "channelName": "Patricia in Tokyo",
+          "channelAvatar": "https://yt3.googleusercontent.com/fsBFdRBHro6Ly-CXU1YglfwAimd8sjpNyT7hPy4m74Xi56PRjKQQk-GUDblOe2G_itQGOfcN1A=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 83,
+          "quote": "It's supposed to be a beer garden but technically it's kind of like a beer city cuz every block has a different brand of beer."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPCws8r1Dn3QwYSWvY3ghh37ZjP_rseFu6HQJ_WvRsy6eUx3MlrKjVY0ZtguszTolIdxSISkA69RKVy2N5m82DPIBYFKZzPukJWmQYbJwT_kk2RkkAiUpISLTPbOAsvc_bZaVzAnChR-r55YeL7ZIC7iA=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPCws8r1Dn3QwYSWvY3ghh37ZjP_rseFu6HQJ_WvRsy6eUx3MlrKjVY0ZtguszTolIdxSISkA69RKVy2N5m82DPIBYFKZzPukJWmQYbJwT_kk2RkkAiUpISLTPbOAsvc_bZaVzAnChR-r55YeL7ZIC7iA=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJKdPFSFEpC18RnuAg7TaybA4/photos/AaVGc3nsGKjnW3Knf3fXBjc1Fr3QWML-V9GWqQLkPEBAcIAj4fEny7l5euHDhZA-5qlvagP7Qudx5_DJZH7I6SGu4klYSrS3v_iaHyBC-hys8OILs3nNdlWcO2zHwQMri0PvzgRr9XxRTAdRiXKP8HqABJWIpt5Sy4CXj54TbQrdnqTyD6CFQmhOeC_pYpOjEdCqqRMpQpRlPdBkMC-OdPa9cJn9bMut8wE7DrETRujSeR_82c5xUlrEXIW9PQE8HSMCbcBD_3MlsHILjGDWgpxISMuRzBueXNLIQqbG__MTPZsjxRJWnKQxDtacUjsYKU8gOo-gbE4Q6qWiKk9Wk-PDIC0leINgBE1aqHS7UFHTpFFdM7-SjoSixL7HujbuzsYR2t230ZMg9dbKnalfhBz74mTUlHt_h6ToY9waBFDiQY8wlmY7I8RUzL5eKvze07Cd",
+        "places/ChIJKdPFSFEpC18RnuAg7TaybA4/photos/AaVGc3nqoWrUt25V0O4GL55I_DAfRlM78lFdhkIv-6x8p0hyGRK_6NxPDxTr0om-FxeIupEvw78oynaUu9Lkl2qlCY_APtDDm_rdChgzdwBtuqNicoQcq5Soo9vzw_Dr9eFZ_uxUhxMMzPonFx6ZD2xHpbmwGxVph1krMhh52XYV8_nOTlNZirwhXWmW3RjadnZMcoRn1Tf8ql4Qg3Bi4mBFxn7G6Zx5aaFQ_AlDYfdTdmMWtJdVgaWEcsHS7kHFxIvw6aRyYkF6JP9w3pXQbpu7rONbc8RQpiAZOzxbV0H75JXxmlFrsrdpU2U3r1HkptRizNvcn6YvsfVAHtWHMA1F_-6nTDk5aGrtkD5HOc_ZcdqFLMvszXzZH46Svm-ClhPO4WN8DcbEivVpW9LTIcXK1MccdwuRN2GynDXfWNUlbv-KPvF5AS27a4agoFNtHNy_",
+        "places/ChIJKdPFSFEpC18RnuAg7TaybA4/photos/AaVGc3lBc2j0h1LcgsQkEwQru8KfNXGKpXZFlv-5GFQ9bXLgng6Y95Ujln0dz0sbRUQdv3HiZmMTbNnqCgvitfWiNXJS9Wv0mMPDVhll4MqgGk0ZlukvgYHRs14lQg5F_WLNEo_4aLUDWQj2maapfHyx5-tav6wxBMxukytKCcMoGCkFL8BlUZOtY70b7ZM_h76-QttiKFkR1hFhPJznmc6rtM8bEv9bOYRCiR9BoKJOq2cZhDDBNRXG5tfyMlc-wzzYJqijG5WwaJpo48BHfzCgvht2LFk__aTC2U70AilAfrkEEghAV0Om6jp8yAF0KbBsCIKX8pmUHsMVLf07_FELmaBh4Ktf9Lq_LWZUfy3lrmWmS69nbhZWnJOhFNnzAYmEIc9qz292rgQXa6SvF8x9hHrYxrSz81pbz8KkrNAaLRXlHxAH",
+        "places/ChIJKdPFSFEpC18RnuAg7TaybA4/photos/AaVGc3mkh_90OhOjROM2cCwYvYiNIhHEznCP515DJ8wMGGt5tEIXB5K8yuh9yt2jqunAcDkjwMx9dyWuMq9WCKZqtGN7yu9xrCAwjjcpaV8lCEJ2ZSPwDsIlzadBb-9RRHegjsUOPwffHwbwSo9ASocnttOAiAdP4L5mrLjjdVBOOzEof-hsUcyaqZbqtj5k1ze2kvZhiUY262AvTl7PYqU0KE0IhNVWe4ACyl0inZOpcSbedkf8FG1DJYtXPn7M07mHcwbBJvyL4sO2dsIwRvJYmjPkfoX5MDVmtzYzvv3qkaGzKULlU4BrqD4WwQ8GO7__2e9WIK26tekKff-iX8JIPPI9RzptJ7zEa5q8iMG3qExHx7O-obJulb7Pgssv_6xE8V3Dg2GzbR7lgngrJAU0zJnv0lQGaTTdVrWQyqBPz8H4qBZqwk969XvfUSKPsA"
+      ]
+    },
+    {
+      "id": "60ee75f1-ed79-4927-bd9d-e2b04f43c215",
+      "name": "Royal Park Canvas",
+      "category": "food",
+      "description": "Hotel restaurant known for its rooftop Jingis Khan (grilled lamb meat), a famous Hokkaido dish. The creator was impressed with the quality based on a local recommendation.",
+      "lat": 43.0604715,
+      "lng": 141.35603129999998,
+      "geocodeSource": "google",
+      "placeId": "ChIJl0riRd8pC18RRRcLG_qiEiA",
+      "mentions": [
+        {
+          "videoId": "RV538Aj6MJo",
+          "videoTitle": "I Explored Japan's Best Kept Secret, Sapporo Hokkaido",
+          "channelName": "Patricia in Tokyo",
+          "channelAvatar": "https://yt3.googleusercontent.com/fsBFdRBHro6Ly-CXU1YglfwAimd8sjpNyT7hPy4m74Xi56PRjKQQk-GUDblOe2G_itQGOfcN1A=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 423,
+          "quote": "Tonight we're at the Royal Park Canvas for their rooftop Jingis Khan."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM5rZ3hS1Kbc4r8dEyG7TE00JPjJD4BLYlN9SWAFB67ee3BUOfYjwAQ_mIR_HvHZsT_TTFEijPtKfmBUzLMvMqeace16XQ0123FfqXj-L-cAfaGMrFxQZmWBTZaICVUdvQatugOysPd-fys2WDSluFyjQ=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM5rZ3hS1Kbc4r8dEyG7TE00JPjJD4BLYlN9SWAFB67ee3BUOfYjwAQ_mIR_HvHZsT_TTFEijPtKfmBUzLMvMqeace16XQ0123FfqXj-L-cAfaGMrFxQZmWBTZaICVUdvQatugOysPd-fys2WDSluFyjQ=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJl0riRd8pC18RRRcLG_qiEiA/photos/AaVGc3kw5rnu8MZ7cs3uH-mzjrB-IobUvwadoihDfolk2LW0kYMn6q00mVmOma62PBKczxpcYJ1pffRdl3K1CQWo7iQC1fOOev4w7FTzTschU__XZoVXxIf9bpkyUfSYVPmy3w7ouZFtlN61Slg19F1FjPIiFtBOxO81mU62poVubEeVhbmI0SyGAfQ7QohVtNPIgXrslglmZX9DNkp4uf7vh8tWtMMZLLloKdEQAA4Y_P-xj7hZDt8Sr-_uYwwGuzHlWh5zOqFtNnWAfiqXStFEjGcqpYXRPSIBuVXnG2nTZUjPQDBe2WLSk4jUeL6FoEnnHbrPB5ar_Tnwgf35iz4rwNxWQ388g-WZFjy61HEXy-q4iK4kucp3BbLpQq02d-SF_JY_J2VckCZscg8ZJaohHrt7g7XRvH14OQNxQvLmAvSpDw",
+        "places/ChIJl0riRd8pC18RRRcLG_qiEiA/photos/AaVGc3keGVzJv9DJJa94bMAHKHTB1MA1g9pJZLnJ61UNp0emM50t6wvcCsyLsJ5CqS9DKknCtVI7UQLwwEDlQwW3xMh-MZJpHAR-mMzJeNdmvJHgmWUodr2JbpVhVTeJZTrKPfcxuRO2DwGeBuPDf0NT2KQGVc6S9AfCb_G1AfcclXGt6ui4BSYou21yF2cV1IRwS6w8v-6ZLv_sL0upeRGBxB10V9d3hFNck6igPVUbl3-a6w8EcQk4J1oijMMkTWzwYAqvYJjxjRQpf5Q8H9dI5CEDeP2IwnoPHHs3aOm4KovUI9xo0bvcOoQ2CTWhdPEkD_Ko8g1v7YWfYFrUG1sBEDEOlw8S_wGmWQWoCXpRcb3yrfHesRvRZzAq-sGnwm82ztnLG029r0UxdtVTEiIsfk3psvjiZwNKxOAt3cB2I06sc-OU",
+        "places/ChIJl0riRd8pC18RRRcLG_qiEiA/photos/AaVGc3nPr8u0PLbLi6VYrnGF1ry-bfmLmKNiXH0tTBP8yT-bq5q_8Y52Fvvm-D_DQyI1pPEsUbYTuJ4TZeBy0Cij0gabjlipyTID5sKqIS7VX9QDyqcI73OZvcOKnhE2JSX1QTxtrULUMYjoShxtJv83yUcSxsNZBDC-2uPnfooTD1SM9bCJk5QF8aS08XxpKTX_qWQ6Ono0R5JRBsLgPaiRO_a9MvCUSELhl3Xr9MGQXf03uuL1epKzEGaRwOdRZVRnydY5JimGbjdGDM9T8BlgzK-y5DnJ_qlP7IPeYfTrt4A8xQKu7wvlORNA-ZCAbS1wQjJ5dUmGGNw2HqYQ3SMaU-ceEajgnlEtyyl3qL7cfGZ00TXj_jSmkwkuCVDMDHtWDEbLqdCQJPsk9uAxZ-bKYq_HVT6Oz0jjb3_PcL1Z_jRmpvg",
+        "places/ChIJl0riRd8pC18RRRcLG_qiEiA/photos/AaVGc3nD9lu_ezD8iKITyJ9xVTPCu6gC5X7oHmFxsHLPXOkS6MPx8C-7NlgZpjPa__Flq_fmT5q_3YjdGECxJY_gKkA88mHDTLG9SUGWJzMUTjoJdOL-MjInrDIOwe4bcWy8mbQaNEopwV-XGVrfQ4vHnprBv5V4ct5ZXOOrWE4R_77SYgYL1lGs_gPUH8ky2ndaVPssJV3HhZ2Mut5IRVluumfXyI0BPS5IHlyUNyJ8gllSfCHcElRGsR2Og9SJmkmqSYbwxzg1zes-R63E3ZP-dbbfkjkobXTcILnIMEpyJunZhKEcaU0tuiPYDbeJxswvREwGOpU6CexBSyDWMsGQPM-HkLLzmyAJtmWv3MkC5d1VlPIQsBRKdkWgt0-vheGdrvoGo-zMeddzOVjH-TEs2K0Au2YhX0kXWyLNJKoaBW3IlerE"
+      ]
+    },
+    {
+      "id": "a269910d-5830-4a72-9129-eae49c71a6c3",
+      "name": "Nijo Market",
+      "category": "food",
+      "description": "Famous and popular seafood market in Sapporo where the creator had kaisendon (seafood bowl) with fresh seafood including uni and salmon.",
+      "lat": 43.058299,
+      "lng": 141.358446,
+      "geocodeSource": "google",
+      "placeId": "ChIJCb2qW4IpC18R93EsGNFraJI",
+      "mentions": [
+        {
+          "videoId": "RV538Aj6MJo",
+          "videoTitle": "I Explored Japan's Best Kept Secret, Sapporo Hokkaido",
+          "channelName": "Patricia in Tokyo",
+          "channelAvatar": "https://yt3.googleusercontent.com/fsBFdRBHro6Ly-CXU1YglfwAimd8sjpNyT7hPy4m74Xi56PRjKQQk-GUDblOe2G_itQGOfcN1A=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 599,
+          "quote": "So, the first place we're eating at is a place in the Nijo Market, which is where we're at right now. It's a very famous and popular seafood market."
+        },
+        {
+          "videoId": "34vE-ABqqmw",
+          "videoTitle": "Winter Wonderland: 10 Must-Do Activities in Sapporo, Hokkaido",
+          "channelName": "TabiEats",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nKMxsKFYExPvkjt_H--4AzJk8lK6enlKgU_eQSOtIIMw=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 72,
+          "quote": "Think of Nijo Market as the Tsukiji of Sapporo, this place has been around for over a century and it has a lot of local charm."
+        }
+      ],
+      "thingsToKnow": [
+        "Crab season is in winter and king crab is fresh and reasonably priced",
+        "Crabs are boiled in the morning so you know you're getting the freshest product",
+        "Located right at the end of Tanuki Koji shopping street"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPpV4oXj-rEv4-SgAFlrQCgf5cXV9H2mZhMoVBKTVcDNRSvUddfPL2pm6p5YB4YIQ9-DUIgden6trlVzW8ylxyOyIw1Emgspj8F-qC-KxzG-p2jES1gMX9ax7Fdso_MOxpOfSGdvv8fJ2bYI0lDC-M0tw=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPpV4oXj-rEv4-SgAFlrQCgf5cXV9H2mZhMoVBKTVcDNRSvUddfPL2pm6p5YB4YIQ9-DUIgden6trlVzW8ylxyOyIw1Emgspj8F-qC-KxzG-p2jES1gMX9ax7Fdso_MOxpOfSGdvv8fJ2bYI0lDC-M0tw=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJCb2qW4IpC18R93EsGNFraJI/photos/AaVGc3kNwzXxq7fibgOaBLRdH1UtZ9n8zuyqYvbL6PeVS9W7-PL77gmLccNpclpUETxXIM2ciZ0Y3UQytIE9AqKLv-raK3z95rFef27yAKLcMrOkKxXZFKpRFYkxAtq01QmiQ7IsXu0cxYquhzRrprw3JF1tzJZO46JQCLU1Lb9CFpcbQzi6gJNH47mnRL6MbZYto-gmfs9i5o8FpkrxHNKgdCFN-d40z3Y9Q3n9jh1xQdmpHkUIdOIZeszz_koV1FzDLBfdKOVSj69TUfyBtrx3lyxIFnCOvB5svF-dQkxT5yT9b_XffiQIujBpGcD-NCdv3G6TjD0OECC8c3aoKcHzy-pESUkWPWRTJVkt1GxSrKm5bzAkmU-NXWGRBRAc9cPTH3xX0fia4y1LyIQL1pW9ZeLl5ZXnk89YL9da5lhVOVRsVGYdhta9eOAO418TZ14O",
+        "places/ChIJCb2qW4IpC18R93EsGNFraJI/photos/AaVGc3kOZN0S0xnO8oXG-eVj7kshiWbXxgbB-fxNByyNTehLcLN29CCCEZOmH8x0MrK7xQZ-3bbEmyqR2XQHuDAfa8S0KDKWKtRSiPzOD-8RDsaKvwXEg3PXXC0soYC0dG3F8lMN2Bao8nkSKJ2Nn0qx7yXmzV7Fc5l28ubQAcuhf_WzHtlkEpY6QosGqeVq78akMSFlTyIsycDeD37g7EYu3C6rkbNdp_0GZgxShPJLKYAlfCJIbIu_n0rKucN5tfXVRUQACT27ogCUUCvEE8hsLfvejHTP6WMSW6yMdblMxIRwJ2Dcx5lx8wOwB5PoNkH3_NxWklrpoDAz-3LsRY-brI1mescih4mZYMoWiqSSH70fn1ldj3L76EQ9XyE4T2O4C1iU8yK_mvijSH1DuOY33yxRsoEx21DgK4QSyAC34yxJszCKr9QHKoW6uGepSgA8",
+        "places/ChIJCb2qW4IpC18R93EsGNFraJI/photos/AaVGc3lv5JG7cxrUtG-zPV5jLOPZ9vlqLPWZKrGwWhnh5iqRrN29VT4r13qzC3R3hUGczp24RCtgpDyOu7oTzaoaR3lG8Sk-S6PKJE6PAi2b4NCmnJg5dnakJfRPn4itOPgAIyJAadXcwK8fSbKVzi2-uuMm4DOLf9GMNrcrjYAG7l_wUI2gqBipGvSeVI247OUXC1OZJQg4MIszf1TSqUOu_DNWSyUa1KSg-CC8XCxkOyTH3wT4tTHtgaI7Yui4bFwvZs8LmLkOVCc8ikfIfJjZvgyKnXcoRZH6oxOTNvBocBT632TbRYvjTKcNq0oFyoUXTbvnFvxPRZm9Pgio9tkkzlBQ6EU2tR7xpDvW03DHznV5Zt3VbVxMhexZwgCmgdgxS94mgSwy927KExutoQiyyRfgF6tPTDTl4Uh-XAjupvJgLJAY",
+        "places/ChIJCb2qW4IpC18R93EsGNFraJI/photos/AaVGc3nZvLW7jetHPwVAO1aDyeu5xvr3hrWiXL2vS2D-feVB-SPMfgLhcR2Wy32EZhQzVZ5DFTcuyjwZQ_yrjgY3_cK8PzzZPp2CeGlHoI1kl8-SSFITP2ie_iuXKcPnpPIYaLAPAU71dGD2iCR1F_cHB4FfmC_9xRnNetS80AsqAfdlEXmmIVWPzNJVuzvSmdtu4eQ6EOttp9KGs5P9Ia5q_kemB7Qv67i5lsmnO29Sp0hYk5ft7ahkcx854ryajAorO8Td4yL2YBMfr4hX1WtsUJc9-_BEFneCyti2E_ymUu_bSiJ7FlBQqB20oOkKJLjUIPfXHi8W-Srzyl7f8EznZme7cE7V-Paqbo951bhiKJXOnxJKqlcFdLtFHQi7pxMFIu31k4md5zF1BWqc1hS--ELu3pk-lNlPfVqA_oFhXzEPnfX-3M4oQL_ELJ8DNEzZ"
+      ]
+    },
+    {
+      "id": "cdfc479c-ffd6-4d3a-a465-abae8b647ba4",
+      "name": "Sapporo Clock Tower",
+      "category": "viewpoint",
+      "description": "Historic clock tower in Sapporo with a line of people waiting for photos. The creator found a hidden spot nearby with no line.",
+      "lat": 43.062576799999995,
+      "lng": 141.3534927,
+      "geocodeSource": "google",
+      "placeId": "ChIJR3JQJ3YpC18R680ES0qomxs",
+      "mentions": [
+        {
+          "videoId": "RV538Aj6MJo",
+          "videoTitle": "I Explored Japan's Best Kept Secret, Sapporo Hokkaido",
+          "channelName": "Patricia in Tokyo",
+          "channelAvatar": "https://yt3.googleusercontent.com/fsBFdRBHro6Ly-CXU1YglfwAimd8sjpNyT7hPy4m74Xi56PRjKQQk-GUDblOe2G_itQGOfcN1A=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 771,
+          "quote": "Next up, the Sapporo Clock Tower. People were lining up for a picture right by the building, but we ended up finding a more hidden spot with no line."
+        },
+        {
+          "videoId": "34vE-ABqqmw",
+          "videoTitle": "Winter Wonderland: 10 Must-Do Activities in Sapporo, Hokkaido",
+          "channelName": "TabiEats",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nKMxsKFYExPvkjt_H--4AzJk8lK6enlKgU_eQSOtIIMw=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 28,
+          "quote": "One of the most iconic and historical buildings here in Sapporo, built in 1878, this wooden structure is actually one of the oldest buildings in the city."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNHP70kHozi4KlGVtwdOYdqz6hgkPy7HybtwA30N5ooh8iYW251i0ZWqewEKVAlvrlRBYVAhKxi2DE2lk69GDdu06HNZ3LzCjR0oFvS7kZ79jQcYf2DSM5YkRp7TlMR8WMT2mpgML15KKS0Rg=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNHP70kHozi4KlGVtwdOYdqz6hgkPy7HybtwA30N5ooh8iYW251i0ZWqewEKVAlvrlRBYVAhKxi2DE2lk69GDdu06HNZ3LzCjR0oFvS7kZ79jQcYf2DSM5YkRp7TlMR8WMT2mpgML15KKS0Rg=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOj7zsBEpJc6bEdXp939T45W0hKeJz8qk1jOtbZK29J1GXZYV0FugzBlxxIJSsEUAWTIPL871MwQJFwoI1UWBO92uRdMIEWd9ujWpFuyTcwS8JDVFvb57814PYgxYSvQmgxNpx7lavZ45kumiE=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOufBaepmD3POssI_EOrbO7v6FA64xAJ-yZnkKfJ2DdkVPJsNNYlnz4x93FxKwQ6sUqGDnGRy8vehkvBscE5uuKtyKd23-FNYGiReocL5qdfvDA19ECigVOO0btpsJv-6wahq8QS4R5HUNmXw=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOVqbWodPpwb7U52n15mHttxuQPLWtYgN_kWfCt_6-65mDX4HmWyFbONSiZT-wHZUR35d5Ds2diMu9DFcGLr6IJ8gOvkEFTDYMBLxlobVK3g63BjDMHKbTn6g2ND_Nzzt3zCVOMNLbSuObQ=s4800-w800",
+          "source": "google"
+        },
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMwxIcY8YRMIg4KszOmwFO5xL73RoGh-ktx1Otihtg02ThDqw61Sd09eIPSfFwv3mraJDrFJMx_VDUIfeICPbBr29bIwliFAbHu_IXp3zlXqsqOXg7NLTm-FzIq6GvT8PzHB1d_1MscHlZExkgB9y2_ew=s4800-w800",
+          "source": "google"
+        }
+      ]
+    },
+    {
+      "id": "22634ca8-9cff-4bb3-97f4-1e17527d66a8",
+      "name": "Ichiryuan",
+      "category": "food",
+      "description": "Popular ramen restaurant in Sapporo Station underground food court known for their miso ramen, particularly the wasabi garlic miso ramen and Genghis Khan miso ramen DX.",
+      "lat": 43.066896799999995,
+      "lng": 141.35433989999999,
+      "geocodeSource": "google",
+      "placeId": "ChIJWbR8RnQpC18RD7V0WDDPGF4",
+      "mentions": [
+        {
+          "videoId": "RV538Aj6MJo",
+          "videoTitle": "I Explored Japan's Best Kept Secret, Sapporo Hokkaido",
+          "channelName": "Patricia in Tokyo",
+          "channelAvatar": "https://yt3.googleusercontent.com/fsBFdRBHro6Ly-CXU1YglfwAimd8sjpNyT7hPy4m74Xi56PRjKQQk-GUDblOe2G_itQGOfcN1A=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 813,
+          "quote": "So the second place we're having our meal today is this place called Ichiryuan and this place is pretty popular for their ramen."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPTjjJUzuK5Q9tZ4La3jfI9QJG-DbGhm2nCVFWHbh_BiwlqypmLydZEjhmXildvvVe30qYxPiU_sorD1ZIJQybMi4LjR-wyDiBDYWckPj-dTAx8wuBY0VIcOXQ7YjnrJVka2MpF4yAg5owKFpM=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPTjjJUzuK5Q9tZ4La3jfI9QJG-DbGhm2nCVFWHbh_BiwlqypmLydZEjhmXildvvVe30qYxPiU_sorD1ZIJQybMi4LjR-wyDiBDYWckPj-dTAx8wuBY0VIcOXQ7YjnrJVka2MpF4yAg5owKFpM=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJWbR8RnQpC18RD7V0WDDPGF4/photos/AaVGc3lyu412uV85IOx4w8Z_1gMQcizF8XODPwJSDcLbH_q7WVDtZTQ56xiP-I-IHkmmgUpD9eJVZnRFxFe0Ur4uN0dh-mPklyyKrZ3dPPrbT9Xt7VfPP6nKA4ZnuiJpTD9x1VAGENNTwuOmYWRl303Rg6CFEER2iu7bvTe9hh_0sKxUfIFErHeIxF49TDmy3twCPYcfSnMkB3XemSwNF2CluIKiaVKs4jK1Ll58r4TnhfzMuxoTLyRh-AGkYEfcJGaw0GQ7gFjczEi1PHllsMsYAU6k9ksPjgOqvdfCh9F8YaprAUPGnkelXbUDbgtIOuxkoHMag-0bPnII9e8gnjQfTsDFF-PhziJH_IEVpuWk-dxNJTfCvJ9909jOlq06NAr9QbPdIeN4BDnOcu_fEQnI2yCF35fW1BjdFr4efYsvkN5VFG8m",
+        "places/ChIJWbR8RnQpC18RD7V0WDDPGF4/photos/AaVGc3k7vvc3gp2X7cfuos2yaEMMr4NJwrUoTi5dThSiR6PK2tRcgYAjDunB_W5G8K8t9PGXudvtolDVjz36NeZoC8pLqCsmD8qbn2dSVI4F8WjfN55ooD1mSgZ91pCgc2Sww0hLklSVBLKmU3c_6heLGaiTRe6jRYTaiQ4NZCy3cfhlPTKUBNDk0b2X2vfNrfunTs-4ssBjAzoGlFMal9Oam3REGGWUDXAJrXfJCmgIoC5bLOzPjKdpromst-wm58s55siJBhz85KRdauoWKR0rk1EaCaD0estrfhmCZRmdtyGt0O-SkvKw15r_IlxJGdbuKo4YotnvYfkfjEs9N7kOAup2mE-HBTSr24YY72DSuTl8a0uKJE_aHvXLpUHaF5CWGqc_6Q-K_6K_D2mwqhQYFXW7vh2qmfWVREMgDq9sF77T8xZGHjOXyCeaNAJJxUcz",
+        "places/ChIJWbR8RnQpC18RD7V0WDDPGF4/photos/AaVGc3laYPGKkQiVGqSDffzo38_JE-ziNeUZnZyWbK9oG_8PZaQDXro-513D3KvkyuGbGc8bG1emVUcMQsQR-snGDVPLrm96ynCIxEhRLiSS0YZTJkuyjL0pHEFS3pUfh-X5iFqNoiP2WQbcEbk63TYVSYnel7aVO0Sre81arHIZN1Xl4h55pydVhHiQsUACJd9IwzALsdHWu0jClqHh3NP2-zGiLtKp1Ph37Fc51HEoUxMpie5XqQbBC0sgIQv9qnj-MjH2hNvUDhtvhXEf4qwTYNjDM5eeLEQV3D76C34EWHTb25Pq3fu6ECLjfI3IqFutjO_Ongb2odu6lqs0P_CMFFWgVlT5nEkQv4u3SfTAW5VbhoFb0PHKUfhWnV-AjGewvyldaEwttT06SxIS2ig0uDPKx6nkAKT5Y2Y4NRJceSNkC1VoNXpK80TnQE6Hp73e",
+        "places/ChIJWbR8RnQpC18RD7V0WDDPGF4/photos/AaVGc3lH1JgXKEpn6f3fiQTa80sqZDKy4KLnK6SfPPFacWaIsGGSkNwbBsjmm-YTEDboDLD7Uyy48wYXdQa9EnNWo-xdr4vttNRl6u_pEetp21JtDUNAA_UMqpZXqjLX7ApOKRDI7KEQ6cSCYVyBqf_tBv9gjFj81fAVq7Ghf0Vz_3pDQQ5qr2MwqB3lmVAvl6sAgnKLrNGr4ul-k2uwFDdix9eLnkCkmf0XC42uQwbk1_pZNSOfuMrZ3s6GBoy7Zzyl7js_dhCqApdtydq_KghSmEDBWPKoXlmggdV-QV9CEFFTY9OE61uTyMBSeavzFVZCqshFh4aHCg3keGMUAoR5EBlfHPNvmywar457dV1yb4pq6KC3Bi0idDY2rQ6IHBgoX9NNxVPyAmGnOHpLT-SqF9yieYCdyoCheqeDmLo5_9BAla7snRsbrhDkGc6a6-f9"
+      ]
+    },
+    {
+      "id": "833c05a9-98fc-4337-9961-e04bcc710b35",
+      "name": "Parfaiteria PaL",
+      "category": "food",
+      "description": "Pioneer of the shime parfait (wrap-up parfait) culture in Sapporo. Known for beautifully crafted seasonal parfait creations that are almost too good to eat, offering a unique way to end the night after drinking.",
+      "lat": 43.0562847,
+      "lng": 141.3559446,
+      "geocodeSource": "google",
+      "placeId": "ChIJ02KmG4QpC18RGdiqVSNFRWY",
+      "mentions": [
+        {
+          "videoId": "RV538Aj6MJo",
+          "videoTitle": "I Explored Japan's Best Kept Secret, Sapporo Hokkaido",
+          "channelName": "Patricia in Tokyo",
+          "channelAvatar": "https://yt3.googleusercontent.com/fsBFdRBHro6Ly-CXU1YglfwAimd8sjpNyT7hPy4m74Xi56PRjKQQk-GUDblOe2G_itQGOfcN1A=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1153,
+          "quote": "Tonight we're at Parfaiteria PaL, the pioneer of the shime parfait culture in Sapporo, known for their beautifully crafted seasonal creations that almost look too good to eat."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPY7-jPEv1mNJv8hOCrXvi6Rz_-n6b0c7N7khtllyBfoCTuU8EOqFZVVSAW4XHbEqmTY4nqk7BL6hzxnID1Szewc62gm-0kJcVbsQ6YE4y0BeFupPT_0sA3vUPuEnyEo3NLMCAcZgFAnWncsg=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPY7-jPEv1mNJv8hOCrXvi6Rz_-n6b0c7N7khtllyBfoCTuU8EOqFZVVSAW4XHbEqmTY4nqk7BL6hzxnID1Szewc62gm-0kJcVbsQ6YE4y0BeFupPT_0sA3vUPuEnyEo3NLMCAcZgFAnWncsg=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ02KmG4QpC18RGdiqVSNFRWY/photos/AaVGc3ksu2z-vNBOd94jIiaLE3H16pi9AcGHAElRiIYtpeqBirkzOn7QzPsnbM2owO0hNPxp0ezZ4IBqG-beQ_3b19wvxW-ARAJ_rPT2dsoS-q2zEGV3tn-42ZyBBA9aBuTJuXuoTYiJ7XJyNC5cpn-msYsE7X3ZG5Hd1ZaG4iYeapsS0QvAFdkwFuJh6wAPOHPhdtZIEyXxXpagB_JVnn8hrsVUWrNdopJk4xlb5Z-MwR3k4JcVX6jWcufWmJQzStfHWlXnTjHzPym66usU4cdvlzUDSZ_ZQiR9tSwn163Vxp8ZgVuUn1B-Nh_XpiPS4hl4fickmN_26Tiasi4oVBFZqhAzDpcdwzPXJVW9ppHisQ8HMgr0sJwKyQ5Mh4XqDguw0eLhYdJMTGI3D7LIYSz9NNaPbGCRH1NRXdDRq9reZJJ6sw",
+        "places/ChIJ02KmG4QpC18RGdiqVSNFRWY/photos/AaVGc3kfabkEam8pHFFN35Xi5CX4JoHHCk9aWaQ3Nn6-Qfn4XYnxXdBsHX9kjDcKRJW0hem_NyBLxqh0ulXkG5ZdLrDWJKQxwgietPc6TW6puzB8y4Jbqfpl22HKEqPidt35QRWofzR-fN-ANjTYcQRbkTV6R6KNPI-VWppzSWQuyUsKEqkuCkzxi8is0BGhjD51QuzLrw9KpaP7D2lVs3iuh7LxblgSKeYFZGYhIUFjdaUkrv5BAJZnP7W-wx5qNkInf_wzZJLOPup6ft_xuTdz4bxrc6eehGe9wCI0PbbvCYR_0QfsxnQjOs1Z0AagOI5cVXL_C9uWgIPbzzJBWno096rwMhvqCTmlUZYptf6SBX_x2ctP7NhJ6dS6z0Ffh3R4S8VPyrjbJlI5oQt5kReNUbFoZ8X8D5VhtzHwab2rdrVRx_H-dPSGFLxzIXPIpHqx",
+        "places/ChIJ02KmG4QpC18RGdiqVSNFRWY/photos/AaVGc3ktfycKco7DZ_BrMIXPjEgUJUwa3In-0ckxY9ZPXAKRd4crRjKwSY5nnfkmx7SLMxTd-b0n_txsS3_UJKO2mv4kGq6__DP8nyUjvDrvwNRlImuPMZwXWxJGEtCYMqPMLKwAiiEkPZXK4brJ186msHBiFWsLVUFc--h58CRTZ0e8Tnk_c4FTk4PImQOCt8aBDGPVxzjwjZ69VMbB7OtLMoslGwxLpHh7-LxD82nrGuEsbx4KojHTk0pVGK39Uv9_u4CgpAZTSEI4cidyPuyC7L8tjzpUDL-VBdBa7TGqhbLr-EtPPKLr1KQIGsJS4cZEavSO7bXLGce6Y2RjpSU_18IKU32t6DibUdcvrAbrQq4muzQ2K2MVj-rireXorcMlqOq7pLPOTlC4ZgNPxEFt6WGNdTWOisdZGHn8KoAMEvDWsoS_5bnIf5K3Z4eC_Q",
+        "places/ChIJ02KmG4QpC18RGdiqVSNFRWY/photos/AaVGc3m9YNxwaQl5eow3LbmMjMzxG2dBDD5dtyk6u-4vmlkjMNcbz1SWLlEb-gq6l5eVZh21X6hN01H6nUIKqXOxgBO8VhDOiRe5kJc8vaexQwx5MDJusV7DnGeRnOc2WAAQXSpCNSVxIgCYWR0fhhN-JQW-aB3M6LuievD39iSwmHf97aD7DR1_jWWoHKWGurWQZfjqNhnKqNgNKhCTupOqZvuVGhEZXqAEtqXDlb_bJjKCHPZ220__2jbzvGIi34x06hkBM_kNtXuVEZVjzxAiMzIc9kz83HFd_zePnEkRtTyxj8MUqNsnS9cR6vpz3zjtztPriz5tYrIGVwpgTezs-du377Y6TIwfPPwebai27iwMqQEA0i3l5C1S9F-22c_U-p2P0OaScyvLO_Ol24YyE6-jASenC79OgmuCl6oTNMis62ZMFsyHqpc4Eckjrkqu"
+      ]
+    },
+    {
+      "id": "e872ee06-ea84-4a0a-85e8-9a8102936529",
+      "name": "Jozankei",
+      "category": "town",
+      "description": "Riverside town about an hour from downtown Sapporo best known for its hot springs. The creator visited to escape the city and enjoy nature, with a foot bath experience and local burger restaurant.",
+      "lat": 42.9541269,
+      "lng": 141.1515023,
+      "geocodeSource": "google",
+      "placeId": "ChIJWSzGYeTNCl8Rg9358MGnJwo",
+      "mentions": [
+        {
+          "videoId": "RV538Aj6MJo",
+          "videoTitle": "I Explored Japan's Best Kept Secret, Sapporo Hokkaido",
+          "channelName": "Patricia in Tokyo",
+          "channelAvatar": "https://yt3.googleusercontent.com/fsBFdRBHro6Ly-CXU1YglfwAimd8sjpNyT7hPy4m74Xi56PRjKQQk-GUDblOe2G_itQGOfcN1A=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1250,
+          "quote": "Today, we came out to Jozankei, just about an hour from downtown Sapporo, a riverside town best known for its hot springs."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM3GCYLyM98l5yaom_nBfx-PiEiVAuOTVudTwzE7kP3LLcIZRvLx0taPLGKrJiLyZhpypVXajkO54P8chHjyUQt9Vop0suXWZ5a9XShtnYRQuitBqQ9RmLuFq8t-0L-kEYOvb_5AftaWBKlO3U=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM3GCYLyM98l5yaom_nBfx-PiEiVAuOTVudTwzE7kP3LLcIZRvLx0taPLGKrJiLyZhpypVXajkO54P8chHjyUQt9Vop0suXWZ5a9XShtnYRQuitBqQ9RmLuFq8t-0L-kEYOvb_5AftaWBKlO3U=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJWSzGYeTNCl8Rg9358MGnJwo/photos/AaVGc3nEHisOPiP2NDsJKSql-zXBrgrt8a-NoJETgzFJstLZT_RdtpmhbHMiOuqTOBGQdMNVir6Fh0OCvQaerc6sGBlUQuurZqYsmar8_SaypReIGGp82Ti_375gRGCtUnx6BepJZaEzf9qwbNEjIoTKs9kMmQmcXR3XURLzb2-zEHtoNgmTkJUPO3tNeIruNsXJYQWkH0GFAvek7rO-X9Z2xz9jEEzrOy5ib6dMudI8H_buk68M8lkCgiPJJ3bBjv6MAqtf8incIQr8nYofAJVLBs6kwplyYqvku9QcxPrsCe1MzYMHRii9l7H4Huismn9_9IQv9QsilgiZ9VFIcSU6n5NXOEz9CZxv4kYEgqcCoiISq_MJgnvNUD3wG4Obl8RCk-QNiQWbq29D4aOiaBMopRdYo2L3Dbc14b0mHeUKd9q6gw",
+        "places/ChIJWSzGYeTNCl8Rg9358MGnJwo/photos/AaVGc3nbcRwacMPLp4Pq1hYT6HTBwi7ZrgmqBxSqkudCk8vmaQn-H6op9I1D7kOM6GoLV9lnGaV7nuZIUDk_tdCSe3_LrBzSXYXaorfoPgC-au2L0KzYp8Fki_HpmMf-QMnzZqr2MfLQ0Yo1Nmq1tTGQ36AkgMyS1ad8WDFCLCPPXkzxfxr4o-Fd6tlMB6LKeyMfRPKuHbU1FgRIu0O5y45ogCaFx83TAst77Ez6zeb3M2GDsKo5KSuoHqH27gr-QIoQSUDSJX4SkaPHhcF7Hx559X0h6kd1ivyreiCLOzYpM8Pi64aeQU93EJH7wYGIWNB6Gswmbw5pxPlo58aeYVHRfCV_s_acdyL1yngnkPfF9h9-XrGHIGMsT9PYRP6JjwaXNn5E31OAS5sXhDNeV0_3rfvTlOoimHtYgF8rYP6xf3Ps6aE2",
+        "places/ChIJWSzGYeTNCl8Rg9358MGnJwo/photos/AaVGc3nfHk_6erj7GcbnHsKUoJXH09dSu7YVpUYxed-1fjE8UtA9leLQ1rJ5CK98VF_uunXgKhUnZP-GDh0qHoroHkuvgtlwlG4X4j5WgnpD6fGyiWNrJR7VrNPdQMYjJ23Bd9Xzm02XcUWfE3MkQtgyYF0U24TjmRTcNz0hbbZe74Ld2UjRk2i1WylUeXeuCnKtZF9xukqS96XBaGgJozbrHoGhTBDnBkp3RiaxHSD2kMHGa5boEQ_IGitc2zEd9ocdVOua4gISa7mf_KBbaozsNI_pgLyIQpbNIKb2ymtgRzDrw720QfWAYD7cHBTbXXBARudgTNLywuiEHhsfzrFNARq-kVQYIne7aC7VP7GUMAd11MYJQzT4OYv1fMtvaNXlfGRkRhdmlAiOiKHxSvEbOHDVdUSk_KqPuy4g4z6BkY8g5A",
+        "places/ChIJWSzGYeTNCl8Rg9358MGnJwo/photos/AaVGc3lSJpzVIy0kZVwldUO1_O3h01Zpob5TapULuRnozkWy7lLBi7QGfNJ7I19rF6RlvYgr4ur8y2EVb_-QJUhzeL_poSlpTSINC4ygknfAzJLi9XS7oX9AMpMlU1ESSi7XfLmIseOzQd1IAm41tVhE6lx9wZP22Id_GpyW6wDyFTh1ad25rUS4-gEA1didNX1-tItIuwIf1JOmFGPszNMJHPLmYaqYGB2Q625LzFpuisakOKLZpgG-jxSwkRtZK3U0KZKZKw6sQpsdkqCWVAPTeIWFYAAT2T4vylS_z7guA0XTPp7yy0my9CxJ0oLKMOlggsVdLJHC92xRg-7-3ktGUtLI-aZ-cNS0MhA2KhWE0sKdWnhIDDRer5exXqo1uLjPpZN6mVKylB7ahZPaVFHi4BK41mEbpkTGHQwQYczKIQOGwu9V"
+      ]
+    },
+    {
+      "id": "a3a030fa-2c09-44d5-a8c5-965647616023",
+      "name": "Jozankei Burger Restaurant",
+      "category": "food",
+      "description": "Log house-style burger restaurant in Jozankei with creative burgers including pineapple-topped and smoked salmon options, priced under 1,500 yen and served with a foot bath experience.",
+      "lat": 42.972398999999996,
+      "lng": 141.1665847,
+      "geocodeSource": "google",
+      "placeId": "ChIJR_Q9Mu3TCl8ROhV9u_WOP0o",
+      "mentions": [
+        {
+          "videoId": "RV538Aj6MJo",
+          "videoTitle": "I Explored Japan's Best Kept Secret, Sapporo Hokkaido",
+          "channelName": "Patricia in Tokyo",
+          "channelAvatar": "https://yt3.googleusercontent.com/fsBFdRBHro6Ly-CXU1YglfwAimd8sjpNyT7hPy4m74Xi56PRjKQQk-GUDblOe2G_itQGOfcN1A=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1333,
+          "quote": "This place looks like a log house."
+        }
+      ],
+      "thingsToKnow": [
+        "High quality burgers available for under 1,500 yen.",
+        "Located next to a foot bath facility."
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM0P_rHDUHN1O9Je9sQMImV7Vb6LN1Q4yTW7M6a3Pc6yC1395LcS_SCiyIGN-9a7CG0z_6anHfXE9rWs_4GPiBf1p28UiLRn54DdA3TsP2_J8sne7ZgnoL7FO6r2UAYnbTykKygztUjPffc6gw=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM0P_rHDUHN1O9Je9sQMImV7Vb6LN1Q4yTW7M6a3Pc6yC1395LcS_SCiyIGN-9a7CG0z_6anHfXE9rWs_4GPiBf1p28UiLRn54DdA3TsP2_J8sne7ZgnoL7FO6r2UAYnbTykKygztUjPffc6gw=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJR_Q9Mu3TCl8ROhV9u_WOP0o/photos/AaVGc3k63YaKof0QTLX2XDk08SkSN-aiS9taTh6C_1_IorUy51EQ0sDX_BQR4nSigC1yXxSp_b3eTELeUQI_Rfs-DqhrxtxFm_K3MIholKEDPOiaTbrhB-mDa1u9BhH97v5Mk7FCuDL5qCVSO_3YQJuE2CbafaYlnEjej2EoT7PNk3bw3uY5mwlKqaXN-g1d4KefvsQzByUrIzSnRJoM4d8-SVcNbeYUlN0K-Pg1DQFBXKiQ0OeznJ43c-ijAhmx4BHOsbLm4bE2iC2YPNrsqznRgu_BsFj5qr-8SkhZqRCa_jC6adyR9rCb-JkMCL9JkI3n-1c3rN1CE_63xvylpS8d2o02pX5wJbAo4lXk--x40SMi0fosqCErMJbvjDwWKQ6wvVj9tgxEP9RSGolI0gh-qRemC2KZySpPg--EOYMJO6Ppv0OG",
+        "places/ChIJR_Q9Mu3TCl8ROhV9u_WOP0o/photos/AaVGc3mYrty5FnxMrq0B9-fO5VKbZrwRr1J_ITmeiIoX5viEsiDirhXyd50wThY_-Gx-VFJvhAP-SKXySFp5ueS8Mqu3YJvRDDiu2T-I3ZmIz6LREo14ACXmFFbSLYs-4c_NIL9Xjq9llcnf0C8IEnwKPJWK6GDEGt7xZOkIlCZAGi3KOK25A8YB5xthj8ySKvS2J_Ho_PPmnIwnF71zVOeo15RgrbUrCapSM3XaC8zwFkFbqdHDdGuNeSqRwqUDlfxd9gjrRKd5zxpLyESVqadNhH2HJ3UkGXmgKDZHGJDVzUGzcihgQOf81g19_8R49i_Ftg7jbtS1gnByT4qUj1HA4VzFhq2UjbNTnY62CL3-_6yMvXIso3__Lv2FCmeIrQ0u18h1oSeeWbDSgLs6IuyX8-NGttlUHzYXxLfvMQ_m8vrmOngK9DO49TIno8cd5g",
+        "places/ChIJR_Q9Mu3TCl8ROhV9u_WOP0o/photos/AaVGc3kKL7nV-QBpi21UVNJ1bPVtFLDbbsEnrzIvTRcEexci_lf425OBa9uMYc8eFyzbeLH-538XUezNcoKjfxt0-Ww2O83wgeg2asTo1thdPPFksKzus-Q_UBiUXak7iUBMLlz7sl4sqadCM7RRnKawctcaTvbMcSNlEQOQzE1_UfkmdLuRE1ja22JIdQ_xqRSy1dSr7mZYVZOdi_oq8DkcRsgR7ndP9fp4L_4Q5xRBFSYBWm2T15FVEQdKvsxokAHeyr-PivVpl1jpzoWpenBTCNF40dKPd3UscHu0wAeAxpw_ZKhpTCXQBVdeyVLABPUF9o_tIdTFWPuDa8AZ84ltaovLcXtD98E6Zv35a3YAlovK9hleOntuUIkj2WgXRvn4NQZFx8zFCluBE_L5H9b-xL5i2U774DxLS6lq51iuFGkqO2pCGPj-2nLOngG-eA2J",
+        "places/ChIJR_Q9Mu3TCl8ROhV9u_WOP0o/photos/AaVGc3koPwC0H0JUj_RYtf0XWAN80Yo2bjZ7GC5d-MVYwyvBO0enUPcOB8cXdtFlXfVXgIslaQChkIbO_XWBmBRZTeUyWeouax3C_t4RyXr6orZmjT_Jnta65sQsWucj8TsZCPqZDsmBUyeq1nl7GccCWKrGh5E05NYT5YlK0aOs2FOa69nI67bzHwU1mzTBVGxQY3PNlhwHV-jWJ8Gq8OaygzyviTx3RCP7WTBpSAoo9Z-UOVikh_mOWeI3tafUMgva6F4w_mBpZ_JDeaXdeRD-sZCpOGmQ9GEP33ql2SZexVBX14R7vP5PWgeKZkXaici8g3720RqlN1zapPbVH8jshbCcK4yfpqyGPtEMg7Dg_5OqWmQpKnooHJ4x8TY1vt2Bvh2Sn4fjPpWdjcNaLyqWLRuk8KbSpdnWB_pzmBxzjEzTZg"
+      ]
+    },
+    {
+      "id": "1cd2470b-064c-44e9-9754-78f53727dc64",
+      "name": "Rusutsu Resort",
+      "category": "activity",
+      "description": "Hokkaido's largest ski resort with three interconnected mountains (West, East, and Isola) offering terrain for all skill levels from beginners to advanced riders. The resort receives abundant snowfall and features groomed runs, tree skiing, and a terrain park.",
+      "lat": 42.75152,
+      "lng": 140.90238789999998,
+      "geocodeSource": "google",
+      "placeId": "ChIJJVMW7yxNdV8RIJXVU_M_MbA",
+      "mentions": [
+        {
+          "videoId": "ElfHwXXS0GQ",
+          "videoTitle": "Rusutsu ❄️ In-Depth Guide to Japan's World Class Ski Resort ⛷️",
+          "channelName": "Lost Then Found 로스트 덴 파운드",
+          "channelAvatar": "https://yt3.googleusercontent.com/7tEu1rWOD5eX65QhxdXx2p0h7O87wzFOATKWN0pBY5FQX2NGTJU4JotERCmQP9rDCgzkqQeVh7M=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 3,
+          "quote": "We're on our way to Rusutsu, the largest ski resort in Hokkaido."
+        }
+      ],
+      "thingsToKnow": [
+        "Free shuttle bus leaves from Sapporo Station and takes about 2 hours to reach the resort",
+        "One-day adult lift ticket costs about $67",
+        "Ski and snowboard rentals are about $62",
+        "Full equipment rental is about $135 per day",
+        "Accommodation near the mountain is limited; staying in Sapporo is recommended with free shuttle service available",
+        "East Mountain section gets the most wind and may be skippable on windy days"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNxluRzPzcNygS_HS0oXudHYtNC5P0lFWhQhtnCjvp7JENyaAv8oprQw3QBtsUvxbOdPXx9-A-V5xtILJqjf_0OV5_F8yp78oCYP7QsJW4W5nJ7ZTWHNtbMDAxmWJiubGW0F26ys1eL3skeaQ=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNxluRzPzcNygS_HS0oXudHYtNC5P0lFWhQhtnCjvp7JENyaAv8oprQw3QBtsUvxbOdPXx9-A-V5xtILJqjf_0OV5_F8yp78oCYP7QsJW4W5nJ7ZTWHNtbMDAxmWJiubGW0F26ys1eL3skeaQ=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJJVMW7yxNdV8RIJXVU_M_MbA/photos/AaVGc3ngyXTGd6YHlJGm-5uBAHaOwGy8chym04bloXIZBL1F4UnmuLbLOUVBeWzKjrajsAvdN9Fog5At3W7mNyS50akl6ZyRoiGjTMMGVPkUG8d_qSOsMi3rDtBX3DPLyQOHuazDI_Cpb02fltUimL38yvk6Gu51ujPo55CM_HW4HjVjmfIpjyH1mj6bs4L9g9VQJXrU3n0Q2sEXn_P_MLpogiDmr0_Ll3jqgbZSA7OzII_0qXUr7jRxuGI_kH-ItX8MMXlwsSSq6gMREPvOPJht9yVjv6kpgCBZto_AFy-7xHIas4GMQ5d71dLG9RrFbKelH_nlaE2XRz8lborACIPb-fxiwF7jBTB4NYxOZ6_nVYM9dUa0sQ1SQRI0ELMpcgj8JCms0gqqM-hSChhBSL8Ixv0IbsfjjzkbFbxuzprXUbY3FY44",
+        "places/ChIJJVMW7yxNdV8RIJXVU_M_MbA/photos/AaVGc3lOFODQUNj0CslvXTkrnhvXfh-QKbpIma6AGG0RcF8duWjEpDpN83RuAQPmbMe0yAvVSC7x4Rp-89erQV0fwOqALtZsFtpp2nLDzvHfu2HpVTwVSQzHoS8a5Z0b9l6IPwW1w58jWjefnlZ5FZOaaYyyjH8mfPbTcw_Sizyh5yeD01dtdz8zayMVYCQVnfZPbzI1I5_SJF-ddvEcni7hi_QQEdRn9ASppad_sG3nJqX_WtcW-3i4eChH6tVBn-bxfnCZG5lDytG-72yfqn9jAow2HSQvalY0pqpFBaPTzsgkKaH1NRADqXJV-OjfFpjWdWsa5vl5EWGzcs7dAgwNMSd1W7wkL4_h_1Om21zxaTaNKaqKU1SEDWiUkjoRXi3oZct98Bk6Gss6Rq4-ieV-J7he4dOa1bM66qq7X2eSP0LT417T",
+        "places/ChIJJVMW7yxNdV8RIJXVU_M_MbA/photos/AaVGc3l34VZhuVGXd6mt5kK7zZT4JyDFHkX1GHF9y71sBdK9vmhw5LpWYPmuZjA9Hp_InwQx0DWEb9L74CDuBB5k0C0AO83XAwpJhmcWIN1zwHxxuy507iaMy21jNwjDKPfJBBiIoz_a4pdzn4dfml_-Qe9sbpEYBCab3JHJfGyvSskOfoovoUh3nJcMaE6PbRxHesE4mFBZzR-MBuB4wfpvB8nGSjhKfbJWHhG_ZnK1SoTXclAO6h1Hs3e42Jd8PjCNXJ1cQUfN6S2niUl9trsxyQeWbBy7yz_Ws0RRqvCWpMVOGjA40O7_OD3_xnNI8crH__ICGyOuzhRw-Y3JJx9YreE6MK_2hZo39Jy5lO5ILiiwy6p5KjwoluwXbR0OOe99wuYzR0n4ipfZc1DOQDfoOhSMitk_6CAP0PKO6W3KgGg",
+        "places/ChIJJVMW7yxNdV8RIJXVU_M_MbA/photos/AaVGc3k-KkZMIJPoaLEiXFirpWue_wsV1iQ_2wh36Ekor_FF1zACGnzGmK-9DWwlINnw2cZcMOj6S3z6f991ruwjPEi0pxwG_NZETRJhHVF0r1VF6E2-ZOiunrkyClpN6HgwX2Vy7FhPRCBHVSdJxOXUL_7hUFg-XCcBPqM8oReLEtOHng8bBpVWWuWTizvzUnqqdPjuAncWxjoJ1nOsls4nCcmwi9rVcsNc1go5rCnOxnFoh_uN7sc5f0aiGfvZOZKhaBoPFihDKhjZofgi78IF4KIhlTgAMK1bt2l68pDjcAXZ9IsMV5Z5qiIFv_sktd-ZMtUTn-D7uac8zZXNEQIl8PjwkNpYFjUmGNn6xTAUmuzdtShmr9QbBJg4buKGHyHCXkz5GNkDFhiPVVfIR2bSEQ7E3VJa7bvyJ66_WfrAZ0k_x25X"
+      ]
+    },
+    {
+      "id": "b0d4e446-a2e3-44fb-9a7b-95fa6e4bb9a7",
+      "name": "Rusutsu Hotel",
+      "category": "stay",
+      "description": "The main hotel at Rusutsu Resort where the shuttle bus drops off visitors. Offers ski shop, convenience store, restaurants, and cafes for guests and day visitors.",
+      "lat": 42.752890799999996,
+      "lng": 140.9023717,
+      "geocodeSource": "google",
+      "placeId": "ChIJ1W3EWQlNdV8R5JRYxpWqiDo",
+      "mentions": [
+        {
+          "videoId": "ElfHwXXS0GQ",
+          "videoTitle": "Rusutsu ❄️ In-Depth Guide to Japan's World Class Ski Resort ⛷️",
+          "channelName": "Lost Then Found 로스트 덴 파운드",
+          "channelAvatar": "https://yt3.googleusercontent.com/7tEu1rWOD5eX65QhxdXx2p0h7O87wzFOATKWN0pBY5FQX2NGTJU4JotERCmQP9rDCgzkqQeVh7M=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 253,
+          "quote": "There is the Rusutsu Hotel where you get off the bus, here you can find a ski shop, convenience store, restaurants and cafes."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNPctk3JVGubOEKsLLcumITKnnzzaYTTaGM_FCDNG_7hk4yxGo-vsXSjl6dRBRbGk5tDdEtitYiCHWJc5kMvd33BBLH-CpQkLEpYlr82RwbnCWfKw-sqmQa36ceUgTZTKz6jo92MwfpfLqyvLA=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNPctk3JVGubOEKsLLcumITKnnzzaYTTaGM_FCDNG_7hk4yxGo-vsXSjl6dRBRbGk5tDdEtitYiCHWJc5kMvd33BBLH-CpQkLEpYlr82RwbnCWfKw-sqmQa36ceUgTZTKz6jo92MwfpfLqyvLA=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJ1W3EWQlNdV8R5JRYxpWqiDo/photos/AaVGc3nbYCRCP6KHIdDRNW1pNJCwsqh57wW8_z1ZSZ6l2k9Cbnm695VAk5_n6B1vODIfu4N_ep5d_0nQ6tPT6cJP4OMaoMkZ20tuGmo9Vj2GARcP2qO1vgp7EojgFtXGhjBBxJOE7nlr3Po9GGxP-0ghv5A1qniYzujzdVNDEtT5aJPzLXeZgpT6iPCeKCsoA4twIYx2YO5sJIQ-tqjVCrw673eZMwl7QtD9j9_JbPGjmb98ldAb_FO2y4QK1-u4qjmJ2TwmWIWOk-rWfXMW7il7BCp2QM-L0dJSSJEKiaF-p0eQ74VxkQOVXGAyA_aAAkyF3exrU4u5ZnxUEpNkORSCSmcGne_QvfslpuUsNj2U4k7M92fg6_FOyoY2yVwB9i4CiEjgaorDRuOF0psAXgRt_1vch8B5tCFaPGc9DHnyR3SdpRLO",
+        "places/ChIJ1W3EWQlNdV8R5JRYxpWqiDo/photos/AaVGc3kGZg09-uiffR3tbD3TpQJl0zwoRlo_hhQBFftLRbiw54wSyyN9lz1mRt2G-z7EtRtQ6DipztFNPtz8y3nAFzstZEYVmUxKQmyI0r1rOdycehcl6sdSL5UtUQmvi7RQCxxMRRG6noWo9rjNdah7sqHEwUeO7QmgcgfGGxvpSqeDZJSaMGYHpUlh_lzJqcr5ru5r2bVXazA43Mfcwj3ooXn9okdW2P-8nzqKKZj2WKruAEyXUGlNr0YADK7tLc6zvcJVaVzz-OWiqlSGAV3G1UM2zTSoEP9WbMF0v1zIGn_ANOftj5XefbTrdjOPFmuxKApDpjQpZdN9bEm6lTUZgar99PiVFD8DlZ0LMTyv0WEcO-qGN6JWBrMULOWDQHMMSybR8u7LtdDfDy6T4-boIyYXOdHVGbJEjTPXGXpwjptJGQ",
+        "places/ChIJ1W3EWQlNdV8R5JRYxpWqiDo/photos/AaVGc3k7rx3HoLP5PMERbw0o-FT2UqUS7iE_comW-gu-BFeX7DTxxiIjsg1VcU-wOdp2oGRhcb2Gi6r03WKEQi0T9IoaxtwtfkdOf4mqsY-3REmPHUdtXsddWJBIYPSaPiGDL4n-YhDp3-sV79YJ4Sc0MKZximocpmmMF5FjPKb1QvUAsIrJYm7G8UJTWpr8hDXvUGsIi7-nXutBH-N3QD4W_JA6tLnk4MUqC1qv72K0Hxaz38wTCrJzVkWEGvnNu0Aj1fNf2yxRPCOukhNEFOzllMF8ce890_TueG7L5O7AucWq0FNCm8g07m9hQZqlzQmELzaA7_d3p_1S8B6xoaj1PscNP2bJwkk3oqsrSKVWRt4k8XsePGnzSSWvzdA1SL7bFXXSDUi5iqnKIB6gYdRWh-gHfPnsIzrnSlY08knEV3hpvMU",
+        "places/ChIJ1W3EWQlNdV8R5JRYxpWqiDo/photos/AaVGc3ke_CshOQVINyji6uuCMswGRS3XehtKV0E9rcarCEEGO0-Y0B7izc9pLItUobmk-VSEOyLILEsnnFQ90vcfSDGVdeycf89_ITyB-gBtzVqy8fcloQhaqMECArqjzcjO8r8xnq0d0yYTjzUlRF_A-wdhFm0LU37HmwYrKfOXAlxlpbIfr3lj5GAxzWqL-97GJxeVuhQkyF7mYqOZ2l4m_3cTi616tYe3r68xy-p0VpVS4306LfhzXHLKXxUeSRYbnKGT7yWt3H4DRckpYjTxdfYT6KOF9JZIamfcD0XoPfjqaFYUN1VAHt2aT6OVJ0xBq-DUVqUOUkQ7twtrgrrTtvMe36nU10_-4ABuYtkmfWx-gwpKB03OrYsvfhFoVA5a_PZYRGDvMO0GLLPRcr_z1hvVuxnd5AnyoVDFaUB5DeH6gA"
+      ]
+    },
+    {
+      "id": "04ed1afc-018d-4be5-8831-07a357326344",
+      "name": "Moerenuma Park",
+      "category": "nature",
+      "description": "A uniquely designed park featuring a swamp or river with an artificial hill called Moa Mountain offering panoramic views of the city and surroundings. The park includes a distinctive glass pyramid observation deck and art space, designed by renowned sculptor Isamu Noguchi.",
+      "lat": 43.1231335,
+      "lng": 141.42665359999998,
+      "geocodeSource": "google",
+      "placeId": "ChIJo24_lq8vC18RcfiqGApcx1s",
+      "mentions": [
+        {
+          "videoId": "34vE-ABqqmw",
+          "videoTitle": "Winter Wonderland: 10 Must-Do Activities in Sapporo, Hokkaido",
+          "channelName": "TabiEats",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nKMxsKFYExPvkjt_H--4AzJk8lK6enlKgU_eQSOtIIMw=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 151,
+          "quote": "Mo Numa Park is not your typical park, it was designed by Isamu Noguchi famous for his sculpture and landscape designs."
+        }
+      ],
+      "thingsToKnow": [
+        "The mountain is higher than it appears from a distance and requires significant walking effort",
+        "The trail is longer than it initially looks and can be strenuous",
+        "It can be very windy at the top"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOuhW02tzyAdoocIDxCp8R4unpmID9nZhqRVszWJhF02li-s-tP2XE05QYAMM7g_gzqI0X5maogdAMtRVAqtnYFcsmWP_wEieFw0P2G8Yd7pyqGFLG5EKxCV9tli31cZXY4ntRJnCL3yVmPdV4=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZOuhW02tzyAdoocIDxCp8R4unpmID9nZhqRVszWJhF02li-s-tP2XE05QYAMM7g_gzqI0X5maogdAMtRVAqtnYFcsmWP_wEieFw0P2G8Yd7pyqGFLG5EKxCV9tli31cZXY4ntRJnCL3yVmPdV4=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJo24_lq8vC18RcfiqGApcx1s/photos/AaVGc3n4_YHfB63XXu1XyuUIm_lwda7YEn2DJMzqeUkeKatvZXDNkI6z_FaXVM8WtLioBWOVrd7VZjEnwL4ciE4-RLDxQe-_xrEI54VoYQ78srAFVttw6nqEB3ms-kwmVxJkBTSnpU8X0gDq-J4FVW1CMmH1jmOk5h8EC6Xgi6NgMS6j41LX9OhIpTHYZmQVaEzIF209MrzvcwFdAkF9W54vHaxe6qZXaFQ_AxataQdAp90IRovjgCsfKiKulM8rZji3H5JHfA3Q2_YfWYh3kVgR_EdXz25FW_0KhQ1zL5g5SMP2jdgVCSmJXTq9ot6LSQE-su1n2j1rzrii6KVCmaYqAkgrPoN64KAu4fA5PkAaR98N7QDroNSUM3_IUd9ZbVOiHdzpcB8Jdgfy-x7stW-8baQDjapXjAxuo4t2nR3WPdC-fLF6",
+        "places/ChIJo24_lq8vC18RcfiqGApcx1s/photos/AaVGc3mcTDaAHzd5vXpgIyTS_pK9n1fgQsuC7d9p8EFPMArACPdSMW4mrwYnJ_jeYmBcEppyHOgd2kyH7B5K8Vr_1wcy82hWBVt5LFomPmYFPy5qgy4vhuEGZW9GGj3HrobEjU78woRu07hDmJCuRPZX3MxQN2Lq3x_9MDF7XSdW5mx4S9GeeKI26M77WoEq2HkWNxBhE8-oXTrlpAGOBPUt6B84KLJZFjZzbFErL4_BwygTMVQz1n-M8PI_y6EZNOkeFlpGe_yJ_LtLhWxWPxGFWRsi7xOZdW_wuHjssTHCzVMlWdisAXmOYkoD3tved170Evqy8z0v2l_tfNmVqdSp9cB4D_CSUzuVCQ8YboggGmFCM5uwWZ9Wgl4BtJAy-RFkKTe9ZVIleFPMmNplOFRuIJ_6ZO1TeiPQDLghpyOwYjg",
+        "places/ChIJo24_lq8vC18RcfiqGApcx1s/photos/AaVGc3kkrSfVaE8taON9eOc4XioJedFoZ90Tv3h67JtzVA6jJjhJMFnOsMSbzcTgRyF3OHZphfz_Tbs_BLsXxSB5bq7Hg_kG6JfuqOa1BPrvT3PgHqUv9kUxJlFo3pLLguZ_eL8tqF1Ds1QQCUDtqiwoMav1Bb3-vI5CIQZCEo8ewHGzmJTWmUvWN2ckG4smXpWbw92NfBp8o-J1U1npsUVEDqTNEyULilbAh_ydvy5EHPBtezDynbOS3SrVGIkGma_X-E1QcTKGV8IgOqd39sLRyY3eKi0AJlo-XzdOjvn61K6HxCmbM7Ij4Af7H1wj8PFUCwS2BAjs_E33jIwe3xm-1tJB1RAI2cR5NpkpCDhPSB_HvCpW0O7xCU8q-X_maJW0H2WX3XaRl7D3KMfZFX22lzMkY_PjWNuQkkI3edtUQvmjMvh2",
+        "places/ChIJo24_lq8vC18RcfiqGApcx1s/photos/AaVGc3lSFOzsZvSOC_UHSZPuN3gpbneKAKU8U1UJa6u9hQcp8jPVUZ0rZrOA6ja5XVYPkeix5iE5q8JxiTqSCktkv7rPa3yhrBuZMLdvSa19y9j3IsiBW60eSA9Iz76waIHr6H5gKDxFrCHO8rDRRbbO25qaV8H-F8AlYZENJsNgMNGLOj0B1RIsbzN3by3JtULu2RoeoO-RIQ81g_GUuh3N857PwHWxVtOcrTgYmWczla-QhNqM_epfhKScGXtPON658ySb4kuhWMNUI6o9CYx3NvtuZ3mWUTkBuLCu5a1WB8U1oV-09es_fcRoG9OtSy0RTmD7-lBbelt5mXdttnrJcQKD8aG1ezCKhJdQCsMt3lcEbrngj5QGyrGJzB55bePCyADEQtfLeyDAruYhSj68qgzS2xhZNeHZLDMYkRRwqdBbu8LHe3v68C0a-Yb5Reex"
+      ]
+    },
+    {
+      "id": "58dbd153-e65c-45dc-9fd7-03f8106f6333",
+      "name": "Mimoto",
+      "category": "food",
+      "description": "A traditional bakery and confectionery shop operating since 1945, serving breads, pastries, cakes, and Japanese wagashi. Known for fluffy egg bread and various pastries like cinnamon rolls, and featured in Boku's monthly premium Japanese snack subscription.",
+      "lat": 43.0597304,
+      "lng": 141.35500009999998,
+      "geocodeSource": "google",
+      "placeId": "ChIJJ7O-14IpC18RSyPCiPq6Nhw",
+      "mentions": [
+        {
+          "videoId": "34vE-ABqqmw",
+          "videoTitle": "Winter Wonderland: 10 Must-Do Activities in Sapporo, Hokkaido",
+          "channelName": "TabiEats",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nKMxsKFYExPvkjt_H--4AzJk8lK6enlKgU_eQSOtIIMw=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 328,
+          "quote": "Mimoto has been serving customers since 1945 and one of their treats is featured in this month's Boku."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPd5tiSqGsHfxUGq24BMM3q8Jmew-s1CSkC_Z513UHvKWTSD1iFZBoJJq8BtC5bF4fkiBApLPyUmSjghoMz_sVg0gZkkTuYiWKk12spSmYZaYUXmT64RCoLVP1BjxG-VaHKxKO2iBiMSKIr2buHAD_76Q=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPd5tiSqGsHfxUGq24BMM3q8Jmew-s1CSkC_Z513UHvKWTSD1iFZBoJJq8BtC5bF4fkiBApLPyUmSjghoMz_sVg0gZkkTuYiWKk12spSmYZaYUXmT64RCoLVP1BjxG-VaHKxKO2iBiMSKIr2buHAD_76Q=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJJ7O-14IpC18RSyPCiPq6Nhw/photos/AaVGc3kz2spvLxGyhkJRX3nHSS3MZC6Eun4o9rvNmYs2XBnN-Rgv2qfkFOZi48ywHpyhhXUTkeqf1RrcC7yXOYPlMWxjOaDjoXUh2kztgl2oZ71T1ob-P06wXuF3L_NB1SRQVZJISMCAXW4hJuSMUVoeM8ffagqIIlLIJLf8VHwWL12T4XutRk4ioqGwyZFC8ElLxjg184Yt_q-MvzEnukJWFJT6pwJmzu5MlpVknZyp109yiVa0MCizM6X9xNPxN0oO4u2zujQ_qySuv4Arj8Kb4_Oh1ha1UK2TSy_FXmcCVADA-qpliqocHLucMQB4_6mXfoD3wOW4qn1dEI17kNS2UttWV0WHC8pe4DqskOq3E-_McgQvpewOci4UKLRpiR4z13oCfG-rYbp8h5VjlphC0bDSWlU_DRldagI7Q4WX6OU",
+        "places/ChIJJ7O-14IpC18RSyPCiPq6Nhw/photos/AaVGc3k17doPFhjlGgHnSbOgaeoAWS8nOZElqrALAiJd4Pye3C1m4dKCR2-FpR3N7OGTujSGzHgq1uDQBM94Fk4LA1bHVduc_dQrC-_rwjncy7m_G_NnzovrgeO5ZK0XPVZLqPIv5ZiGE-K5CzbvmByddRscx1jr727nqd07EpSJafx7XKUT0Cf4WxZzKIkqPcC33Z1rkgsvOA28-0xrOJaktwTJSDkmJqKqqqc_KKvt1uiwGetivwtzpDOGZOgyG2hBJWi9PBiYhiHpo7Q8LTWygcMaYqNfOjV4hXXPSRAR3_J37V9yX8aOptqG347939xIK11Vm4gDN5isWxWlxcRSXJD8LnMIzsKLwP3qSESq2mKa7hf-FlQmOgw0DcaybZPijQEL_V76Xfp2LiSZex481jY8V85ygw0nP_xHNiGBaZU",
+        "places/ChIJJ7O-14IpC18RSyPCiPq6Nhw/photos/AaVGc3lQjNvmIr_Iez_LYfyV8dhYPEMZdPhiBQho4CB_xE1A_F5y7zRqkRF2GuG2a8j1oqy4-OO3csmlPGXBDxWaNFeR0Ak3yffZX22PRqxbnyoNkonhK2Iu0YSYUVtUS_VQdc53fTS7IKLzafLPp_T9iNLPsuJ_-T7GsMtawWJpTnyjXx3O6zHQ9Kc7sPNNfXOGhcR8gOyENwcXGWtNISKJ-h3OH7_qAOELcru9-NdhkfjHbpSrV3Oe7ps92OalLHA4Bvn1D1IfIZ9ir5oeNJAaIhnC0SJky3Th_5-zldE54y3ScETNvLQ6ykzDZkl8mBk1NvGLrWGlqXJyYV8-j2D5e-cGcwWzrBnW3Co3OzVSX_VRac7QEg6bZfi0CZAZoi6dmgUcKHwuTnjmjNOllE7u0Rmvne1phtdn7tgZ48x9n6WU0kaG"
+      ]
+    },
+    {
+      "id": "63c794e6-d81c-4ee4-aff6-4c5c9aa60c7c",
+      "name": "Tanuki Koji Shopping Street",
+      "category": "shopping",
+      "description": "A covered arcade shopping street stretching seven blocks with about 200 shops, one of the oldest and most vibrant shopping arcades in Sapporo started about 140 years ago. The seventh block offers a more local, bohemian atmosphere with well-established shops, tea shops, and izakayas that feel more lived-in and authentic.",
+      "lat": 43.0572386,
+      "lng": 141.352677,
+      "geocodeSource": "google",
+      "placeId": "ChIJyWjcFIMpC18RoRfh7HqDCT4",
+      "mentions": [
+        {
+          "videoId": "34vE-ABqqmw",
+          "videoTitle": "Winter Wonderland: 10 Must-Do Activities in Sapporo, Hokkaido",
+          "channelName": "TabiEats",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nKMxsKFYExPvkjt_H--4AzJk8lK6enlKgU_eQSOtIIMw=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 706,
+          "quote": "It's a covered arcade that stretches seven blocks, it's one of the oldest and most vibrant shopping arcades in Sapporo and you can literally find everything here."
+        }
+      ],
+      "thingsToKnow": [
+        "The arcade is 900 meters long with 200 shops",
+        "There are many spots to sit down with benches and tables along the street",
+        "The seventh block has a more local and bohemian atmosphere"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZONp5wrUzfaWARg21v8ToO8qGOUzc7-dKqWt9ZNn-GN98v3EDyFJqclo7zA9g2vyaNY0Ps9iYrFCVBEBemATpM2rs1XlCab5_EBmE32Ma48-uPaOQjt-LXI5q6SV25jzpyrvEqKuiL9pJdGzr4=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZONp5wrUzfaWARg21v8ToO8qGOUzc7-dKqWt9ZNn-GN98v3EDyFJqclo7zA9g2vyaNY0Ps9iYrFCVBEBemATpM2rs1XlCab5_EBmE32Ma48-uPaOQjt-LXI5q6SV25jzpyrvEqKuiL9pJdGzr4=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJyWjcFIMpC18RoRfh7HqDCT4/photos/AaVGc3lty18RtivfMS3qDOmyFt6u_vc82RDt1m0sAbZqrTy3NUkzooofnSJSnAGD7lvk2_lmA0DDbFubwEAbb3mgb_mMgjeRfn0zpfmyyzyJB6Avy8p5PEisS-J7iUuuA98eq9_gSSnnb-yDGjFqipfV3l6QYD6cwuWCq2sSPzSzvX5g8hf02-IMGvYl2TZT7kpViNbYWSouZJM70Js8RVmok298VOpIJnmrc_OqthnrIluw6eP5IuIo0ajY5ca798aZlBqdM8e8bazVC2gODA4FyjCB1ixnvkUsVH3AE2fEK5rFn7JeUcd_hn_CWNsmv3lvQUREnqzPHiwG8pMGHidysQ3NHLkI2cUmLMf1SThrVHdVikTLjscnffsc-P00UNdYznxkfbOtSpVe8-cJyOBZ0HUUahG8cNg77XiyO9U99IqFqQ",
+        "places/ChIJyWjcFIMpC18RoRfh7HqDCT4/photos/AaVGc3nvUxDO3-qZQwvEjC6srhB7z2I9l4zRJNIv9tSBqkl3KAIYDlr7faI3auAt6PhTLPxqaxJIq2IGJ4-S90edVoYIxhqLg_Gk6Yj5Tkg-7xFi1Cy5yeRF4IVTmczfPeRPDXy9DxdJ82Em5Nw1TyFhYt3WMOHHm8vY7ZNOagLXvEV-_M4bgoO3evxlPbrPQfMBzzNizGl8HR5dCSFs_1Wo_rtSspmzO1TWtJpe-jMG1ZO0A7aNyNK4JccnA83MJapCp-BtvKbTxfdfyczdO2jvIYTgY1qcV1ijR3X4hP7xxh2apzUYrydaphBp-EHOMpKUgY5yLdZPRMi1LKE7ItZIHGV98wAd5Wqocw6dPaehGPJCnq7JwAX5ENX9obq29W7fHJeoyv3fql4ICG8xudEr5GWQ68fK4URCBUuHduXAk8hG3w",
+        "places/ChIJyWjcFIMpC18RoRfh7HqDCT4/photos/AaVGc3lI1PIfJXNCeColPRZSVnnzyOolMgtAk-nUF2oz9MN5rtesqdXZZkxsqfPZIkc-Nsiyv7YhCan-S1ED47tBP4qjcwD98yHAPiyLOOFfN0xnY7FUPZemBns2KZTj2Rgc6vW092aeFau22SRaNsbSzg9meaHfjF2e4iw_O6YqvbYPfGqY59-qGba9CAoDaBWwQ0KYRIoh-akJScj045idg1WUQhEbNj0F_s9EuXWA9J-YINvzR0JCX5PuCJiQNQkkWXaoVAPEdcgux0yQaRflDQlH4KGoEhqrWxTAVFCjgjpD_ANx1rWR2dGBeIZm-HF4gqErRUEcWtncGYp8ayhAWEwMP7OQnNR5SWu9n6WCfdbMMAa_rGX1vKL_Q_EIJyXkCMeXK3ln63VJQsutH7Wctxtm-H-Dns98ELq_LMBMZzOzjBgLd8IDK9EY8hFV0t81",
+        "places/ChIJyWjcFIMpC18RoRfh7HqDCT4/photos/AaVGc3nA1bxtkZi8Me-of3kVSJ4lXMtogHFwSjWV8d0M7X7jOdZ68ONhuISBuhlDw4S-jOoHVpNWSv_D5pvB5cnrug7S_tS8hq7OqtP7OvR_N7wN_YdAtuCaEVggijYE1j5ekZzgkJ_wuy3oPs_zUqXHHFXtPcdSgs2msgiBMCd8wZuLDvsU4Mtlkz9nvDO_Ew6yDXdfxu-slW40GoD4MNGP6eCAKE5JSGcVy69I4ifEI5ZVAgwDLFHWDTK59zXu3Eoc0kxGPR5Fm_2F3CRqbNR1QN2OmpkOJngoQZsuYrcRmco9J_bijjFn05Z1OCLTSoimqzz7xFEddc1zGd44Jj3ruU80iHlQsi4GqMsvHx0tR0HTNfaOrmd3Px4LEzNEwDjObMGU8rV74YsK2UKYPzGtj-YpppRGcI0rYa0qeJtVtM7bEy5jwrzI7652ePX5-ZiG"
+      ]
+    },
+    {
+      "id": "a400410b-8b58-49cc-a437-1b45ee3ff025",
+      "name": "Odori Park Winter Illumination",
+      "category": "viewpoint",
+      "description": "An annual winter illumination event held at Odori Park transforming it into a sparkling winter wonderland. It's Japan's first illumination event starting in 1981, featuring colorful lights throughout the 1.5 km park with the Sapporo TV Tower visible at one end and a Munich Christmas Market during the holiday season.",
+      "lat": 43.060583199999996,
+      "lng": 141.3526426,
+      "geocodeSource": "google",
+      "placeId": "ChIJa20T8L8pC18RT7ri-9fShzQ",
+      "mentions": [
+        {
+          "videoId": "34vE-ABqqmw",
+          "videoTitle": "Winter Wonderland: 10 Must-Do Activities in Sapporo, Hokkaido",
+          "channelName": "TabiEats",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nKMxsKFYExPvkjt_H--4AzJk8lK6enlKgU_eQSOtIIMw=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 914,
+          "quote": "This is a magical place, Odori Park is literally in the middle of the city and right now they have a Munich Christmas Market that's happening."
+        }
+      ],
+      "thingsToKnow": [
+        "Admission is completely free",
+        "The Munich Christmas Market happens every year during the holiday season",
+        "It's less crowded than similar markets in Tokyo"
+      ],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNc5_kz2syKL4rogtZMvDu4yj5xRAFyvrlgUFgwkL_L2topEdBbukXYZpc2aZLbIEIxpSM5qd7ydpN5IqImAMCk2CH2jXHEv5FXrmH7EGwBUc1n-KY1UfyI66kpKa-4DUQS9ULwv9yFqoP2fEA=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZNc5_kz2syKL4rogtZMvDu4yj5xRAFyvrlgUFgwkL_L2topEdBbukXYZpc2aZLbIEIxpSM5qd7ydpN5IqImAMCk2CH2jXHEv5FXrmH7EGwBUc1n-KY1UfyI66kpKa-4DUQS9ULwv9yFqoP2fEA=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJa20T8L8pC18RT7ri-9fShzQ/photos/AaVGc3luH09bLfv9_5YeLGZeIHt3D0L4jtef3gxoSits95l_tOja6i6NY0semSWxpgQHzSYNAvMCCZGtI5czMDIuP1_aF30QbIpTz67nLl_RSPrP2CMXPUvJjS5S6iIV5dqwr7VBk1163mVW7L5YJzUFZCEOx9bIGy5CVYdHny8eONaeWdiT5pmR9tWNu7y2IAPZgKMrkHhj0Z_drS-z4BRhaJ6Y_f-TwgmVDs0KPXSd0cj5xosX0wNDYxdCm7471KcGNJeeeZQRAtsriznYpYLWN5EEDXobGI-eKNmgK5wJUH3Cc-Cnt24a0CfY0CmR9eh0GCFGc0yLLw4k23g7zHjjmBChbnKomVi_VBTZm6HwKb61CsawW8KTIczE4PnwuN55eT-F0eFV_tossOsBJxf8FXnWHKiMePITBJeJbiUwOC83jmCU",
+        "places/ChIJa20T8L8pC18RT7ri-9fShzQ/photos/AaVGc3m8OFEKtMOZE0E9i41H186wnslnrpmy1xRuKue5La2tmuuH1HwL54st_tfo5ijHgnCZ06e-B2QcNv7vYli6vkpngqPI5MiRKtQF-2AyGcdb51EPR4yd50W6ACNrMSDUkOnemxYJ5srK3yXwnfRaKUB5oZb5GXbGfYvmC3fvTQVMQS5fMpkopfLAC_k7Gp9L807XFaOA9HuO-a6hvg1m2al0s2y-MKRE7Pu13OEEE-NO5aQcJCcjrn9tdbzCwb8HXampMwwqcs0ENX5cv1pklUuBLXXpCFdA206A_EcBeu-xiUSvJvmhlaE2gWRAIv_4-GcxM0lDy0C7QOwmVp0NHrNG7LH9b0MELy_p58Jzy5iCcuOHEOhmgJGtSQmOt4ermSBdPBjx3uIgj5kSUrotIVZ2gajMaHqAS8epKAIeVvUndA",
+        "places/ChIJa20T8L8pC18RT7ri-9fShzQ/photos/AaVGc3nDeQhpO8qd5FDQyJfsvIi6d_HllJoJS1x0IJoSGkz9jbziLkY1LPkre5v4I12oQ8AHaAbHgvLg5R6V6764TWziH8fdYdFaiHjcbKe__MkmfLWJxHGWYwVl10MAezgiepeiY0jAFdaxyokNRGJmYAIWjv4FBXM2ADBn88sgvsmKXIDxiUEoYzbynYzVfvbtnK_EdwcD693rVPlLH_OzfeLvMeWo_DmGKOiOw3vU81m8uLoc1VsfIn_K8FHl1SwRKOQdcnC-JYlPNwJlmMGNVfGjnto98crtUG1r9XYy-7emzI9Gy84MTuLrLe0vS-FRmle8v5oFuYErYGYVTEmskrYg-KRhsNl9bxItLvLyer7GJ1ohUOU-3ERPIMzg24-TTPGD8t7mK4aFkDihb1hcl47jLRbulyaWh_BYMZlo_x8",
+        "places/ChIJa20T8L8pC18RT7ri-9fShzQ/photos/AaVGc3nkuUE6SbE4K3_NqgMiLXn-pwONfD_hCpBFh3iNNArfM1zuhv8Akk-WuN9hCQ-590G8FL3LgIJbrUqs8ZfhD0-jEGvBS9IN5710ikqlKRV_r4RGbmg7YJKoccLfE6CpZogaRjFIsEwv_phdzULyjBalCZfJOj5ENLfD3ZUKibVhLn7TD7UYd_m3fxieMqeUrnxz_KHscN1-0foPmv7a9GI7QY2Go3hfgwr4k8rM9-xdRqcCLqP7JC9yt9b4l8CiI_5wwzwtNCHJva340b6ywrzfhT42QFBZUZa_yeoqMNkMm5Zlr7g52fuTtYqNjYRDoc6EMc-aFqmPrMFAf7BsHsC9dhtcVBE6ugxHoE5zQPM_BihUdbXz2yFou2AzE9FzUqVsk6tHxD8C-XM4H7h6ZF0LLLCOJZm0C16k_AMXtgIiH7G1"
+      ]
+    },
+    {
+      "id": "e9cae45c-5474-47d0-b4ca-34c448a7e884",
+      "name": "Sapporo Factory Atrium",
+      "category": "shopping",
+      "description": "An indoor shopping mall in a historic old beer factory building with beautiful red brick architecture. The mall features an atrium with lots of natural light and during the holiday season has a large beautiful Christmas tree in the center, plus ice cream and other food options.",
+      "lat": 43.0653656,
+      "lng": 141.36300029999998,
+      "geocodeSource": "google",
+      "placeId": "ChIJscUT5HApC18RuDlNOuZzWHQ",
+      "mentions": [
+        {
+          "videoId": "34vE-ABqqmw",
+          "videoTitle": "Winter Wonderland: 10 Must-Do Activities in Sapporo, Hokkaido",
+          "channelName": "TabiEats",
+          "channelAvatar": "https://yt3.googleusercontent.com/ytc/AIdro_nKMxsKFYExPvkjt_H--4AzJk8lK6enlKgU_eQSOtIIMw=s900-c-k-c0x00ffffff-no-rj",
+          "timestampSec": 1163,
+          "quote": "This is a mall but it's indoors and because it's an Atrium it lets in lots of natural light and during the holiday season there's a big beautiful Christmas tree."
+        }
+      ],
+      "thingsToKnow": [],
+      "photo": {
+        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMimIdeEDXb_dhcEwLImII3L-SSWh7sTQp-b-Mc6mheo5fI5yRorHsA3AUsi9_sI3GlZU_bBKg346QQyt_xB1rhTOCBCzZJhn461rjbEVcaTAZDWzFSIxXEJRUCkjSWssvQpFJLnUM-ISTC=s4800-w800",
+        "source": "google"
+      },
+      "photos": [
+        {
+          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMimIdeEDXb_dhcEwLImII3L-SSWh7sTQp-b-Mc6mheo5fI5yRorHsA3AUsi9_sI3GlZU_bBKg346QQyt_xB1rhTOCBCzZJhn461rjbEVcaTAZDWzFSIxXEJRUCkjSWssvQpFJLnUM-ISTC=s4800-w800",
+          "source": "google"
+        }
+      ],
+      "morePhotoNames": [
+        "places/ChIJscUT5HApC18RuDlNOuZzWHQ/photos/AaVGc3nqZppslNKKgrlT8KSTdY_6uEFhdRC_f_HOcOAfqdY0trfFMY4B1ROGyb7KjmYCfEH9681z5DlE0b7EGbw-MxvdfrnWpk496SBOr-ojW0wZujtv5HLBz-hRkEcIpIwdo7SYKgCNLLukXiBy_OcoEz977oGq2tPmLbcqQG_LQiWEZTwtac8xUAH2hsQu3b40lu_ypFmh-PDdITISp6-tt8eWgwCf5J2IIabA7QoQWXIKkx6OkpRCPrtLVOuylzkGHIDEVUmCyP_NGWaH6cCGXQCaq96IG2QgRPIAbjFBLvgg_fjuE1QdrqL2V_OyIyLGeaKxNZ7NnoYb_B9FyHud2g0ARZFR7bV01LzVwOnMy7WIsb7a2lDnf7aDPyw3c_Ke5IqKZ5UeIZldTtK7vk84cHpPVfsJuCqbXmOzgxr90R2h0AEwsSbzXC17qVBjF9Qy",
+        "places/ChIJscUT5HApC18RuDlNOuZzWHQ/photos/AaVGc3ns_E4mo1WR_pHNQdRBh7SyVO-2Zdr9qEz-GbVv4MbASF3_sVtxPZRMFLnlPrCLFR-3xoZGrpPIA0fA7izj6n4DjeRscxXH46V2-XgNqtgGIMeScjvb9wv6RIHQaedJ9THcD6uaM9cqfM737jWY3_4zf6s_YLTbHJ6BoEFc3Q4zRtnw45tQe1a7JybsKilfgi208ltqKKNFkfD07s8LOBJGdr7I3BDJXTb-GQOvK9j30xTlFRCsuHKkZaU-MSpmRSZ4oWN49XmgQrpusqtdgadlo-i5bUoZbToByMsmbrRZ9w7-Ge_Hz02kDFLGPoxS2knqrHz9AKIGzdfYxZP2htwmPe5sPs3oP7c7uAan5eu8nYvATUS4SQmOYXWE8wC1J0YdfEjkahQ6J9E17ITvAG-guTdRJW74qcf_RBfwCRQ",
+        "places/ChIJscUT5HApC18RuDlNOuZzWHQ/photos/AaVGc3mj8dEtP9t1fqqwEkcTU6NJJVCwDobOtAddckIg-N-1vvANPjune8mk-VYrg4W4MQpvWshvW2uFUgPqyaiaN9YDRwBrlChcCWN5AIQxEye4P0RHFcWYDeNoxjRGMdyk89RdrGlhJpEROsT0RWGWF-2LRFndYLRpu_R4PyfzBS_E1okCdqtVUViZV5Y-zflvLxW47x2gDmMikIXW4xfqenHS-r7-qKHVbEJb4dDie0yvMy3p_B6idjMAABh7hLaoSL_ojCW83cfdxfxeCRtAcMOa_geO82DAXGUg8-dVqYM3kdxllv43Ure1gZgcJXbrhNAXSL9dVbMdJ1QKsk-ubmDII4UYWNAZGpZ7-s_XfAixaqwpboMf7f7awwm9a63YCSOpelkmBNK3A2JjZ2fYV-2hluHWYj774tas1tUp-Rn5WGS2PX68XoT4VMBOGIRE",
+        "places/ChIJscUT5HApC18RuDlNOuZzWHQ/photos/AaVGc3kNtUEWDdnU6iMFmSNDDojmcBQwiRj0xIrmmb7UbY3C-Bu7kwBN6THJzk5T4_DZET8-3n-Vz_4uGu9Ezlz0N42RFMWMxKcS2CAKFV8Sx9HqOOqUX8e2seDeY56Aeu7StrdYjjhhQuRTvSff0h2Ow3FPkkwfm3F06FmvKeOGIYeOtXOGAkEHPCuHiF7c1l1QqHZTsqPrmUE-qyL1TLd7I7kIunkBO1GogpXi4qhd-RGybj2r5wzQ6IeYrkfvV20XxGQ6qbLce2l0ABi_ySzTWPH9nwtVt4QtrCDCDmr4ehEZM71jZcCr7zWwGZiXQpf74nrFkVqDkT-GuT6EOqvxGZglQ2xa3-BRYqkCeng2GBzGQ36tPmocBoWcVjpl4WPlzI9lFsApnSVfHKVYiueZHME9l9b5bvL5Y7LqVS5QNGVEAA"
+      ]
+    }
+  ],
+  "query": {
+    "destination": "Hokkaido",
+    "startDate": "2027-02-10",
+    "endDate": "2027-02-18",
+    "interests": "skiing, ramen",
+    "resolvedDestination": "Hokkaido, Japan"
+  },
+  "bench": [
+    "u234pDY8Z18",
+    "BUr73MBZ5b0",
+    "hQ-vdiA1q5U",
+    "5s0JpUGuF8c",
+    "kFdc36kYY3U"
+  ]
+}

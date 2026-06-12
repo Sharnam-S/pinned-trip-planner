@@ -6,18 +6,40 @@ import "leaflet/dist/leaflet.css";
 import { Destination, Spot } from "@/lib/types";
 import { CATEGORY_EMOJI } from "@/lib/categories";
 
+export interface MapBounds {
+  north: number;
+  south: number;
+  east: number;
+  west: number;
+}
+
 interface Props {
   destination: Destination;
   spots: Spot[];
   selectedId: string | null;
+  /** When set, pins mentioned in this video light up and the rest dim. */
+  highlightVideoId?: string | null;
+  /** When set (video pinned), the map fits to that video's spots. */
+  fitVideoId?: string | null;
   onSelect: (id: string) => void;
+  onBoundsChange?: (bounds: MapBounds) => void;
 }
 
-export default function TripMap({ destination, spots, selectedId, onSelect }: Props) {
+export default function TripMap({
+  destination,
+  spots,
+  selectedId,
+  highlightVideoId = null,
+  fitVideoId = null,
+  onSelect,
+  onBoundsChange,
+}: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
   const fittedRef = useRef(false);
+  const onBoundsChangeRef = useRef(onBoundsChange);
+  onBoundsChangeRef.current = onBoundsChange;
 
   // Init map once
   useEffect(() => {
@@ -25,9 +47,10 @@ export default function TripMap({ destination, spots, selectedId, onSelect }: Pr
     const map = L.map(containerRef.current, {
       center: [destination.lat, destination.lng],
       zoom: destination.zoom,
-      zoomControl: true,
+      zoomControl: false,
       attributionControl: true,
     });
+    L.control.zoom({ position: "topright" }).addTo(map);
     // CARTO Voyager: the soft pastel look closest to Airbnb's map
     L.tileLayer(
       "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
@@ -39,6 +62,19 @@ export default function TripMap({ destination, spots, selectedId, onSelect }: Pr
       }
     ).addTo(map);
     mapRef.current = map;
+
+    // Tell the parent what's in frame so it can filter the spot list.
+    const emitBounds = () => {
+      const b = map.getBounds();
+      onBoundsChangeRef.current?.({
+        north: b.getNorth(),
+        south: b.getSouth(),
+        east: b.getEast(),
+        west: b.getWest(),
+      });
+    };
+    map.on("moveend zoomend", emitBounds);
+    emitBounds();
 
     // The map mounts inside a flex container that may not have its final size
     // yet (dynamic import); without this Leaflet renders a zoomed-out sliver.
@@ -69,7 +105,19 @@ export default function TripMap({ destination, spots, selectedId, onSelect }: Pr
 
     for (const spot of spots) {
       const isSelected = spot.id === selectedId;
-      const html = `<div class="pin-pill ${isSelected ? "selected" : ""}">${
+      const isHighlighted =
+        highlightVideoId != null &&
+        spot.mentions.some((m) => m.videoId === highlightVideoId);
+      const isDimmed = highlightVideoId != null && !isHighlighted;
+      const pillClass = [
+        "pin-pill",
+        isSelected ? "selected" : "",
+        isHighlighted ? "highlight" : "",
+        isDimmed ? "dimmed" : "",
+      ]
+        .filter(Boolean)
+        .join(" ");
+      const html = `<div class="${pillClass}">${
         CATEGORY_EMOJI[spot.category]
       }<span>${escapeHtml(shorten(spot.name))}</span>${
         spot.mentions.length > 1 ? `<span style="opacity:.6">×${spot.mentions.length}</span>` : ""
@@ -82,14 +130,15 @@ export default function TripMap({ destination, spots, selectedId, onSelect }: Pr
         iconAnchor: [0, 0],
       });
 
+      const zIndex = isSelected ? 1000 : isHighlighted ? 800 : spot.mentions.length * 10;
       const existing = markersRef.current.get(spot.id);
       if (existing) {
         existing.setIcon(icon);
-        existing.setZIndexOffset(isSelected ? 1000 : spot.mentions.length * 10);
+        existing.setZIndexOffset(zIndex);
       } else {
         const marker = L.marker([spot.lat, spot.lng], {
           icon,
-          zIndexOffset: isSelected ? 1000 : spot.mentions.length * 10,
+          zIndexOffset: zIndex,
         });
         marker.on("click", () => onSelect(spot.id));
         marker.addTo(map);
@@ -115,7 +164,25 @@ export default function TripMap({ destination, spots, selectedId, onSelect }: Pr
         map.fitBounds(bounds.pad(0.15), { maxZoom: 13 });
       });
     }
-  }, [spots, selectedId, onSelect]);
+  }, [spots, selectedId, highlightVideoId, onSelect]);
+
+  // When a video is pinned, fit the viewport to all of its spots — zooming
+  // out (or in) so none of them are off-screen. Hover alone never moves the
+  // map; spots live in a ref so a background poll doesn't re-trigger the fit.
+  const spotsRef = useRef(spots);
+  spotsRef.current = spots;
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !fitVideoId) return;
+    const videoSpots = spotsRef.current.filter((s) =>
+      s.mentions.some((m) => m.videoId === fitVideoId)
+    );
+    if (videoSpots.length === 0) return;
+    const bounds = L.latLngBounds(
+      videoSpots.map((s) => [s.lat, s.lng] as [number, number])
+    );
+    map.fitBounds(bounds.pad(0.2), { maxZoom: 14, animate: true });
+  }, [fitVideoId]);
 
   // Pan to selected spot
   useEffect(() => {

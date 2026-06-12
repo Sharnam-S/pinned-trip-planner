@@ -59,9 +59,14 @@ const ExtractionSchema = z.object({
 export type Extraction = z.infer<typeof ExtractionSchema>;
 export type ExtractedSpot = z.infer<typeof ExtractedSpotSchema>;
 
+// Override with EXTRACT_MODEL in .env.local (e.g. claude-haiku-4-5) to trade
+// extraction quality for cost.
+const DEFAULT_MODEL = process.env.EXTRACT_MODEL ?? "claude-sonnet-4-6";
+
 export async function extractSpots(
   video: VideoData,
-  knownSpotNames: string[]
+  knownSpotNames: string[],
+  model: string = DEFAULT_MODEL
 ): Promise<Extraction> {
   const transcriptText = transcriptToText(video.transcript);
 
@@ -75,9 +80,10 @@ export async function extractSpots(
       : "";
 
   const stream = client.messages.stream({
-    model: "claude-sonnet-4-6",
+    model,
     max_tokens: 32000,
-    thinking: { type: "adaptive" },
+    // Adaptive thinking is a 4.6+ feature — Haiku 4.5 rejects it
+    ...(model.includes("haiku") ? {} : { thinking: { type: "adaptive" as const } }),
     system: `You extract travel recommendations from YouTube video transcripts for a trip-planning app.
 
 Rules:
