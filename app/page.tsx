@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Mention, Spot, Trip } from "@/lib/types";
 import {
+  deleteLocalTrip,
   listLocalTrips,
   newTripId,
   saveLocalTrip,
@@ -119,9 +120,32 @@ export default function Home() {
         ) : (
           <div className="cover-fallback">🗺️</div>
         )}
-        <span className={`badge ${sample ? "sample" : t.status}`}>
-          {sample ? "sample" : t.status}
-        </span>
+        {/* ready/sample need no label; in-flight and failed builds still do */}
+        {!sample && t.status !== "ready" && (
+          <span className={`badge ${t.status} with-delete`}>{t.status}</span>
+        )}
+        {!sample && (
+          <button
+            className="cover-delete"
+            title="Delete this trip"
+            aria-label={`Delete ${t.name}`}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              deleteLocalTrip(t.id);
+            }}
+          >
+            <svg width="13" height="14" viewBox="0 0 13 14" fill="none" aria-hidden="true">
+              <path
+                d="M1 3.5h11M5 1h3M2.5 3.5l.7 8.6a1 1 0 001 .9h4.6a1 1 0 001-.9l.7-8.6M5.2 6v4M7.8 6v4"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        )}
         <div className="cover-meta">
           <div className="cover-name">{t.name}</div>
           <div className="cover-sub">
