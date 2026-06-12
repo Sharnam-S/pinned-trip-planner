@@ -53,9 +53,36 @@ export interface VideoData {
   transcript: { text: string; startSec: number }[];
 }
 
+// YouTube bot-checks the default WEB client from datacenter IPs (Vercel):
+// getInfo "succeeds" but comes back hollow — no title, no caption tracks.
+// Alternate clients usually pass, so walk the list until one returns
+// captions. Locally WEB wins on the first try and nothing changes.
+const INFO_CLIENTS = ["WEB", "ANDROID", "TV_EMBEDDED", "IOS"] as const;
+
+async function getInfoWithCaptions(yt: Innertube, videoId: string) {
+  let best: Awaited<ReturnType<Innertube["getInfo"]>> | null = null;
+  for (const client of INFO_CLIENTS) {
+    try {
+      const info = await yt.getInfo(videoId, { client });
+      const hasTitle = Boolean(info.basic_info.title);
+      const hasTracks = (info.captions?.caption_tracks ?? []).length > 0;
+      if (hasTitle && hasTracks) return info;
+      if (hasTitle && !best) best = info; // real video, just no captions yet
+    } catch {
+      // bot check or client-specific failure — try the next client
+    }
+  }
+  return best;
+}
+
 export async function fetchVideoData(videoId: string): Promise<VideoData> {
   const yt = await getClient();
-  const info = await yt.getInfo(videoId);
+  const info = await getInfoWithCaptions(yt, videoId);
+  if (!info) {
+    throw new Error(
+      "YouTube refused the request for this video (bot check) — try again in a bit."
+    );
+  }
 
   const title = info.basic_info.title ?? "Untitled video";
   const channelName = info.basic_info.author ?? "Unknown creator";
