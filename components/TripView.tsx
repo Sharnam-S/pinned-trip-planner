@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { Spot, Trip, TripVideo } from "@/lib/types";
+import { Spot, SpotCategory, Trip, TripVideo } from "@/lib/types";
 import { CATEGORY_EMOJI, formatTimestamp, youtubeLink } from "@/lib/categories";
 import { getLocalTrip, saveLocalTrip, subscribeLocalTrips } from "@/lib/clientStore";
 import { addVideosToTrip, ensureRunning, isRunning } from "@/lib/runner";
@@ -323,6 +323,8 @@ export default function TripView({ tripId }: { tripId: string }) {
   const [addError, setAddError] = useState("");
   // Full-width map: hides the spot grid, toggled from under the zoom control
   const [mapExpanded, setMapExpanded] = useState(false);
+  // Category filter: empty = show all. Applies to both the grid and the map.
+  const [activeCats, setActiveCats] = useState<SpotCategory[]>([]);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const loadSample = useCallback(async () => {
@@ -433,9 +435,23 @@ export default function TripView({ tripId }: { tripId: string }) {
     );
   }
 
-  const selectedSpot = trip.spots.find((s) => s.id === selectedId) ?? null;
+  // Categories present in this trip, most common first, with counts.
+  const catCounts: [SpotCategory, number][] = (() => {
+    const m = new Map<SpotCategory, number>();
+    for (const s of trip.spots) m.set(s.category, (m.get(s.category) ?? 0) + 1);
+    return [...m.entries()].sort((a, b) => b[1] - a[1]);
+  })();
 
-  const sortedSpots = [...trip.spots].sort(
+  // Category filter feeds both the grid and the map pins.
+  const activeSet = new Set(activeCats);
+  const catFiltered =
+    activeCats.length === 0
+      ? trip.spots
+      : trip.spots.filter((s) => activeSet.has(s.category));
+
+  const selectedSpot = catFiltered.find((s) => s.id === selectedId) ?? null;
+
+  const sortedSpots = [...catFiltered].sort(
     (a, b) => b.mentions.length - a.mentions.length || a.name.localeCompare(b.name)
   );
   const visibleSpots = bounds
@@ -464,13 +480,50 @@ export default function TripView({ tripId }: { tripId: string }) {
         </div>
         <h1>{trip.name}</h1>
         <div className="summary">
-          {visibleSpots.length === trip.spots.length
-            ? `${trip.spots.length} spots`
-            : `${visibleSpots.length} of ${trip.spots.length} spots`}{" "}
+          {visibleSpots.length === catFiltered.length
+            ? `${catFiltered.length} spots`
+            : `${visibleSpots.length} of ${catFiltered.length} spots`}{" "}
           within map area
+          {activeCats.length > 0 && ` · filtered`}
           {formatTripDates(trip) && ` · ${formatTripDates(trip)}`}
           {trip.query?.interests && ` · ${trip.query.interests}`}
         </div>
+
+        {catCounts.length > 1 && (
+          <div className="cat-filter">
+            {catCounts.map(([cat, n]) => {
+              const on = activeCats.includes(cat);
+              return (
+                <button
+                  key={cat}
+                  className={`cat-chip ${on ? "on" : ""}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveCats((prev) =>
+                      prev.includes(cat)
+                        ? prev.filter((c) => c !== cat)
+                        : [...prev, cat]
+                    );
+                  }}
+                >
+                  <span>{CATEGORY_EMOJI[cat]}</span> {cat}
+                  <span className="cat-n">{n}</span>
+                </button>
+              );
+            })}
+            {activeCats.length > 0 && (
+              <button
+                className="cat-clear"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveCats([]);
+                }}
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        )}
 
         {trip.status === "processing" && (
           <div className="progress-banner">⚙️ {trip.progress}</div>
@@ -535,7 +588,7 @@ export default function TripView({ tripId }: { tripId: string }) {
           <div className="map-frame">
             <TripMap
               destination={trip.destination}
-              spots={trip.spots}
+              spots={catFiltered}
               selectedId={selectedId}
               highlightVideoId={highlightVideoId}
               fitVideoId={highlightVideoId}
