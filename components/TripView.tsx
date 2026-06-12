@@ -67,6 +67,18 @@ function VideoStrip({
   );
 }
 
+// Download the trip as a JSON file — the unit /uploadtrip accepts, so trips
+// can be moved between browsers or handed to a friend out-of-band.
+function exportTrip(trip: Trip) {
+  const blob = new Blob([JSON.stringify(trip, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${trip.name.replace(/[^\w]+/g, "-").toLowerCase()}-${trip.id}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 function formatTripDates(trip: Trip): string | null {
   const { startDate, endDate } = trip.query ?? {};
   if (!startDate && !endDate) return null;
@@ -392,8 +404,8 @@ export default function TripView({ tripId }: { tripId: string }) {
       <div className="processing-page">
         <h1>Trip not found</h1>
         <div className="progress">
-          Trips are saved in the browser that created them — this link may be
-          someone else&rsquo;s trip, or it was deleted.
+          This trip isn&rsquo;t in the shared library or this browser — the
+          link may be wrong, or it was deleted.
         </div>
         <a className="back" href="/">← Back to trips</a>
       </div>
@@ -440,7 +452,16 @@ export default function TripView({ tripId }: { tripId: string }) {
     // Clicking anywhere outside a video chip clears the pinned highlight
     <div className="trip-page" onClick={() => setPinnedVideoId(null)}>
       <header className="page-header">
-        <a className="back" href="/">← All trips</a>
+        <div className="header-top">
+          <a className="back" href="/">← All trips</a>
+          <button
+            className="export-btn"
+            onClick={() => exportTrip(trip)}
+            title="Download this trip as a JSON file to share"
+          >
+            ↓ Export
+          </button>
+        </div>
         <h1>{trip.name}</h1>
         <div className="summary">
           {visibleSpots.length === trip.spots.length

@@ -6,7 +6,7 @@
  * Runs are per-tab: closing the tab pauses a build, and the trip page resumes
  * it on the next visit (pending videos are picked up where they left off).
  */
-import { getLocalTrip, saveLocalTrip } from "./clientStore";
+import { getLocalTrip, publishTrip, saveLocalTrip } from "./clientStore";
 import { applyVideoResult, pendingVideo, VideoResult } from "./merge";
 import { Trip } from "./types";
 
@@ -98,6 +98,13 @@ async function run(tripId: string) {
       ? "All videos failed to process."
       : `Done — ${finished.spots.length} spots on the map.`;
     save(finished);
+
+    // One shared pool: a finished trip publishes to the shared library so it
+    // shows up everywhere (your phone, the deployed site, friends). Best-
+    // effort — a publish failure never blocks the local trip.
+    if (!allFailed && finished.spots.length > 0) {
+      void publishTrip(finished);
+    }
   } catch (err) {
     const t = getLocalTrip(tripId);
     if (!t) return;

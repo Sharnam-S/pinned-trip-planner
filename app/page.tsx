@@ -8,8 +8,10 @@ import {
   deleteLocalTrip,
   listLocalTrips,
   newTripId,
+  readOwnedIds,
   saveLocalTrip,
   subscribeLocalTrips,
+  unpublishTrip,
 } from "@/lib/clientStore";
 import { newSearchTrip } from "@/lib/merge";
 import { ensureRunning } from "@/lib/runner";
@@ -19,7 +21,8 @@ const HeroMap = dynamic(() => import("@/components/HeroMap"), { ssr: false });
 export default function Home() {
   const router = useRouter();
   const [localTrips, setLocalTrips] = useState<Trip[]>([]);
-  const [samples, setSamples] = useState<Trip[]>([]);
+  const [shared, setShared] = useState<Trip[]>([]);
+  const [ownedIds, setOwnedIds] = useState<string[]>([]);
   const [destination, setDestination] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -28,23 +31,47 @@ export default function Home() {
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
-    setLocalTrips(listLocalTrips());
-    const unsub = subscribeLocalTrips(() => setLocalTrips(listLocalTrips()));
+    const sync = () => {
+      setLocalTrips(listLocalTrips());
+      setOwnedIds(readOwnedIds());
+    };
+    sync();
+    const unsub = subscribeLocalTrips(sync);
+    // The shared library: repo samples + everything published to Blob.
     fetch("/api/trips")
       .then((r) => r.json())
-      .then(setSamples)
+      .then((data) => Array.isArray(data) && setShared(data))
       .catch(() => {});
     return unsub;
   }, []);
 
-  // The hero showcases the freshest ready trip — yours first, then the
-  // samples — the most spots wins a tie so the map always looks alive.
+  // One deduped list: your in-progress local trips merged over the shared
+  // library (a local copy is the freshest on this machine, so it wins).
+  const allTrips = useMemo(() => {
+    const byId = new Map<string, Trip>();
+    for (const t of shared) byId.set(t.id, t);
+    for (const t of localTrips) byId.set(t.id, t);
+    return [...byId.values()].sort((a, b) =>
+      b.createdAt.localeCompare(a.createdAt)
+    );
+  }, [shared, localTrips]);
+
+  // Trips this browser may delete: anything it created locally or owns in the
+  // shared library.
+  const deletableIds = useMemo(() => {
+    const s = new Set(ownedIds);
+    for (const t of localTrips) s.add(t.id);
+    return s;
+  }, [ownedIds, localTrips]);
+
+  // The hero showcases the freshest ready trip — the most spots wins a tie so
+  // the map always looks alive.
   const heroTrip = useMemo(
     () =>
-      [...localTrips, ...samples]
+      allTrips
         .filter((t) => t.status === "ready" && t.spots.length > 0)
         .sort((a, b) => b.spots.length - a.spots.length)[0] ?? null,
-    [localTrips, samples]
+    [allTrips]
   );
 
   const heroSpots: Spot[] = useMemo(
@@ -56,6 +83,11 @@ export default function Home() {
         : [],
     [heroTrip]
   );
+
+  function removeTrip(id: string) {
+    deleteLocalTrip(id); // no-op if it isn't a local trip
+    void unpublishTrip(id); // remove from the shared library + owned set
+  }
 
   const heroQuotes: Mention[] = useMemo(() => {
     if (!heroTrip) return [];
@@ -110,8 +142,9 @@ export default function Home() {
     );
   }
 
-  function coverCard(t: Trip, sample: boolean) {
+  function coverCard(t: Trip) {
     const cover = tripCover(t);
+    const deletable = deletableIds.has(t.id);
     return (
       <a key={t.id} href={`/trip/${t.id}`} className="cover-card">
         {cover ? (
@@ -120,11 +153,13 @@ export default function Home() {
         ) : (
           <div className="cover-fallback">🗺️</div>
         )}
-        {/* ready/sample need no label; in-flight and failed builds still do */}
-        {!sample && t.status !== "ready" && (
-          <span className={`badge ${t.status} with-delete`}>{t.status}</span>
+        {/* ready needs no label; in-flight and failed builds still do */}
+        {t.status !== "ready" && (
+          <span className={`badge ${t.status} ${deletable ? "with-delete" : ""}`}>
+            {t.status}
+          </span>
         )}
-        {!sample && (
+        {deletable && (
           <button
             className="cover-delete"
             title="Delete this trip"
@@ -132,7 +167,7 @@ export default function Home() {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              deleteLocalTrip(t.id);
+              removeTrip(t.id);
             }}
           >
             <svg width="13" height="14" viewBox="0 0 13 14" fill="none" aria-hidden="true">
@@ -165,7 +200,7 @@ export default function Home() {
     );
   }
 
-  const hasTrips = localTrips.length > 0 || samples.length > 0;
+  const hasTrips = allTrips.length > 0;
 
   return (
     <main className="landing">
@@ -247,7 +282,6 @@ export default function Home() {
           {error && <div className="hero-error">{error}</div>}
           <div className="hero-hint">
             Dates and interests are optional — they tune which videos we pick.
-            Trips are saved in your browser, on your device.
           </div>
         </div>
 
@@ -262,9 +296,7 @@ export default function Home() {
                 ?.scrollIntoView({ behavior: "smooth" })
             }
           >
-            <span className="hint-label">
-              {localTrips.length > 0 ? "Your trips" : "Sample trips"}
-            </span>
+            <span className="hint-label">Trips</span>
             <svg width="16" height="9" viewBox="0 0 16 9" fill="none" aria-hidden="true">
               <path d="M1 1l7 6.5L15 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
@@ -272,27 +304,20 @@ export default function Home() {
         )}
       </section>
 
-      {localTrips.length > 0 && (
+      {hasTrips && (
         <section className="trips-gallery">
-          <h2>Your trips</h2>
-          <div className="gallery-grid">
-            {localTrips.map((t) => coverCard(t, false))}
+          <div className="gallery-head">
+            <h2>Trips</h2>
+            <a className="upload-link" href="/uploadtrip">
+              Upload a trip
+            </a>
           </div>
-        </section>
-      )}
-
-      {samples.length > 0 && (
-        <section className="trips-gallery">
-          <h2>Sample trips</h2>
-          <div className="gallery-grid">
-            {samples.map((t) => coverCard(t, true))}
-          </div>
+          <div className="gallery-grid">{allTrips.map((t) => coverCard(t))}</div>
         </section>
       )}
 
       <footer className="landing-footer">
-        Built from creators&rsquo; actual words — never sponsored lists. Your
-        trips stay in your browser.
+        Built from creators&rsquo; actual words — never sponsored lists.
       </footer>
     </main>
   );

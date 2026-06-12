@@ -7,6 +7,7 @@ import { Trip } from "./types";
 
 const INDEX_KEY = "pinned.trip-ids";
 const TRIP_PREFIX = "pinned.trip.";
+const OWNED_KEY = "pinned.owned-ids"; // ids this browser published/uploaded
 const CHANGE_EVENT = "pinned-trips-changed";
 
 function hasStorage() {
@@ -89,4 +90,64 @@ export function subscribeLocalTrips(cb: () => void): () => void {
 export function newTripId(): string {
   // same shape as the old server ids — 12 hex chars
   return crypto.randomUUID().replace(/-/g, "").slice(0, 12);
+}
+
+// --- Ownership: which shared trips this browser may delete/un-publish ---
+
+export function readOwnedIds(): string[] {
+  if (!hasStorage()) return [];
+  try {
+    const raw = localStorage.getItem(OWNED_KEY);
+    return raw ? (JSON.parse(raw) as string[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function markOwned(id: string) {
+  if (!hasStorage()) return;
+  const ids = readOwnedIds();
+  if (!ids.includes(id)) {
+    localStorage.setItem(OWNED_KEY, JSON.stringify([...ids, id]));
+    notify();
+  }
+}
+
+export function unmarkOwned(id: string) {
+  if (!hasStorage()) return;
+  localStorage.setItem(
+    OWNED_KEY,
+    JSON.stringify(readOwnedIds().filter((x) => x !== id))
+  );
+  notify();
+}
+
+/**
+ * Publish a finished trip to the shared library and remember we own it.
+ * Best-effort: a failure (offline, no Blob store) leaves the local copy
+ * untouched. Returns true on success.
+ */
+export async function publishTrip(trip: Trip): Promise<boolean> {
+  try {
+    const res = await fetch("/api/publish", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(trip),
+    });
+    if (!res.ok) return false;
+    markOwned(trip.id);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Remove a trip from the shared library (and our owned set). */
+export async function unpublishTrip(id: string): Promise<void> {
+  try {
+    await fetch(`/api/trips/${id}`, { method: "DELETE" });
+  } catch {
+    // ignore — deletion is idempotent from the UI's perspective
+  }
+  unmarkOwned(id);
 }

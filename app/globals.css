@@ -567,6 +567,114 @@ button {
   color: white;
 }
 
+/* Trips gallery header: title + upload link */
+.gallery-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.upload-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-soft);
+  text-decoration: none;
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-chip);
+  transition: background 0.12s, color 0.12s;
+}
+
+.upload-link:hover {
+  background: var(--surface-alt);
+  color: var(--text);
+}
+
+/* Trip header: back link + export on one row */
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.export-btn {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-soft);
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-chip);
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.export-btn:hover {
+  background: var(--surface-alt);
+  color: var(--text);
+}
+
+/* Upload page */
+.upload-page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.upload-page h1 {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.upload-sub {
+  color: var(--text-soft);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.upload-drop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  border: 2px dashed var(--line);
+  border-radius: 16px;
+  color: var(--text-soft);
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+
+.upload-drop:hover {
+  border-color: var(--text-soft);
+  background: var(--surface-alt);
+}
+
+.upload-drop input {
+  display: none;
+}
+
+.upload-text {
+  min-height: 160px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  resize: vertical;
+}
+
+.upload-msg.error {
+  color: var(--red);
+  font-size: 14px;
+}
+
 /* ---------- Trip page ---------- */
 
 .trip-page {
