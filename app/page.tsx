@@ -15,6 +15,7 @@ import {
 } from "@/lib/clientStore";
 import { newSearchTrip } from "@/lib/merge";
 import { ensureRunning } from "@/lib/runner";
+import { googlePhotoProxy } from "@/lib/photoUrl";
 
 const HeroMap = dynamic(() => import("@/components/HeroMap"), { ssr: false });
 
@@ -135,11 +136,16 @@ export default function Home() {
   }
 
   function tripCover(trip: Trip): string | null {
-    return (
-      trip.spots.find((s) => s.photo)?.photo?.url ??
-      trip.videos[0]?.thumbnail ??
-      null
-    );
+    const spot = trip.spots.find((s) => s.photo);
+    if (spot?.photo) {
+      // Google photo URLs expire — serve via the proxy keyed on the durable
+      // placeId. Wikimedia photos are stable, so render those directly.
+      if (spot.photo.source === "google" && spot.placeId) {
+        return googlePhotoProxy(spot.placeId, 0);
+      }
+      return spot.photo.url;
+    }
+    return trip.videos[0]?.thumbnail ?? null;
   }
 
   function coverCard(t: Trip) {
