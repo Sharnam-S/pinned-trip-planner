@@ -7,6 +7,7 @@ import { CATEGORY_EMOJI, formatTimestamp, youtubeLink } from "@/lib/categories";
 import { getLocalTrip, saveLocalTrip, subscribeLocalTrips } from "@/lib/clientStore";
 import { addVideosToTrip, ensureRunning, isRunning } from "@/lib/runner";
 import { parseVideoId } from "@/lib/links";
+import { googlePhotoProxy } from "@/lib/photoUrl";
 import type { MapBounds } from "./TripMap";
 
 const TripMap = dynamic(() => import("./TripMap"), { ssr: false });
@@ -107,8 +108,23 @@ function spotPhotoUrl(spot: Spot): string | null {
 // never bills the Photos API. Local trips persist the resolved URLs back to
 // localStorage; sample trips keep them for this page view only.
 function useSpotPhotos(spot: Spot, tripId: string, local: boolean) {
-  const baseUrls =
-    spot.photos && spot.photos.length > 0
+  // Google photo URLs expire, so serve the whole Google set through /api/photo
+  // (keyed on the durable placeId + index) instead of the stored URLs. That
+  // also lets us render every photo up front — no lazy re-fetch, no /api/photos
+  // round-trip. Wikimedia / video-frame photos are stable and render directly.
+  const isGooglePhotos =
+    Boolean(spot.placeId) &&
+    (spot.photo?.source === "google" ||
+      (spot.photos?.some((p) => p.source === "google") ?? false) ||
+      (spot.morePhotoNames?.length ?? 0) > 0);
+  const googleCount =
+    (spot.photos?.length ?? (spot.photo ? 1 : 0)) + (spot.morePhotoNames?.length ?? 0);
+
+  const baseUrls = isGooglePhotos
+    ? Array.from({ length: Math.max(googleCount, 1) }, (_, k) =>
+        googlePhotoProxy(spot.placeId!, k)
+      )
+    : spot.photos && spot.photos.length > 0
       ? spot.photos.map((p) => p.url)
       : spotPhotoUrl(spot)
         ? [spotPhotoUrl(spot)!]
@@ -120,12 +136,13 @@ function useSpotPhotos(spot: Spot, tripId: string, local: boolean) {
   const fetchingRef = useRef(false);
 
   const urls = allUrls ?? baseUrls;
-  const pending = allUrls ? 0 : (spot.morePhotoNames?.length ?? 0);
+  // Google sets are already complete; only the legacy lazy path has pending.
+  const pending = isGooglePhotos || allUrls ? 0 : (spot.morePhotoNames?.length ?? 0);
   const total = urls.length + pending;
   const i = Math.min(index, Math.max(0, total - 1));
 
   const ensureAll = () => {
-    if (allUrls || pending === 0 || fetchingRef.current) return;
+    if (isGooglePhotos || allUrls || pending === 0 || fetchingRef.current) return;
     fetchingRef.current = true;
     fetch(`/api/photos`, {
       method: "POST",
