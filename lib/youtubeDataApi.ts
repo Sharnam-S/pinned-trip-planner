@@ -47,6 +47,9 @@ export async function searchVideosOfficial(query: string): Promise<SearchCandida
   searchUrl.searchParams.set("part", "snippet");
   searchUrl.searchParams.set("type", "video");
   searchUrl.searchParams.set("maxResults", "25");
+  // Bias (not filter) toward English results — extraction reads English
+  // caption tracks best; other languages still come through when dominant.
+  searchUrl.searchParams.set("relevanceLanguage", "en");
   searchUrl.searchParams.set("q", query);
   searchUrl.searchParams.set("key", key);
 

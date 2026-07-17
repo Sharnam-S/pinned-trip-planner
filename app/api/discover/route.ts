@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const ranked = await curateVideos(candidates, query, plan.resolvedDestination);
+  const ranked = await curateVideos(candidates, query, plan);
   if (ranked.length === 0) {
     return NextResponse.json(
       {
