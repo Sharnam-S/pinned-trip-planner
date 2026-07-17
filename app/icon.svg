@@ -1,6 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Brand mark: the "Pinned." map pin — black body, yellow brand dot,
-       hairline white halo so it stays visible on dark tab strips -->
-  <path d="M32 2C19.3 2 9 12.3 9 25c0 16.9 20.1 34.6 21 35.4a3 3 0 0 0 4 0C34.9 59.6 55 41.9 55 25 55 12.3 44.7 2 32 2z" fill="#111111" stroke="#ffffff" stroke-width="2.5" paint-order="stroke"/>
-  <circle cx="32" cy="25" r="10" fill="#ffc60a"/>
+  <!-- Brand mark: the landing page in miniature — an ink map pin with the
+       yellow brand dot, dropped through a cloud bank on the sky gradient.
+       The white halo keeps the pin crisp on any tab strip. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e2f2fa"/>
+      <stop offset="1" stop-color="#8fcbe9"/>
+    </linearGradient>
+    <clipPath id="tile">
+      <rect width="64" height="64" rx="14"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#tile)">
+    <rect width="64" height="64" fill="url(#sky)"/>
+    <g fill="#ffffff">
+      <circle cx="9" cy="53" r="10"/>
+      <circle cx="23" cy="48" r="12"/>
+      <circle cx="42" cy="47" r="13"/>
+      <circle cx="56" cy="52" r="10"/>
+      <rect x="0" y="50" width="64" height="14"/>
+    </g>
+    <g transform="translate(6.4 6) scale(0.8)">
+      <path d="M32 2C19.3 2 9 12.3 9 25c0 16.9 20.1 34.6 21 35.4a3 3 0 0 0 4 0C34.9 59.6 55 41.9 55 25 55 12.3 44.7 2 32 2z" fill="#10222f" stroke="#ffffff" stroke-width="3" paint-order="stroke"/>
+      <circle cx="32" cy="25" r="10.5" fill="#ffc60a"/>
+    </g>
+  </g>
 </svg>
