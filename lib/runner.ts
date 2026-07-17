@@ -51,6 +51,17 @@ async function run(tripId: string) {
   if (!trip) return;
 
   try {
+    // A fresh runner means nothing is actually mid-flight: any video still
+    // marked "processing" was orphaned when a prior page load was refreshed or
+    // navigated away before its request came back. Re-queue those so they get
+    // processed instead of hanging on a spinner forever — otherwise the build
+    // ends prematurely as "Done — 0 spots" with videos stuck processing.
+    const orphaned = trip.videos.filter((v) => v.status === "processing");
+    if (orphaned.length > 0) {
+      for (const v of orphaned) v.status = "pending";
+      save(trip);
+    }
+
     // Search-mode trip that hasn't found its videos yet
     if (trip.query && trip.videos.length === 0) {
       trip.status = "processing";
