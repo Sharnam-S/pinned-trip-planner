@@ -3,6 +3,7 @@
   --surface: #ffffff;
   --surface-alt: #f5f5f7;
   --text: #111111;
+  --ink: #141416;
   --text-soft: #6e6e73;
   --line: #ececec;
   --accent: #111111;
@@ -10,10 +11,16 @@
   --yellow-soft: #fff6da;
   --green: #34c759;
   --red: #ff3b30;
+  --blue-ink: #1b2b3a;
+  --blue-primary: #2f6fed;
   --shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
   --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.05), 0 6px 18px rgba(0, 0, 0, 0.07);
+  --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.05), 0 12px 32px rgba(0, 0, 0, 0.1),
+    0 24px 64px rgba(0, 0, 0, 0.08);
   --radius: 20px;
   --radius-chip: 999px;
+  --font-body: var(--font-sans), -apple-system, BlinkMacSystemFont,
+    "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
 }
 
 * {
@@ -28,8 +35,7 @@ body {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI",
-    Roboto, "Helvetica Neue", sans-serif;
+  font-family: var(--font-body);
   color: var(--text);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
@@ -73,418 +79,613 @@ button {
   background: var(--surface);
 }
 
-/* Hero — the product is the backdrop: a live map of a real trip */
-.hero {
+/* The whole landing sits on a grainy blue-sky gradient — deep enough that
+   the white clouds drifting over it actually register */
+.landing {
   position: relative;
-  height: 100vh;
-  min-height: 640px;
-  overflow: hidden;
+  min-height: 100vh;
+  color: var(--blue-ink);
+  background: linear-gradient(
+    180deg,
+    #e8f4fa 0%,
+    #c8e5f4 16%,
+    #a3d5ee 44%,
+    #97cfeb 70%,
+    #b4dcf1 100%
+  );
 }
 
-.hero-map {
-  position: absolute;
+/* Speckled paper grain over the gradient — visible, Linkrunner-style.
+   ::after so it paints above the cloud layer but below the content. */
+.landing::after {
+  content: "";
+  position: fixed;
   inset: 0;
-  /* Contain Leaflet's z-index:400 panes so hero content can sit above */
   z-index: 0;
+  pointer-events: none;
+  opacity: 0.9;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
 }
 
-.hero-map .leaflet-container {
-  width: 100%;
-  height: 100%;
-  font: inherit;
-  background: var(--surface-alt);
+.landing > * {
+  position: relative;
+  z-index: 1;
 }
 
-/* Soft white wash so the headline stays readable over any map */
-.hero-veil {
+/* Barely-there clouds drifting across the gradient. Big soft radial blobs,
+   transform-only animation, slow enough to feel like weather, not motion. */
+.landing > .cloud-layer {
   position: absolute;
   inset: 0;
+  z-index: 0;
+  overflow: hidden;
   pointer-events: none;
+}
+
+.cloud {
+  position: absolute;
+  border-radius: 50%;
   background: radial-gradient(
-    ellipse 70% 55% at 50% 46%,
-    rgba(255, 255, 255, 0.88) 0%,
-    rgba(255, 255, 255, 0.55) 55%,
+    closest-side,
+    rgba(255, 255, 255, 0.9) 0%,
+    rgba(255, 255, 255, 0.4) 52%,
     rgba(255, 255, 255, 0) 100%
   );
-  z-index: 5;
 }
 
-.hero-nav {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+.cloud.c1 {
+  width: 64vw;
+  height: 480px;
+  top: 1%;
+  left: -14%;
+  animation: cloud-drift-a 38s ease-in-out infinite alternate;
+}
+
+.cloud.c2 {
+  width: 52vw;
+  height: 440px;
+  top: 16%;
+  right: -16%;
+  opacity: 0.85;
+  animation: cloud-drift-b 48s ease-in-out infinite alternate;
+}
+
+.cloud.c3 {
+  width: 58vw;
+  height: 500px;
+  top: 42%;
+  left: 6%;
+  opacity: 0.7;
+  animation: cloud-drift-a 58s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes cloud-drift-a {
+  from {
+    transform: translate3d(-10%, 0, 0);
+  }
+  to {
+    transform: translate3d(22%, 4%, 0);
+  }
+}
+
+@keyframes cloud-drift-b {
+  from {
+    transform: translate3d(10%, 3%, 0);
+  }
+  to {
+    transform: translate3d(-20%, -3%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud {
+    animation: none;
+  }
+}
+
+.top-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 32px;
-  z-index: 20;
+  padding: 20px 38px;
 }
 
 .brand {
-  font-size: 24px;
-  font-weight: 900;
-  letter-spacing: -0.04em;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #10222f;
 }
 
 .brand-dot {
   color: var(--yellow);
 }
 
-.hero-center {
-  position: relative;
-  z-index: 10;
-  height: 100%;
+.nav-pill {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(27, 43, 58, 0.12);
+  border-radius: var(--radius-chip);
+  padding: 9px 18px;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.nav-pill:hover {
+  background: white;
+  box-shadow: var(--shadow-soft);
+}
+
+/* Hero: centered, Linkrunner-style — stat chip, headline, sub, search bar */
+.hero {
+  max-width: 1000px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   text-align: center;
-  padding: 24px;
+  padding: 48px 24px 72px;
 }
 
-.hero-center h1 {
-  font-size: clamp(34px, 5vw, 56px);
-  line-height: 1.04;
+.stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(20, 50, 70, 0.08);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 13.5px;
+  color: #33475a;
+  box-shadow: 0 1px 2px rgba(20, 50, 70, 0.05);
+  margin-bottom: 30px;
+}
+
+.stat-chip strong {
+  font-weight: 700;
+  color: #10222f;
+}
+
+.stat-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--blue-primary);
+}
+
+.hero h1 {
+  font-size: clamp(44px, 5.6vw, 72px);
+  font-weight: 600;
+  line-height: 1.05;
   letter-spacing: -0.035em;
-  max-width: 820px;
+  color: #17232e;
 }
 
 .hero-sub {
-  color: #3a3a3c;
-  font-size: 16px;
+  margin-top: 22px;
+  max-width: 680px;
+  font-size: clamp(15px, 1.4vw, 16.5px);
+  font-weight: 450;
   line-height: 1.6;
-  max-width: 580px;
-  margin-top: 18px;
+  color: #3d5266;
 }
 
-/* Frosted search pill — where / when / interests, Airbnb-style segments */
-.search-card {
-  margin-top: 30px;
-  width: min(880px, 100%);
+/* Hero elements rise in on load */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: rise-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.rise.r1 {
+  animation-delay: 0.08s;
+}
+.rise.r2 {
+  animation-delay: 0.2s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise {
+    animation: none;
+  }
+}
+
+/* The create-trip form as a clean white search bar under the headline */
+.search-bar {
+  margin-top: 34px;
+  width: min(860px, 100%);
   display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 0, 0, 0.07);
-  border-radius: 999px;
-  box-shadow: var(--shadow);
-  padding: 8px 8px 8px 18px;
+  align-items: stretch;
+  background: white;
+  border: 1px solid rgba(20, 50, 70, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(20, 50, 70, 0.06), 0 10px 30px rgba(20, 50, 70, 0.12);
+  padding: 7px;
+  text-align: left;
 }
 
-.search-field {
+.sb-field {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  text-align: left;
-  padding: 4px 14px 4px 10px;
-}
-
-.search-field.grow {
-  flex: 1;
+  gap: 3px;
+  justify-content: center;
+  padding: 7px 16px;
   min-width: 0;
 }
 
-.search-field label {
-  font-size: 10.5px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text);
+.sb-field.grow {
+  flex: 1;
 }
 
-.search-field input {
+.sb-field label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #7b8a98;
+}
+
+.sb-field input {
   border: none;
   background: none;
   font: inherit;
   font-size: 14px;
-  color: var(--text);
+  color: #17232e;
   outline: none;
   padding: 0;
   width: 100%;
 }
 
-.search-field input::placeholder {
-  color: var(--text-soft);
+.sb-field input::placeholder {
+  color: #9fadba;
 }
 
-.search-field input[type="date"] {
-  width: 128px;
+.sb-field input[type="date"] {
+  width: 118px;
   font-size: 13px;
 }
 
-.search-divider {
+.sb-divider {
   width: 1px;
-  height: 34px;
-  background: var(--line);
+  align-self: center;
+  height: 30px;
+  background: #e7edf2;
   flex-shrink: 0;
 }
 
-.search-card .btn-primary {
-  margin: 0;
+.sb-cta {
   flex-shrink: 0;
+  align-self: center;
   white-space: nowrap;
+  background: var(--blue-primary);
+  color: white;
+  border: none;
+  border-radius: 11px;
+  padding: 13px 24px;
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  box-shadow: 0 1px 2px rgba(20, 50, 70, 0.2);
+  transition: background 0.15s, transform 0.12s ease;
 }
 
-@media (max-width: 940px) {
-  .search-card {
-    flex-direction: column;
-    align-items: stretch;
-    border-radius: 24px;
-    padding: 14px;
-    gap: 10px;
-  }
-  .search-divider {
-    width: 100%;
-    height: 1px;
-  }
-  .search-field input[type="date"] {
-    width: 100%;
-  }
+.sb-cta:hover {
+  background: #245cd6;
+  transform: scale(1.02);
+}
+
+.sb-cta:disabled {
+  opacity: 0.55;
+  transform: none;
+  cursor: default;
 }
 
 .hero-error {
-  margin-top: 12px;
-  color: var(--red);
+  margin-top: 14px;
   font-size: 13px;
   font-weight: 600;
-  background: rgba(255, 255, 255, 0.85);
-  padding: 6px 14px;
-  border-radius: var(--radius-chip);
+  color: #c22a1e;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  padding: 7px 14px;
 }
 
-.hero-hint {
+.hero-fineprint {
   margin-top: 16px;
   font-size: 13px;
-  font-weight: 600;
-  color: var(--text-soft);
-  background: rgba(255, 255, 255, 0.7);
-  padding: 6px 14px;
-  border-radius: var(--radius-chip);
-  backdrop-filter: blur(8px);
+  font-style: italic;
+  color: #5d7386;
 }
 
-/* Creator quotes spawn around the hero, hold, then drift away.
-   Keep the duration in sync with QUOTE_LIFE_MS in page.tsx. */
-@keyframes bubble-life {
-  0% {
-    opacity: 0;
-    transform: translateY(18px) scale(0.95);
-  }
-  7% {
-    opacity: 1;
-    transform: none;
-  }
-  88% {
-    opacity: 1;
-    transform: translateY(-8px);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-18px);
-  }
-}
-
-.quote-bubble {
-  position: absolute;
-  z-index: 15;
-  /* Never wider than the gutter beside the 820px content column:
-     50vw − 410px (half column) − 24px (edge inset) − 16px (gap) */
-  width: min(300px, calc(50vw - 450px));
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  background: var(--surface);
-  border-radius: 18px;
-  box-shadow: var(--shadow);
-  padding: 14px 16px;
-  pointer-events: none;
-  animation: bubble-life 7s ease both;
-}
-
-/* Below this the gutters are too tight for a readable quote — skip them */
-@media (max-width: 1260px) {
-  .quote-bubble {
-    display: none;
-  }
-}
-
-.quote-bubble img {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-  background: var(--surface-alt);
-}
-
-.quote-bubble .q-text {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--text);
-}
-
-.quote-bubble .q-name {
-  margin-top: 5px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-soft);
-}
-
-/* Scroll hint — your saved trips live below the fold */
-@keyframes hint-bounce {
-  0%,
-  100% {
-    transform: translate(-50%, 0);
-  }
-  50% {
-    transform: translate(-50%, 5px);
-  }
-}
-
-.scroll-hint {
-  position: absolute;
-  left: 50%;
-  bottom: 40px;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: none;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: var(--shadow-soft);
-  border-radius: var(--radius-chip);
-  padding: 11px 20px;
-  color: var(--text);
-  animation: hint-bounce 1.8s ease-in-out infinite;
-  transition: box-shadow 0.15s;
-}
-
-.scroll-hint:hover {
-  box-shadow: var(--shadow);
-}
-
-.scroll-hint .hint-label {
-  font-size: 12.5px;
-  font-weight: 700;
-}
-
-.scroll-hint svg {
-  color: var(--text-soft);
-}
-
-/* Trips as destination covers */
-.trips-gallery {
-  max-width: 1100px;
-  margin: 72px auto 0;
-  padding: 0 24px;
-}
-
-.trips-gallery h2 {
-  font-size: 26px;
-  margin-bottom: 20px;
-}
-
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 18px;
-}
-
-.cover-card {
-  position: relative;
-  aspect-ratio: 4 / 3;
-  border-radius: 20px;
+/* The trips showcase — a proper browser window, Linkrunner-style:
+   chrome bar with dots + URL, then the app (sidebar + live trip preview) */
+.browser-frame {
+  width: min(1280px, calc(100% - 40px));
+  margin: 0 auto;
+  background: rgba(248, 251, 253, 0.92);
+  border: 1px solid rgba(20, 50, 70, 0.08);
+  border-radius: 22px;
+  box-shadow: 0 2px 6px rgba(20, 50, 70, 0.06), 0 24px 70px rgba(20, 50, 70, 0.18);
   overflow: hidden;
-  background: var(--surface-alt);
-  box-shadow: var(--shadow-soft);
-  transition: transform 0.15s ease, box-shadow 0.15s;
-  display: block;
 }
 
-.cover-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow);
+.chrome {
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 460px) 1fr;
+  align-items: center;
+  padding: 13px 18px;
 }
 
-.cover-card > img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+.chrome-dots {
+  display: flex;
+  gap: 7px;
 }
 
-.cover-fallback {
-  width: 100%;
-  height: 100%;
+.chrome-dots span {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #d3dde6;
+}
+
+.chrome-url {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 48px;
-}
-
-.cover-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0) 55%);
-  pointer-events: none;
-}
-
-.cover-card .badge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 2;
-}
-
-.cover-meta {
-  position: absolute;
-  left: 16px;
-  bottom: 14px;
-  right: 16px;
-  z-index: 2;
-  color: white;
-}
-
-.cover-name {
-  font-weight: 800;
-  font-size: 19px;
-  letter-spacing: -0.02em;
-}
-
-.cover-sub {
+  gap: 7px;
+  background: #e9eff4;
+  border-radius: 999px;
+  padding: 7px 16px;
   font-size: 12.5px;
-  opacity: 0.85;
-  margin-top: 2px;
+  font-weight: 500;
+  color: #7b8a98;
 }
 
-.cover-avatars {
+.chrome-url svg {
+  opacity: 0.7;
+}
+
+/* The app inside the window: white, inset, sidebar + preview */
+.app-body {
+  margin: 0 10px 10px;
+  background: white;
+  border: 1px solid #eaf0f5;
+  border-radius: 14px;
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  overflow: hidden;
+}
+
+.rail {
+  border-right: 1px solid #eef2f6;
+  padding: 16px 12px;
+  min-width: 0;
+}
+
+.rail-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #93a3b1;
+  padding: 0 12px;
+  margin-bottom: 10px;
+}
+
+.rail-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin: 3px 0;
+}
+
+.rail-name {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  border: none;
+  border-radius: 9px;
+  background: none;
+  padding: 8px 12px;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: #3d5266;
+  text-align: left;
+  transition: background 0.12s, color 0.12s;
+}
+
+.rail-name svg {
+  flex-shrink: 0;
+  opacity: 0.65;
+}
+
+.rail-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.rail-name:hover {
+  background: #f1f6fa;
+  color: #17232e;
+}
+
+/* Linkrunner-style selected item: filled blue, white text */
+.rail-row.on .rail-name {
+  background: var(--blue-primary);
+  color: white;
+  font-weight: 600;
+}
+
+.rail-row.on .rail-name svg {
+  opacity: 1;
+}
+
+.rail-status {
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.rail-status.processing {
+  background: var(--yellow);
+}
+
+.rail-status.error {
+  background: var(--red);
+}
+
+.rail-del {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: #9db4c4;
+  font-size: 17px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.12s, background 0.12s, color 0.12s;
+}
+
+.rail-row:hover .rail-del {
+  opacity: 1;
+}
+
+.rail-del:hover {
+  background: #fdeceb;
+  color: var(--red);
+}
+
+/* Desktop rendering of the trip page, scaled to fit; the page header is
+   cropped so the preview starts at the category chips like a product shot */
+.trip-preview {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1600 / 890;
+  overflow: hidden;
+  background: white;
+}
+
+.trip-preview iframe {
+  display: block;
+  border: 0;
+  transform-origin: top left;
+}
+
+/* Quiet escape hatch to the real page, floating over the live demo */
+.preview-open {
   position: absolute;
   right: 14px;
   bottom: 14px;
-  z-index: 2;
-  display: flex;
+  z-index: 5;
+  background: var(--blue-primary);
+  color: white;
+  padding: 9px 16px;
+  border-radius: var(--radius-chip);
+  font-size: 12.5px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(20, 50, 70, 0.25);
+  opacity: 0.92;
+  transition: opacity 0.15s, transform 0.12s ease;
 }
 
-.cover-avatars img {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid white;
-  margin-left: -8px;
-  object-fit: cover;
-  background: var(--surface-alt);
+.preview-open:hover {
+  opacity: 1;
+  transform: scale(1.04);
+}
+
+/* On phones the scaled-down UI is too small to use — link out instead */
+@media (max-width: 940px) {
+  .trip-preview iframe {
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 940px) {
+  .hero {
+    padding: 48px 20px 72px;
+  }
+  .search-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px;
+    gap: 4px;
+  }
+  .sb-divider {
+    width: 100%;
+    height: 1px;
+    align-self: auto;
+  }
+  .sb-field input[type="date"] {
+    width: 100%;
+  }
+  .sb-cta {
+    align-self: stretch;
+    padding: 14px;
+    margin-top: 6px;
+  }
+  .app-body {
+    grid-template-columns: 1fr;
+  }
+  .rail {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px 4px;
+    border-right: none;
+    border-bottom: 1px solid #eef2f6;
+    padding: 12px;
+  }
+  .rail-label {
+    width: 100%;
+    margin-bottom: 6px;
+  }
+  .rail-name {
+    font-size: 12.5px;
+    padding: 6px 10px;
+  }
 }
 
 .landing-footer {
   text-align: center;
-  color: var(--text-soft);
-  font-size: 13px;
-  padding: 72px 24px 48px;
+  padding: 90px 24px 52px;
+}
+
+.foot-brand {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #10222f;
+}
+
+.foot-tagline {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #33475a;
+}
+
+.foot-note {
+  margin-top: 20px;
+  font-size: 12px;
+  color: #59748a;
 }
 
 .btn-primary {
@@ -517,78 +718,6 @@ button {
   margin-left: -8px;
   object-fit: cover;
   background: var(--surface-alt);
-}
-
-.badge {
-  font-size: 12px;
-  font-weight: 700;
-  padding: 5px 12px;
-  border-radius: var(--radius-chip);
-  white-space: nowrap;
-}
-
-.badge.processing {
-  background: var(--yellow);
-  color: #111;
-}
-
-.badge.error {
-  background: var(--red);
-  color: white;
-}
-
-/* status badge yields the top-right corner to the delete button */
-.cover-card .badge.with-delete {
-  right: auto;
-  left: 12px;
-}
-
-.cover-delete {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 3;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
-  color: #444;
-  cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
-  transition: background 0.15s, color 0.15s;
-}
-
-.cover-delete:hover {
-  background: var(--red);
-  color: white;
-}
-
-/* Trips gallery header: title + upload link */
-.gallery-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.upload-link {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-soft);
-  text-decoration: none;
-  padding: 6px 14px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-chip);
-  transition: background 0.12s, color 0.12s;
-}
-
-.upload-link:hover {
-  background: var(--surface-alt);
-  color: var(--text);
 }
 
 /* Trip header: back link + export on one row */

@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
-import { Mention, Spot, Trip } from "@/lib/types";
+import { Trip } from "@/lib/types";
 import {
   deleteLocalTrip,
   listLocalTrips,
@@ -15,9 +14,13 @@ import {
 } from "@/lib/clientStore";
 import { newSearchTrip } from "@/lib/merge";
 import { ensureRunning } from "@/lib/runner";
-import { googlePhotoProxy } from "@/lib/photoUrl";
 
-const HeroMap = dynamic(() => import("@/components/HeroMap"), { ssr: false });
+// The preview iframe renders the trip page at a fixed desktop size, then
+// scales it down to fit its frame. The page header (back link + title) is
+// cropped so the preview starts at the category chips.
+const PREVIEW_W = 1600;
+const PREVIEW_H = 1000;
+const PREVIEW_CROP = 110;
 
 export default function Home() {
   const router = useRouter();
@@ -30,6 +33,7 @@ export default function Home() {
   const [interests, setInterests] = useState("");
   const [error, setError] = useState("");
   const [creating, setCreating] = useState(false);
+  const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
 
   useEffect(() => {
     const sync = () => {
@@ -65,38 +69,24 @@ export default function Home() {
     return s;
   }, [ownedIds, localTrips]);
 
-  // The hero showcases the freshest ready trip — the most spots wins a tie so
-  // the map always looks alive.
-  const heroTrip = useMemo(
-    () =>
-      allTrips
-        .filter((t) => t.status === "ready" && t.spots.length > 0)
-        .sort((a, b) => b.spots.length - a.spots.length)[0] ?? null,
+  const totalSpots = useMemo(
+    () => allTrips.reduce((n, t) => n + t.spots.length, 0),
     [allTrips]
   );
 
-  const heroSpots: Spot[] = useMemo(
+  const selectedTrip = useMemo(
     () =>
-      heroTrip
-        ? [...heroTrip.spots]
-            .sort((a, b) => b.mentions.length - a.mentions.length)
-            .slice(0, 10)
-        : [],
-    [heroTrip]
+      allTrips.find((t) => t.id === selectedTripId) ??
+      allTrips.find((t) => t.status === "ready" && t.spots.length > 0) ??
+      allTrips[0] ??
+      null,
+    [allTrips, selectedTripId]
   );
 
   function removeTrip(id: string) {
     deleteLocalTrip(id); // no-op if it isn't a local trip
     void unpublishTrip(id); // remove from the shared library + owned set
   }
-
-  const heroQuotes: Mention[] = useMemo(() => {
-    if (!heroTrip) return [];
-    return heroTrip.spots
-      .flatMap((s) => s.mentions)
-      .filter((m) => m.quote && m.quote.length > 30 && m.quote.length < 140 && m.channelAvatar)
-      .slice(0, 12);
-  }, [heroTrip]);
 
   function createTrip() {
     setError("");
@@ -125,270 +115,205 @@ export default function Home() {
     router.push(`/trip/${id}`);
   }
 
-  function uniqueCreators(trip: Trip) {
-    const seen = new Map<string, string>();
-    for (const v of trip.videos) {
-      if (v.channelName && !seen.has(v.channelName)) {
-        seen.set(v.channelName, v.channelAvatar);
-      }
-    }
-    return [...seen.entries()].slice(0, 4);
-  }
-
-  function tripCover(trip: Trip): string | null {
-    const spot = trip.spots.find((s) => s.photo);
-    if (spot?.photo) {
-      // Google photo URLs expire — serve via the proxy keyed on the durable
-      // placeId. Wikimedia photos are stable, so render those directly.
-      if (spot.photo.source === "google" && spot.placeId) {
-        return googlePhotoProxy(spot.placeId, 0);
-      }
-      return spot.photo.url;
-    }
-    return trip.videos[0]?.thumbnail ?? null;
-  }
-
-  function coverCard(t: Trip) {
-    const cover = tripCover(t);
-    const deletable = deletableIds.has(t.id);
-    return (
-      <a key={t.id} href={`/trip/${t.id}`} className="cover-card">
-        {cover ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={cover} alt={t.name} loading="lazy" />
-        ) : (
-          <div className="cover-fallback">🗺️</div>
-        )}
-        {/* ready needs no label; in-flight and failed builds still do */}
-        {t.status !== "ready" && (
-          <span className={`badge ${t.status} ${deletable ? "with-delete" : ""}`}>
-            {t.status}
-          </span>
-        )}
-        {deletable && (
-          <button
-            className="cover-delete"
-            title="Delete this trip"
-            aria-label={`Delete ${t.name}`}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              removeTrip(t.id);
-            }}
-          >
-            <svg width="13" height="14" viewBox="0 0 13 14" fill="none" aria-hidden="true">
-              <path
-                d="M1 3.5h11M5 1h3M2.5 3.5l.7 8.6a1 1 0 001 .9h4.6a1 1 0 001-.9l.7-8.6M5.2 6v4M7.8 6v4"
-                stroke="currentColor"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-        )}
-        <div className="cover-meta">
-          <div className="cover-name">{t.name}</div>
-          <div className="cover-sub">
-            {t.videos.length} video{t.videos.length === 1 ? "" : "s"} ·{" "}
-            {t.spots.length} spot{t.spots.length === 1 ? "" : "s"}
-          </div>
-        </div>
-        <div className="cover-avatars">
-          {uniqueCreators(t).map(([name, avatar]) =>
-            avatar ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img key={name} src={avatar} alt={name} title={name} />
-            ) : null
-          )}
-        </div>
-      </a>
-    );
-  }
-
-  const hasTrips = allTrips.length > 0;
-
   return (
     <main className="landing">
-      <section className="hero">
-        <HeroMap spots={heroSpots} />
-        <div className="hero-veil" />
+      {/* Soft clouds drifting behind everything */}
+      <div className="cloud-layer" aria-hidden="true">
+        <div className="cloud c1" />
+        <div className="cloud c2" />
+        <div className="cloud c3" />
+      </div>
 
-        <nav className="hero-nav">
-          <div className="brand">
-            Pinned<span className="brand-dot">.</span>
-          </div>
-        </nav>
-
-        <div className="hero-center">
-          <h1>
-            Every place they raved about.
-            <br />
-            On one map.
-          </h1>
-          <p className="hero-sub">
-            Tell us where you&rsquo;re going. We find the best travel videos, read
-            every word, and pin every spot creators actually recommend — with a
-            link back to the exact moment each one comes up.
-          </p>
-
-          <div className="search-card">
-            <div className="search-field grow">
-              <label htmlFor="dest">Where</label>
-              <input
-                id="dest"
-                type="text"
-                value={destination}
-                onChange={(e) => setDestination(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && createTrip()}
-                placeholder="Tbilisi, Georgia"
-                disabled={creating}
-              />
-            </div>
-            <div className="search-divider" />
-            <div className="search-field">
-              <label htmlFor="from">From</label>
-              <input
-                id="from"
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                disabled={creating}
-              />
-            </div>
-            <div className="search-divider" />
-            <div className="search-field">
-              <label htmlFor="to">To</label>
-              <input
-                id="to"
-                type="date"
-                value={endDate}
-                min={startDate || undefined}
-                onChange={(e) => setEndDate(e.target.value)}
-                disabled={creating}
-              />
-            </div>
-            <div className="search-divider" />
-            <div className="search-field grow">
-              <label htmlFor="interests">Interests</label>
-              <input
-                id="interests"
-                type="text"
-                value={interests}
-                onChange={(e) => setInterests(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && createTrip()}
-                placeholder="skiing, wine, street food…"
-                disabled={creating}
-              />
-            </div>
-            <button className="btn-primary" onClick={createTrip} disabled={creating}>
-              {creating ? "Searching…" : "Build my map"}
-            </button>
-          </div>
-          {error && <div className="hero-error">{error}</div>}
-          <div className="hero-hint">
-            Dates and interests are optional — they tune which videos we pick.
-          </div>
+      <nav className="top-nav">
+        <div className="brand">
+          Pinned<span className="brand-dot">.</span>
         </div>
+        <a className="nav-pill" href="/uploadtrip">
+          Upload a trip
+        </a>
+      </nav>
 
-        {heroQuotes.length > 0 && <QuoteField quotes={heroQuotes} />}
-
-        {hasTrips && (
-          <button
-            className="scroll-hint"
-            onClick={() =>
-              document
-                .querySelector(".trips-gallery")
-                ?.scrollIntoView({ behavior: "smooth" })
-            }
-          >
-            <span className="hint-label">Trips</span>
-            <svg width="16" height="9" viewBox="0 0 16 9" fill="none" aria-hidden="true">
-              <path d="M1 1l7 6.5L15 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
+      <section className="hero">
+        {totalSpots > 0 && (
+          <div className="stat-chip rise r1">
+            <span className="stat-dot" />
+            <strong>{totalSpots.toLocaleString()}</strong>&nbsp;spots pinned
+          </div>
         )}
+        <h1 className="rise r1">
+Every YouTube travel
+          <br />
+          guide, mapped
+        </h1>
+        <p className="hero-sub rise r2">
+          Tell us where you're going. We'll find the best YouTube videos, extract every recommendation, and build a map you can actually explore. 
+        </p>
+
+        <div className="search-bar rise r2">
+          <div className="sb-field grow">
+            <label htmlFor="dest">Where</label>
+            <input
+              id="dest"
+              type="text"
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && createTrip()}
+              placeholder="Tbilisi, Georgia"
+              disabled={creating}
+            />
+          </div>
+          <div className="sb-divider" />
+          <div className="sb-field">
+            <label htmlFor="from">From</label>
+            <input
+              id="from"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              disabled={creating}
+            />
+          </div>
+          <div className="sb-divider" />
+          <div className="sb-field">
+            <label htmlFor="to">To</label>
+            <input
+              id="to"
+              type="date"
+              value={endDate}
+              min={startDate || undefined}
+              onChange={(e) => setEndDate(e.target.value)}
+              disabled={creating}
+            />
+          </div>
+          <div className="sb-divider" />
+          <div className="sb-field grow">
+            <label htmlFor="interests">Interests</label>
+            <input
+              id="interests"
+              type="text"
+              value={interests}
+              onChange={(e) => setInterests(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && createTrip()}
+              placeholder="skiing, wine, street food…"
+              disabled={creating}
+            />
+          </div>
+          <button className="sb-cta" onClick={createTrip} disabled={creating}>
+            {creating ? "Searching…" : "Build my map"}
+          </button>
+        </div>
+        {error && <div className="hero-error">{error}</div>}
+        <p className="hero-fineprint rise r2">
+          Dates and interests are optional — they tune which videos we pick.
+        </p>
       </section>
 
-      {hasTrips && (
-        <section className="trips-gallery">
-          <div className="gallery-head">
-            <h2>Trips</h2>
-            <a className="upload-link" href="/uploadtrip">
-              Upload a trip
-            </a>
+      {selectedTrip && (
+        <section className="browser-frame">
+          <div className="chrome">
+            <div className="chrome-dots">
+              <span />
+              <span />
+              <span />
+            </div>
+            <div className="chrome-url">
+              <svg width="11" height="12" viewBox="0 0 11 12" fill="none" aria-hidden="true">
+                <rect x="1" y="5" width="9" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+                <path d="M3.2 5V3.8a2.3 2.3 0 014.6 0V5" stroke="currentColor" strokeWidth="1.3" />
+              </svg>
+              pinned.app/trips
+            </div>
+            <div />
           </div>
-          <div className="gallery-grid">{allTrips.map((t) => coverCard(t))}</div>
+          <div className="app-body">
+            <aside className="rail">
+              <div className="rail-label">Trips</div>
+              {allTrips.map((t) => (
+                <div
+                  key={t.id}
+                  className={`rail-row ${selectedTrip.id === t.id ? "on" : ""}`}
+                >
+                  <button
+                    className="rail-name"
+                    onClick={() => setSelectedTripId(t.id)}
+                  >
+                    <svg width="13" height="13" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+                      <path
+                        d="M11 20s7-6.1 7-11a7 7 0 10-14 0c0 4.9 7 11 7 11z"
+                        stroke="currentColor"
+                        strokeWidth="2.2"
+                        strokeLinejoin="round"
+                      />
+                      <circle cx="11" cy="9" r="2.5" stroke="currentColor" strokeWidth="2.2" />
+                    </svg>
+                    <span className="rail-text">{t.name}</span>
+                    {t.status !== "ready" && (
+                      <span className={`rail-status ${t.status}`} />
+                    )}
+                  </button>
+                  {deletableIds.has(t.id) && (
+                    <button
+                      className="rail-del"
+                      title="Delete this trip"
+                      aria-label={`Delete ${t.name}`}
+                      onClick={() => removeTrip(t.id)}
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              ))}
+            </aside>
+            <TripPreview tripId={selectedTrip.id} />
+          </div>
         </section>
       )}
 
       <footer className="landing-footer">
-        Built from creators&rsquo; actual words — never sponsored lists.
+        <div className="foot-brand">
+          Pinned<span className="brand-dot">.</span>
+        </div>
+        <p className="foot-tagline">Every place they raved about. On one map.</p>
+        <p className="foot-note">
+          Built from creators&rsquo; actual words — never sponsored lists.
+        </p>
       </footer>
     </main>
   );
 }
 
-// Quotes pop up along the hero's side gutters — real people vouching for real
-// places — then drift away. They hug the screen edges; their width is capped
-// in CSS to the gutter beside the content column, so they can never reach the
-// headline or the paste bar.
-const QUOTE_SLOTS: React.CSSProperties[] = [
-  { left: 24, top: "10%" },
-  { right: 24, top: "32%" },
-  { left: 24, bottom: "24%" },
-  { right: 24, bottom: "8%" },
-  { left: 24, top: "40%" },
-  { right: 24, top: "12%" },
-];
-
-const QUOTE_LIFE_MS = 7000;
-const QUOTE_SPAWN_MS = 2800;
-
-function QuoteField({ quotes }: { quotes: Mention[] }) {
-  const [bubbles, setBubbles] = useState<
-    { key: number; quote: Mention; slot: number }[]
-  >([]);
+// A live, fully interactive desktop rendering of the real trip page, scaled
+// to fit — filter chips, spot cards, and the map all work right here.
+function TripPreview({ tripId }: { tripId: string }) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.6);
 
   useEffect(() => {
-    let key = 0;
-    let qi = 0;
-    let slot = 0;
-    const timeouts = new Set<ReturnType<typeof setTimeout>>();
-    const spawn = () => {
-      const bubble = {
-        key: key++,
-        quote: quotes[qi++ % quotes.length],
-        slot: slot++ % QUOTE_SLOTS.length,
-      };
-      setBubbles((cur) => [...cur, bubble]);
-      const t = setTimeout(() => {
-        setBubbles((cur) => cur.filter((b) => b.key !== bubble.key));
-        timeouts.delete(t);
-      }, QUOTE_LIFE_MS);
-      timeouts.add(t);
-    };
-    spawn();
-    const interval = setInterval(spawn, QUOTE_SPAWN_MS);
-    return () => {
-      clearInterval(interval);
-      timeouts.forEach(clearTimeout);
-      setBubbles([]); // drop in-flight bubbles (StrictMode remount, quote change)
-    };
-  }, [quotes]);
+    const el = wrapRef.current;
+    if (!el) return;
+    const fit = () => setScale(el.clientWidth / PREVIEW_W);
+    const ro = new ResizeObserver(fit);
+    ro.observe(el);
+    fit();
+    return () => ro.disconnect();
+  }, []);
 
   return (
-    <>
-      {bubbles.map((b) => (
-        <div className="quote-bubble" style={QUOTE_SLOTS[b.slot]} key={b.key}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={b.quote.channelAvatar} alt={b.quote.channelName} />
-          <div>
-            <div className="q-text">&ldquo;{b.quote.quote}&rdquo;</div>
-            <div className="q-name">{b.quote.channelName}</div>
-          </div>
-        </div>
-      ))}
-    </>
+    <div className="trip-preview" ref={wrapRef}>
+      <iframe
+        key={tripId}
+        src={`/trip/${tripId}`}
+        title="Live trip demo"
+        width={PREVIEW_W}
+        height={PREVIEW_H}
+        style={{
+          transform: `scale(${scale})`,
+          marginTop: -PREVIEW_CROP * scale,
+        }}
+      />
+      <a className="preview-open" href={`/trip/${tripId}`}>
+        Open full trip ↗
+      </a>
+    </div>
   );
 }
