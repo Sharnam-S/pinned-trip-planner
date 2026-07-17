@@ -125,39 +125,83 @@ async function run(tripId: string) {
   }
 }
 
+/**
+ * How many videos to read at once. Each /api/process-video call fetches a
+ * YouTube transcript through the shared residential proxy, so we keep this
+ * modest: too many concurrent fetches from one IP raises YouTube's bot-check
+ * odds, and the win from more lanes flattens out quickly anyway.
+ */
+const CONCURRENCY = 4;
+
 async function processPending(tripId: string) {
+  const start = getLocalTrip(tripId);
+  if (!start) return;
+
+  const pendingIds = start.videos
+    .filter((v) => v.status === "pending")
+    .map((v) => v.id);
+  if (pendingIds.length === 0) return;
+
+  // Flip every pending video to "processing" in one write so the UI shows the
+  // whole batch spinning at once, then fan the requests out.
+  for (const id of pendingIds) {
+    const v = start.videos.find((x) => x.id === id);
+    if (v) v.status = "processing";
+  }
+  start.status = "processing";
+  start.progress =
+    pendingIds.length === 1
+      ? "Reading transcript — extracting spots with Claude…"
+      : `Reading ${pendingIds.length} transcripts in parallel — extracting spots with Claude…`;
+  save(start);
+
+  const queue = [...pendingIds];
+  let done = 0;
+
+  async function worker() {
+    for (let id = queue.shift(); id !== undefined; id = queue.shift()) {
+      await processOne(tripId, id, pendingIds.length, () => ++done);
+    }
+  }
+
+  await Promise.all(
+    Array.from({ length: Math.min(CONCURRENCY, pendingIds.length) }, worker)
+  );
+}
+
+/** Reads and folds in a single video. Each getLocalTrip→save is synchronous
+ *  (no await between), so concurrent workers never clobber each other's writes. */
+async function processOne(
+  tripId: string,
+  videoId: string,
+  total: number,
+  markDone: () => number
+) {
   let trip = getLocalTrip(tripId);
   if (!trip) return;
 
-  for (const ref of trip.videos.filter((v) => v.status === "pending")) {
+  try {
+    const result = await post<VideoResult>("/api/process-video", {
+      videoId,
+      // Fresh snapshot: videos finished so far have already merged in their
+      // spots, so later requests can skip re-resolving them. Anything that
+      // slips through parallel timing is de-duped by applyVideoResult.
+      knownSpotNames: trip.spots.map((s) => s.name),
+    });
     trip = getLocalTrip(tripId);
     if (!trip) return;
-    const video = trip.videos.find((v) => v.id === ref.id)!;
-    video.status = "processing";
-    trip.status = "processing";
-    trip.progress = video.title
-      ? `Reading "${video.title}" — extracting spots with Claude…`
-      : "Reading transcript — extracting spots with Claude…";
+    const added = applyVideoResult(trip, result);
+    const n = markDone();
+    trip.progress = `Read ${n}/${total} — "${result.video.title}" added ${added} new spot${added === 1 ? "" : "s"}.`;
     save(trip);
-
-    try {
-      const result = await post<VideoResult>("/api/process-video", {
-        videoId: ref.id,
-        knownSpotNames: trip.spots.map((s) => s.name),
-      });
-      trip = getLocalTrip(tripId);
-      if (!trip) return;
-      const added = applyVideoResult(trip, result);
-      trip.progress = `Finished "${result.video.title}" — found ${added} new spots.`;
-      save(trip);
-    } catch (err) {
-      trip = getLocalTrip(tripId);
-      if (!trip) return;
-      const v = trip.videos.find((x) => x.id === ref.id)!;
-      v.status = "error";
-      v.error = err instanceof Error ? err.message : String(err);
-      save(trip);
-    }
+  } catch (err) {
+    trip = getLocalTrip(tripId);
+    if (!trip) return;
+    markDone();
+    const v = trip.videos.find((x) => x.id === videoId)!;
+    v.status = "error";
+    v.error = err instanceof Error ? err.message : String(err);
+    save(trip);
   }
 }
 
