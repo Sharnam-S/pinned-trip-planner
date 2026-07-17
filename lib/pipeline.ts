@@ -10,7 +10,14 @@ import {
   googlePlacePhotoNames,
   isGoogleEnabled,
 } from "./google";
-import { normalizeName, VideoResult } from "./merge";
+import {
+  CachedVideo,
+  mergeThingsToKnow,
+  normalizeName,
+  partitionCachedVideo,
+  VideoResult,
+} from "./merge";
+import { getCachedVideo, putCachedVideo, VIDEO_CACHE_VERSION } from "./videoCache";
 import { Mention, Spot, SpotPhotoRef, Trip } from "./types";
 
 /**
@@ -18,19 +25,41 @@ import { Mention, Spot, SpotPhotoRef, Trip } from "./types";
  * trip: video metadata, the video's own destination, fully-resolved new spots
  * (coords, placeId, cover photo), and mentions of already-known spots.
  *
- * Stateless on purpose — trips live in the visitor's localStorage, so the
- * browser orchestrates videos one call at a time and saves between calls.
+ * Cross-trip cached by YouTube id: the expensive work (transcript fetch, Claude
+ * extraction, Google lookups) is trip-independent, so the first trip to include
+ * a video pays for it and every later trip — yours or a friend's — reuses the
+ * stored result and just re-partitions it against its own known spots.
+ *
+ * Stateless per trip on purpose — trips live in the visitor's localStorage, so
+ * the browser orchestrates videos one call at a time and saves between calls.
  */
 export async function processVideo(
   videoId: string,
   knownSpotNames: string[]
 ): Promise<VideoResult> {
-  const data = await fetchVideoData(videoId);
-  const extraction = await extractSpots(data, knownSpotNames);
+  const cached = await getCachedVideo(videoId);
+  if (cached) return partitionCachedVideo(cached, knownSpotNames);
 
-  const known = new Set(knownSpotNames.map(normalizeName));
-  const newSpots: Spot[] = [];
-  const knownMentions: VideoResult["knownMentions"] = [];
+  const fresh = await processVideoRaw(videoId);
+  // Best-effort: a cache write must never fail the video — worst case the next
+  // trip re-processes it.
+  await putCachedVideo(fresh).catch((err) =>
+    console.warn("[videoCache] write failed:", err instanceof Error ? err.message : err)
+  );
+  return partitionCachedVideo(fresh, knownSpotNames);
+}
+
+/**
+ * Trip-independent processing of one video: fetch it and fully resolve EVERY
+ * spot it discusses (no knownSpotNames — that partitioning happens per trip in
+ * `partitionCachedVideo`). This is what we cache and share across trips.
+ */
+export async function processVideoRaw(videoId: string): Promise<CachedVideo> {
+  const data = await fetchVideoData(videoId);
+  const extraction = await extractSpots(data, []);
+
+  const byName = new Map<string, Spot>();
+  const spots: Spot[] = [];
 
   for (const raw of extraction.spots) {
     const mention: Mention = {
@@ -42,11 +71,13 @@ export async function processVideo(
       quote: raw.quote,
     };
 
-    if (known.has(normalizeName(raw.name))) {
-      knownMentions.push({ name: raw.name, mention, thingsToKnow: raw.things_to_know });
+    // Same place mentioned twice in one video — keep one spot (one mention per
+    // video), just fold in any extra tips.
+    const existing = byName.get(normalizeName(raw.name));
+    if (existing) {
+      mergeThingsToKnow(existing, raw.things_to_know);
       continue;
     }
-    known.add(normalizeName(raw.name)); // dedupe within this video too
 
     // Disambiguate with THIS video's destination, not a trip-level one —
     // a multi-region trip (e.g. south-coast + Arugam Bay videos) would
@@ -61,7 +92,7 @@ export async function processVideo(
       extraction.destination?.name ?? null
     );
 
-    newSpots.push({
+    const spot: Spot = {
       id: crypto.randomUUID(),
       name: raw.name,
       category: raw.category,
@@ -75,10 +106,14 @@ export async function processVideo(
       photo: resolved.photo ?? null,
       photos: resolved.photos,
       morePhotoNames: resolved.morePhotoNames,
-    });
+    };
+    byName.set(normalizeName(raw.name), spot);
+    spots.push(spot);
   }
 
   return {
+    version: VIDEO_CACHE_VERSION,
+    cachedAt: new Date().toISOString(),
     video: {
       id: data.id,
       url: `https://www.youtube.com/watch?v=${data.id}`,
@@ -89,8 +124,7 @@ export async function processVideo(
       spotCount: extraction.spots.length,
     },
     destination: extraction.destination,
-    newSpots,
-    knownMentions,
+    spots,
   };
 }
 

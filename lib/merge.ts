@@ -65,6 +65,57 @@ export interface VideoResult {
   knownMentions: { name: string; mention: Mention; thingsToKnow?: string[] }[];
 }
 
+/**
+ * Trip-independent read of one video: video metadata plus EVERY spot it
+ * discusses, fully resolved (coords, placeId, cover photo). This is what gets
+ * cached and shared across trips — two people whose Sri Lanka trips include the
+ * same video reuse this instead of re-fetching the transcript and re-billing
+ * Claude + Google. Re-partition it per trip with `partitionCachedVideo`.
+ */
+export interface CachedVideo {
+  /** Bump when the resolved shape changes so stale caches are re-processed. */
+  version: number;
+  cachedAt: string;
+  video: VideoResult["video"];
+  destination: Destination;
+  /** Every spot the video discusses, each with its own mention. */
+  spots: Spot[];
+}
+
+/**
+ * Split a cached (trip-independent) video into the newSpots / knownMentions a
+ * specific trip needs: spots the trip already has fold in as mentions, the rest
+ * are new. Pure and uses the same name matching `processVideo` did, so a cache
+ * hit yields exactly what a fresh run with these `knownSpotNames` would have.
+ */
+export function partitionCachedVideo(
+  cached: CachedVideo,
+  knownSpotNames: string[]
+): VideoResult {
+  const known = new Set(knownSpotNames.map(normalizeName));
+  const newSpots: Spot[] = [];
+  const knownMentions: VideoResult["knownMentions"] = [];
+  for (const spot of cached.spots) {
+    if (known.has(normalizeName(spot.name))) {
+      knownMentions.push({
+        name: spot.name,
+        // A cached spot's mentions are all from this one video, so the first
+        // carries this video's reference (the merge dedupes by videoId anyway).
+        mention: spot.mentions[0],
+        thingsToKnow: spot.thingsToKnow,
+      });
+    } else {
+      newSpots.push(spot);
+    }
+  }
+  return {
+    video: cached.video,
+    destination: cached.destination,
+    newSpots,
+    knownMentions,
+  };
+}
+
 /** Folds one processed video into the trip. Returns # of spots added. */
 export function applyVideoResult(trip: Trip, result: VideoResult): number {
   const video = trip.videos.find((v) => v.id === result.video.id);
