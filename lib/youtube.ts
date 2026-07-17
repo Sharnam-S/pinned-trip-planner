@@ -1,4 +1,6 @@
 import { Innertube } from "youtubei.js";
+import { ytFetch, proxyEnabled } from "./proxyFetch";
+import { hasDataApiKey, searchVideosOfficial } from "./youtubeDataApi";
 
 let ytPromise: Promise<Innertube> | null = null;
 
@@ -10,8 +12,12 @@ let ytPromise: Promise<Innertube> | null = null;
  * is all that's needed locally — if any minting step fails.
  */
 async function createClient(): Promise<Innertube> {
+  console.log(
+    `[youtube] InnerTube client init — proxy ${proxyEnabled ? "ON" : "off"}, ` +
+      `search via ${hasDataApiKey() ? "Data API" : "InnerTube"}`
+  );
   try {
-    const base = await Innertube.create({ retrieve_player: false });
+    const base = await Innertube.create({ retrieve_player: false, fetch: ytFetch });
     const visitorData = base.session.context.client.visitorData;
     if (!visitorData) throw new Error("no visitor data");
 
@@ -23,7 +29,7 @@ async function createClient(): Promise<Innertube> {
     Object.assign(globalThis, { window: dom.window, document: dom.window.document });
     try {
       const bgConfig = {
-        fetch: (input: string | URL | Request, init?: RequestInit) => fetch(input, init),
+        fetch: (input: string | URL | Request, init?: RequestInit) => ytFetch(input, init),
         globalObj: globalThis,
         identifier: visitorData,
         requestKey: "O43z0dpjhgX20SCx4KAo",
@@ -43,6 +49,7 @@ async function createClient(): Promise<Innertube> {
         po_token: poToken.poToken,
         visitor_data: visitorData,
         generate_session_locally: true,
+        fetch: ytFetch,
       });
     } finally {
       delete (globalThis as Record<string, unknown>).window;
@@ -53,7 +60,7 @@ async function createClient(): Promise<Innertube> {
       "[youtube] po_token minting failed, using plain session:",
       err instanceof Error ? err.message : err
     );
-    return Innertube.create({ generate_session_locally: true });
+    return Innertube.create({ generate_session_locally: true, fetch: ytFetch });
   }
 }
 
@@ -75,8 +82,16 @@ export interface SearchCandidate {
   published: string;
 }
 
-/** Keyless YouTube search via InnerTube — same client we fetch transcripts with. */
+/**
+ * YouTube search. Prefers the official Data API v3 when YOUTUBE_API_KEY is set
+ * (reliable from datacenter IPs — googleapis.com isn't bot-checked); otherwise
+ * falls back to the keyless InnerTube search (same client we fetch transcripts
+ * with, and the only option locally without a key).
+ */
 export async function searchVideos(query: string): Promise<SearchCandidate[]> {
+  if (hasDataApiKey()) {
+    return searchVideosOfficial(query);
+  }
   const yt = await getClient();
   const res = await yt.search(query, { type: "video" });
   /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -150,7 +165,7 @@ async function getInfoWithCaptions(yt: Innertube, videoId: string) {
  *  isn't behind the bot check that blocks video info from server IPs. */
 async function fetchOEmbed(videoId: string) {
   try {
-    const res = await fetch(
+    const res = await ytFetch(
       `https://www.youtube.com/oembed?url=${encodeURIComponent(
         `https://www.youtube.com/watch?v=${videoId}`
       )}&format=json`,
@@ -216,7 +231,7 @@ export async function fetchVideoData(videoId: string): Promise<VideoData> {
     const track =
       tracks.find((t) => t.language_code?.startsWith("en")) ?? tracks[0];
     try {
-      const res = await fetch(`${track.base_url}&fmt=json3`, {
+      const res = await ytFetch(`${track.base_url}&fmt=json3`, {
         signal: AbortSignal.timeout(15000),
       });
       if (res.ok) {
