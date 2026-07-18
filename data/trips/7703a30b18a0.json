@@ -1616,7 +1616,7 @@
     {
       "id": "4977e478-d5bf-43e2-9d76-266b73090078",
       "name": "Kumala Monastery",
-      "category": "temple",
+      "category": "landmark",
       "description": "An archaeological site built in 246 BC with complex history and one of the only cylindrical dagabas to survive in Sri Lanka. Has over 200 caves to explore. Best visited in morning or early afternoon with an undeniable sense of peace at the summit.",
       "lat": 6.6721243999999995,
       "lng": 81.743149,
@@ -2004,7 +2004,7 @@
     {
       "id": "4e67eed7-5302-4820-8da8-8a5032a349f7",
       "name": "Buddhist Temple with Fig Tree",
-      "category": "temple",
+      "category": "landmark",
       "description": "One of the oldest Buddhist temples in Sri Lanka, notable for having a sapling from the fig tree under which Buddha attained enlightenment, reportedly brought from that location.",
       "lat": 5.974585299999999,
       "lng": 80.42464860000001,

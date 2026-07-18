@@ -636,7 +636,7 @@
     {
       "id": "34da4011-c4f3-4f11-8a97-b28042ce9de6",
       "name": "Sioni Cathedral",
-      "category": "temple",
+      "category": "landmark",
       "description": "One of the most sacred churches in Georgia, named after Mount Zion in Jerusalem and first built during the 6th century. A prime example of Georgian religious architecture with a central dome set on a cross-in-square floor plan, it has been destroyed and rebuilt multiple times through invasions and disasters.",
       "lat": 41.6913325,
       "lng": 44.807447599999996,
@@ -816,7 +816,7 @@
     {
       "id": "33ed368f-cfb9-424f-8bd0-1bbc3b087a93",
       "name": "Holy Trinity Cathedral (Sameba)",
-      "category": "temple",
+      "category": "landmark",
       "description": "The largest cathedral in Georgia, completed in 2004 and standing 87 metres tall — the third largest Orthodox cathedral in the world. The creator calls it a must-visit, praising its elegant simplicity, vast interior space, and gold dome, and recommends viewing it lit up at night from Mtatsminda Park.",
       "lat": 41.6976516,
       "lng": 44.8164521,
@@ -976,7 +976,7 @@
     {
       "id": "cb5f2780-0d4e-4388-bc8f-e5f3436d1173",
       "name": "Metekhi Church",
-      "category": "temple",
+      "category": "landmark",
       "description": "A medieval Orthodox church perched dramatically on a cliff overlooking the Mtkvari River, completed around 1278. The creator visited the viewpoint here, noting there is no entrance fee and the views of the entire city are truly impressive.",
       "lat": 41.690207199999996,
       "lng": 44.8111695,

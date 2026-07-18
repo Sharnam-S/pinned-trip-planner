@@ -9,13 +9,17 @@ const ExtractedSpotSchema = z.object({
   name: z.string().describe("Canonical place name, e.g. 'Tegallalang Rice Terrace'"),
   category: z.enum([
     "food",
+    "nightlife",
     "nature",
     "beach",
-    "temple",
-    "activity",
     "viewpoint",
-    "stay",
+    "landmark",
+    "museum",
+    "activity",
+    "wellness",
+    "market",
     "shopping",
+    "stay",
     "town",
     "other",
   ]),
@@ -87,8 +91,23 @@ export async function extractSpots(
     system: `You extract travel recommendations from YouTube video transcripts for a trip-planning app.
 
 Rules:
-- Only include real, physical, visitable places the creator actually visited or recommended: restaurants/warungs, waterfalls, beaches, temples, viewpoints, activities (swings, rafting, hikes), villas/airbnbs/hotels they stayed at or recommended, markets, towns/neighborhoods worth basing in.
-- Accommodation (Airbnbs, villas, hostels, hotels) gets category "stay".
+- Only include real, physical, visitable places the creator actually visited or recommended: restaurants, bars, waterfalls, beaches, cultural/historic sites, viewpoints, activities (swings, rafting, hikes), spas, markets, villas/airbnbs/hotels they stayed at or recommended, towns/neighborhoods worth basing in.
+- Pick the SINGLE category that best fits what the place physically is. Category guide:
+  - food: places to eat — restaurants, cafes, warungs, street-food stalls, bakeries, food halls.
+  - nightlife: places to go out after dark — bars, cocktail lounges, pubs, clubs, rooftop and live-music venues.
+  - nature: natural sites — waterfalls, jungles, rice terraces, lakes, rivers, caves, parks, gardens, wildlife spots.
+  - beach: beaches and coastal swimming/surf spots.
+  - viewpoint: lookouts and scenic vantage points valued mainly for the view.
+  - landmark: outdoor cultural, historic, religious or architectural sights — temples, churches, cathedrals, mosques, monasteries, shrines, castles, fortresses, palaces, ruins, monuments, statues, historic old towns. Use this for ALL places of worship and heritage sites regardless of religion or region (a Georgian Orthodox cathedral, a Japanese shrine, and a Balinese temple are all "landmark").
+  - museum: indoor cultural venues — museums, art galleries, exhibitions, planetariums.
+  - activity: things you DO — hikes, rafting, ziplines, swings, diving/snorkelling, boat trips, guided tours, classes, theme/water parks, zoos, aquariums.
+  - wellness: spas, onsen/hot springs, hammams, thermal baths, saunas, yoga/wellness retreats, massage.
+  - market: markets and bazaars — night markets, local/street markets, flea markets, souks.
+  - shopping: individual shops, boutiques, malls, and design/craft stores (not markets).
+  - stay: accommodation — Airbnbs, villas, hostels, hotels, resorts.
+  - town: towns, villages, or neighborhoods worth basing in or wandering.
+  - other: anything real and visitable that fits none of the above.
+- Classify by what a place physically is, not by a religion-specific reading (a historic fortress is a "landmark", not an "activity").
 - Skip generic mentions (e.g. "the airport", "our hotel" with no name), sponsors, and places outside the trip destination.
 - Transcripts are auto-generated and garble proper nouns. Use your knowledge of the destination to recover the real place name (e.g. "tega lalang" -> "Tegallalang Rice Terrace"). If you cannot confidently identify a real place, skip it.
 - timestamp_sec must come from the [seconds] markers in the transcript where the place is first properly discussed.
