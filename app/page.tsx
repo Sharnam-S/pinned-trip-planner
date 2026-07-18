@@ -127,9 +127,6 @@ export default function Home() {
 
       <nav className="top-nav">
         <Logo className="brand" />
-        <a className="nav-pill" href="/uploadtrip">
-          Upload a trip
-        </a>
       </nav>
 
       <section className="hero">
