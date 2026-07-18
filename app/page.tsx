@@ -18,11 +18,10 @@ import DatePicker from "@/components/DatePicker";
 import { Logo } from "@/components/Logo";
 
 // The preview iframe renders the trip page at a fixed desktop size, then
-// scales it down to fit its frame. The page header (back link + title) is
-// cropped so the preview starts at the category chips.
+// scales it down to fit its frame. ?embed=1 drops the trip-overview header
+// so the preview starts right at the white cards + map body.
 const PREVIEW_W = 1600;
 const PREVIEW_H = 1000;
-const PREVIEW_CROP = 110;
 
 export default function Home() {
   const router = useRouter();
@@ -296,14 +295,11 @@ function TripPreview({ tripId }: { tripId: string }) {
     <div className="trip-preview" ref={wrapRef}>
       <iframe
         key={tripId}
-        src={`/trip/${tripId}`}
+        src={`/trip/${tripId}?embed=1`}
         title="Live trip demo"
         width={PREVIEW_W}
         height={PREVIEW_H}
-        style={{
-          transform: `scale(${scale})`,
-          marginTop: -PREVIEW_CROP * scale,
-        }}
+        style={{ transform: `scale(${scale})` }}
       />
       <a className="preview-open" href={`/trip/${tripId}`}>
         Open full trip ↗

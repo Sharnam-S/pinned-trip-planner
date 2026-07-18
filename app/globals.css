@@ -827,7 +827,8 @@ button {
 .trip-preview {
   position: relative;
   width: 100%;
-  aspect-ratio: 1600 / 890;
+  /* Matches the embed iframe's full 1600×1000 render — no header, no crop */
+  aspect-ratio: 1600 / 1000;
   overflow: hidden;
   background: white;
 }
