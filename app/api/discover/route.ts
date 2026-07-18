@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { curateVideos, gatherCandidates, planSearchQueries } from "@/lib/discover";
 import { rateLimit, rateLimited } from "@/lib/ratelimit";
@@ -43,7 +44,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const plan = await planSearchQueries(query);
+  // One PostHog trace groups both LLM calls of this discover request
+  const traceId = randomUUID();
+
+  const plan = await planSearchQueries(query, traceId);
   const candidates = await gatherCandidates(plan.queries);
   if (candidates.length === 0) {
     return NextResponse.json(
@@ -54,7 +58,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const ranked = await curateVideos(candidates, query, plan);
+  const ranked = await curateVideos(candidates, query, plan, traceId);
   if (ranked.length === 0) {
     return NextResponse.json(
       {
