@@ -1,6 +1,7 @@
 "use client";
 
 import { Trip, TripVideo } from "@/lib/types";
+import { Logo } from "./Logo";
 
 /**
  * Full-page state while a trip is being built — the user's very first moment
@@ -153,8 +154,8 @@ export default function BuildingScreen({ trip }: { trip: Trip }) {
       </div>
 
       <nav className="top-nav">
-        <a className="brand" href="/">
-          Pinned<span className="brand-dot">.</span>
+        <a href="/">
+          <Logo className="brand" />
         </a>
         <a className="nav-pill" href="/">
           ← All trips
