@@ -1990,13 +1990,13 @@ button {
   color: var(--text-soft);
 }
 
-/* "Things to know" — yellow alert card, Flighty-style */
+/* "Things to know" — calm informational card */
 .know-section {
   margin-top: 14px;
-  background: var(--yellow-soft);
-  border: 1px solid #f3dd9a;
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
   border-radius: 14px;
-  padding: 10px 12px;
+  padding: 12px 14px;
 }
 
 .know-label {
@@ -2004,21 +2004,27 @@ button {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #8a6d00;
-  margin-bottom: 6px;
+  color: var(--text-soft);
+  margin-bottom: 8px;
 }
 
 .know-item {
   display: flex;
-  gap: 8px;
+  align-items: baseline;
+  gap: 10px;
   font-size: 13px;
   line-height: 1.5;
-  color: #5c4d12;
+  color: var(--text);
   padding: 3px 0;
 }
 
 .know-item .know-icon {
   flex-shrink: 0;
+  width: 5px;
+  height: 5px;
+  margin-top: 8px;
+  border-radius: 50%;
+  background: var(--text-soft);
 }
 
 .spot-card .cat-line {
