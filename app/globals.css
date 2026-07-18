@@ -237,6 +237,10 @@ button {
   align-items: center;
   text-align: center;
   padding: 48px 24px 72px;
+  /* Lift the hero (and the date picker popup that overflows it) above the
+     browser-frame section below — both are z-index:1 siblings otherwise, so
+     the later one in the DOM would clip the calendar. */
+  z-index: 5;
 }
 
 .stat-chip {
@@ -323,6 +327,11 @@ button {
   box-shadow: 0 1px 2px rgba(20, 50, 70, 0.06), 0 10px 30px rgba(20, 50, 70, 0.12);
   padding: 7px;
   text-align: left;
+  /* Sit above the fineprint below it. The `rise` load animation leaves a
+     lingering transform on both, each forming a stacking context, so the
+     date-picker popup can't escape above the fineprint without this. */
+  position: relative;
+  z-index: 20;
 }
 
 .sb-field {
@@ -399,6 +408,231 @@ button {
   opacity: 0.55;
   transform: none;
   cursor: default;
+}
+
+/* ---------- Custom date picker ---------- */
+
+.dp {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.dp-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #7b8a98;
+}
+
+.dp-trigger {
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  color: #17232e;
+  outline: none;
+  padding: 0;
+  width: 118px;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dp-trigger.placeholder {
+  color: #9fadba;
+}
+
+.dp-trigger:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.dp-pop {
+  position: absolute;
+  /* +24px, not +14: the field sits ~14px above the search bar's outer edge
+     (field + bar padding), so this leaves a slight visible gap below it. */
+  top: calc(100% + 24px);
+  left: -14px;
+  z-index: 40;
+  width: 268px;
+  background: #fff;
+  border: 1px solid rgba(20, 50, 70, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 2px 6px rgba(20, 50, 70, 0.08), 0 18px 44px rgba(20, 50, 70, 0.2);
+  padding: 14px;
+  cursor: default;
+  animation: dp-in 0.16s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.dp-pop.up {
+  top: auto;
+  bottom: calc(100% + 24px);
+}
+
+@keyframes dp-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.dp-month {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #17232e;
+}
+
+.dp-nav {
+  display: flex;
+  gap: 4px;
+}
+
+.dp-nav button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #e7edf2;
+  background: #fff;
+  border-radius: 9px;
+  color: #4a5a68;
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s, color 0.14s;
+}
+
+.dp-nav button:hover {
+  background: #f4f8fb;
+  border-color: #d7e1ea;
+  color: var(--blue-primary);
+}
+
+.dp-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+}
+
+.dp-weekdays span {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #9fadba;
+  padding: 4px 0;
+}
+
+.dp-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.dp-cell {
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: none;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 13px;
+  color: #2b3a47;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.dp-cell.empty {
+  cursor: default;
+}
+
+.dp-cell:not(.empty):not(:disabled):hover {
+  background: #eef5fd;
+  color: var(--blue-primary);
+}
+
+.dp-cell.today:not(.selected) {
+  box-shadow: inset 0 0 0 1.5px #cfe0f6;
+  font-weight: 600;
+}
+
+.dp-cell.selected {
+  background: var(--blue-primary);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(47, 111, 237, 0.35);
+}
+
+.dp-cell.selected:hover {
+  background: #245cd6;
+  color: #fff;
+}
+
+.dp-cell:disabled {
+  color: #cdd7e0;
+  cursor: default;
+}
+
+.dp-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #eef2f6;
+}
+
+.dp-foot button {
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: background 0.12s, color 0.12s;
+}
+
+.dp-clear {
+  color: #7b8a98;
+}
+
+.dp-clear:hover {
+  background: #f4f8fb;
+  color: #4a5a68;
+}
+
+.dp-today {
+  color: var(--blue-primary);
+}
+
+.dp-today:hover {
+  background: #eef5fd;
+}
+
+.dp-today:disabled {
+  color: #cdd7e0;
+  cursor: default;
+  background: none;
 }
 
 .hero-error {
@@ -645,6 +879,14 @@ button {
   }
   .sb-field input[type="date"] {
     width: 100%;
+  }
+  .dp-trigger {
+    width: 100%;
+  }
+  .dp-pop {
+    left: 0;
+    right: 0;
+    width: auto;
   }
   .sb-cta {
     align-self: stretch;

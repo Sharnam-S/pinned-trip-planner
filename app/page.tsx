@@ -14,6 +14,7 @@ import {
 } from "@/lib/clientStore";
 import { newSearchTrip } from "@/lib/merge";
 import { ensureRunning } from "@/lib/runner";
+import DatePicker from "@/components/DatePicker";
 import { Logo } from "@/components/Logo";
 
 // The preview iframe renders the trip page at a fixed desktop size, then
@@ -136,7 +137,7 @@ export default function Home() {
         {totalSpots > 0 && (
           <div className="stat-chip rise r1">
             <span className="stat-dot" />
-            <strong>{totalSpots.toLocaleString()}</strong>&nbsp;spots pinned
+            <strong>{totalSpots.toLocaleString()}</strong>spots pinned
           </div>
         )}
         <h1 className="rise r1">
@@ -163,24 +164,20 @@ Every YouTube travel
           </div>
           <div className="sb-divider" />
           <div className="sb-field">
-            <label htmlFor="from">From</label>
-            <input
-              id="from"
-              type="date"
+            <DatePicker
+              label="From"
               value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={setStartDate}
               disabled={creating}
             />
           </div>
           <div className="sb-divider" />
           <div className="sb-field">
-            <label htmlFor="to">To</label>
-            <input
-              id="to"
-              type="date"
+            <DatePicker
+              label="To"
               value={endDate}
               min={startDate || undefined}
-              onChange={(e) => setEndDate(e.target.value)}
+              onChange={setEndDate}
               disabled={creating}
             />
           </div>
