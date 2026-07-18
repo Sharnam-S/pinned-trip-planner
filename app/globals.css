@@ -1472,6 +1472,10 @@ button {
   color: var(--text);
   border-radius: 18px;
   position: relative;
+  /* Let the grid track shrink to its 1fr share: without this, a long
+     non-wrapping tile name sets the column's min-content width, making the
+     three columns uneven and overflowing the panel horizontally. */
+  min-width: 0;
 }
 
 .spot-tile .tile-photo {
@@ -1864,10 +1868,9 @@ button {
 .pin-pill {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
   background: white;
   border-radius: var(--radius-chip);
-  padding: 7px 12px;
+  padding: 6px 9px;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: -0.01em;
@@ -1879,8 +1882,40 @@ button {
   transform-origin: center bottom;
 }
 
+.pin-emoji {
+  line-height: 1;
+}
+
+/* The name is collapsed by default so dense clusters stay legible; it slides
+   open when the pin is hovered, selected, or highlighted. */
+.pin-name {
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  margin: 0;
+  transition: max-width 0.14s ease, opacity 0.14s ease, margin 0.14s ease;
+}
+
+.pin-count {
+  margin-left: 4px;
+  opacity: 0.6;
+}
+
+.leaflet-marker-icon:hover .pin-name,
+.pin-pill.selected .pin-name,
+.pin-pill.highlight .pin-name {
+  max-width: 220px;
+  opacity: 1;
+  margin: 0 1px 0 5px;
+}
+
 .leaflet-marker-icon:hover .pin-pill {
   transform: scale(1.08);
+}
+
+/* Bring a hovered pin (and its expanded label) above its neighbours */
+.leaflet-marker-icon:hover {
+  z-index: 10000 !important;
 }
 
 .pin-pill.selected {

@@ -117,10 +117,12 @@ export default function TripMap({
       ]
         .filter(Boolean)
         .join(" ");
-      const html = `<div class="${pillClass}">${
+      // Compact by default (emoji + count) so pins don't collide into an
+      // unreadable pile; the name label expands on hover / select / highlight.
+      const html = `<div class="${pillClass}"><span class="pin-emoji">${
         CATEGORY_EMOJI[spot.category]
-      }<span>${escapeHtml(shorten(spot.name))}</span>${
-        spot.mentions.length > 1 ? `<span style="opacity:.6">×${spot.mentions.length}</span>` : ""
+      }</span><span class="pin-name">${escapeHtml(shorten(spot.name))}</span>${
+        spot.mentions.length > 1 ? `<span class="pin-count">×${spot.mentions.length}</span>` : ""
       }</div>`;
 
       const icon = L.divIcon({
