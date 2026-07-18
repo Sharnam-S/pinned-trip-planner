@@ -79,9 +79,11 @@ button {
   background: var(--surface);
 }
 
-/* The whole landing sits on a grainy blue-sky gradient — deep enough that
-   the white clouds drifting over it actually register */
-.landing {
+/* The landing and other full-page sky screens (trip building) sit on a grainy
+   blue-sky gradient — deep enough that the white clouds drifting over it
+   actually register */
+.landing,
+.sky-page {
   position: relative;
   min-height: 100vh;
   color: var(--blue-ink);
@@ -97,7 +99,8 @@ button {
 
 /* Speckled paper grain over the gradient — visible, Linkrunner-style.
    ::after so it paints above the cloud layer but below the content. */
-.landing::after {
+.landing::after,
+.sky-page::after {
   content: "";
   position: fixed;
   inset: 0;
@@ -109,14 +112,16 @@ button {
   background-size: 180px 180px;
 }
 
-.landing > * {
+.landing > *,
+.sky-page > * {
   position: relative;
   z-index: 1;
 }
 
 /* Barely-there clouds drifting across the gradient. Big soft radial blobs,
    transform-only animation, slow enough to feel like weather, not motion. */
-.landing > .cloud-layer {
+.landing > .cloud-layer,
+.sky-page > .cloud-layer {
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -1687,26 +1692,9 @@ button {
   white-space: nowrap;
 }
 
-/* Full-page processing state */
-.processing-page {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  padding: 24px;
-  text-align: center;
-}
-
-.processing-page .spinner {
-  width: 42px;
-  height: 42px;
-  border: 4px solid var(--line);
-  border-top-color: var(--yellow);
-  border-radius: 50%;
-  animation: spin 0.9s linear infinite;
-}
+/* ---------- Building screen (full-page trip build state) ----------
+   The user's first "aha" wait: same sky as the landing, a plane tracing a
+   route with pins popping in its wake, and a narrated three-step timeline. */
 
 @keyframes spin {
   to {
@@ -1714,25 +1702,430 @@ button {
   }
 }
 
-.processing-page h1 {
-  font-size: 26px;
+.building-page {
+  display: flex;
+  flex-direction: column;
 }
 
-.processing-page .progress {
-  color: var(--text-soft);
-  font-size: 14px;
-  max-width: 480px;
-  line-height: 1.55;
-}
-
-.processing-page .video-strip {
+.building-center {
+  flex: 1;
   width: 100%;
-  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px 24px 64px;
+}
+
+.building-title {
+  font-size: clamp(28px, 3.4vw, 40px);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: #17232e;
+  max-width: 680px;
+}
+
+.building-sub {
+  margin-top: 12px;
+  max-width: 520px;
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: #3d5266;
+}
+
+.building-sub + .nav-pill {
+  margin-top: 22px;
+}
+
+/* The looping journey scene: dotted arc + plane + pins */
+.flight-scene {
+  position: relative;
+  width: 340px;
+  max-width: 100%;
+  height: 120px;
+  margin-bottom: 4px;
+  color: rgba(16, 34, 47, 0.3); /* the dotted route */
+}
+
+.scene-pin {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transform: scale(0);
+  opacity: 0;
+}
+
+.scene-pin.p1 {
+  animation: pin-pop-1 7s linear infinite;
+}
+
+.scene-pin.p2 {
+  animation: pin-pop-2 7s linear infinite;
+}
+
+.scene-pin.p3 {
+  animation: pin-pop-3 7s linear infinite;
+}
+
+/* Each pin pops as the plane passes overhead (~30% / 50% / 70% of the loop),
+   holds, then fades out just before the next pass. The spring-in is the two
+   quick keyframes right after the pop point. */
+@keyframes pin-pop-1 {
+  0%, 27% { transform: scale(0); opacity: 0; }
+  32% { transform: scale(1.18); opacity: 1; }
+  35% { transform: scale(1); }
+  93% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.5); opacity: 0; }
+}
+
+@keyframes pin-pop-2 {
+  0%, 47% { transform: scale(0); opacity: 0; }
+  52% { transform: scale(1.18); opacity: 1; }
+  55% { transform: scale(1); }
+  93% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.5); opacity: 0; }
+}
+
+@keyframes pin-pop-3 {
+  0%, 67% { transform: scale(0); opacity: 0; }
+  72% { transform: scale(1.18); opacity: 1; }
+  75% { transform: scale(1); }
+  93% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0.5); opacity: 0; }
+}
+
+/* The plane rides the same cubic as the SVG route. Hidden when offset-path
+   isn't supported — the pins still tell the story on their own. */
+.scene-plane {
+  display: none;
+}
+
+@supports (offset-path: path("M0 0 L10 10")) {
+  .scene-plane {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    offset-path: path("M20 104 C 100 16, 240 16, 320 104");
+    offset-rotate: auto;
+    animation: plane-fly 7s linear infinite;
+    filter: drop-shadow(0 4px 8px rgba(16, 34, 47, 0.2));
+  }
+}
+
+@keyframes plane-fly {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  94% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-plane {
+    display: none;
+  }
+  .scene-pin {
+    animation: none;
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* The narrated three-step timeline, in a frosted card */
+.building-card {
+  margin-top: 30px;
+  width: min(560px, 100%);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(20, 50, 70, 0.08);
+  border-radius: 22px;
+  box-shadow: 0 1px 2px rgba(20, 50, 70, 0.06), 0 14px 40px rgba(20, 50, 70, 0.14);
+  padding: 22px 24px;
   text-align: left;
 }
 
-.processing-page .back {
+.bstep {
+  display: flex;
+  gap: 14px;
+}
+
+.bstep-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.bstep-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.bstep.done .bstep-icon {
+  background: #ddf3e6;
+  color: #178a45;
+}
+
+.bstep.active .bstep-icon {
+  background: var(--blue-primary);
+  color: white;
+}
+
+.bstep.todo .bstep-icon {
+  background: rgba(20, 50, 70, 0.07);
+  color: #7b8a98;
+}
+
+.bstep-line {
+  width: 2px;
+  flex: 1;
+  min-height: 16px;
+  margin: 4px 0;
+  border-radius: 1px;
+  background: rgba(20, 50, 70, 0.1);
+}
+
+.bstep.done .bstep-line {
+  background: #b9e6ca;
+}
+
+.bstep-body {
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 18px;
+}
+
+.bstep:last-child .bstep-body {
+  padding-bottom: 0;
+}
+
+.bstep-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #17232e;
+}
+
+.bstep.todo .bstep-title {
+  color: #6b7d8d;
+}
+
+.bstep-next {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #8296a7;
+  background: rgba(20, 50, 70, 0.06);
+  padding: 3px 8px;
+  border-radius: var(--radius-chip);
+}
+
+.bstep-desc {
+  margin-top: 3px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #4c6275;
+}
+
+.bstep.todo .bstep-desc {
+  color: #7f92a2;
+}
+
+/* Live status line from the runner, under the active step */
+.bstep-live {
+  display: inline-block;
+  margin-top: 9px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #2456bd;
+  background: rgba(47, 111, 237, 0.09);
+  border-radius: 9px;
+  padding: 6px 10px;
+}
+
+/* White dot + radiating ring inside the active step's blue circle */
+.bstep-pulse {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+}
+
+.bstep-pulse::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  animation: pulse-ring 1.6s ease-out infinite;
+}
+
+@keyframes pulse-ring {
+  from {
+    transform: scale(0.4);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.1);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bstep-pulse::after {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+/* Videos-watched meter under step two */
+.bstep-meter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.bstep-bar {
+  flex: 1;
+  height: 6px;
+  border-radius: var(--radius-chip);
+  background: rgba(20, 50, 70, 0.08);
+  overflow: hidden;
+}
+
+.bstep-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-chip);
+  background: linear-gradient(90deg, #6b98f4, var(--blue-primary));
+  transition: width 0.5s ease;
+}
+
+.bstep-bar-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #5d7386;
+  white-space: nowrap;
+}
+
+/* The curated lineup — frosted video cards */
+.building-videos {
+  margin-top: 20px;
+  width: min(560px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.bvideos-label {
+  margin: 2px 2px 0;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #52697d;
+}
+
+.bvideo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(20, 50, 70, 0.07);
+  border-radius: 14px;
+  padding: 8px 12px 8px 8px;
+}
+
+.bvideo-thumb {
+  width: 58px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: rgba(20, 50, 70, 0.08);
+  flex-shrink: 0;
+}
+
+.bvideo-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.bvideo-title {
   font-size: 13px;
   font-weight: 600;
-  color: var(--text-soft);
+  color: #17232e;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bvideo-sub {
+  margin-top: 1px;
+  font-size: 12px;
+  color: #5d7386;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bvideo-status {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bvideo-status.done {
+  background: #ddf3e6;
+  color: #178a45;
+}
+
+.bvideo-status.error {
+  background: #fdeceb;
+  color: var(--red);
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.bvideo-spin {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(20, 50, 70, 0.14);
+  border-top-color: var(--blue-primary);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+.building-hint {
+  margin-top: 24px;
+  font-size: 12.5px;
+  font-style: italic;
+  color: #51687c;
 }

@@ -8,6 +8,7 @@ import { getLocalTrip, saveLocalTrip, subscribeLocalTrips } from "@/lib/clientSt
 import { addVideosToTrip, ensureRunning, isRunning } from "@/lib/runner";
 import { parseVideoId } from "@/lib/links";
 import { googlePhotoProxy } from "@/lib/photoUrl";
+import BuildingScreen from "./BuildingScreen";
 import type { MapBounds } from "./TripMap";
 
 const TripMap = dynamic(() => import("./TripMap"), { ssr: false });
@@ -420,36 +421,39 @@ export default function TripView({ tripId }: { tripId: string }) {
 
   if (notFound) {
     return (
-      <div className="processing-page">
-        <h1>Trip not found</h1>
-        <div className="progress">
-          This trip isn&rsquo;t in the shared library or this browser — the
-          link may be wrong, or it was deleted.
+      <div className="sky-page building-page">
+        <div className="cloud-layer" aria-hidden="true">
+          <div className="cloud c1" />
+          <div className="cloud c2" />
+          <div className="cloud c3" />
         </div>
-        <a className="back" href="/">← Back to trips</a>
+        <div className="building-center">
+          <h1 className="building-title">Trip not found</h1>
+          <p className="building-sub">
+            This trip isn&rsquo;t in the shared library or this browser — the
+            link may be wrong, or it was deleted.
+          </p>
+          <a className="nav-pill" href="/">← Back to trips</a>
+        </div>
       </div>
     );
   }
 
   if (!trip) {
     return (
-      <div className="processing-page">
-        <div className="spinner" />
+      <div className="sky-page building-page">
+        <div className="cloud-layer" aria-hidden="true">
+          <div className="cloud c1" />
+          <div className="cloud c2" />
+          <div className="cloud c3" />
+        </div>
       </div>
     );
   }
 
-  // Full-page processing state until we have a destination + at least one spot.
+  // Full-page building state until we have a destination + at least one spot.
   if (!trip.destination || (trip.status === "processing" && trip.spots.length === 0)) {
-    return (
-      <div className="processing-page">
-        {trip.status === "processing" ? <div className="spinner" /> : null}
-        <h1>{trip.status === "error" ? "Couldn't build this trip" : "Building your map…"}</h1>
-        <div className="progress">{trip.progress}</div>
-        <VideoStrip videos={trip.videos} />
-        <a className="back" href="/">← Back to trips</a>
-      </div>
-    );
+    return <BuildingScreen trip={trip} />;
   }
 
   // Categories present in this trip, most common first, with counts.
