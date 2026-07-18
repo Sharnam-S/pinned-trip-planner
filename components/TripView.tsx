@@ -220,6 +220,30 @@ function CarouselControls({
   );
 }
 
+// A carousel <img> that shimmers over the previous photo until the new source
+// finishes loading. Without this the browser keeps painting the old image while
+// the next one downloads, so a swipe looks like nothing happened. Caller keys
+// this on `src` so the loaded state resets for each photo.
+function CarouselImage({ src, alt }: { src: string; alt: string }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt}
+        loading="lazy"
+        onLoad={() => setLoaded(true)}
+        // A cached image can already be complete before onLoad is wired up.
+        ref={(el) => {
+          if (el?.complete) setLoaded(true);
+        }}
+      />
+      {!loaded && <div className="car-shimmer" />}
+    </>
+  );
+}
+
 // Airbnb-style tile photo carousel: arrows appear on hover, dots track the
 // current photo. Single-photo spots render a plain image.
 function TilePhotos({ spot, tripId, local }: { spot: Spot; tripId: string; local: boolean }) {
@@ -228,8 +252,7 @@ function TilePhotos({ spot, tripId, local }: { spot: Spot; tripId: string; local
   return (
     <div className="tile-photo">
       {urls[i] ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={urls[i]} alt={spot.name} loading="lazy" />
+        <CarouselImage key={urls[i]} src={urls[i]} alt={spot.name} />
       ) : urls.length > 0 ? (
         <div className="tile-photo-loading" /> // swiped ahead of the lazy fetch
       ) : (
@@ -748,8 +771,7 @@ function SpotCard({
       {urls.length > 0 && (
         <div className="card-photo">
           {urls[i] ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={urls[i]} alt={spot.name} loading="lazy" />
+            <CarouselImage key={urls[i]} src={urls[i]} alt={spot.name} />
           ) : (
             <div className="tile-photo-loading" />
           )}

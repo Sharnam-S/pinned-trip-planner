@@ -1556,6 +1556,21 @@ button {
   animation: shimmer 1.1s linear infinite;
 }
 
+/* Overlay shimmer shown over a carousel photo while the next source loads, so
+   swiping never leaves the previous photo on screen. */
+.car-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    var(--surface-alt) 40%,
+    #ececf0 50%,
+    var(--surface-alt) 60%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.1s linear infinite;
+}
+
 /* ---- Full trip-page skeleton (shown while the trip loads) ---- */
 /* Header placeholders mirror the real pill / filter strip so nothing jumps */
 .sk-pill-place {
