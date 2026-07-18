@@ -69,18 +69,6 @@ function VideoStrip({
   );
 }
 
-// Download the trip as a JSON file — the unit /uploadtrip accepts, so trips
-// can be moved between browsers or handed to a friend out-of-band.
-function exportTrip(trip: Trip) {
-  const blob = new Blob([JSON.stringify(trip, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${trip.name.replace(/[^\w]+/g, "-").toLowerCase()}-${trip.id}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
 function formatTripDates(trip: Trip): string | null {
   const { startDate, endDate } = trip.query ?? {};
   if (!startDate && !endDate) return null;
@@ -625,13 +613,6 @@ export default function TripView({
             }
           />
 
-          <button
-            className="export-btn"
-            onClick={() => exportTrip(trip)}
-            title="Download this trip as a JSON file to share"
-          >
-            ↓ Export
-          </button>
         </div>
 
         <div className="filter-bar">
