@@ -11,7 +11,7 @@ import { z } from "zod";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { searchVideos, SearchCandidate } from "./youtube";
 import { TripQuery } from "./types";
-import { observedMessage } from "./llm";
+import { observedMessage, TripTag, tripProperties } from "./llm";
 
 const PLANNER_MODEL = "claude-sonnet-4-6";
 
@@ -71,7 +71,8 @@ function queryContextLines(query: TripQuery): string[] {
 
 export async function planSearchQueries(
   query: TripQuery,
-  traceId: string = randomUUID()
+  traceId: string = randomUUID(),
+  trip?: TripTag
 ): Promise<SearchPlan> {
   const parts = [`Destination: ${query.destination}`, ...queryContextLines(query)];
 
@@ -93,7 +94,7 @@ Given a destination (and optionally travel dates and interests), produce 4-6 You
   }, {
     spanName: "plan-search-queries",
     traceId,
-    properties: { destination: query.destination },
+    properties: { destination: query.destination, ...tripProperties(trip) },
   });
 
   const text = response.content.find((b) => b.type === "text");
@@ -134,7 +135,8 @@ export async function curateVideos(
   candidates: SearchCandidate[],
   query: TripQuery,
   plan: SearchPlan,
-  traceId: string = randomUUID()
+  traceId: string = randomUUID(),
+  trip?: TripTag
 ): Promise<string[]> {
   // Keep the prompt small — 60 candidates is plenty of signal
   const list = candidates.slice(0, 60);
@@ -178,6 +180,7 @@ Ranking criteria:
     properties: {
       destination: plan.resolvedDestination,
       candidateCount: list.length,
+      ...tripProperties(trip),
     },
   });
 

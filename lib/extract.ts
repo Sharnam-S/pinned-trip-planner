@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { VideoData, transcriptToText } from "./youtube";
-import { observedMessage } from "./llm";
+import { observedMessage, TripTag, tripProperties } from "./llm";
 
 const ExtractedSpotSchema = z.object({
   name: z.string().describe("Canonical place name, e.g. 'Tegallalang Rice Terrace'"),
@@ -68,7 +68,8 @@ const DEFAULT_MODEL = process.env.EXTRACT_MODEL ?? "claude-sonnet-4-6";
 export async function extractSpots(
   video: VideoData,
   knownSpotNames: string[],
-  model: string = DEFAULT_MODEL
+  model: string = DEFAULT_MODEL,
+  trip?: TripTag
 ): Promise<Extraction> {
   const transcriptText = transcriptToText(video.transcript);
 
@@ -126,10 +127,13 @@ Rules:
     // video id is the natural trace id.
     traceId: `video-${video.id}`,
     stream: true,
+    // Extractions are cached cross-trip, so the trip tag names the trip that
+    // paid for this call; later trips reuse the cache at zero LLM cost.
     properties: {
       videoId: video.id,
       videoTitle: video.title,
       channel: video.channelName,
+      ...tripProperties(trip),
     },
   });
 
