@@ -242,13 +242,18 @@ function TilePhotos({ spot, tripId, local }: { spot: Spot; tripId: string; local
   );
 }
 
-function Sources({
+// Airbnb-style centered "search" pill for the trip header. Two segments: the
+// place/trip name on the left, and a YouTube-videos selector on the right that
+// drops down the source list (and the add-videos box for local trips).
+function TripSearchPill({
   trip,
   canAdd,
   addLinks,
   setAddLinks,
   addError,
   onAddVideos,
+  open,
+  setOpen,
   pinnedId,
   onHoverVideo,
   onClickVideo,
@@ -259,34 +264,44 @@ function Sources({
   setAddLinks: (v: string) => void;
   addError: string;
   onAddVideos: () => void;
+  open: boolean;
+  setOpen: (fn: (o: boolean) => boolean) => void;
   pinnedId: string | null;
   onHoverVideo: (id: string | null) => void;
   onClickVideo: (id: string) => void;
 }) {
-  const [open, setOpen] = useState(false);
-
+  const count = trip.videos.length;
   return (
-    <div className="sources">
-      <button className="sources-header" onClick={() => setOpen((o) => !o)}>
-        <div className="sources-thumbs">
+    <div className="trip-pill" onClick={(e) => e.stopPropagation()}>
+      <div className="pill-seg pill-place">
+        <span className="pill-icon" aria-hidden="true">
+          📍
+        </span>
+        <span className="pill-text">{trip.name}</span>
+      </div>
+
+      <span className="pill-sep" />
+
+      <button
+        className={`pill-seg pill-videos ${open ? "open" : ""}`}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span className="pill-thumbs">
           {trip.videos.slice(0, 3).map((v) =>
             v.thumbnail ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img key={v.id} src={v.thumbnail} alt="" />
             ) : null
           )}
-        </div>
-        <div className="sources-title">
-          Sources
-          <span className="sources-count">
-            {trip.videos.length} video{trip.videos.length === 1 ? "" : "s"}
-          </span>
-        </div>
-        <span className={`sources-chevron ${open ? "open" : ""}`}>▾</span>
+        </span>
+        <span className="pill-text">
+          {count} video{count === 1 ? "" : "s"}
+        </span>
+        <span className={`pill-chevron ${open ? "open" : ""}`}>▾</span>
       </button>
 
       {open && (
-        <div className="sources-body">
+        <div className="videos-dropdown">
           <VideoStrip
             videos={trip.videos}
             pinnedId={pinnedId}
@@ -324,6 +339,54 @@ function Sources({
   );
 }
 
+// Airbnb-style loading skeleton: a shimmering ghost of the real trip page so
+// the header, spot grid, and map slot in place before the data lands.
+function TripSkeleton() {
+  return (
+    <div className="trip-page">
+      <header className="page-header">
+        <div className="header-bar">
+          <a className="back" href="/">← All trips</a>
+          <div className="trip-pill">
+            <div className="skeleton sk-pill-place" />
+            <span className="pill-sep" />
+            <div className="skeleton sk-pill-videos" />
+          </div>
+          <div className="skeleton sk-export" />
+        </div>
+        <div className="filter-bar">
+          <div className="skeleton sk-count" />
+          <div className="cat-filter">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div className="skeleton sk-chip" key={i} />
+            ))}
+          </div>
+        </div>
+      </header>
+
+      <div className="trip-body">
+        <section className="content-panel">
+          <div className="spot-grid">
+            {Array.from({ length: 9 }).map((_, i) => (
+              <div className="spot-tile skeleton-tile" key={i}>
+                <div className="tile-photo skeleton" />
+                <div className="tile-meta">
+                  <div className="skeleton sk-line title" />
+                  <div className="skeleton sk-line sub" />
+                  <div className="skeleton sk-line desc" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+        <div className="map-side">
+          <div className="map-frame skeleton" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function TripView({ tripId }: { tripId: string }) {
   const [trip, setTrip] = useState<Trip | null>(null);
   // null = still checking localStorage; then the trip is local or a sample
@@ -335,6 +398,8 @@ export default function TripView({ tripId }: { tripId: string }) {
   // the user clicks anywhere else.
   const [pinnedVideoId, setPinnedVideoId] = useState<string | null>(null);
   const [hoverVideoId, setHoverVideoId] = useState<string | null>(null);
+  // The YouTube-videos dropdown in the header pill; closes on any outside click.
+  const [videosOpen, setVideosOpen] = useState(false);
   const highlightVideoId = hoverVideoId ?? pinnedVideoId;
   const [addLinks, setAddLinks] = useState("");
   const [addError, setAddError] = useState("");
@@ -432,11 +497,7 @@ export default function TripView({ tripId }: { tripId: string }) {
   }
 
   if (!trip) {
-    return (
-      <div className="processing-page">
-        <div className="spinner" />
-      </div>
-    );
+    return <TripSkeleton />;
   }
 
   // Full-page processing state until we have a destination + at least one spot.
@@ -482,11 +543,35 @@ export default function TripView({ tripId }: { tripId: string }) {
     : sortedSpots;
 
   return (
-    // Clicking anywhere outside a video chip clears the pinned highlight
-    <div className="trip-page" onClick={() => setPinnedVideoId(null)}>
+    // Clicking anywhere outside the pill clears the pinned highlight and closes
+    // the videos dropdown
+    <div
+      className="trip-page"
+      onClick={() => {
+        setPinnedVideoId(null);
+        setVideosOpen(false);
+      }}
+    >
       <header className="page-header">
-        <div className="header-top">
+        <div className="header-bar">
           <a className="back" href="/">← All trips</a>
+
+          <TripSearchPill
+            trip={trip}
+            canAdd={isLocal === true}
+            addLinks={addLinks}
+            setAddLinks={setAddLinks}
+            addError={addError}
+            onAddVideos={addVideos}
+            open={videosOpen}
+            setOpen={(fn) => setVideosOpen((o) => fn(o))}
+            pinnedId={pinnedVideoId}
+            onHoverVideo={setHoverVideoId}
+            onClickVideo={(id) =>
+              setPinnedVideoId((cur) => (cur === id ? null : id))
+            }
+          />
+
           <button
             className="export-btn"
             onClick={() => exportTrip(trip)}
@@ -495,70 +580,58 @@ export default function TripView({ tripId }: { tripId: string }) {
             ↓ Export
           </button>
         </div>
-        <h1>{trip.name}</h1>
-        <div className="summary">
-          {visibleSpots.length === catFiltered.length
-            ? `${catFiltered.length} spots`
-            : `${visibleSpots.length} of ${catFiltered.length} spots`}{" "}
-          within map area
-          {activeCats.length > 0 && ` · filtered`}
-          {formatTripDates(trip) && ` · ${formatTripDates(trip)}`}
-          {trip.query?.interests && ` · ${trip.query.interests}`}
-        </div>
 
-        {catCounts.length > 1 && (
-          <div className="cat-filter">
-            {catCounts.map(([cat, n]) => {
-              const on = activeCats.includes(cat);
-              return (
+        <div className="filter-bar">
+          <div className="filter-count">
+            {visibleSpots.length === catFiltered.length
+              ? `${catFiltered.length} spots`
+              : `${visibleSpots.length} of ${catFiltered.length} spots`}
+            {formatTripDates(trip) && ` · ${formatTripDates(trip)}`}
+            {trip.query?.interests && ` · ${trip.query.interests}`}
+          </div>
+
+          {catCounts.length > 1 && (
+            <div className="cat-filter">
+              {catCounts.map(([cat, n]) => {
+                const on = activeCats.includes(cat);
+                return (
+                  <button
+                    key={cat}
+                    className={`cat-chip ${on ? "on" : ""}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveCats((prev) =>
+                        prev.includes(cat)
+                          ? prev.filter((c) => c !== cat)
+                          : [...prev, cat]
+                      );
+                    }}
+                  >
+                    {cat}
+                    <span className="cat-n">{n}</span>
+                  </button>
+                );
+              })}
+              {activeCats.length > 0 && (
                 <button
-                  key={cat}
-                  className={`cat-chip ${on ? "on" : ""}`}
+                  className="cat-clear"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setActiveCats((prev) =>
-                      prev.includes(cat)
-                        ? prev.filter((c) => c !== cat)
-                        : [...prev, cat]
-                    );
+                    setActiveCats([]);
                   }}
                 >
-                  <span>{CATEGORY_EMOJI[cat]}</span> {cat}
-                  <span className="cat-n">{n}</span>
+                  Clear
                 </button>
-              );
-            })}
-            {activeCats.length > 0 && (
-              <button
-                className="cat-clear"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setActiveCats([]);
-                }}
-              >
-                Clear
-              </button>
-            )}
-          </div>
-        )}
+              )}
+            </div>
+          )}
+        </div>
 
         {trip.status === "processing" && (
-          <div className="progress-banner">⚙️ {trip.progress}</div>
+          <div className="progress-banner-row">
+            <div className="progress-banner">⚙️ {trip.progress}</div>
+          </div>
         )}
-
-        <Sources
-          trip={trip}
-          canAdd={isLocal === true}
-          addLinks={addLinks}
-          setAddLinks={setAddLinks}
-          addError={addError}
-          onAddVideos={addVideos}
-          pinnedId={pinnedVideoId}
-          onHoverVideo={setHoverVideoId}
-          onClickVideo={(id) =>
-            setPinnedVideoId((cur) => (cur === id ? null : id))
-          }
-        />
       </header>
 
       <div className={`trip-body ${mapExpanded ? "map-expanded" : ""}`}>
