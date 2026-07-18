@@ -193,10 +193,19 @@ button {
 }
 
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   font-size: 21px;
   font-weight: 800;
   letter-spacing: -0.03em;
   color: #10222f;
+}
+
+/* The pin rides a hair high so its visual center sits on the cap height */
+.logo-mark {
+  flex: none;
+  transform: translateY(-1px);
 }
 
 .brand-dot {
@@ -912,6 +921,9 @@ button {
 }
 
 .foot-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 26px;
   font-weight: 800;
   letter-spacing: -0.03em;

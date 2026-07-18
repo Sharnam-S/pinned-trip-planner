@@ -15,6 +15,7 @@ import {
 import { newSearchTrip } from "@/lib/merge";
 import { ensureRunning } from "@/lib/runner";
 import DatePicker from "@/components/DatePicker";
+import { Logo } from "@/components/Logo";
 
 // The preview iframe renders the trip page at a fixed desktop size, then
 // scales it down to fit its frame. The page header (back link + title) is
@@ -126,9 +127,7 @@ export default function Home() {
       </div>
 
       <nav className="top-nav">
-        <div className="brand">
-          Pinned<span className="brand-dot">.</span>
-        </div>
+        <Logo className="brand" />
         <a className="nav-pill" href="/uploadtrip">
           Upload a trip
         </a>
@@ -267,9 +266,7 @@ Every YouTube travel
       )}
 
       <footer className="landing-footer">
-        <div className="foot-brand">
-          Pinned<span className="brand-dot">.</span>
-        </div>
+        <Logo className="foot-brand" markSize={27} />
         <p className="foot-tagline">Every place they raved about. On one map.</p>
         <p className="foot-note">
           Built from creators&rsquo; actual words — never sponsored lists.
