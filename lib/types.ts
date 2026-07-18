@@ -1,12 +1,16 @@
 export type SpotCategory =
   | "food"
+  | "nightlife"
   | "nature"
   | "beach"
-  | "temple"
-  | "activity"
   | "viewpoint"
-  | "stay"
+  | "landmark"
+  | "museum"
+  | "activity"
+  | "wellness"
+  | "market"
   | "shopping"
+  | "stay"
   | "town"
   | "other";
 

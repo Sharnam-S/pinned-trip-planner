@@ -2,13 +2,17 @@ import { SpotCategory } from "./types";
 
 export const CATEGORY_EMOJI: Record<SpotCategory, string> = {
   food: "🍜",
+  nightlife: "🍸",
   nature: "🌿",
   beach: "🏖️",
-  temple: "🛕",
-  activity: "🪂",
   viewpoint: "🌄",
-  stay: "🏡",
+  landmark: "🏛️",
+  museum: "🖼️",
+  activity: "🪂",
+  wellness: "🧖",
+  market: "🧺",
   shopping: "🛍️",
+  stay: "🏡",
   town: "🏘️",
   other: "📍",
 };

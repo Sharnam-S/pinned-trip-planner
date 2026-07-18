@@ -714,7 +714,7 @@
     {
       "id": "898d095d-42d1-4b8e-9a27-1c706d44d0d1",
       "name": "Kumara Monastery",
-      "category": "temple",
+      "category": "landmark",
       "description": "An ancient archaeological site built in 246 BC with a complex history and one of the only surviving cylindrical dagaba in Sri Lanka. Home to over 200 caves and currently occupied by monks. Best visited in morning or early afternoon with a strong sense of peace at the summit.",
       "lat": 6.6721243999999995,
       "lng": 81.743149,
@@ -1492,7 +1492,7 @@
     {
       "id": "d841bbf6-30ba-4ab9-8e67-482120d44f52",
       "name": "Temple of the Tooth",
-      "category": "temple",
+      "category": "landmark",
       "description": "A temple located in Kandy in the hill country that's worth visiting as part of exploring Sri Lanka's cultural and mountainous regions.",
       "lat": 7.293609,
       "lng": 80.641325,
