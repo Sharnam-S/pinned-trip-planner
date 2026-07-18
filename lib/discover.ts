@@ -6,13 +6,13 @@
  * selection compound through everything downstream — so they run on Sonnet.
  * The big-token transcript extraction stays on the cheap model (extract.ts).
  */
-import Anthropic from "@anthropic-ai/sdk";
+import { randomUUID } from "crypto";
 import { z } from "zod";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { searchVideos, SearchCandidate } from "./youtube";
 import { TripQuery } from "./types";
+import { observedMessage } from "./llm";
 
-const client = new Anthropic();
 const PLANNER_MODEL = "claude-sonnet-4-6";
 
 const PlanSchema = z.object({
@@ -69,10 +69,13 @@ function queryContextLines(query: TripQuery): string[] {
   return parts;
 }
 
-export async function planSearchQueries(query: TripQuery): Promise<SearchPlan> {
+export async function planSearchQueries(
+  query: TripQuery,
+  traceId: string = randomUUID()
+): Promise<SearchPlan> {
   const parts = [`Destination: ${query.destination}`, ...queryContextLines(query)];
 
-  const response = await client.messages.create({
+  const response = await observedMessage({
     model: PLANNER_MODEL,
     max_tokens: 2000,
     system: `You plan YouTube searches for a travel app that extracts recommended spots from video transcripts.
@@ -87,6 +90,10 @@ Given a destination (and optionally travel dates and interests), produce 4-6 You
 - Queries should be phrased the way real travel-video titles are phrased.`,
     messages: [{ role: "user", content: parts.join("\n") }],
     output_config: { format: zodOutputFormat(PlanSchema) },
+  }, {
+    spanName: "plan-search-queries",
+    traceId,
+    properties: { destination: query.destination },
   });
 
   const text = response.content.find((b) => b.type === "text");
@@ -126,7 +133,8 @@ const CurationSchema = z.object({
 export async function curateVideos(
   candidates: SearchCandidate[],
   query: TripQuery,
-  plan: SearchPlan
+  plan: SearchPlan,
+  traceId: string = randomUUID()
 ): Promise<string[]> {
   // Keep the prompt small — 60 candidates is plenty of signal
   const list = candidates.slice(0, 60);
@@ -145,7 +153,7 @@ export async function curateVideos(
     .filter(Boolean)
     .join("\n");
 
-  const response = await client.messages.create({
+  const response = await observedMessage({
     model: PLANNER_MODEL,
     max_tokens: 1500,
     system: `You pick the best YouTube travel videos for spot extraction. From the candidate list, return a ranked list of up to 16 video ids (best first).
@@ -164,6 +172,13 @@ Ranking criteria:
       },
     ],
     output_config: { format: zodOutputFormat(CurationSchema) },
+  }, {
+    spanName: "curate-videos",
+    traceId,
+    properties: {
+      destination: plan.resolvedDestination,
+      candidateCount: list.length,
+    },
   });
 
   const text = response.content.find((b) => b.type === "text");

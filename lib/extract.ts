@@ -1,9 +1,7 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { VideoData, transcriptToText } from "./youtube";
-
-const client = new Anthropic();
+import { observedMessage } from "./llm";
 
 const ExtractedSpotSchema = z.object({
   name: z.string().describe("Canonical place name, e.g. 'Tegallalang Rice Terrace'"),
@@ -83,7 +81,7 @@ export async function extractSpots(
           )}\nIf a place in this transcript is the same as one of these, reuse the EXACT same name string so it can be merged.`
       : "";
 
-  const stream = client.messages.stream({
+  const message = await observedMessage({
     model,
     max_tokens: 32000,
     // Adaptive thinking is a 4.6+ feature — Haiku 4.5 rejects it
@@ -122,9 +120,19 @@ Rules:
     output_config: {
       format: zodOutputFormat(ExtractionSchema),
     },
+  }, {
+    spanName: "extract-spots",
+    // One extraction per video and results are cached cross-trip, so the
+    // video id is the natural trace id.
+    traceId: `video-${video.id}`,
+    stream: true,
+    properties: {
+      videoId: video.id,
+      videoTitle: video.title,
+      channel: video.channelName,
+    },
   });
 
-  const message = await stream.finalMessage();
   const textBlock = message.content.find((b) => b.type === "text");
   if (!textBlock || textBlock.type !== "text") {
     throw new Error("Claude returned no text content for extraction.");
