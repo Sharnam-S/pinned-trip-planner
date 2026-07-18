@@ -296,69 +296,78 @@ function TripSearchPill({
 }) {
   const count = trip.videos.length;
   return (
-    <div className="trip-pill" onClick={(e) => e.stopPropagation()}>
-      <div className="pill-seg pill-place">
-        <span className="pill-icon" aria-hidden="true">
-          📍
-        </span>
-        <span className="pill-text">{trip.name}</span>
-      </div>
+    <div className="trip-pill-slot" onClick={(e) => e.stopPropagation()}>
+      {/* One white card: the pill row on top, and the video list expanding
+          inside the same container below it (Airbnb search-pill morph) */}
+      <div className={`trip-pill ${open ? "open" : ""}`}>
+        <div className="pill-row">
+          <div className="pill-seg pill-place">
+            <span className="pill-icon" aria-hidden="true">
+              📍
+            </span>
+            <span className="pill-text">{trip.name}</span>
+          </div>
 
-      <span className="pill-sep" />
+          <span className="pill-sep" />
 
-      <button
-        className={`pill-seg pill-videos ${open ? "open" : ""}`}
-        onClick={() => setOpen((o) => !o)}
-      >
-        <span className="pill-thumbs">
-          {trip.videos.slice(0, 3).map((v) =>
-            v.thumbnail ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img key={v.id} src={v.thumbnail} alt="" />
-            ) : null
-          )}
-        </span>
-        <span className="pill-text">
-          {count} video{count === 1 ? "" : "s"}
-        </span>
-        <span className={`pill-chevron ${open ? "open" : ""}`}>▾</span>
-      </button>
-
-      {open && (
-        <div className="videos-dropdown">
-          <VideoStrip
-            videos={trip.videos}
-            pinnedId={pinnedId}
-            onHoverVideo={onHoverVideo}
-            onClickVideo={onClickVideo}
-          />
-          {canAdd && trip.status !== "processing" && (
-            <div className="add-videos">
-              <textarea
-                placeholder="Add more YouTube links…"
-                value={addLinks}
-                onChange={(e) => setAddLinks(e.target.value)}
-              />
-              {addError && (
-                <div className="error" style={{ color: "var(--red)", fontSize: 13 }}>{addError}</div>
+          <button
+            className={`pill-seg pill-videos ${open ? "open" : ""}`}
+            aria-expanded={open}
+            onClick={() => setOpen((o) => !o)}
+          >
+            <span className="pill-thumbs">
+              {trip.videos.slice(0, 3).map((v) =>
+                v.thumbnail ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img key={v.id} src={v.thumbnail} alt="" />
+                ) : null
               )}
-              <button
-                className="btn-secondary"
-                onClick={onAddVideos}
-                disabled={!addLinks.trim()}
-              >
-                Add videos
-              </button>
-            </div>
-          )}
-          {!canAdd && (
-            <div className="hero-hint" style={{ padding: "8px 4px 2px" }}>
-              This is a sample trip — build your own from the homepage to add
-              videos.
-            </div>
-          )}
+            </span>
+            <span className="pill-text">
+              {count} video{count === 1 ? "" : "s"}
+            </span>
+            <span className={`pill-chevron ${open ? "open" : ""}`}>▾</span>
+          </button>
         </div>
-      )}
+
+        <div className="videos-panel" inert={!open}>
+          <div className="videos-panel-clip">
+            <div className="videos-panel-body">
+              <VideoStrip
+                videos={trip.videos}
+                pinnedId={pinnedId}
+                onHoverVideo={onHoverVideo}
+                onClickVideo={onClickVideo}
+              />
+              {canAdd && trip.status !== "processing" && (
+                <div className="add-videos">
+                  <textarea
+                    placeholder="Add more YouTube links…"
+                    value={addLinks}
+                    onChange={(e) => setAddLinks(e.target.value)}
+                  />
+                  {addError && (
+                    <div className="error" style={{ color: "var(--red)", fontSize: 13 }}>{addError}</div>
+                  )}
+                  <button
+                    className="btn-secondary"
+                    onClick={onAddVideos}
+                    disabled={!addLinks.trim()}
+                  >
+                    Add videos
+                  </button>
+                </div>
+              )}
+              {!canAdd && (
+                <div className="hero-hint" style={{ padding: "8px 4px 2px" }}>
+                  This is a sample trip — build your own from the homepage to add
+                  videos.
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -370,11 +379,18 @@ function TripSkeleton() {
     <div className="trip-page">
       <header className="page-header">
         <div className="header-bar">
-          <a className="back" href="/">← All trips</a>
-          <div className="trip-pill">
-            <div className="skeleton sk-pill-place" />
-            <span className="pill-sep" />
-            <div className="skeleton sk-pill-videos" />
+          <a className="back" href="/">
+            <span className="back-arrow" aria-hidden="true">←</span>
+            Home
+          </a>
+          <div className="trip-pill-slot">
+            <div className="trip-pill">
+              <div className="pill-row">
+                <div className="skeleton sk-pill-place" />
+                <span className="pill-sep" />
+                <div className="skeleton sk-pill-videos" />
+              </div>
+            </div>
           </div>
           <div className="skeleton sk-export" />
         </div>
@@ -577,7 +593,10 @@ export default function TripView({ tripId }: { tripId: string }) {
     >
       <header className="page-header">
         <div className="header-bar">
-          <a className="back" href="/">← All trips</a>
+          <a className="back" href="/">
+            <span className="back-arrow" aria-hidden="true">←</span>
+            Home
+          </a>
 
           <TripSearchPill
             trip={trip}

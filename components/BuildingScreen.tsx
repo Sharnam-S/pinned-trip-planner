@@ -158,7 +158,7 @@ export default function BuildingScreen({ trip }: { trip: Trip }) {
           <Logo className="brand" />
         </a>
         <a className="nav-pill" href="/">
-          ← All trips
+          ← Home
         </a>
       </nav>
 

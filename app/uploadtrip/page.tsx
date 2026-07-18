@@ -64,7 +64,7 @@ export default function UploadTrip() {
 
   return (
     <main className="upload-page">
-      <a className="back" href="/">← All trips</a>
+      <a className="back" href="/">← Home</a>
       <h1>Share a trip</h1>
       <p className="upload-sub">
         Upload a trip JSON to add it to the shared library — anyone with the
