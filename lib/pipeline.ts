@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { getTrip, saveTrip } from "./store";
 import { fetchVideoData } from "./youtube";
 import { extractSpots } from "./extract";
+import { TripTag } from "./llm";
 import { geocode } from "./geocode";
 import { findSpotPhoto } from "./photos";
 import {
@@ -35,12 +36,13 @@ import { Mention, Spot, SpotPhotoRef, Trip } from "./types";
  */
 export async function processVideo(
   videoId: string,
-  knownSpotNames: string[]
+  knownSpotNames: string[],
+  trip?: TripTag
 ): Promise<VideoResult> {
   const cached = await getCachedVideo(videoId);
   if (cached) return partitionCachedVideo(cached, knownSpotNames);
 
-  const fresh = await processVideoRaw(videoId);
+  const fresh = await processVideoRaw(videoId, trip);
   // Best-effort: a cache write must never fail the video — worst case the next
   // trip re-processes it.
   await putCachedVideo(fresh).catch((err) =>
@@ -54,9 +56,12 @@ export async function processVideo(
  * spot it discusses (no knownSpotNames — that partitioning happens per trip in
  * `partitionCachedVideo`). This is what we cache and share across trips.
  */
-export async function processVideoRaw(videoId: string): Promise<CachedVideo> {
+export async function processVideoRaw(
+  videoId: string,
+  trip?: TripTag
+): Promise<CachedVideo> {
   const data = await fetchVideoData(videoId);
-  const extraction = await extractSpots(data, []);
+  const extraction = await extractSpots(data, [], undefined, trip);
 
   const byName = new Map<string, Spot>();
   const spots: Spot[] = [];

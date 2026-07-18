@@ -72,7 +72,12 @@ async function run(tripId: string) {
         resolvedDestination: string;
         videos: { id: string; title: string; channelName: string }[];
         bench: string[];
-      }>("/api/discover", trip.query);
+      }>("/api/discover", {
+        ...trip.query,
+        // For LLM analytics: lets traces/costs be filtered per trip
+        tripId: trip.id,
+        tripName: trip.name,
+      });
 
       trip = getLocalTrip(tripId);
       if (!trip) return;
@@ -187,6 +192,9 @@ async function processOne(
       // spots, so later requests can skip re-resolving them. Anything that
       // slips through parallel timing is de-duped by applyVideoResult.
       knownSpotNames: trip.spots.map((s) => s.name),
+      // For LLM analytics: lets traces/costs be filtered per trip
+      tripId: trip.id,
+      tripName: trip.name,
     });
     trip = getLocalTrip(tripId);
     if (!trip) return;

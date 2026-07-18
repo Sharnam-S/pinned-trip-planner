@@ -23,6 +23,13 @@ const posthog = process.env.POSTHOG_API_KEY
     })
   : null;
 
+/** Which trip a call belongs to — set as event properties so traces can be
+ *  filtered and cost summed per itinerary. */
+export type TripTag = {
+  tripId?: string;
+  tripName?: string;
+};
+
 export type LlmCallOptions = {
   /** Label shown on the generation in PostHog's trace view. */
   spanName: string;
@@ -33,6 +40,24 @@ export type LlmCallOptions = {
   /** Extra event properties, e.g. { destination, videoId }. */
   properties?: Record<string, string | number | boolean | null>;
 };
+
+/** TripTag -> event properties, skipping absent fields. */
+export function tripProperties(trip?: TripTag): Record<string, string> {
+  return {
+    ...(trip?.tripId ? { tripId: trip.tripId } : {}),
+    ...(trip?.tripName ? { tripName: trip.tripName } : {}),
+  };
+}
+
+/** Sanitize a client-supplied trip tag: strings only, capped length. */
+export function parseTripTag(body: Record<string, unknown>): TripTag {
+  const str = (v: unknown, max: number) =>
+    typeof v === "string" && v.trim() ? v.trim().slice(0, max) : undefined;
+  return {
+    tripId: str(body.tripId, 64),
+    tripName: str(body.tripName, 200),
+  };
+}
 
 // PostHog drops events over ~1MB and transcript prompts can be hundreds of
 // KB — keep the debugging value, cap the payload.
