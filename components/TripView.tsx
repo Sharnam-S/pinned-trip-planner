@@ -797,7 +797,7 @@ function SpotCard({
             <div className="know-label">Things to know</div>
             {spot.thingsToKnow!.map((tip, i) => (
               <div className="know-item" key={i}>
-                <span className="know-icon">⚠️</span>
+                <span className="know-icon" aria-hidden="true" />
                 <span>{tip}</span>
               </div>
             ))}
