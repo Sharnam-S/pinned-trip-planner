@@ -374,9 +374,10 @@ function TripSearchPill({
 
 // Airbnb-style loading skeleton: a shimmering ghost of the real trip page so
 // the header, spot grid, and map slot in place before the data lands.
-function TripSkeleton() {
+function TripSkeleton({ embed = false }: { embed?: boolean }) {
   return (
     <div className="trip-page">
+      {!embed && (
       <header className="page-header">
         <div className="header-bar">
           <a className="back" href="/">
@@ -403,6 +404,7 @@ function TripSkeleton() {
           </div>
         </div>
       </header>
+      )}
 
       <div className="trip-body">
         <section className="content-panel">
@@ -427,7 +429,15 @@ function TripSkeleton() {
   );
 }
 
-export default function TripView({ tripId }: { tripId: string }) {
+// embed: the landing-page playground rendering — no trip-overview header
+// (back button, search pill, filter chips), just the white cards + map body.
+export default function TripView({
+  tripId,
+  embed = false,
+}: {
+  tripId: string;
+  embed?: boolean;
+}) {
   const [trip, setTrip] = useState<Trip | null>(null);
   // null = still checking localStorage; then the trip is local or a sample
   const [isLocal, setIsLocal] = useState<boolean | null>(null);
@@ -544,7 +554,7 @@ export default function TripView({ tripId }: { tripId: string }) {
   }
 
   if (!trip) {
-    return <TripSkeleton />;
+    return <TripSkeleton embed={embed} />;
   }
 
   // Full-page building state until we have a destination + at least one spot.
@@ -591,6 +601,7 @@ export default function TripView({ tripId }: { tripId: string }) {
         setVideosOpen(false);
       }}
     >
+      {!embed && (
       <header className="page-header">
         <div className="header-bar">
           <a className="back" href="/">
@@ -675,6 +686,7 @@ export default function TripView({ tripId }: { tripId: string }) {
           </div>
         )}
       </header>
+      )}
 
       <div className={`trip-body ${mapExpanded ? "map-expanded" : ""}`}>
         <section className="content-panel">
