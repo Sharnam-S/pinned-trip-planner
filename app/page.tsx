@@ -35,6 +35,22 @@ export default function Home() {
   const [error, setError] = useState("");
   const [creating, setCreating] = useState(false);
   const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
+  // ?start=1 (the planner panel's "Create your first trip" nudge) lands the
+  // user ready to type: destination focused, search bar pulsing once.
+  const destRef = useRef<HTMLInputElement>(null);
+  const [pulse, setPulse] = useState(false);
+
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("start") !== "1") return;
+    window.history.replaceState(null, "", "/");
+    // Post-paint: the ring animation runs its two beats and ends on its own,
+    // so the class never needs un-setting.
+    const t = setTimeout(() => {
+      destRef.current?.focus();
+      setPulse(true);
+    }, 0);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     const sync = () => {
@@ -145,11 +161,12 @@ Every YouTube travel
           Tell us where you're going. We'll find the best YouTube videos, extract every recommendation, and build a map you can actually explore. 
         </p>
 
-        <div className="search-bar rise r2">
+        <div className={`search-bar rise r2${pulse ? " pulse" : ""}`}>
           <div className="sb-field grow">
             <label htmlFor="dest">Where</label>
             <input
               id="dest"
+              ref={destRef}
               type="text"
               value={destination}
               onChange={(e) => setDestination(e.target.value)}
