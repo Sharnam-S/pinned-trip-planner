@@ -12,6 +12,7 @@ import { useChat } from "@ai-sdk/react";
 import {
   DefaultChatTransport,
   lastAssistantMessageIsCompleteWithToolCalls,
+  type UIMessage,
 } from "ai";
 import { Itinerary, Trip } from "@/lib/types";
 import {
@@ -68,6 +69,63 @@ interface PlannerCtx {
   chatSessionId: string;
 }
 
+// --- Chat history: per-trip, in localStorage (same as plans and stars —
+// nothing user-specific ever lives on the server) ---
+
+const CHAT_PREFIX = "pinned.chat.";
+const CHAT_MAX_MESSAGES = 80;
+
+/** A refresh mid-turn can leave the last assistant message with a tool call
+ *  that never got its output — replaying that to the API is invalid, so drop
+ *  trailing messages until the conversation ends on solid ground. */
+function sanitizeChat(messages: UIMessage[]): UIMessage[] {
+  const out = [...messages];
+  while (out.length > 0) {
+    const last = out[out.length - 1];
+    const dangling =
+      last.role === "assistant" &&
+      last.parts.some(
+        (p) =>
+          p.type.startsWith("tool-") &&
+          "state" in p &&
+          p.state !== "output-available" &&
+          p.state !== "output-error"
+      );
+    if (!dangling) break;
+    out.pop();
+  }
+  return out;
+}
+
+function loadChat(tripId: string): UIMessage[] {
+  if (typeof window === "undefined" || !window.localStorage) return [];
+  try {
+    const raw = localStorage.getItem(CHAT_PREFIX + tripId);
+    return raw ? sanitizeChat(JSON.parse(raw) as UIMessage[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveChat(tripId: string, messages: UIMessage[]): void {
+  try {
+    localStorage.setItem(
+      CHAT_PREFIX + tripId,
+      JSON.stringify(messages.slice(-CHAT_MAX_MESSAGES))
+    );
+  } catch {
+    // quota exceeded — this session still works from memory
+  }
+}
+
+function clearChat(tripId: string): void {
+  try {
+    localStorage.removeItem(CHAT_PREFIX + tripId);
+  } catch {
+    // nothing to do
+  }
+}
+
 /** Chat text with **bold** rendered (the model writes light markdown). */
 function FormattedText({ text }: { text: string }) {
   const parts = text.split(/\*\*(.+?)\*\*/g);
@@ -98,20 +156,50 @@ function makeTransport(tripId: string, ctxRef: { current: PlannerCtx }) {
   });
 }
 
-export default function PlannerChat({
-  trip,
-  isLocal,
-  itinerary,
-  mustSeeIds,
-  onItineraryChange,
-  onClose,
-}: {
+interface PlannerChatProps {
   trip: Trip;
   isLocal: boolean;
   itinerary: Itinerary | null;
   mustSeeIds: string[];
   onItineraryChange: (itin: Itinerary) => void;
   onClose: () => void;
+}
+
+/** Wrapper owns history restore + "New chat": bumping the epoch remounts the
+ *  inner chat with fresh (or cleared) initial messages. */
+export default function PlannerChat(props: PlannerChatProps) {
+  const [epoch, setEpoch] = useState(0);
+  const initialMessages = useMemo(
+    () => loadChat(props.trip.id),
+    // reload on trip change or explicit clear
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [props.trip.id, epoch]
+  );
+  return (
+    <PlannerChatInner
+      key={`${props.trip.id}:${epoch}`}
+      {...props}
+      initialMessages={initialMessages}
+      onClear={() => {
+        clearChat(props.trip.id);
+        setEpoch((e) => e + 1);
+      }}
+    />
+  );
+}
+
+function PlannerChatInner({
+  trip,
+  isLocal,
+  itinerary,
+  mustSeeIds,
+  onItineraryChange,
+  onClose,
+  initialMessages,
+  onClear,
+}: PlannerChatProps & {
+  initialMessages: UIMessage[];
+  onClear: () => void;
 }) {
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -137,6 +225,7 @@ export default function PlannerChat({
 
   const { messages, sendMessage, addToolOutput, status, error, regenerate } = useChat({
     transport,
+    messages: initialMessages,
     sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
     async onToolCall({ toolCall }) {
       if (toolCall.dynamic) return;
@@ -200,6 +289,13 @@ export default function PlannerChat({
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages, busy, error, streamDropped]);
 
+  // Persist the conversation so a refresh (or coming back tomorrow) resumes
+  // it. Skip while streaming — save the settled turn once, not every token.
+  useEffect(() => {
+    if (busy || messages.length === 0) return;
+    saveChat(trip.id, messages);
+  }, [messages, busy, trip.id]);
+
   function send(text: string) {
     const trimmed = text.trim();
     if (!trimmed || busy) return;
@@ -221,17 +317,28 @@ export default function PlannerChat({
         <div className="planner-title">
           <span aria-hidden="true">✨</span> Local planner
         </div>
-        <button className="close" onClick={onClose} aria-label="Close planner">
-          ✕
-        </button>
+        <div className="planner-head-actions">
+          {messages.length > 0 && (
+            <button
+              className="close"
+              onClick={onClear}
+              disabled={busy}
+              title="Start a new conversation (your plan stays)"
+            >
+              ↺ New chat
+            </button>
+          )}
+          <button className="close" onClick={onClose} aria-label="Close planner">
+            ✕
+          </button>
+        </div>
       </div>
 
       <div className="planner-scroll" ref={scrollRef}>
         {messages.length === 0 && (
           <div className="planner-intro">
             <p>
-              I know these {trip.spots.length} spots well — tell me how many
-              days you have and I&rsquo;ll sketch a day-by-day plan on the map.
+              {`I know these ${trip.spots.length} spots well — tell me how many days you have and I'll sketch a day-by-day plan on the map.`}
             </p>
             <div className="planner-suggestions">
               {SUGGESTIONS.map((s) => (

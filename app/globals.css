@@ -2750,6 +2750,11 @@ button {
   letter-spacing: -0.01em;
   color: var(--text);
 }
+.planner-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
 .planner-head .close {
   border: none;
   background: none;
@@ -2758,9 +2763,14 @@ button {
   color: var(--text-soft);
   padding: 4px 6px;
   border-radius: 8px;
+  white-space: nowrap;
 }
 .planner-head .close:hover {
   background: var(--surface-alt);
+}
+.planner-head .close:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 .planner-scroll {
