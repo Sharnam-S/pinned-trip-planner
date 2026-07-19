@@ -1122,10 +1122,7 @@ function SpotCard({
         </a>
 
         {planInfo && (
-          <div
-            className="plan-why"
-            style={planColor ? { borderLeftColor: planColor } : undefined}
-          >
+          <div className="plan-why">
             <div className="plan-why-label">
               <span
                 className="dot"

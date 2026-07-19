@@ -72,7 +72,7 @@ export default function TripMap({
       zoomControl: false,
       attributionControl: true,
     });
-    L.control.zoom({ position: "topright" }).addTo(map);
+    // No zoom buttons — pinch/scroll/double-tap gestures cover it.
     // CARTO Voyager: the soft pastel look closest to Airbnb's map
     L.tileLayer(
       "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
