@@ -260,6 +260,57 @@ function CarouselImage({ src, alt }: { src: string; alt: string }) {
   );
 }
 
+// --- Monochrome line icons for the spot card (stroke-2, round caps — the
+// same language as the carousel chevrons). Colored by currentColor. ---
+
+function IconCamera() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="7" width="18" height="13" rx="3" stroke="currentColor" strokeWidth="2" />
+      <path d="M9 7l1.6-2.6h2.8L15 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="12" cy="13.5" r="3.5" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
+
+function IconVideo() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="14" rx="3.5" stroke="currentColor" strokeWidth="2" />
+      <path d="M10.5 9.3l4.6 2.7-4.6 2.7z" fill="currentColor" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function IconStar() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 3.6l2.5 5.1 5.6.8-4 4 .9 5.6-5-2.7-5 2.7.9-5.6-4-4 5.6-.8L12 3.6z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function IconPlay() {
+  return (
+    <svg width="8" height="8" viewBox="0 0 10 10" aria-hidden="true">
+      <path d="M2.5 1.3l6 3.7-6 3.7z" fill="currentColor" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function IconClose() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+      <path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 // Airbnb-style tile photo carousel: arrows appear on hover, dots track the
 // current photo. Single-photo spots render a plain image.
 function TilePhotos({ spot, tripId, local }: { spot: Spot; tripId: string; local: boolean }) {
@@ -982,7 +1033,7 @@ function TripOverview({
         <h3>No trip plan yet</h3>
         <p>
           Chat with your local planner to turn these spots into a day-by-day
-          itinerary. Star ⭐ the places you refuse to miss and the planner
+          itinerary. Star the places you refuse to miss and the planner
           will build the days around them.
         </p>
         <button className="ov-empty-cta" onClick={onStartPlanning}>
@@ -1211,16 +1262,18 @@ function SpotCard({
   // (wikimedia) or a frame from the recommending creator's video
   const credit =
     spot.photos && spot.photos.length > 0
-      ? "📷 Google Maps"
+      ? { Icon: IconCamera, label: "Google Maps" }
       : spot.photo
         ? spot.photo.source === "google"
-          ? "📷 Google Maps"
-          : "📷 Wikimedia Commons"
-        : `📺 ${spot.mentions[0]?.channelName ?? ""}`;
+          ? { Icon: IconCamera, label: "Google Maps" }
+          : { Icon: IconCamera, label: "Wikimedia Commons" }
+        : { Icon: IconVideo, label: spot.mentions[0]?.channelName ?? "" };
 
   return (
     <div className="spot-card">
-      <button className="close" onClick={onClose} aria-label="Close">✕</button>
+      <button className="close" onClick={onClose} aria-label="Close">
+        <IconClose />
+      </button>
       {urls.length > 0 && (
         <div className="card-photo">
           {urls[i] ? (
@@ -1228,7 +1281,10 @@ function SpotCard({
           ) : (
             <div className="tile-photo-loading" />
           )}
-          <span className="photo-credit">{credit}</span>
+          <span className="photo-credit">
+            <credit.Icon />
+            <span>{credit.label}</span>
+          </span>
           <CarouselControls i={i} total={total} step={step} />
         </div>
       )}
@@ -1245,32 +1301,26 @@ function SpotCard({
             }
             aria-pressed={mustSee}
           >
-            {mustSee ? "⭐ Must-see" : "☆ Must-see"}
+            <IconStar />
+            Must-see
           </button>
         </div>
 
-        {/* Rentizy-style stat tiles: the spot's key facts at a glance */}
-        <div className="stat-tiles">
-          <div className="stat-tile">
-            <div className="st-v">{CATEGORY_EMOJI[spot.category]}</div>
-            <div className="st-l">{spot.category}</div>
-          </div>
-          <div className="stat-tile">
-            <div className="st-v">{spot.mentions.length}</div>
-            <div className="st-l">
-              creator{spot.mentions.length === 1 ? "" : "s"}
-            </div>
-          </div>
-          <div className="stat-tile">
-            <div className="st-v">
-              {planInfo ? planInfo.day.label : "—"}
-            </div>
-            <div className="st-l">
-              {planInfo
-                ? planInfo.stop.time ?? "in your plan"
-                : "not planned"}
-            </div>
-          </div>
+        {/* One quiet meta line: the spot's key facts at a glance. When the
+            spot isn't planned yet the line simply ends after the creator
+            count — no dead "not planned" cell. */}
+        <div className="spot-meta">
+          {[
+            spot.category,
+            `${spot.mentions.length} creator${
+              spot.mentions.length === 1 ? "" : "s"
+            }`,
+            ...(planInfo
+              ? [planInfo.day.label, planInfo.stop.time ?? null]
+              : []),
+          ]
+            .filter(Boolean)
+            .join(" · ")}
         </div>
 
         <p className="desc">
@@ -1327,7 +1377,10 @@ function SpotCard({
               <p className="plan-why-text">{planInfo.stop.why}</p>
             )}
             {planInfo.stop.note && (
-              <p className="plan-why-note">💡 {planInfo.stop.note}</p>
+              <p className="plan-why-note">
+                <span className="tip-tag">Tip</span>
+                {planInfo.stop.note}
+              </p>
             )}
           </div>
         )}
@@ -1344,11 +1397,13 @@ function SpotCard({
           </div>
         )}
 
+        {/* Section label only — the rows below carry the names/avatars, so a
+            single creator isn't repeated twice in a row. */}
         <div className="rec-label">
-          Recommended by{" "}
+          Recommended by
           {spot.mentions.length === 1
-            ? spot.mentions[0].channelName
-            : `${spot.mentions.length} creators`}
+            ? ""
+            : ` ${spot.mentions.length} creators`}
         </div>
         {spot.mentions.map((m) => (
           <a
@@ -1369,7 +1424,10 @@ function SpotCard({
               <div className="cname">{m.channelName}</div>
               <div className="cquote">&ldquo;{m.quote}&rdquo;</div>
             </div>
-            <div className="play">▶ {formatTimestamp(m.timestampSec)}</div>
+            <div className="play">
+              <IconPlay />
+              {formatTimestamp(m.timestampSec)}
+            </div>
           </a>
         ))}
       </div>

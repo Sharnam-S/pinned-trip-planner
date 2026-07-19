@@ -1983,41 +1983,32 @@ button {
   opacity: 0.3;
 }
 
-/* Spot detail card */
+/* Spot detail card — fills the right rail. (It renders nowhere else; the old
+   floating-map-overlay styles are gone, and their absolute left/top offsets
+   were what pushed the card past the rail into a horizontal scroll.) */
 .spot-card {
-  position: absolute;
-  left: 16px;
-  top: 16px;
-  z-index: 1000;
-  width: 360px;
-  max-width: calc(100% - 32px);
+  /* relative, NOT static — the ✕ close button positions against the card */
+  position: relative;
   background: var(--surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  max-height: calc(100% - 32px);
-  display: flex;
-  flex-direction: column;
 }
 
 .spot-card .card-body {
-  padding: 18px;
-  overflow-y: auto;
+  padding: 18px 22px 36px;
 }
 
 .spot-card .close {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 28px;
+  right: 28px;
   width: 32px;
   height: 32px;
+  display: grid;
+  place-items: center;
   border-radius: 50%;
   border: none;
   background: rgba(255, 255, 255, 0.95);
   box-shadow: var(--shadow-soft);
   color: var(--text);
-  font-size: 14px;
-  line-height: 1;
   z-index: 2;
   transition: transform 0.12s ease;
 }
@@ -2028,10 +2019,12 @@ button {
 
 .spot-card .card-photo {
   position: relative;
-  width: 100%;
-  height: 200px;
-  flex-shrink: 0;
+  height: 240px;
+  margin: 16px 16px 0;
+  border-radius: 20px;
+  overflow: hidden;
   background: var(--surface-alt);
+  box-shadow: 0 2px 6px rgba(16, 17, 26, 0.06), 0 12px 28px rgba(16, 17, 26, 0.09);
 }
 
 .spot-card:hover .car-arrow {
@@ -2049,6 +2042,9 @@ button {
   position: absolute;
   left: 10px;
   bottom: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 11px;
   font-weight: 600;
   color: white;
@@ -2056,10 +2052,18 @@ button {
   padding: 4px 10px;
   border-radius: var(--radius-chip);
   max-width: 75%;
+  backdrop-filter: blur(6px);
+}
+
+.spot-card .photo-credit svg {
+  flex-shrink: 0;
+}
+
+.spot-card .photo-credit span {
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  backdrop-filter: blur(6px);
 }
 
 /* "Open in Google Maps" — quiet secondary pill under the description */
@@ -2101,9 +2105,9 @@ button {
 
 .know-label {
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: var(--text-soft);
   margin-bottom: 8px;
 }
@@ -2127,32 +2131,31 @@ button {
   background: var(--text-soft);
 }
 
-.spot-card .cat-line {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-soft);
-}
-
 .spot-card h2 {
+  margin: 0;
   font-size: 21px;
-  margin: 4px 0 8px;
+  font-weight: 750;
   letter-spacing: -0.02em;
+  line-height: 1.25;
 }
 
 .spot-card .desc {
   font-size: 14px;
-  line-height: 1.55;
-  color: #3a3a3c;
+  line-height: 1.7;
+  color: var(--text-soft);
 }
 
+/* Same small-caps voice as .know-label / .plan-why-label — the card's
+   section labels are one system. */
 .spot-card .rec-label {
-  margin-top: 16px;
-  padding-top: 14px;
+  margin-top: 18px;
+  padding-top: 16px;
   border-top: 1px solid var(--line);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-soft);
 }
 
 .creator-row {
@@ -2200,6 +2203,9 @@ button {
 }
 
 .creator-row .play {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   background: var(--text);
   color: white;
   font-size: 11px;
@@ -3180,9 +3186,9 @@ button {
   align-items: center;
   gap: 8px;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: var(--text-soft);
   margin-bottom: 8px;
 }
@@ -3205,6 +3211,15 @@ button {
   color: var(--text-soft);
   margin: 8px 0 0;
 }
+/* Inline small-caps prefix on agent tips — replaces the old 💡 emoji with
+   the card's label voice, one size down. */
+.plan-why-note .tip-tag {
+  margin-right: 7px;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
 
 /* Must-see star: on the spot card + the bar above the chat input */
 .card-title-row {
@@ -3218,6 +3233,9 @@ button {
 }
 .must-star {
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   border: 1px solid rgba(16, 17, 26, 0.1);
   background: var(--surface);
   border-radius: var(--radius-chip);
@@ -3230,6 +3248,16 @@ button {
   box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04);
   transition: border-color 0.15s ease, background 0.15s ease,
     box-shadow 0.15s ease, transform 0.15s ease;
+}
+.must-star svg {
+  flex-shrink: 0;
+  color: var(--text-soft);
+}
+.must-star.on svg {
+  color: var(--yellow);
+}
+.must-star.on svg path {
+  fill: currentColor;
 }
 .must-star:hover {
   border-color: rgba(16, 17, 26, 0.22);
@@ -3359,84 +3387,20 @@ button {
   padding: 48px 24px;
 }
 
-/* Premium detail card: fills the right rail (was a floating map overlay) */
-.right-side .spot-card {
-  /* relative, NOT static — the ✕ close button positions against the card;
-     static let it escape to the page body and render off-screen */
-  position: relative;
-  width: auto;
-  max-width: none;
-  max-height: none;
-  box-shadow: none;
-  border-radius: 0;
-  display: block;
-}
-.right-side .spot-card .card-photo {
-  width: auto;
-  height: 240px;
-  border-radius: 20px;
-  overflow: hidden;
-  margin: 16px 16px 0;
-  box-shadow: 0 2px 6px rgba(16, 17, 26, 0.06), 0 12px 28px rgba(16, 17, 26, 0.09);
-}
-.right-side .spot-card .close {
-  top: 28px;
-  right: 28px;
-}
-.right-side .spot-card .card-body {
-  padding: 18px 22px 36px;
-  overflow: visible;
-}
-.right-side .spot-card h2 {
-  font-size: 21px;
-  font-weight: 750;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
-}
-.right-side .spot-card .desc {
-  font-size: 14px;
-  line-height: 1.7;
-  color: var(--text-soft);
-}
 .approx-note {
   font-size: 12px;
   color: var(--text-soft);
 }
 
-/* Stat tiles (Rentizy-style key facts) */
-.stat-tiles {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin: 16px 0 18px;
-}
-.stat-tile {
-  background: var(--surface);
-  border: 1px solid rgba(16, 17, 26, 0.06);
-  border-radius: 16px;
-  padding: 13px 8px 11px;
-  text-align: center;
-  min-width: 0;
-  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04), 0 5px 14px rgba(16, 17, 26, 0.05);
-}
-.st-v {
-  font-size: 15px;
-  font-weight: 750;
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.st-l {
-  margin-top: 3px;
-  font-size: 10px;
+/* Key facts under the title: one quiet small-caps line (category · creators
+   · plan slot) — same voice as .know-label / .plan-why-label, no boxes. */
+.spot-meta {
+  margin: 4px 0 12px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-soft);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* Mini photo popup on the map (selection opens the right-rail card) */
