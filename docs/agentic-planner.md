@@ -21,14 +21,14 @@ rationale on the spot cards.
 
 ```
 ┌──────────────┬────────────────────────────┬────────────────────┐
-│ Trip head    │  Map, center stage         │ Selected spot →    │
-│ (name, meta, │  · day chips → day brief   │ premium detail     │
-│ videos ▾)    │  · numbered day pins       │ card (stat tiles)  │
-│──────────────│  · route polylines         │ else → 2-col grid  │
-│ Planner chat │  · mini photo popup on     │ of spots in the    │
-│ (open by     │    pin click               │ map viewport       │
-│ default)     │  (category filters live    │                    │
-│              │   in the top bar)          │                    │
+│ Trip head    │  Map, center stage         │ Tabs: Pins │ Trip  │
+│ (name, meta, │  · day chips → day brief   │ overview.  Pins =  │
+│ videos ▾)    │  · numbered day pins       │ detail card / 2-col│
+│──────────────│  · route polylines         │ viewport grid.     │
+│ Planner chat │  · mini photo popup on     │ Overview = numbered│
+│ (open by     │    pin click               │ timeline of expand-│
+│ default)     │  (category filters live    │ able day cards     │
+│              │   in the top bar)          │ (+ empty state)    │
 └──────────────┴────────────────────────────┴────────────────────┘
 ```
 (Redesigned 2026-07-19 to a Rentizy-style map-center layout — selection
