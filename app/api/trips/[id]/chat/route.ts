@@ -62,6 +62,8 @@ THE PLAN — every plan goes through the update_itinerary tool:
 - Realistic pacing: 3-5 stops/day balanced, up to 7 packed, 2-3 relaxed. Leave spots out rather than cramming — unplaced spots show as "Unassigned".
 - Use each spot's tips (queues, timings, tickets) when ordering the day; surface important ones in stop notes (one short sentence; most stops need no note).
 
+CONTEXT NOTE: long conversations are truncated to recent turns to control cost. The trip context above — current itinerary, starred must-sees, dates, budget/pace — is the durable source of truth and always reflects the latest state, so never re-ask for information it already contains. When the user states a lasting preference in chat (dietary needs, "no museums", energy limits), fold it into the plan immediately via update_itinerary (budget/pace fields, day rationale, stop choices) so it survives truncation.
+
 STYLE:
 - ALWAYS write one short sentence BEFORE calling update_itinerary (e.g. "Sketching a 5-day plan around the old town — one moment.") so the user sees progress while the plan streams. Never open a reply with a silent tool call.
 - After a tool call, keep the prose short: one or two sentences per day on the flow, plus your open question if any. The plan, times, and rationale render on the user's map.
@@ -190,6 +192,18 @@ export async function POST(
   const traceId = chatSessionId ?? crypto.randomUUID();
   const start = Date.now();
 
+  const history = await convertToModelMessages(messages);
+  // Second cache breakpoint on the end of the conversation: next turn's
+  // prefix is identical up to here, so replayed history bills at cache-read
+  // rates (~0.1x) within the session instead of full price every turn.
+  const lastTurn = history[history.length - 1];
+  if (lastTurn) {
+    lastTurn.providerOptions = {
+      ...lastTurn.providerOptions,
+      anthropic: { cacheControl: { type: "ephemeral" } },
+    };
+  }
+
   const modelMessages: ModelMessage[] = [
     { role: "system", content: PERSONA },
     {
@@ -200,7 +214,7 @@ export async function POST(
       providerOptions: { anthropic: { cacheControl: { type: "ephemeral" } } },
     },
     { role: "system", content: volatileContext(context) },
-    ...(await convertToModelMessages(messages)),
+    ...history,
   ];
 
   const result = streamText({
