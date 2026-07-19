@@ -1236,14 +1236,35 @@ function DayBrief({
   onSelectSpot: (id: string) => void;
   onClose: () => void;
 }) {
-  const photoUrl =
-    day.stops
-      .map((st) => spotById.get(st.spotId))
-      .map((spot) => (spot ? miniPhotoUrl(spot) : null))
-      .find(Boolean) ?? null;
+  const stops = day.stops.flatMap((st) => {
+    const spot = spotById.get(st.spotId);
+    return spot ? [{ ...st, spot }] : [];
+  });
+  const photoUrl = stops.map((s) => miniPhotoUrl(s.spot)).find(Boolean) ?? null;
+  const catCount = new Map<SpotCategory, number>();
+  for (const s of stops) {
+    catCount.set(s.spot.category, (catCount.get(s.spot.category) ?? 0) + 1);
+  }
+  const topCats = [...catCount.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 2)
+    .map(([c]) => c);
+
   return (
-    <div className="day-brief" onClick={(e) => e.stopPropagation()}>
-      <div className="ov-brief-head">
+    <div className="day-brief ov-card" onClick={(e) => e.stopPropagation()}>
+      <button
+        className="ov-brief-close"
+        onClick={onClose}
+        aria-label="Close day brief"
+      >
+        ✕
+      </button>
+      {/* Same anatomy as the rail card: full-bleed cover, then text, then stops */}
+      {photoUrl && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img className="ov-cover" src={photoUrl} alt="" />
+      )}
+      <div className="ov-card-text">
         <span className="ov-day-badge">
           <span className="dot" style={{ background: color }} />
           {day.label}
@@ -1253,25 +1274,27 @@ function DayBrief({
               { weekday: "short", month: "short", day: "numeric" }
             )}`}
         </span>
-        <button className="close" onClick={onClose} aria-label="Close day brief">
-          ✕
-        </button>
-      </div>
-      <div className="ov-brief-main">
-        <div className="ov-brief-main-text">
-          {day.theme && <div className="ov-title">{day.theme}</div>}
-        </div>
-        {photoUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img className="ov-brief-cover" src={photoUrl} alt="" />
+        <div className="ov-title">{day.theme ?? day.label}</div>
+        {topCats.length > 0 && (
+          <div className="ov-chips">
+            {topCats.map((c) => (
+              <span className="ov-chip" key={c}>
+                {CATEGORY_EMOJI[c]} {c}
+              </span>
+            ))}
+          </div>
+        )}
+        {day.rationale && (
+          <p className="ov-rationale ov-rationale-teaser">{day.rationale}</p>
         )}
       </div>
-      <div className="ov-stops in-brief">
+      <div className="ov-stops">
         <DaySchedule
           day={day}
           spotById={spotById}
           onSelectSpot={onSelectSpot}
           showDate={false}
+          showRationale={false}
         />
       </div>
     </div>
