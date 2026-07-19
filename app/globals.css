@@ -21,6 +21,20 @@
   --radius-chip: 999px;
   --font-body: var(--font-sans), -apple-system, BlinkMacSystemFont,
     "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+
+  /* Type scale — 4 steps, one voice. The spot detail card previously mixed
+     8 ad-hoc sizes (21/14/13.5/13/12.5/12/11/10) with drifting line-heights
+     and letter-spacing across tiers that mean the same thing. These tokens
+     collapse it: title, reading body, supporting text, and overline label.
+     Pair each size with its line-height token; color hierarchy stays
+     two-tone (--text / --text-soft), never more. */
+  --fs-title: 21px;
+  --fs-body: 14px;
+  --fs-support: 12.5px;
+  --fs-label: 11px;
+  --lh-body: 1.6;
+  --lh-support: 1.5;
+  --ls-label: 0.06em;
 }
 
 * {
@@ -2045,7 +2059,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: var(--fs-label);
   font-weight: 600;
   color: white;
   background: rgba(0, 0, 0, 0.5);
@@ -2075,7 +2089,7 @@ button {
   padding: 9px 15px;
   border: 1px solid rgba(16, 17, 26, 0.1);
   border-radius: var(--radius-chip);
-  font-size: 12.5px;
+  font-size: var(--fs-support);
   font-weight: 700;
   color: var(--text);
   background: var(--surface);
@@ -2104,10 +2118,10 @@ button {
 }
 
 .know-label {
-  font-size: 11px;
+  font-size: var(--fs-label);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ls-label);
   color: var(--text-soft);
   margin-bottom: 8px;
 }
@@ -2116,8 +2130,8 @@ button {
   display: flex;
   align-items: baseline;
   gap: 10px;
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
   color: var(--text);
   padding: 3px 0;
 }
@@ -2133,15 +2147,15 @@ button {
 
 .spot-card h2 {
   margin: 0;
-  font-size: 21px;
+  font-size: var(--fs-title);
   font-weight: 750;
   letter-spacing: -0.02em;
   line-height: 1.25;
 }
 
 .spot-card .desc {
-  font-size: 14px;
-  line-height: 1.7;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
   color: var(--text-soft);
 }
 
@@ -2151,9 +2165,9 @@ button {
   margin-top: 18px;
   padding-top: 16px;
   border-top: 1px solid var(--line);
-  font-size: 11px;
+  font-size: var(--fs-label);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ls-label);
   text-transform: uppercase;
   color: var(--text-soft);
 }
@@ -2187,14 +2201,14 @@ button {
 }
 
 .creator-row .cname {
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 650;
+  font-size: var(--fs-body);
 }
 
 .creator-row .cquote {
   color: var(--text-soft);
-  font-size: 12.5px;
-  line-height: 1.4;
+  font-size: var(--fs-support);
+  line-height: var(--lh-support);
   display: -webkit-box;
   /* the creator's words are the point — give the quote real room */
   -webkit-line-clamp: 6;
@@ -2208,7 +2222,7 @@ button {
   gap: 5px;
   background: var(--text);
   color: white;
-  font-size: 11px;
+  font-size: var(--fs-label);
   font-weight: 700;
   padding: 5px 10px;
   border-radius: var(--radius-chip);
@@ -3185,10 +3199,10 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
+  font-size: var(--fs-label);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ls-label);
   color: var(--text-soft);
   margin-bottom: 8px;
 }
@@ -3200,24 +3214,24 @@ button {
   flex-shrink: 0;
 }
 .plan-why-text {
-  font-size: 13.5px;
-  line-height: 1.55;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
   color: var(--text);
   margin: 0;
 }
 .plan-why-note {
-  font-size: 12.5px;
-  line-height: 1.5;
+  font-size: var(--fs-support);
+  line-height: var(--lh-support);
   color: var(--text-soft);
   margin: 8px 0 0;
 }
-/* Inline small-caps prefix on agent tips — replaces the old 💡 emoji with
-   the card's label voice, one size down. */
+/* Inline small-caps prefix on agent tips — the card's overline label voice,
+   matching every other section label. */
 .plan-why-note .tip-tag {
   margin-right: 7px;
-  font-size: 10px;
-  font-weight: 750;
-  letter-spacing: 0.07em;
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: var(--ls-label);
   text-transform: uppercase;
 }
 
@@ -3240,8 +3254,8 @@ button {
   background: var(--surface);
   border-radius: var(--radius-chip);
   padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--fs-support);
+  font-weight: 650;
   color: var(--text);
   cursor: pointer;
   white-space: nowrap;
@@ -3388,7 +3402,7 @@ button {
 }
 
 .approx-note {
-  font-size: 12px;
+  font-size: var(--fs-support);
   color: var(--text-soft);
 }
 
@@ -3396,9 +3410,9 @@ button {
    · plan slot) — same voice as .know-label / .plan-why-label, no boxes. */
 .spot-meta {
   margin: 4px 0 12px;
-  font-size: 11px;
+  font-size: var(--fs-label);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: var(--ls-label);
   text-transform: uppercase;
   color: var(--text-soft);
 }
