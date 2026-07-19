@@ -123,12 +123,12 @@ const CurationSchema = z.object({
   videoIds: z
     .array(z.string())
     .describe(
-      "Ranked YouTube video ids from the candidate list, best first, up to 16. Only ids that appear in the list."
+      "Ranked YouTube video ids from the candidate list, best first, up to 40. Only ids that appear in the list."
     ),
 });
 
 /**
- * Rank candidates: the top 8 become the trip, the rest are the bench for
+ * Rank candidates: the top 20 become the trip, the rest are the bench for
  * substitution when a pick turns out to have no captions.
  */
 export async function curateVideos(
@@ -158,15 +158,15 @@ export async function curateVideos(
   const response = await observedMessage({
     model: PLANNER_MODEL,
     max_tokens: 1500,
-    system: `You pick the best YouTube travel videos for spot extraction. From the candidate list, return a ranked list of up to 16 video ids (best first).
+    system: `You pick the best YouTube travel videos for spot extraction. From the candidate list, return a ranked list of up to 40 video ids (best first).
 
 Ranking criteria:
 - Actual travel content about the destination: guides, vlogs, "things to do", food tours. Reject news, real-estate, expat-life rants, generic country compilations where the destination is one stop among many, and single-event coverage — festival / concert / marathon vlogs and recaps where every spot would land on the same venue — unless the traveler named that event or their travel dates fall inside it.
-- The first 8 must come from 8 DIFFERENT channels — they become the trip; diversity of perspective is the product's core value.
+- The first 20 must come from as many DIFFERENT channels as possible (ideally 20 distinct channels) — they become the trip; diversity of perspective is the product's core value.
 - When travel dates are given, match the season: infer the season a video covers from its title and its published month (a vlog published in July was almost certainly filmed in summer). Favor same-season and evergreen videos; demote wrong-season ones — a summer hiking vlog is a poor guide for a December trip, and vice versa. Keep a wrong-season video only when it's clearly the best general guide available. Without dates, lean season-neutral.
-- Cover the traveler's interests when given, but keep general coverage in the first 8 too.
+- Cover the traveler's interests when given, but keep general coverage in the first 20 too.
 - Prefer recent over old (places close), substantial over thin (a 15-min detailed guide beats a 4-min montage), and watched over unwatched — but a niche creator with exactly the right content beats a generic popular one.
-- Ranks 9-16 are backups used when a pick has no captions: same standards, just next-best.`,
+- Ranks 21-40 are backups used when a pick has no captions: same standards, just next-best.`,
     messages: [
       {
         role: "user",
