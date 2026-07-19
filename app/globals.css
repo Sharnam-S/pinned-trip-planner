@@ -3980,7 +3980,8 @@ button {
   margin: 8px 0;
 }
 
-/* The map's day-brief now wears the same card design as the rail */
+/* The map's day-brief IS the rail card (.ov-card), floated over the map.
+   Same anatomy: full-bleed cover on top, then text, then the stop list. */
 .day-brief {
   position: absolute;
   top: 60px;
@@ -3988,57 +3989,34 @@ button {
   z-index: 1000;
   width: min(340px, 72%);
   max-height: calc(100% - 84px);
-  overflow-y: auto;
-  background: var(--surface);
-  border: none;
-  border-radius: 22px;
-  box-shadow: 0 2px 4px rgba(16, 17, 26, 0.05), 0 16px 40px rgba(16, 17, 26, 0.14);
-  padding: 16px 18px 16px;
+  overflow: hidden auto;
+  margin-bottom: 0;
+  padding: 0;
+  box-shadow: 0 2px 4px rgba(16, 17, 26, 0.05),
+    0 16px 40px rgba(16, 17, 26, 0.14);
 }
-.ov-brief-head {
+/* Floating close button, tucked into the top-right corner of the cover */
+.ov-brief-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.ov-brief-head .close {
+  justify-content: center;
   border: none;
-  background: none;
+  border-radius: 50%;
+  background: rgba(20, 22, 30, 0.5);
+  color: #fff;
+  font-size: 11px;
   cursor: pointer;
-  font-size: 13px;
-  color: var(--text-soft);
-  padding: 4px 6px;
-  border-radius: 8px;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
 }
-.ov-brief-head .close:hover {
-  background: var(--surface-alt);
-}
-/* Title on the left, the day's cover thumbnail on the right */
-.ov-brief-main {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 12px;
-}
-.ov-brief-main-text {
-  flex: 1;
-  min-width: 0;
-}
-.day-brief .ov-title {
-  margin-top: 0;
-}
-.ov-brief-cover {
-  flex-shrink: 0;
-  width: 84px;
-  height: 84px;
-  border-radius: 14px;
-  object-fit: cover;
-  background: #f2f3f5;
-}
-.ov-stops.in-brief {
-  border-top: 1px solid #f0f1f3;
-  margin-top: 12px;
-  padding: 4px 0 0;
+.ov-brief-close:hover {
+  background: rgba(20, 22, 30, 0.72);
 }
 
 /* ===== Day card expand/collapse motion (same card grows open) ===== */
