@@ -21,13 +21,13 @@ export const ItineraryInputSchema = z.object({
           .describe("yyyy-mm-dd if travel dates are known"),
         theme: z
           .string()
-          .optional()
-          .describe('One-line theme, e.g. "Old town + street food"'),
+          .describe(
+            'The day\'s EXPERIENTIAL theme — what kind of day it is, not where. Good: "Harbor icons & a sunset bridge walk", "Slow morning, street-food afternoon". Bad: spot names joined with "+". Never list locations here; the map already shows them.'
+          ),
         rationale: z
           .string()
-          .optional()
           .describe(
-            "1-2 sentences: why these spots are grouped and ordered this way (geography, opening hours, pacing). Shown to the user on the map."
+            "1-2 sentences selling the day's logic: why these spots belong together, why this order, what the day feels like (geography, opening hours, energy curve). Shown to the user on the map — write for them, not for a log."
           ),
         stops: z
           .array(
@@ -46,9 +46,8 @@ export const ItineraryInputSchema = z.object({
                 .describe("Minutes to spend at this stop (estimate honestly)"),
               why: z
                 .string()
-                .optional()
                 .describe(
-                  "One sentence: why THIS spot on THIS day at THIS time (weekday fit, light, crowds, what it pairs with). Shown on the spot's card — fill it for every stop."
+                  "1-2 sentences answering all three: (1) why this spot is worth the user's time (what makes it special — lean on the creators' takes), (2) why THIS day, (3) why THIS time of day (crowds, light, weekday, what it pairs with). Shown on the spot's card. Not a practical tip — tips go in note."
                 ),
               note: z
                 .string()
