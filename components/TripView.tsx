@@ -1050,12 +1050,6 @@ function TripOverview({
             .slice(0, 2)
             .map(([c]) => c);
           const open = expandedDay === i;
-          const first = stops.find((s) => s.time)?.time;
-          const withEnd = [...stops].reverse().find((s) => s.time);
-          const end =
-            withEnd?.time && withEnd.durationMin
-              ? addMinutes(withEnd.time, withEnd.durationMin)
-              : withEnd?.time;
 
           return (
             <div className="ov-item" key={i}>
@@ -1070,9 +1064,6 @@ function TripOverview({
                         the expanded schedule so the pill never wraps. */}
                     <span className="ov-day-badge">{day.label}</span>
                     <div className="ov-title">{day.theme ?? day.label}</div>
-                    {day.rationale && (
-                      <div className="ov-desc">{day.rationale}</div>
-                    )}
                     {topCats.length > 0 && (
                       <div className="ov-chips">
                         {topCats.map((c) => (
@@ -1090,71 +1081,11 @@ function TripOverview({
                 </button>
                 {open && (
                   <div className="ov-stops">
-                    {(first || day.date) && (
-                      <div className="ov-span">
-                        {day.date && (
-                          <span>
-                            {new Date(
-                              day.date + "T00:00:00"
-                            ).toLocaleDateString(undefined, {
-                              weekday: "short",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </span>
-                        )}
-                        {day.date && first && (
-                          <span className="ov-span-sep">·</span>
-                        )}
-                        {first && <span>Start {first}</span>}
-                        {first && end && <span className="ov-span-sep">→</span>}
-                        {first && end && <span>done ~{end}</span>}
-                      </div>
-                    )}
-                    {stops.map((st, k) => {
-                      const next = stops[k + 1];
-                      const gapMin = next
-                        ? travelEstimate(
-                            haversineKm(
-                              st.spot.lat,
-                              st.spot.lng,
-                              next.spot.lat,
-                              next.spot.lng
-                            )
-                          ).driveMin
-                        : null;
-                      return (
-                        <div className="ov-stop" key={st.spotId}>
-                          <button
-                            className="ov-stop-row"
-                            onClick={() => onSelectSpot(st.spotId)}
-                          >
-                            <span className="ov-stop-time">
-                              {st.time ?? "·"}
-                            </span>
-                            <span className="ov-stop-name">
-                              <span className="ov-stop-emoji" aria-hidden="true">
-                                {CATEGORY_EMOJI[st.spot.category]}
-                              </span>
-                              {st.spot.name}
-                            </span>
-                            {st.durationMin != null && (
-                              <span className="ov-stop-dur">
-                                {formatDuration(st.durationMin)}
-                              </span>
-                            )}
-                          </button>
-                          {st.note && (
-                            <div className="ov-stop-note">{st.note}</div>
-                          )}
-                          {gapMin != null && (
-                            <div className="ov-stop-gap">
-                              ~{gapMin} min travel
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+                    <DaySchedule
+                      day={day}
+                      spotById={spotById}
+                      onSelectSpot={onSelectSpot}
+                    />
                   </div>
                 )}
               </div>
@@ -1172,9 +1103,96 @@ function formatDuration(min: number): string {
   return h > 0 ? (m > 0 ? `${h}h ${m}m` : `${h}h`) : `${m}m`;
 }
 
-/** Clicking a day chip opens this: the day's timeline (arrival times,
- *  durations, travel gaps) and the agent's rationale for how it's built —
- *  the "why should I trust this plan" view. */
+/** One day's schedule — the span line, the agent's rationale, and the stop
+ *  rows. Shared verbatim between the map's day-brief overlay and the right
+ *  rail's expanded day card, so the two can't drift apart visually. */
+function DaySchedule({
+  day,
+  spotById,
+  onSelectSpot,
+  showDate = true,
+}: {
+  day: ItineraryDay;
+  spotById: Map<string, Spot>;
+  onSelectSpot: (id: string) => void;
+  showDate?: boolean;
+}) {
+  const stops = day.stops.flatMap((st) => {
+    const spot = spotById.get(st.spotId);
+    return spot ? [{ ...st, spot }] : [];
+  });
+  const first = stops.find((s) => s.time)?.time;
+  const withEnd = [...stops].reverse().find((s) => s.time);
+  const end =
+    withEnd?.time && withEnd.durationMin
+      ? addMinutes(withEnd.time, withEnd.durationMin)
+      : withEnd?.time;
+  const dateLabel =
+    showDate && day.date
+      ? new Date(day.date + "T00:00:00").toLocaleDateString(undefined, {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+        })
+      : null;
+
+  return (
+    <>
+      {(dateLabel || first) && (
+        <div className="ov-span">
+          {dateLabel && <span>{dateLabel}</span>}
+          {dateLabel && first && <span className="ov-span-sep">·</span>}
+          {first && <span>Start {first}</span>}
+          {first && end && <span className="ov-span-sep">→</span>}
+          {first && end && <span>done ~{end}</span>}
+        </div>
+      )}
+      {!first && stops.length > 0 && (
+        <div className="ov-untimed">
+          No times on this plan yet — tell the planner &ldquo;add times to my
+          days&rdquo; and it will fill in arrivals and durations.
+        </div>
+      )}
+      {day.rationale && <p className="ov-rationale">{day.rationale}</p>}
+      {stops.map((st, k) => {
+        const next = stops[k + 1];
+        const gapMin = next
+          ? travelEstimate(
+              haversineKm(st.spot.lat, st.spot.lng, next.spot.lat, next.spot.lng)
+            ).driveMin
+          : null;
+        return (
+          <div className="ov-stop" key={st.spotId}>
+            <button
+              className="ov-stop-row"
+              onClick={() => onSelectSpot(st.spotId)}
+            >
+              <span className="ov-stop-time">{st.time ?? "·"}</span>
+              <span className="ov-stop-name">
+                <span className="ov-stop-emoji" aria-hidden="true">
+                  {CATEGORY_EMOJI[st.spot.category]}
+                </span>
+                {st.spot.name}
+              </span>
+              {st.durationMin != null && (
+                <span className="ov-stop-dur">
+                  {formatDuration(st.durationMin)}
+                </span>
+              )}
+            </button>
+            {st.note && <div className="ov-stop-note">{st.note}</div>}
+            {gapMin != null && (
+              <div className="ov-stop-gap">~{gapMin} min travel</div>
+            )}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+/** Clicking a day chip on the MAP opens this floating card — same visual
+ *  language as the right rail's day cards. */
 function DayBrief({
   day,
   color,
@@ -1188,78 +1206,30 @@ function DayBrief({
   onSelectSpot: (id: string) => void;
   onClose: () => void;
 }) {
-  const stops = day.stops.flatMap((st) => {
-    const spot = spotById.get(st.spotId);
-    return spot ? [{ ...st, spot }] : [];
-  });
-  const first = stops.find((s) => s.time)?.time;
-  const withEnd = [...stops].reverse().find((s) => s.time);
-  const end =
-    withEnd?.time && withEnd.durationMin
-      ? addMinutes(withEnd.time, withEnd.durationMin)
-      : withEnd?.time;
-
   return (
     <div className="day-brief" onClick={(e) => e.stopPropagation()}>
-      <div className="db-head">
-        <span className="dot" style={{ background: color }} />
-        <div className="db-title">
+      <div className="ov-brief-head">
+        <span className="ov-day-badge">
+          <span className="dot" style={{ background: color }} />
           {day.label}
-          {day.date && (
-            <span className="db-date">
-              {" · "}
-              {new Date(day.date + "T00:00:00").toLocaleDateString(undefined, {
-                weekday: "short",
-                month: "short",
-                day: "numeric",
-              })}
-            </span>
-          )}
-        </div>
+          {day.date &&
+            ` · ${new Date(day.date + "T00:00:00").toLocaleDateString(
+              undefined,
+              { weekday: "short", month: "short", day: "numeric" }
+            )}`}
+        </span>
         <button className="close" onClick={onClose} aria-label="Close day brief">
           ✕
         </button>
       </div>
-      {day.theme && <div className="db-theme">{day.theme}</div>}
-      {first && (
-        <div className="db-span">
-          Start {first}
-          {end && ` → done ~${end}`}
-        </div>
-      )}
-      {!first && stops.length > 0 && (
-        <div className="db-untimed">
-          No times on this plan yet — tell the planner &ldquo;add times to my
-          days&rdquo; and it will fill in arrivals and durations.
-        </div>
-      )}
-      {day.rationale && <p className="db-rationale">{day.rationale}</p>}
-      <div className="db-timeline">
-        {stops.map((st, i) => {
-          const next = stops[i + 1];
-          const gapMin = next
-            ? travelEstimate(
-                haversineKm(st.spot.lat, st.spot.lng, next.spot.lat, next.spot.lng)
-              ).driveMin
-            : null;
-          return (
-            <div key={st.spotId}>
-              <button className="db-row" onClick={() => onSelectSpot(st.spotId)}>
-                <span className="db-time">{st.time ?? "—"}</span>
-                <span className="db-name">
-                  {CATEGORY_EMOJI[st.spot.category]} {st.spot.name}
-                </span>
-                {st.durationMin != null && (
-                  <span className="db-dur">{formatDuration(st.durationMin)}</span>
-                )}
-              </button>
-              {st.note && <div className="db-note">{st.note}</div>}
-              {gapMin != null && (
-                <div className="db-gap">↓ ~{gapMin} min travel</div>
-              )}
-            </div>
-          );
-        })}
+      {day.theme && <div className="ov-title">{day.theme}</div>}
+      <div className="ov-stops in-brief">
+        <DaySchedule
+          day={day}
+          spotById={spotById}
+          onSelectSpot={onSelectSpot}
+          showDate={false}
+        />
       </div>
     </div>
   );
