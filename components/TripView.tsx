@@ -2,14 +2,16 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { Spot, SpotCategory, Trip, TripVideo } from "@/lib/types";
+import { Itinerary, Spot, SpotCategory, Trip, TripVideo } from "@/lib/types";
 import { CATEGORY_EMOJI, formatTimestamp, youtubeLink } from "@/lib/categories";
 import { getLocalTrip, saveLocalTrip, subscribeLocalTrips } from "@/lib/clientStore";
 import { addVideosToTrip, ensureRunning, isRunning } from "@/lib/runner";
 import { parseVideoId } from "@/lib/links";
 import { googlePhotoProxy } from "@/lib/photoUrl";
+import { dayColor, loadItinerary, unassignedSpotIds } from "@/lib/itinerary";
 import BuildingScreen from "./BuildingScreen";
-import type { MapBounds } from "./TripMap";
+import PlannerChat from "./PlannerChat";
+import type { MapBounds, PlanRender } from "./TripMap";
 
 const TripMap = dynamic(() => import("./TripMap"), { ssr: false });
 
@@ -445,6 +447,13 @@ export default function TripView({
   const [mapExpanded, setMapExpanded] = useState(false);
   // Category filter: empty = show all. Applies to both the grid and the map.
   const [activeCats, setActiveCats] = useState<SpotCategory[]>([]);
+  // Planner agent: chat panel + the itinerary it maintains + map day filter.
+  // The itinerary is derived from storage each render (localStorage is the
+  // source of truth); the override covers the moment the agent saves, before
+  // any store subscription fires (sample trips have none).
+  const [planOpen, setPlanOpen] = useState(false);
+  const [itineraryOverride, setItineraryOverride] = useState<Itinerary | null>(null);
+  const [activeDay, setActiveDay] = useState<PlanRender["activeDay"]>("all");
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const loadSample = useCallback(async () => {
@@ -474,6 +483,15 @@ export default function TripView({
     setIsLocal(false);
     loadSample();
   }, [tripId, loadSample]);
+
+  // Local trips carry the plan on the Trip object; sample trips keep a
+  // per-browser overlay. Freshest of the two wins.
+  const itinerary =
+    trip && isLocal !== null
+      ? [itineraryOverride, loadItinerary(trip, isLocal)]
+          .filter((x): x is Itinerary => x !== null)
+          .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0] ?? null
+      : null;
 
   // Sample trips only: poll while local-dev background passes (photo
   // backfill, Google data upgrade) are improving them, so pins slide to
@@ -579,6 +597,27 @@ export default function TripView({
       )
     : sortedSpots;
 
+  // Resolve the itinerary to drawable days (skip ids that no longer exist).
+  const spotById = new Map(trip.spots.map((s) => [s.id, s]));
+  const planRender: PlanRender | null =
+    itinerary && itinerary.days.length > 0
+      ? {
+          days: itinerary.days.map((d, i) => ({
+            label: d.label,
+            color: dayColor(i),
+            stops: d.stops.flatMap((st) => {
+              const spot = spotById.get(st.spotId);
+              return spot ? [{ spot, note: st.note }] : [];
+            }),
+          })),
+          stay: itinerary.stay ?? null,
+          activeDay,
+        }
+      : null;
+  const unassignedCount = itinerary
+    ? unassignedSpotIds(itinerary, trip.spots).length
+    : 0;
+
   return (
     // Clicking anywhere outside the pill clears the pinned highlight and closes
     // the videos dropdown
@@ -616,6 +655,16 @@ export default function TripView({
         </div>
 
         <div className="filter-bar">
+          <button
+            className={`plan-toggle ${planOpen ? "on" : ""}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setPlanOpen((o) => !o);
+            }}
+          >
+            <span aria-hidden="true">✨</span>
+            {itinerary ? "Day plan" : "Plan my days"}
+          </button>
           <div className="filter-count">
             {visibleSpots.length === catFiltered.length
               ? `${catFiltered.length} spots`
@@ -669,7 +718,20 @@ export default function TripView({
       </header>
       )}
 
-      <div className={`trip-body ${mapExpanded ? "map-expanded" : ""}`}>
+      <div
+        className={`trip-body ${mapExpanded ? "map-expanded" : ""} ${
+          planOpen ? "plan-open" : ""
+        }`}
+      >
+        {planOpen && (
+          <PlannerChat
+            trip={trip}
+            isLocal={isLocal === true}
+            itinerary={itinerary}
+            onItineraryChange={setItineraryOverride}
+            onClose={() => setPlanOpen(false)}
+          />
+        )}
         <section className="content-panel">
           {visibleSpots.length === 0 ? (
             <div className="empty-area">
@@ -717,9 +779,46 @@ export default function TripView({
               selectedId={selectedId}
               highlightVideoId={highlightVideoId}
               fitVideoId={highlightVideoId}
+              plan={planRender}
               onSelect={setSelectedId}
               onBoundsChange={setBounds}
             />
+            {planRender && (
+              <div className="day-chips" onClick={(e) => e.stopPropagation()}>
+                <button
+                  className={`day-chip ${activeDay === "all" ? "on" : ""}`}
+                  onClick={() => setActiveDay("all")}
+                >
+                  All days
+                </button>
+                {planRender.days.map((d, i) => (
+                  <button
+                    key={i}
+                    className={`day-chip ${activeDay === i ? "on" : ""}`}
+                    onClick={() =>
+                      setActiveDay((cur) => (cur === i ? "all" : i))
+                    }
+                  >
+                    <span className="dot" style={{ background: d.color }} />
+                    {d.label}
+                  </button>
+                ))}
+                {unassignedCount > 0 && (
+                  <button
+                    className={`day-chip ${
+                      activeDay === "unassigned" ? "on" : ""
+                    }`}
+                    onClick={() =>
+                      setActiveDay((cur) =>
+                        cur === "unassigned" ? "all" : "unassigned"
+                      )
+                    }
+                  >
+                    Unassigned <span className="chip-n">{unassignedCount}</span>
+                  </button>
+                )}
+              </div>
+            )}
             <button
               className="map-expand-btn"
               onClick={() => setMapExpanded((x) => !x)}

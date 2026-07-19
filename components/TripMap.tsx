@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Destination, Spot } from "@/lib/types";
+import { Destination, ItineraryStay, Spot } from "@/lib/types";
 import { CATEGORY_EMOJI } from "@/lib/categories";
 
 export interface MapBounds {
@@ -11,6 +11,21 @@ export interface MapBounds {
   south: number;
   east: number;
   west: number;
+}
+
+/** One itinerary day resolved to real spots, ready to draw. */
+export interface PlanDayRender {
+  label: string;
+  color: string;
+  stops: { spot: Spot; note?: string }[];
+}
+
+/** The whiteboard state: which days exist, which are visible. */
+export interface PlanRender {
+  days: PlanDayRender[];
+  stay?: ItineraryStay | null;
+  /** 'all' shows every day; a number shows that day; 'unassigned' shows only unplanned pills. */
+  activeDay: "all" | number | "unassigned";
 }
 
 interface Props {
@@ -21,6 +36,8 @@ interface Props {
   highlightVideoId?: string | null;
   /** When set (video pinned), the map fits to that video's spots. */
   fitVideoId?: string | null;
+  /** Planner itinerary overlay — numbered day pins + route lines. */
+  plan?: PlanRender | null;
   onSelect: (id: string) => void;
   onBoundsChange?: (bounds: MapBounds) => void;
 }
@@ -31,12 +48,14 @@ export default function TripMap({
   selectedId,
   highlightVideoId = null,
   fitVideoId = null,
+  plan = null,
   onSelect,
   onBoundsChange,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
+  const planLayerRef = useRef<L.LayerGroup | null>(null);
   const fittedRef = useRef(false);
   const onBoundsChangeRef = useRef(onBoundsChange);
   onBoundsChangeRef.current = onBoundsChange;
@@ -62,6 +81,7 @@ export default function TripMap({
       }
     ).addTo(map);
     mapRef.current = map;
+    planLayerRef.current = L.layerGroup().addTo(map);
 
     // Tell the parent what's in frame so it can filter the spot list.
     const emitBounds = () => {
@@ -92,13 +112,34 @@ export default function TripMap({
       ro.disconnect();
       map.remove();
       mapRef.current = null;
+      planLayerRef.current = null;
       markersRef.current.clear();
       fittedRef.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Sync markers with spots
+  // Which planned spots are currently drawn as numbered day pins (they replace
+  // the regular pill), and which pills should dim behind the active plan view.
+  const planVisibleIds = new Set<string>();
+  const planAllIds = new Set<string>();
+  if (plan) {
+    plan.days.forEach((day, i) => {
+      for (const stop of day.stops) {
+        planAllIds.add(stop.spot.id);
+        if (plan.activeDay === "all" || plan.activeDay === i) {
+          planVisibleIds.add(stop.spot.id);
+        }
+      }
+    });
+  }
+  const planKey = plan
+    ? `${plan.activeDay}:${plan.days
+        .map((d) => d.stops.map((s) => s.spot.id).join(","))
+        .join("|")}:${plan.stay?.lat ?? ""}`
+    : "";
+
+  // Sync pill markers with spots
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -108,12 +149,23 @@ export default function TripMap({
       const isHighlighted =
         highlightVideoId != null &&
         spot.mentions.some((m) => m.videoId === highlightVideoId);
-      const isDimmed = highlightVideoId != null && !isHighlighted;
+      // A numbered day pin replaces the pill; in unassigned view the planned
+      // pills dim; in a day view the other days' pills dim too.
+      const planHidden = planVisibleIds.has(spot.id);
+      const planDimmed =
+        !planHidden &&
+        plan != null &&
+        (plan.activeDay === "unassigned"
+          ? planAllIds.has(spot.id)
+          : plan.activeDay !== "all" && !isSelected);
+      const isDimmed =
+        (highlightVideoId != null && !isHighlighted) || planDimmed;
       const pillClass = [
         "pin-pill",
         isSelected ? "selected" : "",
         isHighlighted ? "highlight" : "",
         isDimmed ? "dimmed" : "",
+        planHidden ? "plan-hidden" : "",
       ]
         .filter(Boolean)
         .join(" ");
@@ -166,7 +218,87 @@ export default function TripMap({
         map.fitBounds(bounds.pad(0.15), { maxZoom: 13 });
       });
     }
-  }, [spots, selectedId, highlightVideoId, onSelect]);
+    // planKey covers everything the pill classes read from `plan`.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spots, selectedId, highlightVideoId, onSelect, planKey]);
+
+  // Draw the plan overlay: numbered pins in day colors + a route line per day.
+  useEffect(() => {
+    const layer = planLayerRef.current;
+    if (!layer) return;
+    layer.clearLayers();
+    if (!plan) return;
+
+    plan.days.forEach((day, i) => {
+      if (plan.activeDay !== "all" && plan.activeDay !== i) return;
+      if (day.stops.length === 0) return;
+
+      const latlngs = day.stops.map(
+        (s) => [s.spot.lat, s.spot.lng] as [number, number]
+      );
+      if (latlngs.length > 1) {
+        L.polyline(latlngs, {
+          color: day.color,
+          weight: 3,
+          opacity: 0.75,
+          dashArray: "6 8",
+          lineCap: "round",
+        }).addTo(layer);
+      }
+
+      day.stops.forEach((stop, order) => {
+        const icon = L.divIcon({
+          className: "",
+          html: `<div class="day-pin" style="background:${day.color}" title="${escapeHtml(
+            `${day.label} · ${order + 1}. ${stop.spot.name}`
+          )}"><span class="day-pin-n">${order + 1}</span><span class="day-pin-name">${escapeHtml(
+            shorten(stop.spot.name)
+          )}</span></div>`,
+          iconSize: undefined,
+          iconAnchor: [13, 13],
+        });
+        const marker = L.marker([stop.spot.lat, stop.spot.lng], {
+          icon,
+          zIndexOffset: 1200 + order,
+        });
+        marker.on("click", () => onSelect(stop.spot.id));
+        marker.addTo(layer);
+      });
+    });
+
+    if (
+      plan.stay &&
+      typeof plan.stay.lat === "number" &&
+      typeof plan.stay.lng === "number" &&
+      plan.activeDay !== "unassigned"
+    ) {
+      const icon = L.divIcon({
+        className: "",
+        html: `<div class="stay-pin" title="${escapeHtml(plan.stay.name)}">🏠</div>`,
+        iconSize: undefined,
+        iconAnchor: [15, 15],
+      });
+      L.marker([plan.stay.lat, plan.stay.lng], {
+        icon,
+        zIndexOffset: 1500,
+      }).addTo(layer);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [planKey, onSelect]);
+
+  // Selecting a day chip fits the viewport to that day's route.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !plan || typeof plan.activeDay !== "number") return;
+    const day = plan.days[plan.activeDay];
+    if (!day || day.stops.length === 0) return;
+    const pts = day.stops.map((s) => [s.spot.lat, s.spot.lng] as [number, number]);
+    if (plan.stay?.lat != null && plan.stay?.lng != null) {
+      pts.push([plan.stay.lat, plan.stay.lng]);
+    }
+    map.fitBounds(L.latLngBounds(pts).pad(0.25), { maxZoom: 15, animate: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [plan?.activeDay]);
 
   // When a video is pinned, fit the viewport to all of its spots — zooming
   // out (or in) so none of them are off-screen. Hover alone never moves the

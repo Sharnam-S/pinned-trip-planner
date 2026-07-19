@@ -86,6 +86,42 @@ export interface TripQuery {
   interests?: string;
 }
 
+export type ItinerarySlot = "morning" | "afternoon" | "evening";
+
+export interface ItineraryStop {
+  /** References Spot.id — stops render in array order (visit order). */
+  spotId: string;
+  slot?: ItinerarySlot;
+  /** Agent tip for this stop ("go before 9am to beat the queue"). */
+  note?: string;
+}
+
+export interface ItineraryDay {
+  label: string; // "Day 1"
+  date?: string; // yyyy-mm-dd
+  theme?: string; // "Old town + street food"
+  stops: ItineraryStop[];
+}
+
+export interface ItineraryStay {
+  name: string;
+  lat?: number;
+  lng?: number;
+  note?: string;
+}
+
+export type ItineraryPace = "packed" | "balanced" | "relaxed";
+
+/** The planner agent's artifact: a day-by-day plan over the trip's spots.
+ *  Edited via the update_itinerary tool; rendered by the map and cards. */
+export interface Itinerary {
+  days: ItineraryDay[];
+  stay?: ItineraryStay;
+  pace?: ItineraryPace;
+  budget?: string;
+  updatedAt: string;
+}
+
 export interface Trip {
   id: string;
   name: string;
@@ -100,6 +136,9 @@ export interface Trip {
   upgrading?: boolean;
   /** Search-mode inputs (absent on paste-your-own-links trips). */
   query?: TripQuery;
+  /** Day-by-day plan built by the planner agent (local trips only — sample
+   *  trips keep a visitor's plan in a localStorage overlay instead). */
+  itinerary?: Itinerary;
   /** Ranked substitute video ids, used when a picked video has no captions. */
   bench?: string[];
 }
