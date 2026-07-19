@@ -8,6 +8,7 @@
  * whiteboard.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useChat } from "@ai-sdk/react";
 import {
   DefaultChatTransport,
@@ -15,6 +16,8 @@ import {
   type UIMessage,
 } from "ai";
 import { Itinerary, Trip } from "@/lib/types";
+import { listLocalTrips, readOwnedIds } from "@/lib/clientStore";
+import { spotCoverUrl } from "@/lib/photoUrl";
 import {
   ItineraryInput,
   TravelTimesInput,
@@ -181,6 +184,31 @@ export default function PlannerChat({
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
+  // Visitors who haven't built a trip of their own only ever see this panel on
+  // a sample trip — greet them with a create-your-first-trip nudge instead of
+  // the planning intro. "Test-drive" dismisses it for this page view.
+  const [hasOwnTrips] = useState(
+    () => listLocalTrips().length > 0 || readOwnedIds().length > 0
+  );
+  const [nudgeDismissed, setNudgeDismissed] = useState(false);
+
+  // The three best-loved spots' photos, fanned like a hand of postcards. Best
+  // photo front and center; a card whose photo fails to load hides itself.
+  const nudgePhotos = useMemo(() => {
+    if (hasOwnTrips) return [];
+    const urls = [...trip.spots]
+      .sort((a, b) => b.mentions.length - a.mentions.length)
+      .map((s) => spotCoverUrl(s))
+      .filter((u): u is string => Boolean(u))
+      .slice(0, 3);
+    const [front, left, right] = urls;
+    return [
+      ...(left ? [{ url: left, cls: "left" }] : []),
+      ...(right ? [{ url: right, cls: "right" }] : []),
+      ...(front ? [{ url: front, cls: "front" }] : []),
+    ];
+  }, [trip, hasOwnTrips]);
+
   // The transport is created once; the ctx ref keeps the request body current.
   const ctxRef = useRef<PlannerCtx>({
     trip,
@@ -315,20 +343,55 @@ export default function PlannerChat({
       </div>
 
       <div className="planner-scroll" ref={scrollRef}>
-        {messages.length === 0 && (
-          <div className="planner-intro">
-            <p>
-              {`I know these ${trip.spots.length} spots well — tell me how many days you have and I'll sketch a day-by-day plan on the map.`}
-            </p>
-            <div className="planner-suggestions">
-              {SUGGESTIONS.map((s) => (
-                <button key={s} className="suggestion-chip" onClick={() => send(s)}>
-                  {s}
-                </button>
-              ))}
+        {messages.length === 0 &&
+          (!hasOwnTrips && !isLocal && !nudgeDismissed ? (
+            <div className="planner-nudge">
+              {nudgePhotos.length > 0 && (
+                <div className="nudge-stack" aria-hidden="true">
+                  {nudgePhotos.map(({ url, cls }) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={url}
+                      className={`nudge-card ${cls}`}
+                      src={url}
+                      alt=""
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+              <h3 className="nudge-title">
+                Where are <em>you</em> headed?
+              </h3>
+              <p className="nudge-sub">
+                {`You're browsing a sample trip. Create your own and we'll map every spot creators rave about — then I'll plan your days around them.`}
+              </p>
+              <Link className="nudge-cta" href="/?start=1">
+                Create your first trip
+              </Link>
+              <button
+                className="nudge-alt"
+                onClick={() => setNudgeDismissed(true)}
+              >
+                or test-drive me on this sample →
+              </button>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="planner-intro">
+              <p>
+                {`I know these ${trip.spots.length} spots well — tell me how many days you have and I'll sketch a day-by-day plan on the map.`}
+              </p>
+              <div className="planner-suggestions">
+                {SUGGESTIONS.map((s) => (
+                  <button key={s} className="suggestion-chip" onClick={() => send(s)}>
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
 
         {messages.map((message) => (
           <div key={message.id} className={`pm pm-${message.role}`}>

@@ -15,7 +15,7 @@ import { CATEGORY_EMOJI, formatTimestamp, youtubeLink } from "@/lib/categories";
 import { getLocalTrip, saveLocalTrip, subscribeLocalTrips } from "@/lib/clientStore";
 import { addVideosToTrip, ensureRunning, isRunning } from "@/lib/runner";
 import { parseVideoId } from "@/lib/links";
-import { googlePhotoProxy } from "@/lib/photoUrl";
+import { googlePhotoProxy, spotCoverUrl, spotPhotoUrl } from "@/lib/photoUrl";
 import {
   dayColor,
   haversineKm,
@@ -96,28 +96,6 @@ function formatTripDates(trip: Trip): string | null {
     });
   if (startDate && endDate) return `${fmt(startDate)} – ${fmt(endDate)}`;
   return fmt((startDate ?? endDate)!);
-}
-
-function spotPhotoUrl(spot: Spot): string | null {
-  // Wikimedia photo when we found one; otherwise a frame from the first
-  // creator's video — there is always something to show
-  return (
-    spot.photo?.url ??
-    (spot.mentions[0]
-      ? `https://i.ytimg.com/vi/${spot.mentions[0].videoId}/hqdefault.jpg`
-      : null)
-  );
-}
-
-/** One stable cover photo for the map's mini popup (Google photos go through
- *  the proxy — stored Google URLs expire). */
-function miniPhotoUrl(spot: Spot): string | null {
-  const isGoogle =
-    Boolean(spot.placeId) &&
-    (spot.photo?.source === "google" ||
-      (spot.photos?.some((p) => p.source === "google") ?? false) ||
-      (spot.morePhotoNames?.length ?? 0) > 0);
-  return isGoogle ? googlePhotoProxy(spot.placeId!, 0) : spotPhotoUrl(spot);
 }
 
 // Lazy photo carousel state, shared by the grid tiles and the detail card.
@@ -764,7 +742,7 @@ export default function TripView({
                       } · ${selectedSpot.mentions.length} creator${
                         selectedSpot.mentions.length === 1 ? "" : "s"
                       }`,
-                      photoUrl: miniPhotoUrl(selectedSpot),
+                      photoUrl: spotCoverUrl(selectedSpot),
                     }
                   : null
               }
@@ -1013,7 +991,7 @@ function TripOverview({
             return spot ? [{ ...st, spot }] : [];
           });
           const photoUrl =
-            stops.map((s) => miniPhotoUrl(s.spot)).find(Boolean) ?? null;
+            stops.map((s) => spotCoverUrl(s.spot)).find(Boolean) ?? null;
           const catCount = new Map<SpotCategory, number>();
           for (const s of stops) {
             catCount.set(s.spot.category, (catCount.get(s.spot.category) ?? 0) + 1);
