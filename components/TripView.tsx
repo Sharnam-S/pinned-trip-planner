@@ -980,6 +980,12 @@ function DayBrief({
           {end && ` → done ~${end}`}
         </div>
       )}
+      {!first && stops.length > 0 && (
+        <div className="db-untimed">
+          No times on this plan yet — tell the planner &ldquo;add times to my
+          days&rdquo; and it will fill in arrivals and durations.
+        </div>
+      )}
       {day.rationale && <p className="db-rationale">{day.rationale}</p>}
       <div className="db-timeline">
         {stops.map((st, i) => {

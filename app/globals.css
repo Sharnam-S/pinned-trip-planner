@@ -3125,6 +3125,16 @@ button {
   margin-top: 8px;
   width: fit-content;
 }
+.db-untimed {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #6b5200;
+  background: var(--yellow-soft);
+  border: 1px solid var(--yellow);
+  border-radius: 8px;
+  padding: 7px 10px;
+  margin-top: 8px;
+}
 .db-rationale {
   font-size: 12.5px;
   line-height: 1.5;

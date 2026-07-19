@@ -36,14 +36,14 @@ export const ItineraryInputSchema = z.object({
                 .string()
                 .describe("A spot id from the trip context, exactly as given"),
               slot: z.enum(["morning", "afternoon", "evening"]).optional(),
+              // Required: an itinerary without times doesn't answer "when do
+              // I start and when am I done" — the whole point of the plan.
               time: z
                 .string()
-                .optional()
                 .describe('Planned arrival, 24h "HH:MM", e.g. "09:30"'),
               durationMin: z
                 .number()
-                .optional()
-                .describe("Minutes to spend at this stop"),
+                .describe("Minutes to spend at this stop (estimate honestly)"),
               why: z
                 .string()
                 .optional()
