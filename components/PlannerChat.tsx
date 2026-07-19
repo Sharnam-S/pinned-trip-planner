@@ -169,14 +169,12 @@ export default function PlannerChat({
   itinerary,
   mustSeeIds,
   onItineraryChange,
-  onClose,
 }: {
   trip: Trip;
   isLocal: boolean;
   itinerary: Itinerary | null;
   mustSeeIds: string[];
   onItineraryChange: (itin: Itinerary) => void;
-  onClose: () => void;
 }) {
   const initialMessages = useMemo(() => loadChat(trip.id), [trip.id]);
   const [input, setInput] = useState("");
@@ -304,14 +302,6 @@ export default function PlannerChat({
         <div className="planner-title">
           <span aria-hidden="true">✨</span> Local planner
         </div>
-        <button
-          className="close"
-          onClick={onClose}
-          title="Minimize — your conversation is saved"
-          aria-label="Minimize planner"
-        >
-          ✕
-        </button>
       </div>
 
       <div className="planner-scroll" ref={scrollRef}>

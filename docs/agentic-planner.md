@@ -33,7 +33,13 @@ rationale on the spot cards.
 ```
 (Redesigned 2026-07-19 to a Rentizy-style map-center layout — selection
 opens the right rail, not a map overlay; the map keeps a small photo
-popup.)
+popup. Visual system: white cards floating on a soft gray canvas
+(#edeff2), monochrome ink accents — day colors only on the map where
+they encode routes — borderless soft-gray pill chips, white Day badges,
+grayscale CARTO Positron tiles, Poppins. The chat has no close button:
+one trip, one always-open conversation. The map's day-brief opens only
+from the map's own chips; the overview's expanded cards are the
+right-rail equivalent.)
 
 **Core principle: the itinerary is a data object, not chat prose.** The
 agent edits it via one tool (`update_itinerary`, full replace); the map,
