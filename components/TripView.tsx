@@ -2,7 +2,15 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { Itinerary, ItineraryDay, Spot, SpotCategory, Trip, TripVideo } from "@/lib/types";
+import {
+  Itinerary,
+  ItineraryDay,
+  ItineraryStop,
+  Spot,
+  SpotCategory,
+  Trip,
+  TripVideo,
+} from "@/lib/types";
 import { CATEGORY_EMOJI, formatTimestamp, youtubeLink } from "@/lib/categories";
 import { getLocalTrip, saveLocalTrip, subscribeLocalTrips } from "@/lib/clientStore";
 import { addVideosToTrip, ensureRunning, isRunning } from "@/lib/runner";
@@ -630,6 +638,19 @@ export default function TripView({
     ? unassignedSpotIds(itinerary, trip.spots).length
     : 0;
 
+  // Where the selected spot sits in the plan (if anywhere) — powers the
+  // "why it's in your plan" section on the spot card.
+  const selectedPlanInfo = (() => {
+    if (!selectedSpot || !itinerary) return null;
+    for (let i = 0; i < itinerary.days.length; i++) {
+      const stop = itinerary.days[i].stops.find(
+        (s) => s.spotId === selectedSpot.id
+      );
+      if (stop) return { day: itinerary.days[i], dayIndex: i, stop };
+    }
+    return null;
+  })();
+
   const toggleMustSee = (id: string) => {
     setMustSeeIds((prev) => {
       const next = prev.includes(id)
@@ -884,6 +905,10 @@ export default function TripView({
                 local={isLocal === true}
                 mustSee={mustSeeIds.includes(selectedSpot.id)}
                 onToggleMustSee={() => toggleMustSee(selectedSpot.id)}
+                planInfo={selectedPlanInfo}
+                planColor={
+                  selectedPlanInfo ? dayColor(selectedPlanInfo.dayIndex) : undefined
+                }
                 onClose={() => setSelectedId(null)}
               />
             )}
@@ -1002,6 +1027,8 @@ function SpotCard({
   local,
   mustSee,
   onToggleMustSee,
+  planInfo,
+  planColor,
   onClose,
 }: {
   spot: Spot;
@@ -1009,6 +1036,8 @@ function SpotCard({
   local: boolean;
   mustSee: boolean;
   onToggleMustSee: () => void;
+  planInfo?: { day: ItineraryDay; dayIndex: number; stop: ItineraryStop } | null;
+  planColor?: string;
   onClose: () => void;
 }) {
   const { urls, i, total, step } = useSpotPhotos(spot, tripId, local);
@@ -1085,6 +1114,34 @@ function SpotCard({
           </svg>
           Open in Google Maps
         </a>
+
+        {planInfo && (
+          <div
+            className="plan-why"
+            style={planColor ? { borderLeftColor: planColor } : undefined}
+          >
+            <div className="plan-why-label">
+              <span
+                className="dot"
+                style={planColor ? { background: planColor } : undefined}
+              />
+              In your plan — {planInfo.day.label}
+              {planInfo.day.date &&
+                ` (${new Date(
+                  planInfo.day.date + "T00:00:00"
+                ).toLocaleDateString(undefined, { weekday: "long" })})`}
+              {planInfo.stop.time && ` · ${planInfo.stop.time}`}
+              {planInfo.stop.durationMin != null &&
+                ` · ${formatDuration(planInfo.stop.durationMin)}`}
+            </div>
+            {planInfo.stop.why && (
+              <p className="plan-why-text">{planInfo.stop.why}</p>
+            )}
+            {planInfo.stop.note && (
+              <p className="plan-why-note">💡 {planInfo.stop.note}</p>
+            )}
+          </div>
+        )}
 
         {(spot.thingsToKnow?.length ?? 0) > 0 && (
           <div className="know-section">
