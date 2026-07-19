@@ -1065,37 +1065,6 @@ button {
   overflow: hidden;
 }
 
-/* Full-width header — Airbnb-style: a top bar with a centered "search" pill,
-   then a slightly-grey filter strip that separates it from the content below */
-/* One grey container holds the whole header — back row, centered pill (with
-   the videos selector) and the filter chips — with room to breathe */
-.page-header {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 15px 28px;
-  /* Frosted glass toolbar — translucent white over a saturated blur so it
-     reads as a premium surface rather than a flat grey bar. */
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border-bottom: 1px solid rgba(16, 17, 26, 0.06);
-}
-
-/* Top row: category filters (left) · visible-spot count (right).
-   No back button — this is a web app, so browser/gesture back covers it. */
-.header-bar {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 16px;
-}
-
-.header-bar .export-btn {
-  justify-self: end;
-}
-
 /* Centered pill: place segment | videos-selector segment.
    The slot reserves the closed pill's footprint in the header grid; the card
    itself is absolutely positioned over it so it can expand downward (into a
@@ -1270,118 +1239,185 @@ button {
   box-shadow: none;
 }
 
-/* Grey separator strip carrying the centered filters + a subtle spot count */
-.filter-bar {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 12px;
+/* ===== Category filter over the map =====
+   A frosted glass pill that fans open into the full list of category chips.
+   Picking one applies it and collapses the tray again. Anchored top-left of
+   the map frame, matching the pins' glass language. */
+.map-filters {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  /* Let the map handle drags through the container's empty gaps; the
+     interactive bits opt back in. */
+  pointer-events: none;
+}
+.map-filters > * {
+  pointer-events: auto;
 }
 
-.filter-count {
-  justify-self: end;
-  color: var(--text-soft);
-  font-size: 13px;
-  font-weight: 500;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.mf-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-chip);
+  padding: 7px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.06), 0 4px 14px rgba(16, 17, 26, 0.1);
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease,
+    color 0.15s ease;
+}
+.mf-toggle:hover {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 6px rgba(16, 17, 26, 0.08), 0 6px 18px rgba(16, 17, 26, 0.12);
+  transform: translateY(-1px);
+}
+/* Active (a filter is applied) — the ink pill, same accent as a selected chip */
+.mf-toggle.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(16, 17, 26, 0.3);
+}
+.mf-funnel {
+  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0.25, 1);
+}
+.mf-toggle.open .mf-funnel {
+  transform: rotate(180deg);
+}
+.mf-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.28);
+  font-size: 11px;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
-/* Category filter chips — Airbnb-style: calm, roomy, medium weight, matching
-   the pill's rhythm above */
-.cat-filter {
-  grid-column: 2;
-  justify-self: center;
+/* The chip tray fans down under the toggle; collapsed it clips to nothing. */
+.mf-tray {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
+  gap: 6px;
+  max-width: 100%;
+  max-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  overflow: hidden;
+  transition: max-height 0.32s cubic-bezier(0.32, 0.72, 0.25, 1),
+    opacity 0.22s ease, transform 0.28s cubic-bezier(0.32, 0.72, 0.25, 1);
+}
+.map-filters.open .mf-tray {
+  max-height: 60vh;
+  opacity: 1;
+  transform: translateY(0);
 }
 
-/* Airbnb amenity chips: white, hairline dark outline, small light type */
-.cat-chip {
+.mf-chip,
+.mf-clear {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 8px 15px;
-  border: 1px solid rgba(0, 0, 0, 0.18);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: var(--radius-chip);
-  background: var(--surface);
-  color: var(--text);
+  padding: 6px 12px;
   font-size: 12.5px;
-  font-weight: 400;
-  line-height: 1;
-  text-transform: capitalize;
-  cursor: pointer;
-  transition: background 0.12s, border-color 0.12s, box-shadow 0.12s;
-}
-
-.cat-chip:hover {
-  border-color: rgba(0, 0, 0, 0.55);
-}
-
-/* Selected: crisp black outline over a whisper-grey fill, Airbnb-style */
-.cat-chip.on {
-  background: #f2f2f2;
-  border-color: var(--text);
-  box-shadow: inset 0 0 0 1px var(--text);
-  font-weight: 500;
-}
-
-.cat-chip .cat-n {
-  font-size: 11.5px;
-  opacity: 0.55;
-  font-weight: 500;
-}
-
-.cat-chip.on .cat-n {
-  opacity: 0.65;
-}
-
-.cat-clear {
-  align-self: center;
-  padding: 8px 12px;
-  border: none;
-  background: none;
-  color: var(--text-soft);
-  font-size: 13px;
-  font-weight: 500;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.cat-clear:hover {
+  font-weight: 600;
   color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.06), 0 4px 14px rgba(16, 17, 26, 0.1);
+  /* Fan-in: each chip lifts + fades, staggered by an inline transition-delay */
+  opacity: 0;
+  transform: translateY(-8px) scale(0.94);
+  transition: background 0.15s ease, box-shadow 0.15s ease, color 0.15s ease,
+    opacity 0.22s ease, transform 0.28s cubic-bezier(0.32, 0.72, 0.25, 1);
+}
+.mf-chip {
+  text-transform: capitalize;
+}
+.map-filters.open .mf-chip,
+.map-filters.open .mf-clear {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.mf-chip:hover,
+.mf-clear:hover {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 6px rgba(16, 17, 26, 0.08), 0 6px 18px rgba(16, 17, 26, 0.12);
+}
+.mf-chip.on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(16, 17, 26, 0.3);
+}
+.mf-emoji {
+  font-size: 12px;
+}
+.mf-n {
+  font-weight: 500;
+  opacity: 0.55;
+  font-variant-numeric: tabular-nums;
+}
+.mf-chip.on .mf-n {
+  opacity: 0.7;
+}
+.mf-clear {
+  color: var(--text-soft);
 }
 
-/* Processing banner sits within the header container, below the filters */
-.progress-banner-row .progress-banner {
-  max-width: 440px;
-  margin-bottom: 0;
+/* Processing progress floats over the map — a glass pill at the bottom */
+.map-progress {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  max-width: calc(100% - 32px);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-chip);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b5200;
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.06), 0 6px 18px rgba(16, 17, 26, 0.12);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Tighter header on narrow screens — drop the count so the pill keeps room */
-@media (max-width: 820px) {
-  .page-header {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-  .trip-pill {
-    max-width: 68vw;
-  }
-  .filter-count {
-    display: none;
-  }
-  .filter-bar {
-    grid-template-columns: 1fr;
-  }
-  .cat-filter {
-    grid-column: 1;
-  }
-  .trip-pill.open {
-    width: 340px;
+@media (prefers-reduced-motion: reduce) {
+  .mf-chip,
+  .mf-clear,
+  .mf-tray,
+  .mf-funnel {
+    transition: opacity 0.15s ease;
+    transform: none !important;
+    transition-delay: 0ms !important;
   }
 }
 
@@ -1654,19 +1690,6 @@ button {
   height: 32px;
   border-radius: var(--radius-chip);
   justify-self: end;
-}
-
-.sk-count {
-  width: 90px;
-  height: 13px;
-  border-radius: 999px;
-  justify-self: start;
-}
-
-.filter-bar .cat-filter .sk-chip {
-  width: 82px;
-  height: 31px;
-  border-radius: var(--radius-chip);
 }
 
 /* Tile placeholders reuse the real tile geometry (4/3 photo + text lines) */
@@ -2965,58 +2988,6 @@ button {
   cursor: default;
 }
 
-/* Day chips — the whiteboard filter, floating inside the map frame */
-.day-chips {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  right: 72px;
-  z-index: 1000;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.day-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  /* Frosted glass floating over the map — translucent white with a blurred,
-     saturated backdrop and a bright glass edge. */
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: var(--radius-chip);
-  padding: 6px 13px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text);
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.06), 0 4px 14px rgba(16, 17, 26, 0.1);
-  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
-}
-.day-chip:hover {
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 2px 6px rgba(16, 17, 26, 0.08), 0 6px 18px rgba(16, 17, 26, 0.12);
-  transform: translateY(-1px);
-}
-.day-chip.on {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: #fff;
-  box-shadow: 0 3px 12px rgba(16, 17, 26, 0.3);
-}
-.day-chip .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.day-chip .chip-n {
-  font-weight: 400;
-  opacity: 0.7;
-}
-
 /* Numbered day pins + route styling on the map */
 .day-pin {
   display: inline-flex;
@@ -3302,27 +3273,7 @@ button {
   cursor: default;
 }
 
-/* ===== Redesign: top-bar filters, trip head, right-rail grid + premium card ===== */
-
-/* Category chips live in the top bar now */
-.header-bar .cat-filter.header-cats {
-  grid-column: 1;
-  justify-self: stretch;
-  min-width: 0;
-  justify-content: flex-start;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding: 2px 2px;
-}
-.header-bar .cat-filter.header-cats::-webkit-scrollbar {
-  display: none;
-}
-.header-bar .filter-count {
-  grid-column: 2;
-  flex-shrink: 0;
-  white-space: nowrap;
-}
+/* ===== Redesign: trip head, right-rail grid + premium card ===== */
 
 /* Trip identity block at the top of the left rail */
 .trip-head {
@@ -3554,7 +3505,9 @@ button {
   transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
   will-change: transform;
 }
-.rail-seg[data-active="overview"] .rail-seg-thumb {
+/* Itinerary sits first (left); Pins second (right) — slide the thumb right
+   when Pins is active. */
+.rail-seg[data-active="pins"] .rail-seg-thumb {
   transform: translateX(100%);
 }
 .rail-tab {
@@ -3882,43 +3835,8 @@ button {
   box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04), 0 8px 24px rgba(16, 17, 26, 0.05);
 }
 
-/* Top bar: airy, hairline-separated; soft glass pill filter chips */
-.header-bar .cat-filter.header-cats .cat-chip {
-  border: 1px solid rgba(16, 17, 26, 0.07);
-  border-radius: 999px;
-  padding: 8px 15px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04);
-  transition: background 0.15s ease, border-color 0.15s ease,
-    box-shadow 0.15s ease, color 0.15s ease, transform 0.15s ease;
-}
-.header-bar .cat-filter.header-cats .cat-chip:hover {
-  border-color: rgba(16, 17, 26, 0.16);
-  box-shadow: 0 2px 8px rgba(16, 17, 26, 0.07);
-  transform: translateY(-1px);
-}
-/* Selected: a crisp ink pill with white type + soft lift — reads as a
-   deliberate premium accent, not the old flat, near-illegible black. */
-.header-bar .cat-filter.header-cats .cat-chip.on {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: #fff;
-  box-shadow: 0 3px 12px rgba(16, 17, 26, 0.24);
-}
-.header-bar .cat-filter.header-cats .cat-chip.on:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 5px 16px rgba(16, 17, 26, 0.28);
-}
-.header-bar .cat-filter.header-cats .cat-chip.on .cat-n {
-  color: #fff;
-  opacity: 0.6;
-}
-
 /* Soft glass pill language for the planner's chips too — matches the
-   header filters and the overview cards. */
+   map filters and the overview cards. */
 .suggestion-chip {
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(16, 17, 26, 0.07);
