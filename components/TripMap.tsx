@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Destination, ItineraryStay, Spot } from "@/lib/types";
+import { Destination, ItinerarySlot, ItineraryStay, Spot } from "@/lib/types";
 import { CATEGORY_EMOJI } from "@/lib/categories";
 
 export interface MapBounds {
@@ -17,7 +17,60 @@ export interface MapBounds {
 export interface PlanDayRender {
   label: string;
   color: string;
-  stops: { spot: Spot; note?: string }[];
+  stops: {
+    spot: Spot;
+    note?: string;
+    /** slot/time carry through so the route line can be split into "rounds"
+     *  (a morning outing and an evening outing with a midday break). */
+    slot?: ItinerarySlot;
+    time?: string;
+    durationMin?: number;
+  }[];
+}
+
+/** A gap this long between one stop ending and the next starting reads as a
+ *  break (back to the hotel, a long lunch) rather than travel between stops —
+ *  so the day's route line splits into separate loops there. */
+const BREAK_GAP_MIN = 150;
+
+function stopStartMinutes(time?: string): number | null {
+  if (!time) return null;
+  const m = /^(\d{1,2}):(\d{2})$/.exec(time.trim());
+  if (!m) return null;
+  return Number(m[1]) * 60 + Number(m[2]);
+}
+
+function isBreakBetween(
+  a: PlanDayRender["stops"][number],
+  b: PlanDayRender["stops"][number]
+): boolean {
+  const aStart = stopStartMinutes(a.time);
+  const bStart = stopStartMinutes(b.time);
+  if (aStart !== null && bStart !== null) {
+    return bStart - (aStart + (a.durationMin ?? 0)) >= BREAK_GAP_MIN;
+  }
+  // Fallback when times are missing: jumping straight from a morning stop to
+  // an evening one implies an afternoon break.
+  return a.slot === "morning" && b.slot === "evening";
+}
+
+/** Split a day's stops into contiguous rounds, breaking wherever there's a
+ *  real gap. Returns one lat/lng path per round for drawing route lines. */
+function routeSegments(
+  stops: PlanDayRender["stops"]
+): [number, number][][] {
+  const segments: [number, number][][] = [];
+  let current: [number, number][] = [];
+  stops.forEach((stop, i) => {
+    current.push([stop.spot.lat, stop.spot.lng]);
+    const next = stops[i + 1];
+    if (next && isBreakBetween(stop, next)) {
+      segments.push(current);
+      current = [];
+    }
+  });
+  if (current.length > 0) segments.push(current);
+  return segments;
 }
 
 /** The whiteboard state: which days exist, which are visible. */
@@ -261,11 +314,12 @@ export default function TripMap({
       if (plan.activeDay !== "all" && plan.activeDay !== i) return;
       if (day.stops.length === 0) return;
 
-      const latlngs = day.stops.map(
-        (s) => [s.spot.lat, s.spot.lng] as [number, number]
-      );
-      if (latlngs.length > 1) {
-        L.polyline(latlngs, {
+      // One line per round: an afternoon break splits the day into a morning
+      // loop and an evening loop instead of a single line cutting across the
+      // gap as if it were travel between two stops.
+      for (const seg of routeSegments(day.stops)) {
+        if (seg.length < 2) continue;
+        L.polyline(seg, {
           color: day.color,
           weight: 3,
           opacity: 0.75,
