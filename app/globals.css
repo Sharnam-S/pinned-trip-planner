@@ -1888,43 +1888,6 @@ button {
   background: white;
 }
 
-/* Expand toggle: sits right under the zoom pill, same Airbnb styling */
-.map-expand-btn {
-  position: absolute;
-  top: 106px; /* 16px margin + 80px zoom pill + 10px gap */
-  right: 16px;
-  z-index: 1000; /* above Leaflet panes, same layer as its controls */
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  color: #222222;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 12px;
-  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.08), 0 6px 18px rgba(16, 17, 26, 0.12);
-  cursor: pointer;
-  transition: background 0.15s ease, box-shadow 0.15s ease;
-}
-
-.map-expand-btn:hover {
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 2px 6px rgba(16, 17, 26, 0.1), 0 8px 22px rgba(16, 17, 26, 0.14);
-}
-
-/* Expanded: the spot grid steps aside and the map takes the full row */
-.trip-body.map-expanded .content-panel {
-  display: none;
-}
-
-.trip-body.map-expanded .map-side {
-  width: 100%;
-  padding-left: 32px;
-}
-
 /* Flighty-style map pin pills */
 .pin-pill {
   display: inline-flex;
@@ -2726,10 +2689,6 @@ button {
   min-width: 0;
   padding: 18px;
   background: var(--bg);
-}
-.trip-body.map-expanded .left-side,
-.trip-body.map-expanded .right-side {
-  display: none;
 }
 @media (max-width: 1360px) {
   .left-side {
