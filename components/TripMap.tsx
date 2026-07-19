@@ -85,9 +85,10 @@ export default function TripMap({
       attributionControl: true,
     });
     // No zoom buttons — pinch/scroll/double-tap gestures cover it.
-    // CARTO Voyager: the soft pastel look closest to Airbnb's map
+    // CARTO Positron: near-grayscale tiles so the ink pins, day colors, and
+    // photos carry all the color (mood-board look).
     L.tileLayer(
-      "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+      "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
       {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',

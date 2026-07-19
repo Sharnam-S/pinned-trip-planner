@@ -472,11 +472,11 @@ export default function TripView({
   // The itinerary is derived from storage each render (localStorage is the
   // source of truth); the override covers the moment the agent saves, before
   // any store subscription fires (sample trips have none).
-  // Open by default — planning is the page's second half, not a hidden mode.
-  // (The embed playground stays map-first.)
-  const [planOpen, setPlanOpen] = useState(!embed);
   const [itineraryOverride, setItineraryOverride] = useState<Itinerary | null>(null);
   const [activeDay, setActiveDay] = useState<PlanRender["activeDay"]>("all");
+  // The map's day-brief overlay opens ONLY from the map's own day chips —
+  // the right-rail overview has its own expanded view and must not double up.
+  const [briefDay, setBriefDay] = useState<number | null>(null);
   // Right rail: "pins" (viewport grid / spot detail) or the day-by-day
   // trip overview timeline. Selecting any spot flips back to pins.
   const [rightTab, setRightTab] = useState<"pins" | "overview">("pins");
@@ -677,9 +677,11 @@ export default function TripView({
     if (id) setRightTab("pins");
   };
 
-  // Expanding a day card in the overview also filters the map to that day —
-  // the timeline and the whiteboard stay in sync.
+  // Expanding a day card in the overview filters the map to that day (pins +
+  // route line) but does NOT open the map's day-brief — the expanded card
+  // already tells that story.
   const toggleOverviewDay = (i: number) => {
+    setBriefDay(null);
     setExpandedDay((cur) => {
       const next = cur === i ? null : i;
       setActiveDay(next === null ? "all" : next);
@@ -784,26 +786,13 @@ export default function TripView({
                 setPinnedVideoId((cur) => (cur === id ? null : id))
               }
             />
-            {planOpen ? (
-              <PlannerChat
-                trip={trip}
-                isLocal={isLocal === true}
-                itinerary={itinerary}
-                mustSeeIds={mustSeeIds}
-                onItineraryChange={setItineraryOverride}
-                onClose={() => setPlanOpen(false)}
-              />
-            ) : (
-              <button
-                className="planner-reopen"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setPlanOpen(true);
-                }}
-              >
-                ✨ Open the planner
-              </button>
-            )}
+            <PlannerChat
+              trip={trip}
+              isLocal={isLocal === true}
+              itinerary={itinerary}
+              mustSeeIds={mustSeeIds}
+              onItineraryChange={setItineraryOverride}
+            />
           </aside>
         )}
 
@@ -840,7 +829,10 @@ export default function TripView({
               <div className="day-chips" onClick={(e) => e.stopPropagation()}>
                 <button
                   className={`day-chip ${activeDay === "all" ? "on" : ""}`}
-                  onClick={() => setActiveDay("all")}
+                  onClick={() => {
+                    setActiveDay("all");
+                    setBriefDay(null);
+                  }}
                 >
                   All days
                 </button>
@@ -848,9 +840,11 @@ export default function TripView({
                   <button
                     key={i}
                     className={`day-chip ${activeDay === i ? "on" : ""}`}
-                    onClick={() =>
-                      setActiveDay((cur) => (cur === i ? "all" : i))
-                    }
+                    onClick={() => {
+                      const next = activeDay === i ? "all" : i;
+                      setActiveDay(next);
+                      setBriefDay(next === "all" ? null : i);
+                    }}
                   >
                     <span className="dot" style={{ background: d.color }} />
                     {d.label}
@@ -861,28 +855,30 @@ export default function TripView({
                     className={`day-chip ${
                       activeDay === "unassigned" ? "on" : ""
                     }`}
-                    onClick={() =>
+                    onClick={() => {
                       setActiveDay((cur) =>
                         cur === "unassigned" ? "all" : "unassigned"
-                      )
-                    }
+                      );
+                      setBriefDay(null);
+                    }}
                   >
                     Unassigned <span className="chip-n">{unassignedCount}</span>
                   </button>
                 )}
               </div>
             )}
-            {itinerary &&
-              typeof activeDay === "number" &&
-              itinerary.days[activeDay] && (
-                <DayBrief
-                  day={itinerary.days[activeDay]}
-                  color={dayColor(activeDay)}
-                  spotById={spotById}
-                  onSelectSpot={selectSpot}
-                  onClose={() => setActiveDay("all")}
-                />
-              )}
+            {itinerary && briefDay !== null && itinerary.days[briefDay] && (
+              <DayBrief
+                day={itinerary.days[briefDay]}
+                color={dayColor(briefDay)}
+                spotById={spotById}
+                onSelectSpot={selectSpot}
+                onClose={() => {
+                  setBriefDay(null);
+                  setActiveDay("all");
+                }}
+              />
+            )}
             <button
               className="map-expand-btn"
               onClick={() => setMapExpanded((x) => !x)}
@@ -929,7 +925,14 @@ export default function TripView({
               expandedDay={expandedDay}
               onToggleDay={toggleOverviewDay}
               onSelectSpot={selectSpot}
-              onStartPlanning={() => setPlanOpen(true)}
+              onStartPlanning={() => {
+                // The chat is always open in the left rail — just focus it.
+                document
+                  .querySelector<HTMLTextAreaElement>(
+                    ".planner-inputrow textarea"
+                  )
+                  ?.focus();
+              }}
             />
           ) : selectedSpot ? (
             <SpotCard
@@ -1057,9 +1060,7 @@ function TripOverview({
           return (
             <div className="ov-item" key={i}>
               <div className="ov-marker">
-                <span className="ov-dot" style={{ background: dayColor(i) }}>
-                  {i + 1}
-                </span>
+                <span className="ov-dot">{i + 1}</span>
                 {i < itinerary.days.length - 1 && <span className="ov-line" />}
               </div>
               <div className={`ov-card ${open ? "open" : ""}`}>
@@ -1098,9 +1099,10 @@ function TripOverview({
                 {open && (
                   <div className="ov-stops">
                     {first && (
-                      <div className="db-span">
-                        Start {first}
-                        {end && ` → done ~${end}`}
+                      <div className="ov-span">
+                        <span>Start {first}</span>
+                        {end && <span className="ov-span-sep">→</span>}
+                        {end && <span>done ~{end}</span>}
                       </div>
                     )}
                     {stops.map((st, k) => {
@@ -1116,24 +1118,33 @@ function TripOverview({
                           ).driveMin
                         : null;
                       return (
-                        <div key={st.spotId}>
+                        <div className="ov-stop" key={st.spotId}>
                           <button
-                            className="db-row"
+                            className="ov-stop-row"
                             onClick={() => onSelectSpot(st.spotId)}
                           >
-                            <span className="db-time">{st.time ?? "—"}</span>
-                            <span className="db-name">
-                              {CATEGORY_EMOJI[st.spot.category]} {st.spot.name}
+                            <span className="ov-stop-time">
+                              {st.time ?? "·"}
+                            </span>
+                            <span className="ov-stop-name">
+                              <span className="ov-stop-emoji" aria-hidden="true">
+                                {CATEGORY_EMOJI[st.spot.category]}
+                              </span>
+                              {st.spot.name}
                             </span>
                             {st.durationMin != null && (
-                              <span className="db-dur">
+                              <span className="ov-stop-dur">
                                 {formatDuration(st.durationMin)}
                               </span>
                             )}
                           </button>
-                          {st.note && <div className="db-note">{st.note}</div>}
+                          {st.note && (
+                            <div className="ov-stop-note">{st.note}</div>
+                          )}
                           {gapMin != null && (
-                            <div className="db-gap">↓ ~{gapMin} min travel</div>
+                            <div className="ov-stop-gap">
+                              ~{gapMin} min travel
+                            </div>
                           )}
                         </div>
                       );
