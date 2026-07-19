@@ -2688,7 +2688,10 @@ button {
   position: relative;
 }
 .left-side {
-  width: 340px;
+  /* Scale with the viewport instead of a fixed px width — otherwise every
+     extra pixel on a wide monitor pours into the flex:1 map and the rails
+     look tiny beside it. Min anchors the laptop view; max keeps it sane. */
+  width: clamp(340px, 23vw, 480px);
   min-width: 320px;
   flex-shrink: 0;
   display: flex;
@@ -2726,7 +2729,9 @@ button {
   border-color: var(--ink);
 }
 .right-side {
-  width: 440px;
+  /* Same as .left-side: grow with the viewport so the trip/pin cards keep
+     pace with the map on a large display. */
+  width: clamp(440px, 30vw, 660px);
   min-width: 400px;
   flex-shrink: 0;
   height: 100%;
