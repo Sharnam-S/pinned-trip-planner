@@ -461,6 +461,10 @@ export default function TripView({
   // itinerary timeline. Selecting any spot flips back to pins. The itinerary
   // tab (and the whole segmented control) only appears once a plan exists.
   const [rightTab, setRightTab] = useState<"pins" | "overview">("pins");
+  // Which rail tab a spot detail was opened from, so closing it returns there
+  // — e.g. picking a stop inside an itinerary day and closing lands back on
+  // that day rather than dumping the user into the all-pins grid.
+  const [spotOrigin, setSpotOrigin] = useState<"pins" | "overview">("pins");
   const [expandedDay, setExpandedDay] = useState<number | null>(null);
   // Spots the user starred as non-negotiable — the agent must include them.
   const [mustSeeIds, setMustSeeIds] = useState<string[]>(() => loadMustSees(tripId));
@@ -664,7 +668,11 @@ export default function TripView({
   // stop) shows its detail — which lives on the pins tab.
   const selectSpot = (id: string | null) => {
     setSelectedId(id);
-    if (id) setRightTab("pins");
+    if (id) {
+      // Remember where we came from so the detail's close button returns there.
+      setSpotOrigin(rightTab);
+      setRightTab("pins");
+    }
   };
 
   // Expanding a day card in the overview filters the map to that day (pins +
@@ -904,7 +912,10 @@ export default function TripView({
               planColor={
                 selectedPlanInfo ? dayColor(selectedPlanInfo.dayIndex) : undefined
               }
-              onClose={() => setSelectedId(null)}
+              onClose={() => {
+                setSelectedId(null);
+                setRightTab(spotOrigin);
+              }}
             />
           ) : visibleSpots.length === 0 ? (
             <div className="empty-area">
