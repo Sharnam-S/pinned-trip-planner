@@ -904,18 +904,30 @@ export default function TripView({
             trip overview built from the agent's itinerary */}
         <aside className="right-side" onClick={(e) => e.stopPropagation()}>
           <div className="rail-tabs">
-            <button
-              className={`rail-tab ${rightTab === "pins" ? "on" : ""}`}
-              onClick={() => setRightTab("pins")}
+            <div
+              className="rail-seg"
+              role="tablist"
+              aria-label="Right rail view"
+              data-active={rightTab}
             >
-              Pins
-            </button>
-            <button
-              className={`rail-tab ${rightTab === "overview" ? "on" : ""}`}
-              onClick={() => setRightTab("overview")}
-            >
-              Trip overview
-            </button>
+              <span className="rail-seg-thumb" aria-hidden="true" />
+              <button
+                role="tab"
+                aria-selected={rightTab === "pins"}
+                className={`rail-tab ${rightTab === "pins" ? "on" : ""}`}
+                onClick={() => setRightTab("pins")}
+              >
+                Pins
+              </button>
+              <button
+                role="tab"
+                aria-selected={rightTab === "overview"}
+                className={`rail-tab ${rightTab === "overview" ? "on" : ""}`}
+                onClick={() => setRightTab("overview")}
+              >
+                Trip overview
+              </button>
+            </div>
           </div>
 
           {rightTab === "overview" ? (
