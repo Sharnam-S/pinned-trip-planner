@@ -1059,10 +1059,23 @@ function TripOverview({
               </div>
               <div className={`ov-card ${open ? "open" : ""}`}>
                 <button className="ov-card-main" onClick={() => onToggleDay(i)}>
+                  {/* Full-bleed cover on top — edge to edge, no padding */}
+                  {photoUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img className="ov-cover" src={photoUrl} alt="" />
+                  )}
                   <div className="ov-card-text">
-                    {/* Badge is just "Day N" (reference) — the date lives in
-                        the expanded schedule so the pill never wraps. */}
-                    <span className="ov-day-badge">{day.label}</span>
+                    <span className="ov-day-badge">
+                      {day.label}
+                      {day.date &&
+                        ` · ${new Date(
+                          day.date + "T00:00:00"
+                        ).toLocaleDateString(undefined, {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric",
+                        })}`}
+                    </span>
                     <div className="ov-title">{day.theme ?? day.label}</div>
                     {topCats.length > 0 && (
                       <div className="ov-chips">
@@ -1074,20 +1087,20 @@ function TripOverview({
                       </div>
                     )}
                   </div>
-                  {photoUrl && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img className="ov-photo" src={photoUrl} alt="" />
-                  )}
                 </button>
-                {open && (
-                  <div className="ov-stops">
-                    <DaySchedule
-                      day={day}
-                      spotById={spotById}
-                      onSelectSpot={onSelectSpot}
-                    />
+                {/* Always mounted so open/close animates smoothly */}
+                <div className={`ov-expand ${open ? "open" : ""}`} inert={!open}>
+                  <div className="ov-expand-clip">
+                    <div className="ov-stops">
+                      <DaySchedule
+                        day={day}
+                        spotById={spotById}
+                        onSelectSpot={onSelectSpot}
+                        showDate={false}
+                      />
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             </div>
           );

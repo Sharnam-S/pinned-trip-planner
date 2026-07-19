@@ -3443,7 +3443,9 @@ button {
 
 /* Premium detail card: fills the right rail (was a floating map overlay) */
 .right-side .spot-card {
-  position: static;
+  /* relative, NOT static — the ✕ close button positions against the card;
+     static let it escape to the page body and render off-screen */
+  position: relative;
   width: auto;
   max-width: none;
   max-height: none;
@@ -3656,27 +3658,27 @@ button {
 .ov-card.open {
   box-shadow: 0 0 0 1.5px var(--ink), 0 8px 24px rgba(16, 17, 26, 0.08);
 }
-/* Text column and photo stretch to the SAME height (reference layout):
-   badge top, chips bottom-aligned, photo spanning the full card body. */
+/* Vertical card: full-bleed cover image on top (edge to edge, no padding),
+   then badge / title / chips underneath. */
 .ov-card-main {
-  display: flex;
-  align-items: stretch;
-  gap: 14px;
+  display: block;
   width: 100%;
   border: none;
   background: none;
   text-align: left;
-  padding: 16px;
+  padding: 0;
   cursor: pointer;
   font: inherit;
 }
+.ov-cover {
+  display: block;
+  width: 100%;
+  height: 148px;
+  object-fit: cover;
+  background: #f2f3f5;
+}
 .ov-card-text {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 2px 0 2px 4px;
+  padding: 14px 16px 16px;
 }
 .ov-day-badge {
   display: inline-block;
@@ -3715,8 +3717,7 @@ button {
 .ov-chips {
   display: flex;
   gap: 6px;
-  margin-top: auto;
-  padding-top: 12px;
+  margin-top: 12px;
   flex-wrap: wrap;
 }
 .ov-chip {
@@ -3992,4 +3993,23 @@ button {
   border-top: 1px solid #f0f1f3;
   margin-top: 12px;
   padding: 4px 0 0;
+}
+
+/* ===== Day card expand/collapse motion (same card grows open) ===== */
+.ov-expand {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.38s cubic-bezier(0.32, 0.72, 0.25, 1),
+    opacity 0.22s ease;
+}
+.ov-expand.open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows 0.38s cubic-bezier(0.32, 0.72, 0.25, 1),
+    opacity 0.28s ease 0.08s;
+}
+.ov-expand-clip {
+  overflow: hidden;
+  min-height: 0;
 }
