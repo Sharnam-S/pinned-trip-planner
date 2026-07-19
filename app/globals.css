@@ -2726,8 +2726,8 @@ button {
   border-color: var(--ink);
 }
 .right-side {
-  width: 380px;
-  min-width: 340px;
+  width: 440px;
+  min-width: 400px;
   flex-shrink: 0;
   height: 100%;
   overflow-y: auto;
@@ -2752,8 +2752,8 @@ button {
     min-width: 280px;
   }
   .right-side {
-    width: 340px;
-    min-width: 300px;
+    width: 400px;
+    min-width: 360px;
   }
   .right-side .spot-grid {
     grid-template-columns: 1fr;
