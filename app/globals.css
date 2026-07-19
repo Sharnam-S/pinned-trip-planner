@@ -3828,9 +3828,6 @@ button {
   color: var(--text);
   line-height: 1.4;
 }
-.ov-stop-emoji {
-  margin-right: 7px;
-}
 .ov-stop-dur {
   flex-shrink: 0;
   font-size: 11.5px;
@@ -3957,13 +3954,17 @@ button {
   border-radius: 50%;
   flex-shrink: 0;
 }
-/* The rationale, readable — shown in the expanded schedule, not squeezed
-   into a truncated teaser on the collapsed card */
+/* The rationale, readable — shown as the day summary on the collapsed card
+   (below the title) and, verbatim, inside the map's day-brief overlay. */
 .ov-rationale {
   margin: 2px 0 6px;
   font-size: 12.5px;
   line-height: 1.6;
   color: #6b7280;
+}
+/* On the collapsed overview card it sits under the chips as a teaser. */
+.ov-rationale-teaser {
+  margin: 12px 0 0;
 }
 .ov-untimed {
   font-size: 12px;
@@ -4009,8 +4010,27 @@ button {
 .ov-brief-head .close:hover {
   background: var(--surface-alt);
 }
-.day-brief .ov-title {
+/* Title on the left, the day's cover thumbnail on the right */
+.ov-brief-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin-top: 12px;
+}
+.ov-brief-main-text {
+  flex: 1;
+  min-width: 0;
+}
+.day-brief .ov-title {
+  margin-top: 0;
+}
+.ov-brief-cover {
+  flex-shrink: 0;
+  width: 84px;
+  height: 84px;
+  border-radius: 14px;
+  object-fit: cover;
+  background: #f2f3f5;
 }
 .ov-stops.in-brief {
   border-top: 1px solid #f0f1f3;

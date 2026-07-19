@@ -1098,6 +1098,11 @@ function TripOverview({
                         ))}
                       </div>
                     )}
+                    {day.rationale && (
+                      <p className="ov-rationale ov-rationale-teaser">
+                        {day.rationale}
+                      </p>
+                    )}
                   </div>
                 </button>
                 {/* Always mounted so open/close animates smoothly */}
@@ -1109,6 +1114,7 @@ function TripOverview({
                         spotById={spotById}
                         onSelectSpot={onSelectSpot}
                         showDate={false}
+                        showRationale={false}
                       />
                     </div>
                   </div>
@@ -1136,11 +1142,13 @@ function DaySchedule({
   spotById,
   onSelectSpot,
   showDate = true,
+  showRationale = true,
 }: {
   day: ItineraryDay;
   spotById: Map<string, Spot>;
   onSelectSpot: (id: string) => void;
   showDate?: boolean;
+  showRationale?: boolean;
 }) {
   const stops = day.stops.flatMap((st) => {
     const spot = spotById.get(st.spotId);
@@ -1178,7 +1186,9 @@ function DaySchedule({
           days&rdquo; and it will fill in arrivals and durations.
         </div>
       )}
-      {day.rationale && <p className="ov-rationale">{day.rationale}</p>}
+      {showRationale && day.rationale && (
+        <p className="ov-rationale">{day.rationale}</p>
+      )}
       {stops.map((st, k) => {
         const next = stops[k + 1];
         const gapMin = next
@@ -1193,12 +1203,7 @@ function DaySchedule({
               onClick={() => onSelectSpot(st.spotId)}
             >
               <span className="ov-stop-time">{st.time ?? "·"}</span>
-              <span className="ov-stop-name">
-                <span className="ov-stop-emoji" aria-hidden="true">
-                  {CATEGORY_EMOJI[st.spot.category]}
-                </span>
-                {st.spot.name}
-              </span>
+              <span className="ov-stop-name">{st.spot.name}</span>
               {st.durationMin != null && (
                 <span className="ov-stop-dur">
                   {formatDuration(st.durationMin)}
@@ -1231,6 +1236,11 @@ function DayBrief({
   onSelectSpot: (id: string) => void;
   onClose: () => void;
 }) {
+  const photoUrl =
+    day.stops
+      .map((st) => spotById.get(st.spotId))
+      .map((spot) => (spot ? miniPhotoUrl(spot) : null))
+      .find(Boolean) ?? null;
   return (
     <div className="day-brief" onClick={(e) => e.stopPropagation()}>
       <div className="ov-brief-head">
@@ -1247,7 +1257,15 @@ function DayBrief({
           ✕
         </button>
       </div>
-      {day.theme && <div className="ov-title">{day.theme}</div>}
+      <div className="ov-brief-main">
+        <div className="ov-brief-main-text">
+          {day.theme && <div className="ov-title">{day.theme}</div>}
+        </div>
+        {photoUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img className="ov-brief-cover" src={photoUrl} alt="" />
+        )}
+      </div>
       <div className="ov-stops in-brief">
         <DaySchedule
           day={day}
