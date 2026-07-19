@@ -5,8 +5,33 @@
  * update_itinerary tool — never prose in the chat.
  */
 import { z } from "zod";
-import { Itinerary, Spot, Trip } from "./types";
+import { Itinerary, ItinerarySlot, Spot, Trip } from "./types";
 import { getLocalTrip, saveLocalTrip } from "./clientStore";
+
+/** The model reaches for time-of-day words beyond the canonical three
+ *  ("midday", "night", "lunch"). Map the common synonyms onto the real slots
+ *  and drop anything we can't place — the field is an optional grouping hint,
+ *  so a value we don't recognize is better dropped than allowed to break the
+ *  plan. */
+const SLOT_ALIASES: Record<string, ItinerarySlot> = {
+  morning: "morning",
+  breakfast: "morning",
+  "early morning": "morning",
+  midday: "afternoon",
+  noon: "afternoon",
+  lunch: "afternoon",
+  afternoon: "afternoon",
+  evening: "evening",
+  night: "evening",
+  nighttime: "evening",
+  dinner: "evening",
+  sunset: "evening",
+};
+
+export function normalizeSlot(raw?: string): ItinerarySlot | undefined {
+  if (!raw) return undefined;
+  return SLOT_ALIASES[raw.trim().toLowerCase()];
+}
 
 // --- Tool input schemas (what the model sends) ---
 
@@ -35,7 +60,17 @@ export const ItineraryInputSchema = z.object({
               spotId: z
                 .string()
                 .describe("A spot id from the trip context, exactly as given"),
-              slot: z.enum(["morning", "afternoon", "evening"]).optional(),
+              // Kept lenient on purpose: this is an optional, low-stakes
+              // grouping hint, and the model reaches for synonyms ("midday",
+              // "night"). A strict enum would reject the ENTIRE plan over one
+              // stray value, so accept any string and normalize downstream in
+              // validateItinerary rather than hard-failing the tool call.
+              slot: z
+                .string()
+                .optional()
+                .describe(
+                  'Rough time-of-day bucket — one of "morning", "afternoon", "evening".'
+                ),
               // Required: an itinerary without times doesn't answer "when do
               // I start and when am I done" — the whole point of the plan.
               time: z
@@ -125,7 +160,7 @@ export function validateItinerary(
       seen.add(stop.spotId);
       stops.push({
         spotId: stop.spotId,
-        slot: stop.slot,
+        slot: normalizeSlot(stop.slot),
         time: stop.time,
         durationMin: stop.durationMin,
         why: stop.why,

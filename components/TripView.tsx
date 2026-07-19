@@ -666,7 +666,17 @@ export default function TripView({
             color: dayColor(i),
             stops: d.stops.flatMap((st) => {
               const spot = spotById.get(st.spotId);
-              return spot ? [{ spot, note: st.note }] : [];
+              return spot
+                ? [
+                    {
+                      spot,
+                      note: st.note,
+                      slot: st.slot,
+                      time: st.time,
+                      durationMin: st.durationMin,
+                    },
+                  ]
+                : [];
             }),
           })),
           stay: itinerary.stay ?? null,
