@@ -1,190 +1,285 @@
-# Agentic Trip Planner — Design Doc
+# Agentic Trip Planner — Living Doc
 
-Status: **v1 in progress** · Owner: Sharnam · Last updated: 2026-07-19
+**Read this first if you're an agent (or human) working on the planner.**
+It holds the architecture, the decision log with rationale, and — most
+importantly — the learnings from 9+ rounds of live-testing iteration.
+Update it when you change behavior or learn something that cost time.
 
-## 1. What we're building
+Status: **shipped, iterating on live feedback** · Owner: Sharnam ·
+Last updated: 2026-07-19 (PRs #23–#32)
 
-Today the app answers *"what's worth visiting?"* (YouTube research → spots on a map).
-This feature answers the second half: *"when do I visit what?"* — an in-app travel
-agent that behaves like a knowledgeable local, interviews the user lightly (budget,
-dates, stay, interests), and produces a **day-by-day itinerary** that renders on the
-existing map like a whiteboard: day filters, visit order, and route lines.
+---
 
-The trip page becomes three panels:
+## 1. What this is
 
-```
-┌────────────┬──────────────────────┬──────────────────────┐
-│  Planner   │  Spot cards          │  Map ("whiteboard")  │
-│  chat      │  (3 cols → 2 when    │  · day chips overlay │
-│  (agent)   │   chat is open)      │  · numbered markers  │
-│            │                      │  · per-day polylines │
-└────────────┴──────────────────────┴──────────────────────┘
-```
-
-**Core principle: the itinerary is a data object, not chat prose.** The agent edits
-it via a tool call; the map, cards, and future features all render the same object.
-Chat is ephemeral; the itinerary persists on the trip.
-
-## 2. Decisions (and why)
-
-| # | Decision | Rationale |
-|---|----------|-----------|
-| D1 | **Vercel AI SDK v7** (`ai` + `@ai-sdk/anthropic` + `@ai-sdk/react`) | Covers the hard 20%: `useChat` state machine, SSE transport, streaming tool calls, provider abstraction (future Gemini/Haiku split is config). LangChain/LangGraph rejected — abstraction tax, no UI story. |
-| D2 | **Model: `claude-sonnet-5`** | Quality is the product in the planner; ~$0.10–0.50 per full session with caching. Extraction pipeline stays on its current model — revisit split after checking PostHog `llm-total-costs`. |
-| D3 | **Stateless chat route; client owns all state** | User trips live *only* in browser localStorage (`lib/clientStore.ts`); the deployed server is read-only (`isReadOnly` when `VERCEL`). So the client sends trip context + messages each turn; the server holds nothing. This also makes BYOK trivial later. |
-| D4 | **Both tools are client-executed** (no `execute` on the server) | `update_itinerary` must write localStorage — server can't. `get_travel_times` needs spot coords the client already has (haversine). Zero server state, zero server Google cost in v1. |
-| D5 | **`update_itinerary` is a full-replace** of the itinerary | Idempotent, trivially validated, no patch-conflict logic. Payloads are small (≤ a few KB). Partial-edit ops can come later if token cost ever matters. |
-| D6 | **Itinerary stored as `Trip.itinerary`** for local trips; **overlay key** `pinned.itin.<tripId>` for sample/shared trips | Local trips already round-trip wholesale through `saveLocalTrip`. Sample trips are server-owned and read-only, but a visitor should still be able to plan on one — the overlay keeps their plan without forking the trip. |
-| D7 | **Prompt caching**: spot digest lives in one system message with `providerOptions.anthropic.cacheControl: {type:'ephemeral'}` | The spot list is the big, static block (~10–30KB). Cache-read pricing makes multi-turn sessions ~10× cheaper. Volatile content (current itinerary, user prefs) goes *after* it. |
-| D8 | **Distance digest in context + on-demand tool** | System prompt includes each spot's 3 nearest neighbors (km) so the agent clusters sensibly without tool round-trips; `get_travel_times` answers specific pair queries. v1 is haversine × mode-speed heuristic; Google **Routes API ComputeRouteMatrix** is v2 (free tier 10K elements/mo; only fetch pairs the plan actually uses). |
-| D9 | **Agent proposes, doesn't interrogate** | Dates/interests often already exist in `Trip.query` — seed from them, ask at most 1–2 questions, then put a draft plan on the table and iterate. Encoded in the system prompt. |
-| D10 | **Auth: server `ANTHROPIC_API_KEY` in v1; BYOK header in v3** | Matches the existing pipeline. Subscription/OAuth harnessing is banned by Anthropic's consumer ToS (enforced 2026-01/02) — API is the only compliant path. |
-| D11 | **PostHog `$ai_generation`** captured in the route's `onFinish`, reusing `tripProperties()` from `lib/llm.ts` | Keeps the chat visible in the same LLM-analytics traces as the pipeline. |
-
-## 3. Data model (ERD)
+The trip page's second half. Part one (pre-existing): YouTube research →
+spots on a map. Part two (the planner): a chat agent that behaves like a
+local guide, interviews the user briefly, and builds a **day-by-day
+itinerary** rendered on the map as a whiteboard — day chips, numbered
+per-day markers, route lines, per-day "brief" panels, and per-stop
+rationale on the spot cards.
 
 ```
-Trip (existing)                      Itinerary (new, optional on Trip)
-┌───────────────────┐               ┌─────────────────────────────┐
-│ id                │ 1 ──── 0..1   │ days: ItineraryDay[]        │
-│ name              │               │ stay?: Stay                 │
-│ spots: Spot[]     │               │ pace?: packed|balanced|     │
-│ query?: TripQuery │               │        relaxed              │
-│ itinerary?  ◄─────┼───────────────│ budget?: string             │
-│ ...               │               │ updatedAt: ISO string       │
-└───────────────────┘               └─────────────────────────────┘
-                                       │ 1..7        │ 0..1
-                                       ▼             ▼
-                       ItineraryDay              Stay
-                       ┌──────────────────┐     ┌──────────────────┐
-                       │ label: "Day 1"   │     │ name              │
-                       │ date?: yyyy-mm-dd│     │ lat?, lng?        │
-                       │ theme?: string   │     │ note?             │
-                       │ stops: Stop[]    │     └──────────────────┘
-                       └──────────────────┘
-                          │ 0..n  (ordered = visit order)
-                          ▼
-                       ItineraryStop
-                       ┌────────────────────────────┐
-                       │ spotId ───► Spot.id (FK)   │
-                       │ slot?: morning|afternoon|  │
-                       │        evening             │
-                       │ note?: string (agent tip)  │
-                       └────────────────────────────┘
+┌────────────┬──────────────────────┬──────────────────────────┐
+│  Planner   │  Spot cards          │  Map ("whiteboard")      │
+│  chat      │  (2 cols while chat  │  · day chips → day brief │
+│  (open by  │   is open)           │  · numbered day pins     │
+│  default)  │                      │  · route polylines       │
+└────────────┴──────────────────────┴──────────────────────────┘
 ```
 
-Invariants (enforced by `lib/itinerary.ts` zod schema + client-side validation):
-- `stops[].spotId` must exist in `trip.spots` (unknown ids dropped with a warning
-  returned to the model so it can self-correct).
-- A spot appears at most once across all days (first occurrence wins).
-- ≤ 14 days, ≤ 10 stops/day (sanity caps).
-- Spots not referenced anywhere = "Unassigned" (derived, not stored).
+**Core principle: the itinerary is a data object, not chat prose.** The
+agent edits it via one tool (`update_itinerary`, full replace); the map,
+day briefs, and spot cards all render that same object. The chat is a
+means; the artifact is the product.
 
-## 4. Request flow
+## 2. Architecture (and the one fact that shapes everything)
+
+**User trips live ONLY in browser localStorage.** The server never stores
+user data (deployed Vercel copies are read-only, `lib/store.ts
+isReadOnly`). Everything follows from this:
+
+- **The chat route is stateless.** The client sends trip context (spot
+  digest + current itinerary + must-sees) with every request.
+- **Both tools execute client-side** (no `execute` on the server):
+  `update_itinerary` validates + writes localStorage; `get_travel_times`
+  computes haversine from spot coords the browser already has. The map
+  re-renders the moment a tool call lands mid-stream — the "whiteboard"
+  effect is free.
+- **All planner state is per-browser localStorage**, one key family:
+  - `pinned.trip.<id>` — the trip itself (pre-existing)
+  - `pinned.itin.<id>` — itinerary overlay for *sample/shared* trips
+    (local trips carry `trip.itinerary` directly)
+  - `pinned.mustsee.<id>` — user-starred must-see spot ids
+  - `pinned.chat.<id>` — conversation history (last 80 messages)
+
+### Stack
+
+- **Vercel AI SDK v7** (`ai@7`, `@ai-sdk/anthropic@4`, `@ai-sdk/react`) —
+  chosen over LangChain/LangGraph (abstraction tax, no UI story) and raw
+  SDK + hand-rolled SSE (the UI half is the hard 20%).
+- **Model: `claude-sonnet-5`** — latest Sonnet, best in line, intro
+  pricing $2/$10 per MTok through 2026-08-31 (then $3/$15).
+- **Route:** `app/api/trips/[id]/chat/route.ts` — `streamText` +
+  `createUIMessageStreamResponse(toUIMessageStream(...))`,
+  `maxDuration = 300` (see Learnings §5.1), per-IP rate limit, PostHog
+  `$ai_generation` capture in `onEnd`/`onError`.
+- **Client:** `components/PlannerChat.tsx` — `useChat` +
+  `DefaultChatTransport` with `prepareSendMessagesRequest` (carries
+  context + windowed history), `onToolCall`/`addToolOutput`,
+  `sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls`.
+
+### Data model (`lib/types.ts`, zod in `lib/itinerary.ts`)
 
 ```
-user types ──► useChat (PlannerChat.tsx)
-                 │  POST /api/trips/[id]/chat
-                 │  body: { messages: UIMessage[], context: {meta, spots digest,
-                 │          distances, itinerary} }
-                 ▼
-        route.ts: streamText({ model: anthropic('claude-sonnet-5'),
-                 system: [persona+rules, CACHED spot digest, volatile itinerary],
-                 tools: update_itinerary / get_travel_times  (no execute) })
-                 │  SSE stream: text deltas + streaming tool-call parts
-                 ▼
-        PlannerChat onToolCall:
-          · update_itinerary → validate → save (Trip.itinerary or overlay)
-                               → addToolOutput({ok, warnings})
-          · get_travel_times  → haversine from trip.spots → addToolOutput
-                 │  sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls
-                 ▼
-        localStorage change → subscribeLocalTrips → TripView re-renders
-                 ▼
-        TripMap: day chips · numbered colored markers · polylines
+Trip ── itinerary?: Itinerary
+          days: ItineraryDay[]      label, date?, theme*, rationale*, stops
+            stops: ItineraryStop[]  spotId→Spot.id, time*, durationMin*,
+                                    why*, note?, slot?
+          stay?  (name, lat?, lng?, note?)   pace?  budget?  updatedAt
 ```
 
-The save→render loop means the map updates **the moment the tool call lands**,
-mid-conversation — the whiteboard effect falls out of the architecture for free.
+Fields marked `*` are **required in the tool input schema** but optional
+in the stored types (old plans must keep rendering). This asymmetry is
+deliberate — see Learnings §4.1.
 
-## 5. Implementation details
+## 3. The agent's behavior contract (persona, in the route)
 
-### New files
-| File | Contents |
+The persona is the product spec. Current contract, in order of the
+user-trust lessons that produced it:
+
+1. **Intake before planning** — ONE compact batched message asking only
+   what context doesn't answer: exact dates (weekday reasoning needs
+   them), stay booked/where, budget + pace, must-sees (proactively
+   flagging 2–3 iconic spots). "Just plan it" → draft with stated
+   assumptions.
+2. **Never invent user facts** — stay is only set when told, or as a
+   labeled recommendation with rationale.
+3. **Every plan change goes through `update_itinerary`** (full replace,
+   never prose-only), preceded by one short sentence so the stream shows
+   progress before a long tool call.
+4. **Times required** (arrival + duration per stop, accounting for
+   travel/meals/opening hours); **rationale required** per day; **why
+   required** per stop answering: worth it why / this day why / this
+   time why.
+5. **Day-of-week awareness** — clubs Fri/Sat, weekend-crowded spots on
+   weekday mornings, closure days, trip-level arcs (beach first, party
+   Saturday).
+6. **Creator consensus weights picks** — 2+ mention spots get priority;
+   dropping one requires an explicit stated reason.
+7. **Meal logic** — one food spot per meal slot; consecutive food stops
+   only as a stated complement pairing (dessert/coffee/shake).
+8. **Starred must-sees are non-negotiable.**
+9. **Truncation-aware** — durable prefs must be folded into the plan
+   immediately (the context block, not old chat turns, is the source of
+   truth).
+
+## 4. Learnings — agent behavior
+
+### 4.1 Schemas are guarantees; prose is steering (the biggest lesson)
+Prose-level "times are required" produced plans with no times. Optional
+zod fields get skipped; loose `describe()` strings get lazy content
+("theme" = spot names joined with "+", "why" = a practical tip). The fix
+that actually worked, twice: **make the field required in the tool input
+schema and write the description as a content spec** (e.g. why must
+answer three named questions; theme must be experiential, "never join
+spot names with +"). Keep stored types optional for backward compat.
+
+### 4.2 Judgment gaps close with one explicit rule
+Sonnet follows short, explicit, targeted rules reliably. Real examples:
+back-to-back restaurants (fixed by MEAL LOGIC rule naming the exact
+anti-pattern), skipped 3-creator spot (CONSENSUS rule), invented stay
+(NEVER-INVENT rule). When live testing surfaces a bad judgment call,
+prefer one added persona line naming the anti-pattern over re-architecting.
+
+### 4.3 Trust is rationale at every zoom level
+The user's core demand ("trips are how people spend their most precious
+money"). Rationale renders where decisions are inspected: trip flow in
+chat prose, day structure in the map's day brief, individual picks on the
+spot card ("In your plan — Day 4 (Friday) · 19:00"). The persona is told
+these render on the map/cards — write for the user, not a log.
+
+### 4.4 Intake-first beats propose-first (for this domain)
+v1's "propose, don't interrogate" was wrong for high-stakes planning —
+the user explicitly wanted to be asked (dates, stay, budget, must-sees)
+before a draft. Compromise that works: ask everything in ONE batched
+message, never re-ask what context answers, honor "just plan it".
+
+### 4.5 Silence looks like a hang
+Sonnet thinks before answering and thinking is invisible by default
+(API `display` defaults to `omitted` — empty thinking blocks). Three
+layers fixed it: request `thinking: {type:"adaptive", display:
+"summarized"}` via providerOptions and render reasoning parts (live
+italic block → collapsible); persona rule "one sentence before every
+tool call"; staged status cues + elapsed counter in the UI. Note:
+thinking is billed identically whether displayed or not.
+
+## 5. Learnings — infrastructure & cost
+
+### 5.1 The 60s Vercel timeout (the production hang)
+First live session: silent dots → dead stream. Vercel runtime logs showed
+`Task timed out after 60 seconds` — my own `maxDuration = 60` while the
+model was mid-think on a 5-day plan. Fixes: `maxDuration = 300` (needs
+Fluid Compute — default on this project), the speak-before-tool-call
+rule, and error surfacing (unmask via `toUIMessageStream({onError})`,
+retry buttons, detection of empty assistant turns = dropped stream).
+**Debugging lesson: check Vercel runtime logs first** (`get_runtime_logs`
+MCP tool) — the answer was one grep away.
+
+### 5.2 Prompt caching layout (Anthropic caching is explicit, prefix-based)
+The AI SDK does NOT auto-cache for Anthropic (OpenAI auto-caches; that's
+where "plumbing handles it" intuition comes from). We place two
+`cacheControl: {type:"ephemeral"}` breakpoints via providerOptions:
+1. On the **spot-digest system message** — prefix semantics mean this
+   also covers tool schemas + the persona before it. The volatile block
+   (current itinerary, stars, today's date) sits AFTER it on purpose.
+2. On the **last conversation message** — replayed history bills at
+   ~0.1× within a session.
+Known tradeoff: a plan-changing turn mutates the volatile block →
+one-turn cache miss on history (bounded by the send window). Micro-opt
+if ever justified by PostHog data: move itinerary state out of the
+system tail.
+
+### 5.3 Long-conversation cost: state-carrying truncation, not summarization
+Requests send only the last 30 messages (window always opens on a user
+turn so tool pairs don't strand). Safe because **the itinerary IS the
+compressed conversation** — durable state (plan + whys + stars + budget
++ pace + dates) rides in the context block every turn. The persona knows
+truncation happens and folds lasting chat-stated prefs into the plan
+immediately. LLM summarization was rejected: extra calls, lossy, and
+unnecessary at this scale. Storage keeps 80 messages for display; only
+the request is windowed.
+
+### 5.4 Chat persistence pitfalls
+- Save **continuously** (debounced 400ms) + **flush on unmount** —
+  saving only on settled turns lost conversations closed mid-stream.
+- **Sanitize on load**: a refresh mid-turn persists an assistant message
+  with a dangling tool call (no output) — replaying that is an invalid
+  Anthropic conversation. Drop trailing dangling messages.
+- One trip = one conversation. No "new chat" — planning context is never
+  intentionally discarded.
+
+### 5.5 Verify costs in PostHog, decide with data
+Every planner turn emits `$ai_generation` (span `planner-chat`, tagged
+tripId/tripName) with token + cache fields. Before optimizing anything
+cost-related (model splits, summarization, Routes API), check
+`llm-total-costs` there first. From turn 2 of a session,
+cache_read should dominate input tokens — if not, a silent cache
+invalidator crept in.
+
+### 5.6 Anthropic platform facts that shaped decisions
+- Subscription/OAuth reuse in third-party apps is **banned & enforced**
+  (2026-01/02) — API key (later BYOK) is the only compliant path.
+- `claude-sonnet-5` is the right model tier here; deeper thinking is a
+  feature for this use case, `effort` is the knob if cost ever bites.
+
+## 6. Learnings — Vercel AI SDK v7 specifics
+
+- **Trust the bundled docs, not training memory** — v7 was newer than
+  the building agent's knowledge. Canonical references live in
+  `node_modules/ai/docs/` and provider types in
+  `node_modules/@ai-sdk/anthropic/dist/index.d.ts`. Same rule as this
+  repo's AGENTS.md gives for Next.js.
+- Server: `streamText` → `createUIMessageStreamResponse({stream:
+  toUIMessageStream({stream: result.stream, onError})})`. Use `onEnd`
+  (not deprecated `onFinish`); usage details at
+  `usage.inputTokenDetails.cacheReadTokens/cacheWriteTokens`.
+- Multiple system messages in `messages` require
+  `allowSystemInMessages: true`.
+- Client-executed tools = define with `inputSchema` but **no `execute`**;
+  handle in `useChat onToolCall` + `addToolOutput` (don't await it);
+  auto-continue via `sendAutomaticallyWhen:
+  lastAssistantMessageIsCompleteWithToolCalls`.
+- Tool parts render as `part.type === "tool-<name>"` with states
+  `input-streaming → input-available → output-available | output-error`;
+  reasoning as `part.type === "reasoning"` with `state:
+  "streaming"|"done"`.
+- `useChat({messages})` seeds initial history (persistence).
+  `regenerate()` retries the last turn.
+- `prepareStep`/`pruneMessages` compaction is **intra-run** (multi-step
+  tool loops), NOT cross-turn chat history — chat windowing is app-level
+  by design.
+- JSX gotcha that hit production: whitespace around `{expr}` at line
+  boundaries collapses ("63spots") — use template literals for
+  interpolated sentences.
+
+## 7. File map
+
+| File | Role |
 |---|---|
-| `lib/itinerary.ts` | Types re-exported to `lib/types.ts`, zod schemas (`ItinerarySchema`), `validateItinerary(input, spots)` → `{itinerary, warnings}`, `getItinerary(trip)` / `saveItinerary(trip, isLocal, itin)` (overlay logic), `haversineKm`, `nearestNeighborsDigest(spots)`, day color palette. |
-| `app/api/trips/[id]/chat/route.ts` | `POST` handler: rate-limit (`lib/ratelimit.ts`), build system messages, `streamText` with tool *schemas only*, `createUIMessageStreamResponse`, PostHog capture in `onFinish`. `runtime: nodejs`, `maxDuration: 60`. |
-| `components/PlannerChat.tsx` | `useChat` + `DefaultChatTransport` (body carries context), message rendering (`text` + `tool-update_itinerary` summary card + `tool-get_travel_times` chip), `onToolCall` handlers, input box, quick-start hint chips. |
+| `app/api/trips/[id]/chat/route.ts` | Chat route: persona, context assembly, caching breakpoints, tool schemas (no execute), PostHog capture |
+| `lib/itinerary.ts` | Zod schemas (tool input), validation/normalization, localStorage helpers (itinerary overlay, must-sees), haversine + travel estimates, spot digest builder, day colors, `PlannerContext` |
+| `components/PlannerChat.tsx` | Chat UI: useChat wiring, client tool execution, history persistence (save/sanitize/window), reasoning + tool part rendering, must-see bar, auto-growing input |
+| `components/TripView.tsx` | Page shell: 3-panel layout, itinerary/must-see state, day chips, `DayBrief` (timeline + rationale), `SpotCard` ("In your plan" + star) |
+| `components/TripMap.tsx` | Leaflet map: pill markers (star badges), plan overlay (numbered day pins, polylines, stay pin), day-fit behavior |
+| `lib/types.ts` | `Itinerary`/`ItineraryDay`/`ItineraryStop` on `Trip` (stored shapes — optional fields for back-compat) |
+| `app/globals.css` | Everything under `/* Planner agent */` (~end of file) |
 
-### Modified files
-| File | Change |
-|---|---|
-| `lib/types.ts` | `Trip.itinerary?: Itinerary` + new interfaces. |
-| `components/TripView.tsx` | Chat panel toggle ("✨ Plan" button in filter bar), `planOpen` + `activeDay` state, pass itinerary + day selection to `TripMap`, `trip-body` gets a `plan-open` class (grid drops to 2 cols). |
-| `components/TripMap.tsx` | New props `itinerary?`, `activeDay?` (`'all' | number | 'unassigned'`), `onDayChange`. Renders: day chip bar (Leaflet-independent overlay div), numbered circular markers in day color for planned stops, dashed polyline per visible day in day order, dimmed pills for unplanned spots when a day filter is active. Stay marker (🏠) when set. |
-| `app/globals.css` | Panel layout, chat styles, day chips, numbered pins, polyline-adjacent styles. |
+## 8. Working on this project
 
-### System prompt sketch (route.ts)
+- **Verify:** `npx tsc --noEmit` and `npm run build` must be clean.
+  `npm run lint` carries ~20 **pre-existing** errors in untouched files
+  (anchor tags, ref patterns) — the bar is "no NEW errors", checked by
+  linting only the files you changed.
+- **No API key in Conductor workspaces** — live model behavior is tested
+  by the owner on the Vercel deployment (screenshots come back as
+  feedback). You can verify to the API boundary with a dummy key
+  (expect a clean SSE error stream, not a crash).
+- **Workflow:** each feedback round = branch → commit → PR to `main` →
+  owner merges & tests on prod. Small, complete rounds beat big batches.
+- **Prompt changes are product changes** — update §3 here when you touch
+  the persona.
 
-1. **Persona + rules** (static, cacheable): local-guide voice; propose-don't-
-   interrogate; ≤2 questions before first draft; respect known `query` data; use
-   `update_itinerary` for every plan change (never describe a plan only in prose);
-   meals anchor days; realistic travel times; cite spot names exactly.
-2. **Spot digest** (static per trip, `cacheControl: ephemeral`): one line per spot —
-   `id | name | category | 2-line desc | mentions count | nearest: id(km), id(km), id(km)`
-   plus trip meta (destination, dates, interests from `query`).
-3. **Volatile tail** (not cached): current itinerary JSON (or "none yet"), today's
-   date.
+## 9. Deliberate non-goals / deferred
 
-### Tool schemas (zod, shared client/server via `lib/itinerary.ts`)
-
-```ts
-update_itinerary: { days: [{ label, date?, theme?, stops: [{ spotId, slot?, note? }] }],
-                    stay?: { name, lat?, lng?, note? }, pace?, budget? }
-   → client returns { ok: true, warnings: string[], unassignedCount: number }
-
-get_travel_times: { pairs: [{ from: spotId, to: spotId }] }   (≤ 20 pairs)
-   → client returns [{ from, to, km, walkMin, driveMin }]
-```
-
-## 6. Scope
-
-**v1 (this build)**
-- Itinerary model + validation + persistence (local trip field / sample-trip overlay)
-- Chat route + panel, streaming, both tools, prompt caching, PostHog capture
-- Map: day chips, numbered day-colored markers, per-day polylines, unassigned filter,
-  stay pin
-- Layout: 3-panel with collapsible chat; cards 3→2 cols
-
-**v2**
-- Google Routes API travel times (lazy, adjacent-pairs only) + opening hours from
-  Places (`placeId` already on spots)
-- "By day" grouping toggle in the cards column; drag spot between days (manual
-  override the agent must respect); `locked` stops
-- Stay-neighborhood recommendation mode (cluster centroid + candidate-area pins)
-
-**v3**
-- BYOK: settings modal, key in localStorage, `x-user-api-key` header →
-  `createAnthropic({apiKey})` per request; ship to friends
-- Hour-level scheduling; weather-aware replans; itinerary export/share
-
-**Explicitly out of scope**
-- Proposal/accept diffs (agent edits directly; day chips make changes visible)
-- Server-side itinerary storage, auth/accounts, LangGraph-style orchestration
-
-## 7. Risks / notes
-
-- **AI SDK v7 is new** — patterns verified against the installed package's bundled
-  docs (`node_modules/ai/docs`), not memory. Key shapes: `createUIMessageStreamResponse`
-  + `toUIMessageStream`, `onToolCall`/`addToolOutput` (don't `await` it),
-  `sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls`, tool parts
-  `tool-<name>` with `input-streaming → input-available → output-available` states.
-- **Nonstandard Next.js 16** (see AGENTS.md) — route handlers mirror the existing
-  `app/api/trips/[id]/route.ts` conventions (`params: Promise<…>`, `runtime` export).
-- **Client-validated tool results**: the model may reference stale/unknown spot ids;
-  validation returns warnings in the tool result so the model self-corrects in the
-  same turn.
-- **Sample trips on deployed Vercel**: chat works, plan persists only in that
-  browser (overlay). Acceptable for v1.
-- **Rate limiting**: reuse `lib/ratelimit.ts` (per-IP) on the chat route to protect
-  the shared server key until BYOK lands.
+- **Google Routes API travel times** (v2) — haversine × city-speed is
+  deliberately "good enough to structure a day"; upgrade lazily
+  (adjacent pairs only, 10K free elements/mo) when estimates prove off.
+- **BYOK** (v3) — friends bring their own Anthropic key via header →
+  `createAnthropic({apiKey})`; localStorage-only, never stored server-side.
+- **Proposal/accept diffs, drag-to-reorder + locks, opening hours from
+  Places, cross-device sync (needs accounts), stay-area recommendation
+  mode with candidate pins.**
+- **Rejected:** LangChain/LangGraph (see §2), LLM summarization of chat
+  (§5.3), Vercel AI Gateway (fragmenting billing/analytics), Claude
+  subscription harnessing (ToS, §5.6).
