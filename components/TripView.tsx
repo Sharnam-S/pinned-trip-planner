@@ -110,6 +110,17 @@ function spotPhotoUrl(spot: Spot): string | null {
   );
 }
 
+/** One stable cover photo for the map's mini popup (Google photos go through
+ *  the proxy — stored Google URLs expire). */
+function miniPhotoUrl(spot: Spot): string | null {
+  const isGoogle =
+    Boolean(spot.placeId) &&
+    (spot.photo?.source === "google" ||
+      (spot.photos?.some((p) => p.source === "google") ?? false) ||
+      (spot.morePhotoNames?.length ?? 0) > 0);
+  return isGoogle ? googlePhotoProxy(spot.placeId!, 0) : spotPhotoUrl(spot);
+}
+
 // Lazy photo carousel state, shared by the grid tiles and the detail card.
 // Photos beyond the cover resolve on the first swipe — a card nobody swipes
 // never bills the Photos API. Local trips persist the resolved URLs back to
@@ -272,11 +283,11 @@ function TilePhotos({ spot, tripId, local }: { spot: Spot; tripId: string; local
   );
 }
 
-// Airbnb-style centered "search" pill for the trip header. Two segments: the
-// place/trip name on the left, and a YouTube-videos selector on the right that
-// drops down the source list (and the add-videos box for local trips).
-function TripSearchPill({
+// The trip's identity block at the top of the left rail: name + meta line,
+// with the YouTube-videos list (and add-videos box) expanding below it.
+function TripHead({
   trip,
+  meta,
   canAdd,
   addLinks,
   setAddLinks,
@@ -289,6 +300,7 @@ function TripSearchPill({
   onClickVideo,
 }: {
   trip: Trip;
+  meta: string;
   canAdd: boolean;
   addLinks: string;
   setAddLinks: (v: string) => void;
@@ -302,75 +314,68 @@ function TripSearchPill({
 }) {
   const count = trip.videos.length;
   return (
-    <div className="trip-pill-slot" onClick={(e) => e.stopPropagation()}>
-      {/* One white card: the pill row on top, and the video list expanding
-          inside the same container below it (Airbnb search-pill morph) */}
-      <div className={`trip-pill ${open ? "open" : ""}`}>
-        <div className="pill-row">
-          <div className="pill-seg pill-place">
-            <span className="pill-icon" aria-hidden="true">
-              📍
-            </span>
-            <span className="pill-text">{trip.name}</span>
-          </div>
-
-          <span className="pill-sep" />
-
-          <button
-            className={`pill-seg pill-videos ${open ? "open" : ""}`}
-            aria-expanded={open}
-            onClick={() => setOpen((o) => !o)}
-          >
-            <span className="pill-thumbs">
-              {trip.videos.slice(0, 3).map((v) =>
-                v.thumbnail ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img key={v.id} src={v.thumbnail} alt="" />
-                ) : null
-              )}
-            </span>
-            <span className="pill-text">
-              {count} video{count === 1 ? "" : "s"}
-            </span>
-            <span className={`pill-chevron ${open ? "open" : ""}`}>▾</span>
-          </button>
+    <div
+      className={`trip-head ${open ? "open" : ""}`}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="th-row">
+        <div className="th-id">
+          <h1 className="th-name">{trip.name}</h1>
+          <div className="th-meta">{meta}</div>
         </div>
+        <button
+          className={`th-videos ${open ? "open" : ""}`}
+          aria-expanded={open}
+          onClick={() => setOpen((o) => !o)}
+          title={`${count} source video${count === 1 ? "" : "s"}`}
+        >
+          <span className="pill-thumbs">
+            {trip.videos.slice(0, 3).map((v) =>
+              v.thumbnail ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={v.id} src={v.thumbnail} alt="" />
+              ) : null
+            )}
+          </span>
+          <span className="th-videos-n">{count}</span>
+          <span className={`pill-chevron ${open ? "open" : ""}`}>▾</span>
+        </button>
+      </div>
 
-        <div className="videos-panel" inert={!open}>
-          <div className="videos-panel-clip">
-            <div className="videos-panel-body">
-              <VideoStrip
-                videos={trip.videos}
-                pinnedId={pinnedId}
-                onHoverVideo={onHoverVideo}
-                onClickVideo={onClickVideo}
-              />
-              {canAdd && trip.status !== "processing" && (
-                <div className="add-videos">
-                  <textarea
-                    placeholder="Add more YouTube links…"
-                    value={addLinks}
-                    onChange={(e) => setAddLinks(e.target.value)}
-                  />
-                  {addError && (
-                    <div className="error" style={{ color: "var(--red)", fontSize: 13 }}>{addError}</div>
-                  )}
-                  <button
-                    className="btn-secondary"
-                    onClick={onAddVideos}
-                    disabled={!addLinks.trim()}
-                  >
-                    Add videos
-                  </button>
-                </div>
-              )}
-              {!canAdd && (
-                <div className="hero-hint" style={{ padding: "8px 4px 2px" }}>
-                  This is a sample trip — build your own from the homepage to add
-                  videos.
-                </div>
-              )}
-            </div>
+      <div className="videos-panel" inert={!open}>
+        <div className="videos-panel-clip">
+          <div className="videos-panel-body">
+            <VideoStrip
+              videos={trip.videos}
+              pinnedId={pinnedId}
+              onHoverVideo={onHoverVideo}
+              onClickVideo={onClickVideo}
+            />
+            {canAdd && trip.status !== "processing" && (
+              <div className="add-videos">
+                <textarea
+                  placeholder="Add more YouTube links…"
+                  value={addLinks}
+                  onChange={(e) => setAddLinks(e.target.value)}
+                />
+                {addError && (
+                  <div className="error" style={{ color: "var(--red)", fontSize: 13 }}>{addError}</div>
+                )}
+                <button
+                  className="btn-secondary"
+                  onClick={onAddVideos}
+                  disabled={!addLinks.trim()}
+                >
+                  Add videos
+                </button>
+              </div>
+            )}
+            {!canAdd && (
+              <div className="hero-hint" style={{ padding: "8px 4px 2px" }}>
+                This is a sample trip — build your own from the homepage to add
+                videos.
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -379,7 +384,7 @@ function TripSearchPill({
 }
 
 // Airbnb-style loading skeleton: a shimmering ghost of the real trip page so
-// the header, spot grid, and map slot in place before the data lands.
+// the left rail, map, and right grid slot in place before the data lands.
 function TripSkeleton({ embed = false }: { embed?: boolean }) {
   return (
     <div className="trip-page">
@@ -390,46 +395,46 @@ function TripSkeleton({ embed = false }: { embed?: boolean }) {
             <span className="back-arrow" aria-hidden="true">←</span>
             Home
           </a>
-          <div className="trip-pill-slot">
-            <div className="trip-pill">
-              <div className="pill-row">
-                <div className="skeleton sk-pill-place" />
-                <span className="pill-sep" />
-                <div className="skeleton sk-pill-videos" />
-              </div>
-            </div>
-          </div>
-          <div className="skeleton sk-export" />
-        </div>
-        <div className="filter-bar">
-          <div className="skeleton sk-count" />
-          <div className="cat-filter">
+          <div className="cat-filter header-cats">
             {Array.from({ length: 6 }).map((_, i) => (
               <div className="skeleton sk-chip" key={i} />
             ))}
           </div>
+          <div className="skeleton sk-count" />
         </div>
       </header>
       )}
 
       <div className="trip-body">
-        <section className="content-panel">
+        {!embed && (
+          <aside className="left-side">
+            <div className="trip-head">
+              <div className="th-row">
+                <div className="th-id">
+                  <div className="skeleton sk-line title" style={{ width: 140 }} />
+                  <div className="skeleton sk-line sub" style={{ width: 180 }} />
+                </div>
+                <div className="skeleton sk-pill-videos" />
+              </div>
+            </div>
+          </aside>
+        )}
+        <div className="map-side">
+          <div className="map-frame skeleton" />
+        </div>
+        <aside className="right-side">
           <div className="spot-grid">
-            {Array.from({ length: 9 }).map((_, i) => (
+            {Array.from({ length: 6 }).map((_, i) => (
               <div className="spot-tile skeleton-tile" key={i}>
                 <div className="tile-photo skeleton" />
                 <div className="tile-meta">
                   <div className="skeleton sk-line title" />
                   <div className="skeleton sk-line sub" />
-                  <div className="skeleton sk-line desc" />
                 </div>
               </div>
             ))}
           </div>
-        </section>
-        <div className="map-side">
-          <div className="map-frame skeleton" />
-        </div>
+        </aside>
       </div>
     </div>
   );
@@ -673,41 +678,16 @@ export default function TripView({
     >
       {!embed && (
       <header className="page-header">
+        {/* One clean top bar: back on the left, category filters center,
+            visible-spot count on the right (mockup: Rentizy-style). */}
         <div className="header-bar">
           <a className="back" href="/">
             <span className="back-arrow" aria-hidden="true">←</span>
             Home
           </a>
 
-          <TripSearchPill
-            trip={trip}
-            canAdd={isLocal === true}
-            addLinks={addLinks}
-            setAddLinks={setAddLinks}
-            addError={addError}
-            onAddVideos={addVideos}
-            open={videosOpen}
-            setOpen={(fn) => setVideosOpen((o) => fn(o))}
-            pinnedId={pinnedVideoId}
-            onHoverVideo={setHoverVideoId}
-            onClickVideo={(id) =>
-              setPinnedVideoId((cur) => (cur === id ? null : id))
-            }
-          />
-
-        </div>
-
-        <div className="filter-bar">
-          <div className="filter-count">
-            {visibleSpots.length === catFiltered.length
-              ? `${catFiltered.length} spots`
-              : `${visibleSpots.length} of ${catFiltered.length} spots`}
-            {formatTripDates(trip) && ` · ${formatTripDates(trip)}`}
-            {trip.query?.interests && ` · ${trip.query.interests}`}
-          </div>
-
           {catCounts.length > 1 && (
-            <div className="cat-filter">
+            <div className="cat-filter header-cats">
               {catCounts.map(([cat, n]) => {
                 const on = activeCats.includes(cat);
                 return (
@@ -741,6 +721,12 @@ export default function TripView({
               )}
             </div>
           )}
+
+          <div className="filter-count">
+            {visibleSpots.length === catFiltered.length
+              ? `${catFiltered.length} spots`
+              : `${visibleSpots.length} of ${catFiltered.length} spots`}
+          </div>
         </div>
 
         {trip.status === "processing" && (
@@ -751,73 +737,54 @@ export default function TripView({
       </header>
       )}
 
-      <div
-        className={`trip-body ${mapExpanded ? "map-expanded" : ""} ${
-          planOpen ? "plan-open" : ""
-        }`}
-      >
-        {planOpen ? (
-          <PlannerChat
-            trip={trip}
-            isLocal={isLocal === true}
-            itinerary={itinerary}
-            mustSeeIds={mustSeeIds}
-            onItineraryChange={setItineraryOverride}
-            onClose={() => setPlanOpen(false)}
-          />
-        ) : (
-          !embed && (
-            <button
-              className="planner-reopen"
-              onClick={(e) => {
-                e.stopPropagation();
-                setPlanOpen(true);
-              }}
-              title="Open the planner"
-              aria-label="Open the planner"
-            >
-              ✨
-            </button>
-          )
+      <div className={`trip-body ${mapExpanded ? "map-expanded" : ""}`}>
+        {/* Left rail: trip identity + the planner agent */}
+        {!embed && (
+          <aside className="left-side">
+            <TripHead
+              trip={trip}
+              meta={[
+                `${catFiltered.length} spots`,
+                formatTripDates(trip),
+                trip.query?.interests,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+              canAdd={isLocal === true}
+              addLinks={addLinks}
+              setAddLinks={setAddLinks}
+              addError={addError}
+              onAddVideos={addVideos}
+              open={videosOpen}
+              setOpen={(fn) => setVideosOpen((o) => fn(o))}
+              pinnedId={pinnedVideoId}
+              onHoverVideo={setHoverVideoId}
+              onClickVideo={(id) =>
+                setPinnedVideoId((cur) => (cur === id ? null : id))
+              }
+            />
+            {planOpen ? (
+              <PlannerChat
+                trip={trip}
+                isLocal={isLocal === true}
+                itinerary={itinerary}
+                mustSeeIds={mustSeeIds}
+                onItineraryChange={setItineraryOverride}
+                onClose={() => setPlanOpen(false)}
+              />
+            ) : (
+              <button
+                className="planner-reopen"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setPlanOpen(true);
+                }}
+              >
+                ✨ Open the planner
+              </button>
+            )}
+          </aside>
         )}
-        <section className="content-panel">
-          {visibleSpots.length === 0 ? (
-            <div className="empty-area">
-              No spots in this part of the map — zoom out or pan around to see more.
-            </div>
-          ) : (
-          <div className="spot-grid">
-            {visibleSpots.map((spot) => {
-              return (
-                <button
-                  key={spot.id}
-                  className={`spot-tile ${selectedId === spot.id ? "selected" : ""}`}
-                  onClick={() => setSelectedId(spot.id)}
-                >
-                  <TilePhotos spot={spot} tripId={trip.id} local={isLocal === true} />
-                  <div className="tile-meta">
-                    <div className="tile-name">{spot.name}</div>
-                    <div className="tile-sub">
-                      {spot.mentions.length === 1
-                        ? spot.mentions[0].channelName
-                        : `${spot.mentions.length} creators recommend`}
-                    </div>
-                    <div className="tile-desc">{spot.description}</div>
-                  </div>
-                  <div className="avatar-stack">
-                    {spot.mentions.slice(0, 3).map((m) =>
-                      m.channelAvatar ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img key={m.videoId} src={m.channelAvatar} alt={m.channelName} />
-                      ) : null
-                    )}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </section>
 
         <div className="map-side">
           <div className="map-frame">
@@ -829,6 +796,22 @@ export default function TripView({
               fitVideoId={highlightVideoId}
               plan={planRender}
               mustSeeIds={mustSeeIds}
+              popupSpot={
+                selectedSpot
+                  ? {
+                      id: selectedSpot.id,
+                      lat: selectedSpot.lat,
+                      lng: selectedSpot.lng,
+                      name: selectedSpot.name,
+                      sub: `${CATEGORY_EMOJI[selectedSpot.category]} ${
+                        selectedSpot.category
+                      } · ${selectedSpot.mentions.length} creator${
+                        selectedSpot.mentions.length === 1 ? "" : "s"
+                      }`,
+                      photoUrl: miniPhotoUrl(selectedSpot),
+                    }
+                  : null
+              }
               onSelect={setSelectedId}
               onBoundsChange={setBounds}
             />
@@ -897,23 +880,59 @@ export default function TripView({
                 </svg>
               )}
             </button>
-            {selectedSpot && (
-              <SpotCard
-                key={selectedSpot.id} // remount per spot — photo carousel state must not leak between spots
-                spot={selectedSpot}
-                tripId={trip.id}
-                local={isLocal === true}
-                mustSee={mustSeeIds.includes(selectedSpot.id)}
-                onToggleMustSee={() => toggleMustSee(selectedSpot.id)}
-                planInfo={selectedPlanInfo}
-                planColor={
-                  selectedPlanInfo ? dayColor(selectedPlanInfo.dayIndex) : undefined
-                }
-                onClose={() => setSelectedId(null)}
-              />
-            )}
           </div>
         </div>
+
+        {/* Right rail: the selected spot's detail card, or a grid of what's
+            currently in the map viewport */}
+        <aside className="right-side">
+          {selectedSpot ? (
+            <SpotCard
+              key={selectedSpot.id} // remount per spot — photo carousel state must not leak between spots
+              spot={selectedSpot}
+              tripId={trip.id}
+              local={isLocal === true}
+              mustSee={mustSeeIds.includes(selectedSpot.id)}
+              onToggleMustSee={() => toggleMustSee(selectedSpot.id)}
+              planInfo={selectedPlanInfo}
+              planColor={
+                selectedPlanInfo ? dayColor(selectedPlanInfo.dayIndex) : undefined
+              }
+              onClose={() => setSelectedId(null)}
+            />
+          ) : visibleSpots.length === 0 ? (
+            <div className="empty-area">
+              No spots in this part of the map — zoom out or pan around to see
+              more.
+            </div>
+          ) : (
+            <div className="spot-grid">
+              {visibleSpots.map((spot) => (
+                <button
+                  key={spot.id}
+                  className={`spot-tile ${
+                    selectedId === spot.id ? "selected" : ""
+                  }`}
+                  onClick={() => setSelectedId(spot.id)}
+                >
+                  <TilePhotos
+                    spot={spot}
+                    tripId={trip.id}
+                    local={isLocal === true}
+                  />
+                  <div className="tile-meta">
+                    <div className="tile-name">{spot.name}</div>
+                    <div className="tile-sub">
+                      {spot.mentions.length === 1
+                        ? spot.mentions[0].channelName
+                        : `${spot.mentions.length} creators recommend`}
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </aside>
       </div>
     </div>
   );
@@ -1073,10 +1092,6 @@ function SpotCard({
         </div>
       )}
       <div className="card-body">
-        <div className="cat-line">
-          {CATEGORY_EMOJI[spot.category]} {spot.category}
-          {spot.geocodeSource === "llm" && " · approximate location"}
-        </div>
         <div className="card-title-row">
           <h2>{spot.name}</h2>
           <button
@@ -1092,7 +1107,37 @@ function SpotCard({
             {mustSee ? "⭐ Must-see" : "☆ Must-see"}
           </button>
         </div>
-        <p className="desc">{spot.description}</p>
+
+        {/* Rentizy-style stat tiles: the spot's key facts at a glance */}
+        <div className="stat-tiles">
+          <div className="stat-tile">
+            <div className="st-v">{CATEGORY_EMOJI[spot.category]}</div>
+            <div className="st-l">{spot.category}</div>
+          </div>
+          <div className="stat-tile">
+            <div className="st-v">{spot.mentions.length}</div>
+            <div className="st-l">
+              creator{spot.mentions.length === 1 ? "" : "s"}
+            </div>
+          </div>
+          <div className="stat-tile">
+            <div className="st-v">
+              {planInfo ? planInfo.day.label : "—"}
+            </div>
+            <div className="st-l">
+              {planInfo
+                ? planInfo.stop.time ?? "in your plan"
+                : "not planned"}
+            </div>
+          </div>
+        </div>
+
+        <p className="desc">
+          {spot.description}
+          {spot.geocodeSource === "llm" && (
+            <span className="approx-note"> (approximate location)</span>
+          )}
+        </p>
 
         <a
           className="gmaps-btn"

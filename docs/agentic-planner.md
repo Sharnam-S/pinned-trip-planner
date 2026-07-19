@@ -20,13 +20,20 @@ per-day markers, route lines, per-day "brief" panels, and per-stop
 rationale on the spot cards.
 
 ```
-┌────────────┬──────────────────────┬──────────────────────────┐
-│  Planner   │  Spot cards          │  Map ("whiteboard")      │
-│  chat      │  (2 cols while chat  │  · day chips → day brief │
-│  (open by  │   is open)           │  · numbered day pins     │
-│  default)  │                      │  · route polylines       │
-└────────────┴──────────────────────┴──────────────────────────┘
+┌──────────────┬────────────────────────────┬────────────────────┐
+│ Trip head    │  Map, center stage         │ Selected spot →    │
+│ (name, meta, │  · day chips → day brief   │ premium detail     │
+│ videos ▾)    │  · numbered day pins       │ card (stat tiles)  │
+│──────────────│  · route polylines         │ else → 2-col grid  │
+│ Planner chat │  · mini photo popup on     │ of spots in the    │
+│ (open by     │    pin click               │ map viewport       │
+│ default)     │  (category filters live    │                    │
+│              │   in the top bar)          │                    │
+└──────────────┴────────────────────────────┴────────────────────┘
 ```
+(Redesigned 2026-07-19 to a Rentizy-style map-center layout — selection
+opens the right rail, not a map overlay; the map keeps a small photo
+popup.)
 
 **Core principle: the itinerary is a data object, not chat prose.** The
 agent edits it via one tool (`update_itinerary`, full replace); the map,

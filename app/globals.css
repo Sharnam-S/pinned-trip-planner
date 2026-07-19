@@ -2683,35 +2683,13 @@ button {
 
 /* ============================= Planner agent ============================= */
 
-/* Slim tab to reopen the planner after closing it */
-.planner-reopen {
-  position: absolute;
-  left: 0;
-  top: 24px;
-  z-index: 50;
-  width: 40px;
-  height: 44px;
-  border: 1px solid var(--line);
-  border-left: none;
-  border-radius: 0 14px 14px 0;
-  background: var(--surface);
-  font-size: 17px;
-  cursor: pointer;
-  box-shadow: var(--shadow-soft);
-}
-.planner-reopen:hover {
-  border-color: var(--ink);
-}
-
-/* Three-panel layout: chat | cards | map. The chat gets real width; the
-   card columns give up space (2 narrower columns, tighter gaps). */
+/* ===== 3-rail layout: [trip head + chat] | map (center) | [detail/grid] ===== */
 .trip-body {
   position: relative;
 }
-.planner-panel {
-  width: 30%;
-  min-width: 360px;
-  max-width: 480px;
+.left-side {
+  width: 340px;
+  min-width: 320px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -2719,19 +2697,65 @@ button {
   background: var(--surface);
   border-right: 1px solid var(--line);
 }
-.trip-body.plan-open .spot-grid {
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px 12px;
+.left-side .planner-panel {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  flex: 1;
+  min-height: 0;
+  border-right: none;
 }
-.trip-body.plan-open .content-panel {
-  padding: 24px 18px 56px 22px;
+.planner-panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
 }
-.trip-body.plan-open .map-side {
-  width: 34%;
-  min-width: 320px;
+.planner-reopen {
+  margin: 14px;
+  height: 46px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
 }
-@media (max-width: 1400px) {
-  .trip-body.plan-open .spot-grid {
+.planner-reopen:hover {
+  border-color: var(--ink);
+}
+.right-side {
+  width: 380px;
+  min-width: 340px;
+  flex-shrink: 0;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--surface);
+  border-left: 1px solid var(--line);
+}
+/* Map takes the center stage */
+.map-side {
+  flex: 1;
+  width: auto;
+  min-width: 0;
+  padding: 18px;
+  background: var(--bg);
+}
+.trip-body.map-expanded .left-side,
+.trip-body.map-expanded .right-side {
+  display: none;
+}
+@media (max-width: 1360px) {
+  .left-side {
+    width: 300px;
+    min-width: 280px;
+  }
+  .right-side {
+    width: 340px;
+    min-width: 300px;
+  }
+  .right-side .spot-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -3312,4 +3336,215 @@ button {
 .planner-mustsee-bar button:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+/* ===== Redesign: top-bar filters, trip head, right-rail grid + premium card ===== */
+
+/* Category chips live in the top bar now */
+.header-bar .cat-filter.header-cats {
+  flex: 1;
+  min-width: 0;
+  justify-content: center;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px 8px;
+}
+.header-bar .cat-filter.header-cats::-webkit-scrollbar {
+  display: none;
+}
+.header-bar .filter-count {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Trip identity block at the top of the left rail */
+.trip-head {
+  border-bottom: 1px solid var(--line);
+  padding: 16px 18px 14px;
+}
+.th-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.th-id {
+  min-width: 0;
+}
+.th-name {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.th-meta {
+  margin-top: 3px;
+  font-size: 12.5px;
+  color: var(--text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.th-videos {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: var(--radius-chip);
+  padding: 6px 11px;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: border-color 0.15s ease;
+}
+.th-videos:hover,
+.th-videos.open {
+  border-color: var(--ink);
+}
+.th-videos-n {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text);
+}
+/* Reuse the pill's expand animation, driven by .trip-head.open */
+.trip-head.open .videos-panel {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.trip-head.open .videos-panel-body {
+  transform: translateY(0);
+}
+.trip-head .videos-panel-body {
+  padding: 12px 2px 4px;
+  max-height: 38vh;
+}
+
+/* Right rail: compact 2-col grid of in-view spots */
+.right-side .spot-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 12px;
+  padding: 16px 16px 48px;
+}
+.right-side .spot-tile .tile-name {
+  font-size: 13px;
+}
+.right-side .spot-tile .tile-sub {
+  font-size: 11.5px;
+}
+.right-side .empty-area {
+  padding: 48px 24px;
+}
+
+/* Premium detail card: fills the right rail (was a floating map overlay) */
+.right-side .spot-card {
+  position: static;
+  width: auto;
+  max-width: none;
+  max-height: none;
+  box-shadow: none;
+  border-radius: 0;
+  display: block;
+}
+.right-side .spot-card .card-photo {
+  width: auto;
+  height: 240px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 16px 16px 0;
+}
+.right-side .spot-card .close {
+  top: 28px;
+  right: 28px;
+}
+.right-side .spot-card .card-body {
+  padding: 18px 22px 36px;
+  overflow: visible;
+}
+.right-side .spot-card h2 {
+  font-size: 21px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+.right-side .spot-card .desc {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-soft);
+}
+.approx-note {
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
+/* Stat tiles (Rentizy-style key facts) */
+.stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 16px 0 18px;
+}
+.stat-tile {
+  background: var(--surface-alt);
+  border-radius: 16px;
+  padding: 13px 8px 11px;
+  text-align: center;
+  min-width: 0;
+}
+.st-v {
+  font-size: 15px;
+  font-weight: 750;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.st-l {
+  margin-top: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Mini photo popup on the map (selection opens the right-rail card) */
+.spot-pop .leaflet-popup-content-wrapper {
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 0;
+  overflow: hidden;
+}
+.spot-pop .leaflet-popup-content {
+  margin: 0;
+  width: 210px !important;
+  font: inherit;
+}
+.spot-pop-inner img {
+  display: block;
+  width: 100%;
+  height: 118px;
+  object-fit: cover;
+}
+.spot-pop-meta {
+  padding: 10px 13px 12px;
+}
+.spot-pop-meta .spn {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+.spot-pop-meta .sps {
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--text-soft);
 }
