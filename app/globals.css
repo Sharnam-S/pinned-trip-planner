@@ -2695,11 +2695,12 @@ button {
   border-color: var(--ink);
 }
 .right-side {
-  /* Same as .left-side: grow with the viewport so the trip/pin cards keep
-     pace with the map on a large display. */
-  width: clamp(440px, 30vw, 660px);
-  min-width: 400px;
+  /* Fixed width on purpose: unlike .left-side and the map, the rail should NOT
+     scale with the viewport. Moving from a laptop to a large monitor keeps the
+     trip/pin cards at the same size; the extra pixels pour into the map. */
+  width: 480px;
   flex-shrink: 0;
+  flex-grow: 0;
   height: 100%;
   overflow-y: auto;
   background: var(--surface);

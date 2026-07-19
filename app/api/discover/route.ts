@@ -9,7 +9,7 @@ export const runtime = "nodejs";
 // Sonnet planning + YouTube searches + Sonnet curation in one call
 export const maxDuration = 300;
 
-const PICK_COUNT = 8;
+const PICK_COUNT = 20;
 
 /**
  * Search-mode step 1: turn a destination/dates/interests query into a ranked
