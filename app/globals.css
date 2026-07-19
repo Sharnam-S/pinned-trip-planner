@@ -1914,40 +1914,6 @@ button {
   background: white;
 }
 
-/* Expand toggle: sits right under the zoom pill, same Airbnb styling */
-.map-expand-btn {
-  position: absolute;
-  top: 106px; /* 16px margin + 80px zoom pill + 10px gap */
-  right: 16px;
-  z-index: 1000; /* above Leaflet panes, same layer as its controls */
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: white;
-  color: #222222;
-  border: none;
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  cursor: pointer;
-  transition: background 0.12s;
-}
-
-.map-expand-btn:hover {
-  background: var(--surface-alt);
-}
-
-/* Expanded: the spot grid steps aside and the map takes the full row */
-.trip-body.map-expanded .content-panel {
-  display: none;
-}
-
-.trip-body.map-expanded .map-side {
-  width: 100%;
-  padding-left: 32px;
-}
-
 /* Flighty-style map pin pills */
 .pin-pill {
   display: inline-flex;
@@ -2746,10 +2712,6 @@ button {
   min-width: 0;
   padding: 18px;
   background: var(--bg);
-}
-.trip-body.map-expanded .left-side,
-.trip-body.map-expanded .right-side {
-  display: none;
 }
 @media (max-width: 1360px) {
   .left-side {

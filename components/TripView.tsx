@@ -464,8 +464,6 @@ export default function TripView({
   const highlightVideoId = hoverVideoId ?? pinnedVideoId;
   const [addLinks, setAddLinks] = useState("");
   const [addError, setAddError] = useState("");
-  // Full-width map: hides the spot grid, toggled from under the zoom control
-  const [mapExpanded, setMapExpanded] = useState(false);
   // Category filter: empty = show all. Applies to both the grid and the map.
   const [activeCats, setActiveCats] = useState<SpotCategory[]>([]);
   // Planner agent: chat panel + the itinerary it maintains + map day filter.
@@ -760,7 +758,7 @@ export default function TripView({
       </header>
       )}
 
-      <div className={`trip-body ${mapExpanded ? "map-expanded" : ""}`}>
+      <div className="trip-body">
         {/* Left rail: trip identity + the planner agent */}
         {!embed && (
           <aside className="left-side">
@@ -879,24 +877,6 @@ export default function TripView({
                 }}
               />
             )}
-            <button
-              className="map-expand-btn"
-              onClick={() => setMapExpanded((x) => !x)}
-              title={mapExpanded ? "Show the spot list" : "Expand the map"}
-              aria-label={mapExpanded ? "Show the spot list" : "Expand the map"}
-            >
-              {mapExpanded ? (
-                // arrows pointing in — collapse back to the split view
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M6.5 1.5v5h-5M9.5 14.5v-5h5M6.5 6.5L1 1M9.5 9.5L15 15" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              ) : (
-                // arrows pointing out — go full width
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M9.5 1.5h5v5M6.5 14.5h-5v-5M14.5 1.5L9 7M1.5 14.5L7 9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              )}
-            </button>
           </div>
         </div>
 
