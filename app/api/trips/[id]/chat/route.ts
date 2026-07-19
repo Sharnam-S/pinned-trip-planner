@@ -187,6 +187,12 @@ export async function POST(
     model: anthropic(MODEL),
     messages: modelMessages,
     allowSystemInMessages: true,
+    // Sonnet thinks before answering; the default display is "omitted"
+    // (thinking blocks stream with empty text). Ask for readable summaries so
+    // the panel can show what the agent is working through.
+    providerOptions: {
+      anthropic: { thinking: { type: "adaptive", display: "summarized" } },
+    },
     tools: {
       // Client-executed: the browser validates against the real spot list,
       // writes localStorage, and re-renders the map. No execute() here.

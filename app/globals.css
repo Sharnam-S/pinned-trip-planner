@@ -2867,6 +2867,35 @@ button {
   30% { transform: translateY(-4px); }
 }
 
+/* Reasoning summaries: live while the model thinks, collapsible after */
+.pm-reasoning {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-soft);
+  background: var(--surface-alt);
+  border-radius: 12px;
+  padding: 8px 12px;
+  max-width: 94%;
+}
+.pm-reasoning-label {
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.pm-reasoning summary.pm-reasoning-label::-webkit-details-marker {
+  display: none;
+}
+.pm-reasoning-text {
+  margin-top: 6px;
+  white-space: pre-wrap;
+  font-style: italic;
+  max-height: 180px;
+  overflow-y: auto;
+}
+.pm-reasoning.streaming .pm-reasoning-label {
+  animation: pm-pulse 1.4s ease-in-out infinite;
+}
+
 /* Staged status line under the typing dots — what the agent is doing */
 .pm-status {
   font-size: 12.5px;

@@ -228,6 +228,23 @@ export default function PlannerChat({
                   </div>
                 );
               }
+              if (part.type === "reasoning") {
+                if (!part.text.trim()) return null;
+                // Live while thinking; collapses to a toggle once done.
+                return part.state === "streaming" ? (
+                  <div key={i} className="pm-reasoning streaming">
+                    <div className="pm-reasoning-label">💭 Thinking…</div>
+                    <div className="pm-reasoning-text">{part.text}</div>
+                  </div>
+                ) : (
+                  <details key={i} className="pm-reasoning">
+                    <summary className="pm-reasoning-label">
+                      💭 Thought it through
+                    </summary>
+                    <div className="pm-reasoning-text">{part.text}</div>
+                  </details>
+                );
+              }
               if (part.type === "tool-update_itinerary") {
                 if (
                   part.state === "input-streaming" ||
