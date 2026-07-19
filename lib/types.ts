@@ -92,6 +92,10 @@ export interface ItineraryStop {
   /** References Spot.id — stops render in array order (visit order). */
   spotId: string;
   slot?: ItinerarySlot;
+  /** Planned arrival, 24h "HH:MM". */
+  time?: string;
+  /** How long to spend here, in minutes. */
+  durationMin?: number;
   /** Agent tip for this stop ("go before 9am to beat the queue"). */
   note?: string;
 }
@@ -100,6 +104,8 @@ export interface ItineraryDay {
   label: string; // "Day 1"
   date?: string; // yyyy-mm-dd
   theme?: string; // "Old town + street food"
+  /** Why the day is grouped/ordered this way — shown in the map's day brief. */
+  rationale?: string;
   stops: ItineraryStop[];
 }
 

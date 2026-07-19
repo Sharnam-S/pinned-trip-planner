@@ -38,6 +38,8 @@ interface Props {
   fitVideoId?: string | null;
   /** Planner itinerary overlay — numbered day pins + route lines. */
   plan?: PlanRender | null;
+  /** Spot ids the user starred as must-sees — pills get a star badge. */
+  mustSeeIds?: string[];
   onSelect: (id: string) => void;
   onBoundsChange?: (bounds: MapBounds) => void;
 }
@@ -49,6 +51,7 @@ export default function TripMap({
   highlightVideoId = null,
   fitVideoId = null,
   plan = null,
+  mustSeeIds = [],
   onSelect,
   onBoundsChange,
 }: Props) {
@@ -171,7 +174,10 @@ export default function TripMap({
         .join(" ");
       // Compact by default (emoji + count) so pins don't collide into an
       // unreadable pile; the name label expands on hover / select / highlight.
-      const html = `<div class="${pillClass}"><span class="pin-emoji">${
+      const star = mustSeeIds.includes(spot.id)
+        ? `<span class="pin-star">⭐</span>`
+        : "";
+      const html = `<div class="${pillClass}">${star}<span class="pin-emoji">${
         CATEGORY_EMOJI[spot.category]
       }</span><span class="pin-name">${escapeHtml(shorten(spot.name))}</span>${
         spot.mentions.length > 1 ? `<span class="pin-count">×${spot.mentions.length}</span>` : ""
@@ -220,7 +226,7 @@ export default function TripMap({
     }
     // planKey covers everything the pill classes read from `plan`.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spots, selectedId, highlightVideoId, onSelect, planKey]);
+  }, [spots, selectedId, highlightVideoId, onSelect, planKey, mustSeeIds.join(",")]);
 
   // Draw the plan overlay: numbered pins in day colors + a route line per day.
   useEffect(() => {
