@@ -668,8 +668,11 @@ export default function TripView({
   };
 
   // Expanding a day card in the overview filters the map to that day (pins +
-  // route line); the expanded card itself tells the day's story.
+  // route line); the expanded card itself tells the day's story. Engaging a
+  // day drops any category filter so the day's itinerary pins take over — the
+  // filter and the plan overlay never fight for the map at once.
   const toggleOverviewDay = (i: number) => {
+    setActiveCats([]);
     setExpandedDay((cur) => {
       const next = cur === i ? null : i;
       setActiveDay(next === null ? "all" : next);
@@ -732,7 +735,10 @@ export default function TripView({
               selectedId={selectedId}
               highlightVideoId={highlightVideoId}
               fitVideoId={highlightVideoId}
-              plan={planRender}
+              // Filters are master: while one is applied the map shows only the
+              // filtered pins and the itinerary overlay (numbered day pins +
+              // routes) is hidden so the two don't stack confusingly.
+              plan={activeCats.length > 0 ? null : planRender}
               mustSeeIds={mustSeeIds}
               popupSpot={
                 selectedSpot
@@ -798,14 +804,15 @@ export default function TripView({
                         style={{
                           transitionDelay: filtersOpen ? `${i * 22}ms` : "0ms",
                         }}
-                        onClick={() => {
+                        onClick={() =>
+                          // Stay open so several categories can be picked; the
+                          // tray only closes on a toggle re-click / outside click.
                           setActiveCats((prev) =>
                             prev.includes(cat)
                               ? prev.filter((c) => c !== cat)
                               : [...prev, cat]
-                          );
-                          setFiltersOpen(false); // picking one applies + collapses
-                        }}
+                          )
+                        }
                       >
                         <span className="mf-emoji">{CATEGORY_EMOJI[cat]}</span>
                         <span className="mf-label">{cat}</span>
@@ -821,10 +828,7 @@ export default function TripView({
                           ? `${catCounts.length * 22}ms`
                           : "0ms",
                       }}
-                      onClick={() => {
-                        setActiveCats([]);
-                        setFiltersOpen(false);
-                      }}
+                      onClick={() => setActiveCats([])}
                     >
                       Clear
                     </button>
