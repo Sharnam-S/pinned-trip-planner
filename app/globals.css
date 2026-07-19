@@ -2847,10 +2847,19 @@ button {
 .planner-scroll {
   flex: 1;
   overflow-y: auto;
+  /* Long unbreakable tokens (URLs, run-on strings) must never open a
+     horizontal scrollbar — the message text wraps them (below); this is the
+     backstop so nothing else can either. */
+  overflow-x: hidden;
   padding: 18px 18px 12px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+/* Column flex items default to min-width:auto, which lets a long token widen
+   the row past the panel. Let them shrink so wrapping can take over. */
+.planner-scroll > .pm {
+  min-width: 0;
 }
 
 .planner-intro p {
@@ -3018,6 +3027,7 @@ button {
   font-size: 13.5px;
   line-height: 1.5;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 /* Assistant text sits directly on the panel — typeset, not boxed */
 .pm-assistant .pm-text {
@@ -3026,6 +3036,7 @@ button {
   font-size: 14px;
   line-height: 1.65;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 .pm-assistant .pm-text strong {
   font-weight: 650;
@@ -3099,6 +3110,7 @@ button {
 .pm-reasoning-text {
   margin-top: 6px;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
   font-style: italic;
   max-height: 180px;
   overflow-y: auto;
