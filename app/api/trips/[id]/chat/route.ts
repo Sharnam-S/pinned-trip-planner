@@ -26,7 +26,10 @@ import {
 import { rateLimit, rateLimited } from "@/lib/ratelimit";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+// Sonnet thinks before it answers, and a multi-day plan is a long think plus
+// a large tool-call JSON — 60s got killed mid-stream in production (Vercel
+// runtime timeout). Fluid compute allows up to 300s.
+export const maxDuration = 300;
 
 const MODEL = "claude-sonnet-5";
 
@@ -41,6 +44,8 @@ How you work:
 - Realistic pacing: 3-5 stops/day balanced, up to 7 packed, 2-3 relaxed. Fewer if spots are far apart. Use get_travel_times when a leg looks long.
 - Leave spots out rather than cramming — unplaced spots show as "Unassigned" and the user can ask to swap them in.
 - Use each spot's tips (queues, timings, tickets) when ordering the day, and surface the important ones in stop notes.
+- ALWAYS write one short sentence BEFORE calling update_itinerary (e.g. "Sketching a 5-day plan around the old town — one moment.") so the user sees progress while the plan streams. Never open a reply with a silent tool call.
+- Keep the tool payload lean: stop notes only where they genuinely help (a timing trick, a queue warning), one short sentence each. Most stops need no note.
 - After a tool call, keep the prose short: one or two sentences per day on the flow and why, plus your open question if any. The plan itself renders on the user's map.
 - If the tool result returns warnings, fix the plan in the same turn.
 - If they haven't booked a stay, offer to recommend an area based on where their spots cluster (set it via the stay field).`;
@@ -222,6 +227,12 @@ export async function POST(
   });
 
   return createUIMessageStreamResponse({
-    stream: toUIMessageStream({ stream: result.stream }),
+    stream: toUIMessageStream({
+      stream: result.stream,
+      // Default masks everything as "An error occurred" — surface the real
+      // reason so the panel can show something actionable.
+      onError: (error) =>
+        error instanceof Error ? error.message : String(error ?? "unknown error"),
+    }),
   });
 }

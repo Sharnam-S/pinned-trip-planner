@@ -451,7 +451,9 @@ export default function TripView({
   // The itinerary is derived from storage each render (localStorage is the
   // source of truth); the override covers the moment the agent saves, before
   // any store subscription fires (sample trips have none).
-  const [planOpen, setPlanOpen] = useState(false);
+  // Open by default — planning is the page's second half, not a hidden mode.
+  // (The embed playground stays map-first.)
+  const [planOpen, setPlanOpen] = useState(!embed);
   const [itineraryOverride, setItineraryOverride] = useState<Itinerary | null>(null);
   const [activeDay, setActiveDay] = useState<PlanRender["activeDay"]>("all");
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -655,16 +657,6 @@ export default function TripView({
         </div>
 
         <div className="filter-bar">
-          <button
-            className={`plan-toggle ${planOpen ? "on" : ""}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              setPlanOpen((o) => !o);
-            }}
-          >
-            <span aria-hidden="true">✨</span>
-            {itinerary ? "Day plan" : "Plan my days"}
-          </button>
           <div className="filter-count">
             {visibleSpots.length === catFiltered.length
               ? `${catFiltered.length} spots`
@@ -723,7 +715,7 @@ export default function TripView({
           planOpen ? "plan-open" : ""
         }`}
       >
-        {planOpen && (
+        {planOpen ? (
           <PlannerChat
             trip={trip}
             isLocal={isLocal === true}
@@ -731,6 +723,20 @@ export default function TripView({
             onItineraryChange={setItineraryOverride}
             onClose={() => setPlanOpen(false)}
           />
+        ) : (
+          !embed && (
+            <button
+              className="planner-reopen"
+              onClick={(e) => {
+                e.stopPropagation();
+                setPlanOpen(true);
+              }}
+              title="Open the planner"
+              aria-label="Open the planner"
+            >
+              ✨
+            </button>
+          )
         )}
         <section className="content-panel">
           {visibleSpots.length === 0 ? (

@@ -30,6 +30,37 @@ const SUGGESTIONS = [
   "We're on a budget — keep it affordable",
 ];
 
+// Staged cues while the model thinks (thinking isn't streamed, so without
+// this the panel sits on silent dots for tens of seconds and looks stuck).
+const THINKING_CUES: [afterSec: number, cue: string][] = [
+  [0, "Thinking…"],
+  [6, "Reading your spots and clustering neighborhoods…"],
+  [15, "Drafting the day-by-day plan…"],
+  [35, "Big plans take a little while — still working…"],
+  [75, "Almost there — finalizing the days…"],
+];
+
+/** Typing indicator with an elapsed-seconds counter and staged status cues. */
+function ThinkingStatus() {
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setElapsed((s) => s + 1), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const cue = [...THINKING_CUES].reverse().find(([after]) => elapsed >= after)![1];
+  return (
+    <div className="pm pm-assistant">
+      <div className="pm-typing">
+        <span /><span /><span />
+      </div>
+      <div className="pm-status">
+        {cue}
+        {elapsed >= 6 && <span className="pm-elapsed"> {elapsed}s</span>}
+      </div>
+    </div>
+  );
+}
+
 interface PlannerCtx {
   trip: Trip;
   itinerary: Itinerary | null;
@@ -87,7 +118,7 @@ export default function PlannerChat({
   // eslint-disable-next-line react-hooks/refs
   const transport = useMemo(() => makeTransport(trip.id, ctxRef), [trip.id]);
 
-  const { messages, sendMessage, addToolOutput, status, error } = useChat({
+  const { messages, sendMessage, addToolOutput, status, error, regenerate } = useChat({
     transport,
     sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
     async onToolCall({ toolCall }) {
@@ -133,11 +164,24 @@ export default function PlannerChat({
 
   const busy = status === "submitted" || status === "streaming";
 
+  // The stream can die server-side without an error event (e.g. a runtime
+  // timeout kills the function mid-think) — the request "finishes" but the
+  // last turn produced no assistant output. Detect it and offer a retry.
+  const last = messages[messages.length - 1];
+  const lastAssistantEmpty =
+    last?.role === "assistant" &&
+    !last.parts.some(
+      (p) =>
+        (p.type === "text" && p.text.trim()) || p.type.startsWith("tool-")
+    );
+  const streamDropped =
+    !busy && !error && (last?.role === "user" || lastAssistantEmpty);
+
   useEffect(() => {
     // Follow the conversation as it streams.
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
-  }, [messages, busy]);
+  }, [messages, busy, error, streamDropped]);
 
   function send(text: string) {
     const trimmed = text.trim();
@@ -232,16 +276,24 @@ export default function PlannerChat({
           </div>
         ))}
 
-        {busy && (
-          <div className="pm pm-assistant">
-            <div className="pm-typing">
-              <span /><span /><span />
-            </div>
+        {busy && <ThinkingStatus />}
+        {error && (
+          <div className="pm-problem">
+            <div>Something went wrong: {error.message}</div>
+            <button className="pm-retry" onClick={() => regenerate()}>
+              ↻ Try again
+            </button>
           </div>
         )}
-        {error && (
-          <div className="pm-tool error">
-            Something went wrong — try again. ({error.message})
+        {streamDropped && (
+          <div className="pm-problem">
+            <div>
+              The connection dropped before the plan arrived — this can happen
+              on very large plans.
+            </div>
+            <button className="pm-retry" onClick={() => regenerate()}>
+              ↻ Try again
+            </button>
           </div>
         )}
       </div>
