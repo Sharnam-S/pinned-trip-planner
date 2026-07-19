@@ -115,6 +115,7 @@ export default function PlannerChat({
 }) {
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   // The transport is created once; the ctx ref keeps the request body current.
   const ctxRef = useRef<PlannerCtx>({
@@ -204,6 +205,14 @@ export default function PlannerChat({
     if (!trimmed || busy) return;
     sendMessage({ text: trimmed });
     setInput("");
+    const el = inputRef.current;
+    if (el) el.style.height = "auto";
+  }
+
+  // Grow with the content (up to ~5 lines), like any modern chat input.
+  function autosize(el: HTMLTextAreaElement) {
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 132)}px`;
   }
 
   return (
@@ -359,9 +368,20 @@ export default function PlannerChat({
           send(input);
         }}
       >
-        <input
+        <textarea
+          ref={inputRef}
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          rows={1}
+          onChange={(e) => {
+            setInput(e.target.value);
+            autosize(e.target);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              send(input);
+            }
+          }}
           placeholder="Ask your local planner…"
           aria-label="Message the planner"
         />
