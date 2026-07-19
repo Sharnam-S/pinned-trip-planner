@@ -1074,50 +1074,22 @@ button {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 18px 28px 20px;
-  background: var(--surface-alt);
-  border-bottom: 1px solid var(--line);
+  padding: 15px 28px;
+  /* Frosted glass toolbar — translucent white over a saturated blur so it
+     reads as a premium surface rather than a flat grey bar. */
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(16, 17, 26, 0.06);
 }
 
-/* Top row: back link (left) · trip pill (center) · export (right) */
+/* Top row: category filters (left) · visible-spot count (right).
+   No back button — this is a web app, so browser/gesture back covers it. */
 .header-bar {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr auto;
   align-items: center;
   gap: 16px;
-}
-
-/* Back to home: a white pill button matching the search pill's language */
-.page-header .back {
-  justify-self: start;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 38px;
-  padding: 0 16px 0 13px;
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-chip);
-  box-shadow: var(--shadow-soft);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
-}
-
-.page-header .back:hover {
-  box-shadow: var(--shadow);
-  transform: translateY(-1px);
-}
-
-.page-header .back .back-arrow {
-  font-size: 14px;
-  line-height: 1;
-  transition: transform 0.2s cubic-bezier(0.32, 0.72, 0.25, 1);
-}
-
-.page-header .back:hover .back-arrow {
-  transform: translateX(-2px);
 }
 
 .header-bar .export-btn {
@@ -1307,12 +1279,14 @@ button {
 }
 
 .filter-count {
-  justify-self: start;
+  justify-self: end;
   color: var(--text-soft);
   font-size: 13px;
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Category filter chips — Airbnb-style: calm, roomy, medium weight, matching
@@ -2071,19 +2045,21 @@ button {
   align-items: center;
   gap: 7px;
   margin-top: 12px;
-  padding: 8px 14px;
-  border: 1px solid #d9d9de;
+  padding: 9px 15px;
+  border: 1px solid rgba(16, 17, 26, 0.1);
   border-radius: var(--radius-chip);
   font-size: 12.5px;
   font-weight: 700;
   color: var(--text);
   background: var(--surface);
-  transition: border-color 0.12s, background 0.12s;
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .gmaps-btn:hover {
-  border-color: var(--text);
-  background: var(--surface-alt);
+  border-color: rgba(16, 17, 26, 0.22);
+  box-shadow: 0 3px 10px rgba(16, 17, 26, 0.08);
+  transform: translateY(-1px);
 }
 
 .gmaps-btn svg {
@@ -2093,10 +2069,11 @@ button {
 /* "Things to know" — calm informational card */
 .know-section {
   margin-top: 14px;
-  background: var(--surface-alt);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid rgba(16, 17, 26, 0.06);
+  border-radius: 16px;
+  padding: 13px 15px;
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04), 0 5px 14px rgba(16, 17, 26, 0.05);
 }
 
 .know-label {
@@ -2948,9 +2925,9 @@ button {
 .planner-inputrow textarea {
   flex: 1;
   min-width: 0;
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 11px 16px;
+  border: 1px solid rgba(16, 17, 26, 0.08);
+  border-radius: 22px;
+  padding: 12px 17px;
   font-size: 13.5px;
   line-height: 1.5;
   font-family: inherit;
@@ -2960,11 +2937,12 @@ button {
   max-height: 132px;
   overflow-y: auto;
   background: var(--surface);
-  box-shadow: var(--shadow-soft);
-  transition: border-color 0.15s ease;
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04), 0 6px 18px rgba(16, 17, 26, 0.06);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .planner-inputrow textarea:focus {
-  border-color: var(--ink);
+  border-color: rgba(16, 17, 26, 0.22);
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.05), 0 8px 22px rgba(16, 17, 26, 0.09);
 }
 .planner-inputrow button {
   width: 40px;
@@ -3002,24 +2980,31 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--surface);
-  border: 1px solid var(--line);
+  /* Frosted glass floating over the map — translucent white with a blurred,
+     saturated backdrop and a bright glass edge. */
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: var(--radius-chip);
-  padding: 6px 12px;
+  padding: 6px 13px;
   font-size: 12.5px;
   font-weight: 600;
   color: var(--text);
   cursor: pointer;
-  box-shadow: var(--shadow-soft);
-  transition: border-color 0.15s ease;
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.06), 0 4px 14px rgba(16, 17, 26, 0.1);
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 .day-chip:hover {
-  border-color: var(--ink);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 6px rgba(16, 17, 26, 0.08), 0 6px 18px rgba(16, 17, 26, 0.12);
+  transform: translateY(-1px);
 }
 .day-chip.on {
   background: var(--ink);
   border-color: var(--ink);
   color: #fff;
+  box-shadow: 0 3px 12px rgba(16, 17, 26, 0.3);
 }
 .day-chip .dot {
   width: 8px;
@@ -3212,10 +3197,11 @@ button {
    Styled to match .know-section so the card reads as one system. */
 .plan-why {
   margin-top: 14px;
-  background: var(--surface-alt);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid rgba(16, 17, 26, 0.06);
+  border-radius: 16px;
+  padding: 13px 15px;
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04), 0 5px 14px rgba(16, 17, 26, 0.05);
 }
 .plan-why-label {
   display: flex;
@@ -3260,19 +3246,23 @@ button {
 }
 .must-star {
   flex-shrink: 0;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(16, 17, 26, 0.1);
   background: var(--surface);
   border-radius: var(--radius-chip);
-  padding: 5px 11px;
+  padding: 6px 12px;
   font-size: 12px;
   font-weight: 600;
   color: var(--text);
   cursor: pointer;
   white-space: nowrap;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04);
+  transition: border-color 0.15s ease, background 0.15s ease,
+    box-shadow 0.15s ease, transform 0.15s ease;
 }
 .must-star:hover {
-  border-color: var(--ink);
+  border-color: rgba(16, 17, 26, 0.22);
+  box-shadow: 0 3px 10px rgba(16, 17, 26, 0.08);
+  transform: translateY(-1px);
 }
 .must-star.on {
   background: var(--yellow-soft);
@@ -3283,22 +3273,29 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 8px 14px;
-  border-top: 1px solid var(--line);
-  background: var(--yellow-soft);
+  padding: 10px 16px;
+  border-top: 1px solid rgba(255, 198, 10, 0.28);
+  background: linear-gradient(180deg, #fffaef 0%, #fff4d6 100%);
   font-size: 12.5px;
   font-weight: 600;
   color: #6b5200;
 }
 .planner-mustsee-bar button {
-  border: 1px solid var(--yellow);
+  border: 1px solid rgba(255, 198, 10, 0.55);
   background: var(--surface);
   color: #6b5200;
   border-radius: var(--radius-chip);
-  padding: 5px 12px;
+  padding: 6px 13px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 1px 2px rgba(107, 82, 0, 0.08);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+.planner-mustsee-bar button:not(:disabled):hover {
+  border-color: var(--yellow);
+  box-shadow: 0 3px 10px rgba(255, 198, 10, 0.28);
+  transform: translateY(-1px);
 }
 .planner-mustsee-bar button:disabled {
   opacity: 0.5;
@@ -3309,18 +3306,20 @@ button {
 
 /* Category chips live in the top bar now */
 .header-bar .cat-filter.header-cats {
-  flex: 1;
+  grid-column: 1;
+  justify-self: stretch;
   min-width: 0;
-  justify-content: center;
+  justify-content: flex-start;
   flex-wrap: nowrap;
   overflow-x: auto;
   scrollbar-width: none;
-  padding: 2px 8px;
+  padding: 2px 2px;
 }
 .header-bar .cat-filter.header-cats::-webkit-scrollbar {
   display: none;
 }
 .header-bar .filter-count {
+  grid-column: 2;
   flex-shrink: 0;
   white-space: nowrap;
 }
@@ -3426,6 +3425,7 @@ button {
   border-radius: 20px;
   overflow: hidden;
   margin: 16px 16px 0;
+  box-shadow: 0 2px 6px rgba(16, 17, 26, 0.06), 0 12px 28px rgba(16, 17, 26, 0.09);
 }
 .right-side .spot-card .close {
   top: 28px;
@@ -3459,11 +3459,13 @@ button {
   margin: 16px 0 18px;
 }
 .stat-tile {
-  background: var(--surface-alt);
+  background: var(--surface);
+  border: 1px solid rgba(16, 17, 26, 0.06);
   border-radius: 16px;
   padding: 13px 8px 11px;
   text-align: center;
   min-width: 0;
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04), 0 5px 14px rgba(16, 17, 26, 0.05);
 }
 .st-v {
   font-size: 15px;
@@ -3880,28 +3882,57 @@ button {
   box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04), 0 8px 24px rgba(16, 17, 26, 0.05);
 }
 
-/* Top bar: airy, hairline-separated; soft pill filter chips */
+/* Top bar: airy, hairline-separated; soft glass pill filter chips */
 .header-bar .cat-filter.header-cats .cat-chip {
-  border-color: #eef0f2;
+  border: 1px solid rgba(16, 17, 26, 0.07);
   border-radius: 999px;
   padding: 8px 15px;
   font-size: 13px;
-  background: var(--surface);
-  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.03);
+  font-weight: 500;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04);
+  transition: background 0.15s ease, border-color 0.15s ease,
+    box-shadow 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
+.header-bar .cat-filter.header-cats .cat-chip:hover {
+  border-color: rgba(16, 17, 26, 0.16);
+  box-shadow: 0 2px 8px rgba(16, 17, 26, 0.07);
+  transform: translateY(-1px);
+}
+/* Selected: a crisp ink pill with white type + soft lift — reads as a
+   deliberate premium accent, not the old flat, near-illegible black. */
 .header-bar .cat-filter.header-cats .cat-chip.on {
   background: var(--ink);
   border-color: var(--ink);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(16, 17, 26, 0.24);
+}
+.header-bar .cat-filter.header-cats .cat-chip.on:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 16px rgba(16, 17, 26, 0.28);
+}
+.header-bar .cat-filter.header-cats .cat-chip.on .cat-n {
+  color: #fff;
+  opacity: 0.6;
 }
 
-/* Soft pill language for the planner's chips too */
+/* Soft glass pill language for the planner's chips too — matches the
+   header filters and the overview cards. */
 .suggestion-chip {
-  background: #f2f3f5;
-  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(16, 17, 26, 0.07);
   padding: 9px 15px;
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04);
+  transition: background 0.15s ease, border-color 0.15s ease,
+    box-shadow 0.15s ease, transform 0.15s ease;
 }
 .suggestion-chip:hover {
-  background: #e9ebee;
+  background: #fff;
+  border-color: rgba(16, 17, 26, 0.16);
+  box-shadow: 0 3px 10px rgba(16, 17, 26, 0.08);
+  transform: translateY(-1px);
 }
 .planner-head {
   border-bottom: 1px solid #f0f1f3;

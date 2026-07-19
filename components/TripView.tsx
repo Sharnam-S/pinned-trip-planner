@@ -391,10 +391,6 @@ function TripSkeleton({ embed = false }: { embed?: boolean }) {
       {!embed && (
       <header className="page-header">
         <div className="header-bar">
-          <a className="back" href="/">
-            <span className="back-arrow" aria-hidden="true">←</span>
-            Home
-          </a>
           <div className="cat-filter header-cats">
             {Array.from({ length: 6 }).map((_, i) => (
               <div className="skeleton sk-chip" key={i} />
@@ -699,14 +695,10 @@ export default function TripView({
     >
       {!embed && (
       <header className="page-header">
-        {/* One clean top bar: back on the left, category filters center,
-            visible-spot count on the right (mockup: Rentizy-style). */}
+        {/* One clean top bar: category filters on the left, visible-spot
+            count on the right. No back button — this is a web app, so the
+            browser/gesture back covers it. */}
         <div className="header-bar">
-          <a className="back" href="/">
-            <span className="back-arrow" aria-hidden="true">←</span>
-            Home
-          </a>
-
           {catCounts.length > 1 && (
             <div className="cat-filter header-cats">
               {catCounts.map(([cat, n]) => {
