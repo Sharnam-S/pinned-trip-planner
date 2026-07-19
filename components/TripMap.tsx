@@ -40,7 +40,18 @@ interface Props {
   plan?: PlanRender | null;
   /** Spot ids the user starred as must-sees — pills get a star badge. */
   mustSeeIds?: string[];
-  onSelect: (id: string) => void;
+  /** Small photo card anchored to the selected spot (the full detail card
+   *  lives in the page's right rail now). */
+  popupSpot?: {
+    id: string;
+    lat: number;
+    lng: number;
+    name: string;
+    sub: string;
+    photoUrl: string | null;
+  } | null;
+  /** null = clicked the map background (deselect). */
+  onSelect: (id: string | null) => void;
   onBoundsChange?: (bounds: MapBounds) => void;
 }
 
@@ -52,6 +63,7 @@ export default function TripMap({
   fitVideoId = null,
   plan = null,
   mustSeeIds = [],
+  popupSpot = null,
   onSelect,
   onBoundsChange,
 }: Props) {
@@ -98,6 +110,10 @@ export default function TripMap({
     };
     map.on("moveend zoomend", emitBounds);
     emitBounds();
+
+    // Clicking the map background clears the selection (marker clicks don't
+    // bubble here). onSelect is a stable setState — safe in this closure.
+    map.on("click", () => onSelect(null));
 
     // The map mounts inside a flex container that may not have its final size
     // yet (dynamic import); without this Leaflet renders a zoomed-out sliver.
@@ -331,6 +347,39 @@ export default function TripMap({
     const spot = spots.find((s) => s.id === selectedId);
     if (spot) map.panTo([spot.lat, spot.lng], { animate: true });
   }, [selectedId, spots]);
+
+  // Mini photo popup on the selected spot — the detail card is in the page's
+  // right rail, so the map just shows a glanceable photo + name.
+  const popupRef = useRef<L.Popup | null>(null);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    popupRef.current?.remove();
+    popupRef.current = null;
+    if (!popupSpot) return;
+    const html = `<div class="spot-pop-inner">${
+      popupSpot.photoUrl
+        ? `<img src="${escapeHtml(popupSpot.photoUrl)}" alt="" />`
+        : ""
+    }<div class="spot-pop-meta"><div class="spn">${escapeHtml(
+      popupSpot.name
+    )}</div><div class="sps">${escapeHtml(popupSpot.sub)}</div></div></div>`;
+    popupRef.current = L.popup({
+      closeButton: false,
+      className: "spot-pop",
+      offset: [0, -6],
+      autoPan: true,
+      maxWidth: 230,
+    })
+      .setLatLng([popupSpot.lat, popupSpot.lng])
+      .setContent(html)
+      .openOn(map);
+    return () => {
+      popupRef.current?.remove();
+      popupRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [popupSpot?.id, popupSpot?.photoUrl]);
 
   return <div ref={containerRef} style={{ width: "100%", height: "100%" }} />;
 }
