@@ -96,6 +96,9 @@ export interface ItineraryStop {
   time?: string;
   /** How long to spend here, in minutes. */
   durationMin?: number;
+  /** Why the agent picked this spot for this day/slot — shown on the spot
+   *  card so the user can audit the plan. */
+  why?: string;
   /** Agent tip for this stop ("go before 9am to beat the queue"). */
   note?: string;
 }

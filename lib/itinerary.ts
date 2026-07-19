@@ -44,6 +44,12 @@ export const ItineraryInputSchema = z.object({
                 .number()
                 .optional()
                 .describe("Minutes to spend at this stop"),
+              why: z
+                .string()
+                .optional()
+                .describe(
+                  "One sentence: why THIS spot on THIS day at THIS time (weekday fit, light, crowds, what it pairs with). Shown on the spot's card — fill it for every stop."
+                ),
               note: z
                 .string()
                 .optional()
@@ -123,6 +129,7 @@ export function validateItinerary(
         slot: stop.slot,
         time: stop.time,
         durationMin: stop.durationMin,
+        why: stop.why,
         note: stop.note,
       });
     }
