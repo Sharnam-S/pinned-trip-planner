@@ -2,13 +2,21 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { Itinerary, Spot, SpotCategory, Trip, TripVideo } from "@/lib/types";
+import { Itinerary, ItineraryDay, Spot, SpotCategory, Trip, TripVideo } from "@/lib/types";
 import { CATEGORY_EMOJI, formatTimestamp, youtubeLink } from "@/lib/categories";
 import { getLocalTrip, saveLocalTrip, subscribeLocalTrips } from "@/lib/clientStore";
 import { addVideosToTrip, ensureRunning, isRunning } from "@/lib/runner";
 import { parseVideoId } from "@/lib/links";
 import { googlePhotoProxy } from "@/lib/photoUrl";
-import { dayColor, loadItinerary, unassignedSpotIds } from "@/lib/itinerary";
+import {
+  dayColor,
+  haversineKm,
+  loadItinerary,
+  loadMustSees,
+  saveMustSees,
+  travelEstimate,
+  unassignedSpotIds,
+} from "@/lib/itinerary";
 import BuildingScreen from "./BuildingScreen";
 import PlannerChat from "./PlannerChat";
 import type { MapBounds, PlanRender } from "./TripMap";
@@ -456,6 +464,8 @@ export default function TripView({
   const [planOpen, setPlanOpen] = useState(!embed);
   const [itineraryOverride, setItineraryOverride] = useState<Itinerary | null>(null);
   const [activeDay, setActiveDay] = useState<PlanRender["activeDay"]>("all");
+  // Spots the user starred as non-negotiable — the agent must include them.
+  const [mustSeeIds, setMustSeeIds] = useState<string[]>(() => loadMustSees(tripId));
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const loadSample = useCallback(async () => {
@@ -620,6 +630,16 @@ export default function TripView({
     ? unassignedSpotIds(itinerary, trip.spots).length
     : 0;
 
+  const toggleMustSee = (id: string) => {
+    setMustSeeIds((prev) => {
+      const next = prev.includes(id)
+        ? prev.filter((x) => x !== id)
+        : [...prev, id];
+      saveMustSees(tripId, next);
+      return next;
+    });
+  };
+
   return (
     // Clicking anywhere outside the pill clears the pinned highlight and closes
     // the videos dropdown
@@ -720,6 +740,7 @@ export default function TripView({
             trip={trip}
             isLocal={isLocal === true}
             itinerary={itinerary}
+            mustSeeIds={mustSeeIds}
             onItineraryChange={setItineraryOverride}
             onClose={() => setPlanOpen(false)}
           />
@@ -786,6 +807,7 @@ export default function TripView({
               highlightVideoId={highlightVideoId}
               fitVideoId={highlightVideoId}
               plan={planRender}
+              mustSeeIds={mustSeeIds}
               onSelect={setSelectedId}
               onBoundsChange={setBounds}
             />
@@ -825,6 +847,17 @@ export default function TripView({
                 )}
               </div>
             )}
+            {itinerary &&
+              typeof activeDay === "number" &&
+              itinerary.days[activeDay] && (
+                <DayBrief
+                  day={itinerary.days[activeDay]}
+                  color={dayColor(activeDay)}
+                  spotById={spotById}
+                  onSelectSpot={setSelectedId}
+                  onClose={() => setActiveDay("all")}
+                />
+              )}
             <button
               className="map-expand-btn"
               onClick={() => setMapExpanded((x) => !x)}
@@ -849,6 +882,8 @@ export default function TripView({
                 spot={selectedSpot}
                 tripId={trip.id}
                 local={isLocal === true}
+                mustSee={mustSeeIds.includes(selectedSpot.id)}
+                onToggleMustSee={() => toggleMustSee(selectedSpot.id)}
                 onClose={() => setSelectedId(null)}
               />
             )}
@@ -859,15 +894,121 @@ export default function TripView({
   );
 }
 
+function formatDuration(min: number): string {
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return h > 0 ? (m > 0 ? `${h}h ${m}m` : `${h}h`) : `${m}m`;
+}
+
+/** Clicking a day chip opens this: the day's timeline (arrival times,
+ *  durations, travel gaps) and the agent's rationale for how it's built —
+ *  the "why should I trust this plan" view. */
+function DayBrief({
+  day,
+  color,
+  spotById,
+  onSelectSpot,
+  onClose,
+}: {
+  day: ItineraryDay;
+  color: string;
+  spotById: Map<string, Spot>;
+  onSelectSpot: (id: string) => void;
+  onClose: () => void;
+}) {
+  const stops = day.stops.flatMap((st) => {
+    const spot = spotById.get(st.spotId);
+    return spot ? [{ ...st, spot }] : [];
+  });
+  const first = stops.find((s) => s.time)?.time;
+  const withEnd = [...stops].reverse().find((s) => s.time);
+  const end =
+    withEnd?.time && withEnd.durationMin
+      ? addMinutes(withEnd.time, withEnd.durationMin)
+      : withEnd?.time;
+
+  return (
+    <div className="day-brief" onClick={(e) => e.stopPropagation()}>
+      <div className="db-head">
+        <span className="dot" style={{ background: color }} />
+        <div className="db-title">
+          {day.label}
+          {day.date && (
+            <span className="db-date">
+              {" · "}
+              {new Date(day.date + "T00:00:00").toLocaleDateString(undefined, {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+              })}
+            </span>
+          )}
+        </div>
+        <button className="close" onClick={onClose} aria-label="Close day brief">
+          ✕
+        </button>
+      </div>
+      {day.theme && <div className="db-theme">{day.theme}</div>}
+      {first && (
+        <div className="db-span">
+          Start {first}
+          {end && ` → done ~${end}`}
+        </div>
+      )}
+      {day.rationale && <p className="db-rationale">{day.rationale}</p>}
+      <div className="db-timeline">
+        {stops.map((st, i) => {
+          const next = stops[i + 1];
+          const gapMin = next
+            ? travelEstimate(
+                haversineKm(st.spot.lat, st.spot.lng, next.spot.lat, next.spot.lng)
+              ).driveMin
+            : null;
+          return (
+            <div key={st.spotId}>
+              <button className="db-row" onClick={() => onSelectSpot(st.spotId)}>
+                <span className="db-time">{st.time ?? "—"}</span>
+                <span className="db-name">
+                  {CATEGORY_EMOJI[st.spot.category]} {st.spot.name}
+                </span>
+                {st.durationMin != null && (
+                  <span className="db-dur">{formatDuration(st.durationMin)}</span>
+                )}
+              </button>
+              {st.note && <div className="db-note">{st.note}</div>}
+              {gapMin != null && (
+                <div className="db-gap">↓ ~{gapMin} min travel</div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function addMinutes(hhmm: string, min: number): string | undefined {
+  const m = /^(\d{1,2}):(\d{2})$/.exec(hhmm);
+  if (!m) return undefined;
+  const total = (Number(m[1]) * 60 + Number(m[2]) + min) % (24 * 60);
+  return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(
+    total % 60
+  ).padStart(2, "0")}`;
+}
+
 function SpotCard({
   spot,
   tripId,
   local,
+  mustSee,
+  onToggleMustSee,
   onClose,
 }: {
   spot: Spot;
   tripId: string;
   local: boolean;
+  mustSee: boolean;
+  onToggleMustSee: () => void;
   onClose: () => void;
 }) {
   const { urls, i, total, step } = useSpotPhotos(spot, tripId, local);
@@ -901,7 +1042,21 @@ function SpotCard({
           {CATEGORY_EMOJI[spot.category]} {spot.category}
           {spot.geocodeSource === "llm" && " · approximate location"}
         </div>
-        <h2>{spot.name}</h2>
+        <div className="card-title-row">
+          <h2>{spot.name}</h2>
+          <button
+            className={`must-star ${mustSee ? "on" : ""}`}
+            onClick={onToggleMustSee}
+            title={
+              mustSee
+                ? "Remove from must-sees"
+                : "Star as a must-see — the planner will always include it"
+            }
+            aria-pressed={mustSee}
+          >
+            {mustSee ? "⭐ Must-see" : "☆ Must-see"}
+          </button>
+        </div>
         <p className="desc">{spot.description}</p>
 
         <a

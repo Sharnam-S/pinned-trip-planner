@@ -64,7 +64,18 @@ function ThinkingStatus() {
 interface PlannerCtx {
   trip: Trip;
   itinerary: Itinerary | null;
+  mustSeeIds: string[];
   chatSessionId: string;
+}
+
+/** Chat text with **bold** rendered (the model writes light markdown). */
+function FormattedText({ text }: { text: string }) {
+  const parts = text.split(/\*\*(.+?)\*\*/g);
+  return (
+    <>
+      {parts.map((p, i) => (i % 2 === 1 ? <strong key={i}>{p}</strong> : p))}
+    </>
+  );
 }
 
 // Module scope so the request-time callback reads the ref outside render
@@ -78,7 +89,8 @@ function makeTransport(tripId: string, ctxRef: { current: PlannerCtx }) {
         messages,
         context: buildPlannerContext(
           ctxRef.current.trip,
-          ctxRef.current.itinerary
+          ctxRef.current.itinerary,
+          ctxRef.current.mustSeeIds
         ),
         chatSessionId: ctxRef.current.chatSessionId,
       },
@@ -90,12 +102,14 @@ export default function PlannerChat({
   trip,
   isLocal,
   itinerary,
+  mustSeeIds,
   onItineraryChange,
   onClose,
 }: {
   trip: Trip;
   isLocal: boolean;
   itinerary: Itinerary | null;
+  mustSeeIds: string[];
   onItineraryChange: (itin: Itinerary) => void;
   onClose: () => void;
 }) {
@@ -106,12 +120,14 @@ export default function PlannerChat({
   const ctxRef = useRef<PlannerCtx>({
     trip,
     itinerary,
+    mustSeeIds,
     chatSessionId: crypto.randomUUID(),
   });
   useEffect(() => {
     ctxRef.current.trip = trip;
     ctxRef.current.itinerary = itinerary;
-  }, [trip, itinerary]);
+    ctxRef.current.mustSeeIds = mustSeeIds;
+  }, [trip, itinerary, mustSeeIds]);
 
   // The transport only reads the ref at request time
   // (prepareSendMessagesRequest), never during render.
@@ -224,7 +240,7 @@ export default function PlannerChat({
               if (part.type === "text") {
                 return (
                   <div key={i} className="pm-text">
-                    {part.text}
+                    <FormattedText text={part.text} />
                   </div>
                 );
               }
@@ -314,6 +330,27 @@ export default function PlannerChat({
           </div>
         )}
       </div>
+
+      {mustSeeIds.length > 0 && (
+        <div className="planner-mustsee-bar">
+          <span>
+            ⭐ {mustSeeIds.length} must-see{mustSeeIds.length === 1 ? "" : "s"}{" "}
+            starred
+          </span>
+          <button
+            disabled={busy}
+            onClick={() =>
+              send(
+                `I've starred ${mustSeeIds.length} must-see spot${
+                  mustSeeIds.length === 1 ? "" : "s"
+                } on the map — make sure every one of them is in the plan.`
+              )
+            }
+          >
+            Fit them into my plan
+          </button>
+        </div>
+      )}
 
       <form
         className="planner-inputrow"

@@ -23,6 +23,12 @@ export const ItineraryInputSchema = z.object({
           .string()
           .optional()
           .describe('One-line theme, e.g. "Old town + street food"'),
+        rationale: z
+          .string()
+          .optional()
+          .describe(
+            "1-2 sentences: why these spots are grouped and ordered this way (geography, opening hours, pacing). Shown to the user on the map."
+          ),
         stops: z
           .array(
             z.object({
@@ -30,6 +36,14 @@ export const ItineraryInputSchema = z.object({
                 .string()
                 .describe("A spot id from the trip context, exactly as given"),
               slot: z.enum(["morning", "afternoon", "evening"]).optional(),
+              time: z
+                .string()
+                .optional()
+                .describe('Planned arrival, 24h "HH:MM", e.g. "09:30"'),
+              durationMin: z
+                .number()
+                .optional()
+                .describe("Minutes to spend at this stop"),
               note: z
                 .string()
                 .optional()
@@ -104,12 +118,19 @@ export function validateItinerary(
         break;
       }
       seen.add(stop.spotId);
-      stops.push({ spotId: stop.spotId, slot: stop.slot, note: stop.note });
+      stops.push({
+        spotId: stop.spotId,
+        slot: stop.slot,
+        time: stop.time,
+        durationMin: stop.durationMin,
+        note: stop.note,
+      });
     }
     return {
       label: day.label || `Day ${i + 1}`,
       date: day.date,
       theme: day.theme,
+      rationale: day.rationale,
       stops,
     };
   });
@@ -172,6 +193,30 @@ export function saveItinerary(
   }
 }
 
+// --- Must-see spots (user-starred; the agent must include them) ---
+// Stored separately from the itinerary because the agent replaces the
+// itinerary wholesale — stars are the user's, not the agent's, to overwrite.
+
+const MUSTSEE_PREFIX = "pinned.mustsee.";
+
+export function loadMustSees(tripId: string): string[] {
+  if (typeof window === "undefined" || !window.localStorage) return [];
+  try {
+    const raw = localStorage.getItem(MUSTSEE_PREFIX + tripId);
+    return raw ? (JSON.parse(raw) as string[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveMustSees(tripId: string, spotIds: string[]): void {
+  try {
+    localStorage.setItem(MUSTSEE_PREFIX + tripId, JSON.stringify(spotIds));
+  } catch {
+    // quota exceeded — in-memory state still drives this session
+  }
+}
+
 // --- Geo helpers ---
 
 export function haversineKm(
@@ -223,11 +268,14 @@ export interface PlannerContext {
   interests?: string;
   spots: CompactSpot[];
   itinerary: Itinerary | null;
+  /** Spot ids the user starred as non-negotiable must-sees. */
+  mustSeeSpotIds?: string[];
 }
 
 export function buildPlannerContext(
   trip: Trip,
-  itinerary: Itinerary | null
+  itinerary: Itinerary | null,
+  mustSeeSpotIds: string[] = []
 ): PlannerContext {
   return {
     tripName: trip.name,
@@ -235,6 +283,7 @@ export function buildPlannerContext(
     startDate: trip.query?.startDate,
     endDate: trip.query?.endDate,
     interests: trip.query?.interests,
+    mustSeeSpotIds: mustSeeSpotIds.length > 0 ? mustSeeSpotIds : undefined,
     spots: trip.spots.map((s) => ({
       id: s.id,
       name: s.name,
