@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-// Poppins isn't a variable font — load the weight steps the CSS actually
-// uses (in-between values like 650/750 resolve to the nearest loaded step).
-const poppins = Poppins({
+// Inter is a variable font — all weights (including 650/750) render exactly.
+const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-sans",
 });
 
@@ -22,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={poppins.variable}>
+    <html lang="en" className={inter.variable}>
       <body>{children}</body>
     </html>
   );
