@@ -2762,6 +2762,42 @@ button {
   padding: 18px;
   background: var(--bg);
 }
+
+/* Drag handle sitting in the gap between the planner rail and the map. It
+   straddles the 14px gap (negative margins) so the panels keep their spacing
+   while giving a comfortable grab target. */
+.rail-resizer {
+  flex: 0 0 auto;
+  align-self: stretch;
+  width: 12px;
+  margin: 0 -13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: col-resize;
+  touch-action: none;
+  z-index: 5;
+}
+.rail-resizer-grip {
+  width: 4px;
+  height: 40px;
+  border-radius: 4px;
+  background: rgba(16, 17, 26, 0.14);
+  transition: background 0.15s ease, height 0.15s ease;
+}
+.rail-resizer:hover .rail-resizer-grip,
+.rail-resizer.resizing .rail-resizer-grip {
+  background: var(--ink);
+  height: 64px;
+}
+/* While dragging, don't let the map or text selection swallow the pointer. */
+.trip-page.resizing {
+  user-select: none;
+  cursor: col-resize;
+}
+.trip-page.resizing .map-side {
+  pointer-events: none;
+}
 @media (max-width: 1360px) {
   .left-side {
     width: 300px;

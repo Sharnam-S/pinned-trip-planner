@@ -499,6 +499,57 @@ export default function TripView({
   const [mustSeeIds, setMustSeeIds] = useState<string[]>(() => loadMustSees(tripId));
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Draggable divider between the planner rail and the map. `leftWidth` is a
+  // pixel override; null means "use the responsive CSS width" (the default and
+  // what a double-click restores). The map is flex:1 so it absorbs whatever the
+  // rail gives up. Min widths keep both panels usable.
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const rightRef = useRef<HTMLElement>(null);
+  const [leftWidth, setLeftWidth] = useState<number | null>(null);
+  const [resizing, setResizing] = useState(false);
+
+  const clampLeft = useCallback((raw: number) => {
+    const body = bodyRef.current;
+    if (!body) return raw;
+    const LEFT_MIN = 300;
+    const MAP_MIN = 420;
+    const PAD = 14; // .trip-body padding
+    const GAP = 14; // rail↔map and map↔detail gaps (the resizer straddles one)
+    const rightW = rightRef.current?.offsetWidth ?? 0;
+    const maxLeft = body.clientWidth - PAD * 2 - GAP * 2 - rightW - MAP_MIN;
+    return Math.max(LEFT_MIN, Math.min(raw, Math.max(LEFT_MIN, maxLeft)));
+  }, []);
+
+  const startResize = useCallback(
+    (e: React.PointerEvent) => {
+      e.preventDefault();
+      const body = bodyRef.current;
+      if (!body) return;
+      setResizing(true);
+      const move = (ev: PointerEvent) => {
+        const rect = body.getBoundingClientRect();
+        setLeftWidth(clampLeft(ev.clientX - rect.left - 14));
+      };
+      const up = () => {
+        setResizing(false);
+        window.removeEventListener("pointermove", move);
+        window.removeEventListener("pointerup", up);
+      };
+      window.addEventListener("pointermove", move);
+      window.addEventListener("pointerup", up);
+    },
+    [clampLeft]
+  );
+
+  // Keep a user-set rail width valid when the window resizes — otherwise a
+  // shrinking viewport could crush the map below its minimum.
+  useEffect(() => {
+    if (leftWidth == null) return;
+    const onResize = () => setLeftWidth((w) => (w == null ? w : clampLeft(w)));
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [leftWidth, clampLeft]);
+
   const loadSample = useCallback(async () => {
     const res = await fetch(`/api/trips/${tripId}`);
     if (res.status === 404) {
@@ -725,17 +776,20 @@ export default function TripView({
     // Clicking anywhere outside the pill clears the pinned highlight and closes
     // the videos dropdown
     <div
-      className="trip-page"
+      className={`trip-page ${resizing ? "resizing" : ""}`}
       onClick={() => {
         setPinnedVideoId(null);
         setVideosOpen(false);
         setFiltersOpen(false);
       }}
     >
-      <div className="trip-body">
+      <div className="trip-body" ref={bodyRef}>
         {/* Left rail: trip identity + the planner agent */}
         {!embed && (
-          <aside className="left-side">
+          <aside
+            className="left-side"
+            style={leftWidth != null ? { width: leftWidth, minWidth: 0 } : undefined}
+          >
             <TripHead
               trip={trip}
               meta={[
@@ -766,6 +820,21 @@ export default function TripView({
               onItineraryChange={setItineraryOverride}
             />
           </aside>
+        )}
+
+        {/* Drag to rebalance the planner rail and the map; double-click resets. */}
+        {!embed && (
+          <div
+            className={`rail-resizer ${resizing ? "resizing" : ""}`}
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Resize planner panel"
+            onPointerDown={startResize}
+            onDoubleClick={() => setLeftWidth(null)}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <span className="rail-resizer-grip" />
+          </div>
         )}
 
         <div className="map-side">
@@ -887,7 +956,7 @@ export default function TripView({
             primary tab) or Pins (viewport grid / spot detail). The segmented
             control only appears after the agent has built an itinerary; before
             that the rail is pins-only. */}
-        <aside className="right-side" onClick={(e) => e.stopPropagation()}>
+        <aside className="right-side" ref={rightRef} onClick={(e) => e.stopPropagation()}>
           {hasItinerary && (
             <div className="rail-tabs">
               <div
