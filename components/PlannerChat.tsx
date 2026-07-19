@@ -194,6 +194,16 @@ export default function PlannerChat({
     ctxRef.current.mustSeeIds = mustSeeIds;
   }, [trip, itinerary, mustSeeIds]);
 
+  // Starred must-sees that the agent hasn't placed in the plan yet. The bar
+  // nudges the user to fit these in, so it should hide once they're all
+  // planned — even though the spots stay starred in the location pane.
+  const unplannedMustSeeIds = useMemo(() => {
+    const planned = new Set(
+      (itinerary?.days ?? []).flatMap((d) => d.stops.map((s) => s.spotId))
+    );
+    return mustSeeIds.filter((id) => !planned.has(id));
+  }, [itinerary, mustSeeIds]);
+
   // The transport only reads the ref at request time
   // (prepareSendMessagesRequest), never during render.
   // eslint-disable-next-line react-hooks/refs
@@ -417,19 +427,19 @@ export default function PlannerChat({
         )}
       </div>
 
-      {mustSeeIds.length > 0 && (
+      {unplannedMustSeeIds.length > 0 && (
         <div className="planner-mustsee-bar">
           <span>
-            ⭐ {mustSeeIds.length} must-see{mustSeeIds.length === 1 ? "" : "s"}{" "}
-            starred
+            ⭐ {unplannedMustSeeIds.length} must-see
+            {unplannedMustSeeIds.length === 1 ? "" : "s"} not in your plan yet
           </span>
           <button
             disabled={busy}
             onClick={() =>
               send(
-                `I've starred ${mustSeeIds.length} must-see spot${
-                  mustSeeIds.length === 1 ? "" : "s"
-                } on the map — make sure every one of them is in the plan.`
+                `I've starred ${unplannedMustSeeIds.length} must-see spot${
+                  unplannedMustSeeIds.length === 1 ? "" : "s"
+                } on the map that aren't in the plan yet — make sure every one of them is included.`
               )
             }
           >
