@@ -59,16 +59,23 @@ export default function DatePicker({
   const today = new Date();
   const todayKey = toKey(today.getFullYear(), today.getMonth() + 1, today.getDate());
 
-  // The month the grid is currently showing.
-  const [view, setView] = useState(() =>
-    selected ?? { y: today.getFullYear(), m: today.getMonth() + 1 }
-  );
+  // Where the grid lands when nothing is selected: the `min` month (so the
+  // "To" field opens near the chosen "From" date) falling back to today.
+  const fallbackView = () => {
+    const m = parse(min ?? "");
+    return m
+      ? { y: m.y, m: m.m }
+      : { y: today.getFullYear(), m: today.getMonth() + 1 };
+  };
 
-  // When the field opens, jump the grid to the selected date (or today).
+  // The month the grid is currently showing.
+  const [view, setView] = useState(() => selected ?? fallbackView());
+
+  // When the field opens, jump the grid to the selected date (or the fallback).
   useEffect(() => {
     if (!open) return;
     const s = parse(value);
-    setView(s ? { y: s.y, m: s.m } : { y: today.getFullYear(), m: today.getMonth() + 1 });
+    setView(s ? { y: s.y, m: s.m } : fallbackView());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
