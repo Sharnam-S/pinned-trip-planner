@@ -477,6 +477,10 @@ export default function TripView({
   const [planOpen, setPlanOpen] = useState(!embed);
   const [itineraryOverride, setItineraryOverride] = useState<Itinerary | null>(null);
   const [activeDay, setActiveDay] = useState<PlanRender["activeDay"]>("all");
+  // Right rail: "pins" (viewport grid / spot detail) or the day-by-day
+  // trip overview timeline. Selecting any spot flips back to pins.
+  const [rightTab, setRightTab] = useState<"pins" | "overview">("pins");
+  const [expandedDay, setExpandedDay] = useState<number | null>(null);
   // Spots the user starred as non-negotiable — the agent must include them.
   const [mustSeeIds, setMustSeeIds] = useState<string[]>(() => loadMustSees(tripId));
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -666,6 +670,23 @@ export default function TripView({
     });
   };
 
+  // Selecting a spot from anywhere (map pin, grid tile, day brief, overview
+  // stop) shows its detail — which lives on the pins tab.
+  const selectSpot = (id: string | null) => {
+    setSelectedId(id);
+    if (id) setRightTab("pins");
+  };
+
+  // Expanding a day card in the overview also filters the map to that day —
+  // the timeline and the whiteboard stay in sync.
+  const toggleOverviewDay = (i: number) => {
+    setExpandedDay((cur) => {
+      const next = cur === i ? null : i;
+      setActiveDay(next === null ? "all" : next);
+      return next;
+    });
+  };
+
   return (
     // Clicking anywhere outside the pill clears the pinned highlight and closes
     // the videos dropdown
@@ -812,7 +833,7 @@ export default function TripView({
                     }
                   : null
               }
-              onSelect={setSelectedId}
+              onSelect={selectSpot}
               onBoundsChange={setBounds}
             />
             {planRender && (
@@ -858,7 +879,7 @@ export default function TripView({
                   day={itinerary.days[activeDay]}
                   color={dayColor(activeDay)}
                   spotById={spotById}
-                  onSelectSpot={setSelectedId}
+                  onSelectSpot={selectSpot}
                   onClose={() => setActiveDay("all")}
                 />
               )}
@@ -883,10 +904,34 @@ export default function TripView({
           </div>
         </div>
 
-        {/* Right rail: the selected spot's detail card, or a grid of what's
-            currently in the map viewport */}
-        <aside className="right-side">
-          {selectedSpot ? (
+        {/* Right rail: Pins (viewport grid / spot detail) or the day-by-day
+            trip overview built from the agent's itinerary */}
+        <aside className="right-side" onClick={(e) => e.stopPropagation()}>
+          <div className="rail-tabs">
+            <button
+              className={`rail-tab ${rightTab === "pins" ? "on" : ""}`}
+              onClick={() => setRightTab("pins")}
+            >
+              Pins
+            </button>
+            <button
+              className={`rail-tab ${rightTab === "overview" ? "on" : ""}`}
+              onClick={() => setRightTab("overview")}
+            >
+              Trip overview
+            </button>
+          </div>
+
+          {rightTab === "overview" ? (
+            <TripOverview
+              itinerary={itinerary}
+              spotById={spotById}
+              expandedDay={expandedDay}
+              onToggleDay={toggleOverviewDay}
+              onSelectSpot={selectSpot}
+              onStartPlanning={() => setPlanOpen(true)}
+            />
+          ) : selectedSpot ? (
             <SpotCard
               key={selectedSpot.id} // remount per spot — photo carousel state must not leak between spots
               spot={selectedSpot}
@@ -913,7 +958,7 @@ export default function TripView({
                   className={`spot-tile ${
                     selectedId === spot.id ? "selected" : ""
                   }`}
-                  onClick={() => setSelectedId(spot.id)}
+                  onClick={() => selectSpot(spot.id)}
                 >
                   <TilePhotos
                     spot={spot}
@@ -933,6 +978,172 @@ export default function TripView({
             </div>
           )}
         </aside>
+      </div>
+    </div>
+  );
+}
+
+/** The "Trip overview" tab: a numbered timeline of day cards built from the
+ *  agent's itinerary. Clicking a card expands its stop-by-stop schedule and
+ *  filters the map to that day. */
+function TripOverview({
+  itinerary,
+  spotById,
+  expandedDay,
+  onToggleDay,
+  onSelectSpot,
+  onStartPlanning,
+}: {
+  itinerary: Itinerary | null;
+  spotById: Map<string, Spot>;
+  expandedDay: number | null;
+  onToggleDay: (i: number) => void;
+  onSelectSpot: (id: string) => void;
+  onStartPlanning: () => void;
+}) {
+  if (!itinerary || itinerary.days.length === 0) {
+    return (
+      <div className="ov-empty">
+        <div className="ov-empty-icon" aria-hidden="true">
+          🗺️
+        </div>
+        <h3>No trip plan yet</h3>
+        <p>
+          Chat with your local planner to turn these spots into a day-by-day
+          itinerary. Star ⭐ the places you refuse to miss and the planner
+          will build the days around them.
+        </p>
+        <button className="ov-empty-cta" onClick={onStartPlanning}>
+          ✨ Start planning
+        </button>
+      </div>
+    );
+  }
+
+  const plannedCount = itinerary.days.reduce((n, d) => n + d.stops.length, 0);
+
+  return (
+    <div className="overview">
+      <div className="ov-head">
+        <h3>Itinerary</h3>
+        <span className="ov-places">
+          🗺 {plannedCount} place{plannedCount === 1 ? "" : "s"}
+        </span>
+      </div>
+      <div className="ov-timeline">
+        {itinerary.days.map((day, i) => {
+          const stops = day.stops.flatMap((st) => {
+            const spot = spotById.get(st.spotId);
+            return spot ? [{ ...st, spot }] : [];
+          });
+          const photoUrl =
+            stops.map((s) => miniPhotoUrl(s.spot)).find(Boolean) ?? null;
+          const catCount = new Map<SpotCategory, number>();
+          for (const s of stops) {
+            catCount.set(s.spot.category, (catCount.get(s.spot.category) ?? 0) + 1);
+          }
+          const topCats = [...catCount.entries()]
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 2)
+            .map(([c]) => c);
+          const open = expandedDay === i;
+          const first = stops.find((s) => s.time)?.time;
+          const withEnd = [...stops].reverse().find((s) => s.time);
+          const end =
+            withEnd?.time && withEnd.durationMin
+              ? addMinutes(withEnd.time, withEnd.durationMin)
+              : withEnd?.time;
+
+          return (
+            <div className="ov-item" key={i}>
+              <div className="ov-marker">
+                <span className="ov-dot" style={{ background: dayColor(i) }}>
+                  {i + 1}
+                </span>
+                {i < itinerary.days.length - 1 && <span className="ov-line" />}
+              </div>
+              <div className={`ov-card ${open ? "open" : ""}`}>
+                <button className="ov-card-main" onClick={() => onToggleDay(i)}>
+                  <div className="ov-card-text">
+                    <span className="ov-day-badge">
+                      {day.label}
+                      {day.date &&
+                        ` · ${new Date(
+                          day.date + "T00:00:00"
+                        ).toLocaleDateString(undefined, {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric",
+                        })}`}
+                    </span>
+                    <div className="ov-title">{day.theme ?? day.label}</div>
+                    {day.rationale && (
+                      <div className="ov-desc">{day.rationale}</div>
+                    )}
+                    {topCats.length > 0 && (
+                      <div className="ov-chips">
+                        {topCats.map((c) => (
+                          <span className="ov-chip" key={c}>
+                            {CATEGORY_EMOJI[c]} {c}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {photoUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img className="ov-photo" src={photoUrl} alt="" />
+                  )}
+                </button>
+                {open && (
+                  <div className="ov-stops">
+                    {first && (
+                      <div className="db-span">
+                        Start {first}
+                        {end && ` → done ~${end}`}
+                      </div>
+                    )}
+                    {stops.map((st, k) => {
+                      const next = stops[k + 1];
+                      const gapMin = next
+                        ? travelEstimate(
+                            haversineKm(
+                              st.spot.lat,
+                              st.spot.lng,
+                              next.spot.lat,
+                              next.spot.lng
+                            )
+                          ).driveMin
+                        : null;
+                      return (
+                        <div key={st.spotId}>
+                          <button
+                            className="db-row"
+                            onClick={() => onSelectSpot(st.spotId)}
+                          >
+                            <span className="db-time">{st.time ?? "—"}</span>
+                            <span className="db-name">
+                              {CATEGORY_EMOJI[st.spot.category]} {st.spot.name}
+                            </span>
+                            {st.durationMin != null && (
+                              <span className="db-dur">
+                                {formatDuration(st.durationMin)}
+                              </span>
+                            )}
+                          </button>
+                          {st.note && <div className="db-note">{st.note}</div>}
+                          {gapMin != null && (
+                            <div className="db-gap">↓ ~{gapMin} min travel</div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
