@@ -230,10 +230,16 @@ export default function TripMap({
       }
     }
 
-    // Fit bounds once when we first have spots (after the container has settled)
+    // Fit bounds once when we first have spots (after the container has settled).
+    // Prefer the itinerary's own spots so an existing plan doesn't get zoomed
+    // out to fit every must-see pin scattered across the destination.
     if (!fittedRef.current && spots.length > 0) {
       fittedRef.current = true;
-      const bounds = L.latLngBounds(spots.map((s) => [s.lat, s.lng] as [number, number]));
+      const fitSpots =
+        planAllIds.size > 0 ? spots.filter((s) => planAllIds.has(s.id)) : spots;
+      const bounds = L.latLngBounds(
+        (fitSpots.length > 0 ? fitSpots : spots).map((s) => [s.lat, s.lng] as [number, number])
+      );
       requestAnimationFrame(() => {
         if (mapRef.current !== map) return; // map was torn down (StrictMode remount)
         map.invalidateSize();
