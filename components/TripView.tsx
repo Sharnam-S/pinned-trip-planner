@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   Itinerary,
@@ -542,6 +542,17 @@ export default function TripView({
     };
   }, [trip, needsPoll, loadSample]);
 
+  // Category filter feeds both the grid and the map pins. Memoized so its
+  // array identity is stable across renders — TripMap effects depend on the
+  // `spots` reference, and a fresh array every render would loop them
+  // (pan → moveend → setBounds → re-render → new array → pan → …).
+  const catFiltered = useMemo(() => {
+    if (!trip) return [];
+    if (activeCats.length === 0) return trip.spots;
+    const activeSet = new Set(activeCats);
+    return trip.spots.filter((s) => activeSet.has(s.category));
+  }, [trip, activeCats]);
+
   function addVideos() {
     setAddError("");
     const entries = addLinks
@@ -600,13 +611,6 @@ export default function TripView({
     for (const s of trip.spots) m.set(s.category, (m.get(s.category) ?? 0) + 1);
     return [...m.entries()].sort((a, b) => b[1] - a[1]);
   })();
-
-  // Category filter feeds both the grid and the map pins.
-  const activeSet = new Set(activeCats);
-  const catFiltered =
-    activeCats.length === 0
-      ? trip.spots
-      : trip.spots.filter((s) => activeSet.has(s.category));
 
   const selectedSpot = catFiltered.find((s) => s.id === selectedId) ?? null;
 
