@@ -23,7 +23,6 @@ import {
   loadMustSees,
   saveMustSees,
   travelEstimate,
-  unassignedSpotIds,
 } from "@/lib/itinerary";
 import BuildingScreen from "./BuildingScreen";
 import PlannerChat from "./PlannerChat";
@@ -388,19 +387,6 @@ function TripHead({
 function TripSkeleton({ embed = false }: { embed?: boolean }) {
   return (
     <div className="trip-page">
-      {!embed && (
-      <header className="page-header">
-        <div className="header-bar">
-          <div className="cat-filter header-cats">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div className="skeleton sk-chip" key={i} />
-            ))}
-          </div>
-          <div className="skeleton sk-count" />
-        </div>
-      </header>
-      )}
-
       <div className="trip-body">
         {!embed && (
           <aside className="left-side">
@@ -468,11 +454,12 @@ export default function TripView({
   // any store subscription fires (sample trips have none).
   const [itineraryOverride, setItineraryOverride] = useState<Itinerary | null>(null);
   const [activeDay, setActiveDay] = useState<PlanRender["activeDay"]>("all");
-  // The map's day-brief overlay opens ONLY from the map's own day chips —
-  // the right-rail overview has its own expanded view and must not double up.
-  const [briefDay, setBriefDay] = useState<number | null>(null);
+  // The map's category filter is a collapsed glass pill that fans open into
+  // the full list of category chips; picking one applies it and collapses.
+  const [filtersOpen, setFiltersOpen] = useState(false);
   // Right rail: "pins" (viewport grid / spot detail) or the day-by-day
-  // trip overview timeline. Selecting any spot flips back to pins.
+  // itinerary timeline. Selecting any spot flips back to pins. The itinerary
+  // tab (and the whole segmented control) only appears once a plan exists.
   const [rightTab, setRightTab] = useState<"pins" | "overview">("pins");
   const [expandedDay, setExpandedDay] = useState<number | null>(null);
   // Spots the user starred as non-negotiable — the agent must include them.
@@ -515,6 +502,18 @@ export default function TripView({
           .filter((x): x is Itinerary => x !== null)
           .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0] ?? null
       : null;
+
+  // A plan exists once the agent has built at least one day. Before that the
+  // right rail is pins-only (no segmented control); once it lands, the
+  // itinerary becomes the primary tab. Switch during render (React's
+  // adjust-state-on-change pattern) so the itinerary shows without a
+  // one-frame flash of the pins tab.
+  const hasItinerary = itinerary != null && itinerary.days.length > 0;
+  const [prevHasItinerary, setPrevHasItinerary] = useState(false);
+  if (hasItinerary !== prevHasItinerary) {
+    setPrevHasItinerary(hasItinerary);
+    if (hasItinerary) setRightTab("overview");
+  }
 
   // Sample trips only: poll while local-dev background passes (photo
   // backfill, Google data upgrade) are improving them, so pins slide to
@@ -637,9 +636,6 @@ export default function TripView({
           activeDay,
         }
       : null;
-  const unassignedCount = itinerary
-    ? unassignedSpotIds(itinerary, trip.spots).length
-    : 0;
 
   // Where the selected spot sits in the plan (if anywhere) — powers the
   // "why it's in your plan" section on the spot card.
@@ -672,10 +668,8 @@ export default function TripView({
   };
 
   // Expanding a day card in the overview filters the map to that day (pins +
-  // route line) but does NOT open the map's day-brief — the expanded card
-  // already tells that story.
+  // route line); the expanded card itself tells the day's story.
   const toggleOverviewDay = (i: number) => {
-    setBriefDay(null);
     setExpandedDay((cur) => {
       const next = cur === i ? null : i;
       setActiveDay(next === null ? "all" : next);
@@ -691,65 +685,9 @@ export default function TripView({
       onClick={() => {
         setPinnedVideoId(null);
         setVideosOpen(false);
+        setFiltersOpen(false);
       }}
     >
-      {!embed && (
-      <header className="page-header">
-        {/* One clean top bar: category filters on the left, visible-spot
-            count on the right. No back button — this is a web app, so the
-            browser/gesture back covers it. */}
-        <div className="header-bar">
-          {catCounts.length > 1 && (
-            <div className="cat-filter header-cats">
-              {catCounts.map(([cat, n]) => {
-                const on = activeCats.includes(cat);
-                return (
-                  <button
-                    key={cat}
-                    className={`cat-chip ${on ? "on" : ""}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveCats((prev) =>
-                        prev.includes(cat)
-                          ? prev.filter((c) => c !== cat)
-                          : [...prev, cat]
-                      );
-                    }}
-                  >
-                    {cat}
-                    <span className="cat-n">{n}</span>
-                  </button>
-                );
-              })}
-              {activeCats.length > 0 && (
-                <button
-                  className="cat-clear"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setActiveCats([]);
-                  }}
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-          )}
-
-          <div className="filter-count">
-            {visibleSpots.length === catFiltered.length
-              ? `${catFiltered.length} spots`
-              : `${visibleSpots.length} of ${catFiltered.length} spots`}
-          </div>
-        </div>
-
-        {trip.status === "processing" && (
-          <div className="progress-banner-row">
-            <div className="progress-banner">⚙️ {trip.progress}</div>
-          </div>
-        )}
-      </header>
-      )}
-
       <div className="trip-body">
         {/* Left rail: trip identity + the planner agent */}
         {!embed && (
@@ -815,94 +753,126 @@ export default function TripView({
               onSelect={selectSpot}
               onBoundsChange={setBounds}
             />
-            {planRender && (
-              <div className="day-chips" onClick={(e) => e.stopPropagation()}>
+            {/* Category filter lives over the map now — a glass pill that fans
+                open into the full list of categories. Picking one applies it
+                and collapses the tray. */}
+            {catCounts.length > 1 && (
+              <div
+                className={`map-filters ${filtersOpen ? "open" : ""}`}
+                onClick={(e) => e.stopPropagation()}
+              >
                 <button
-                  className={`day-chip ${activeDay === "all" ? "on" : ""}`}
-                  onClick={() => {
-                    setActiveDay("all");
-                    setBriefDay(null);
-                  }}
+                  className={`mf-toggle ${activeCats.length > 0 ? "active" : ""} ${
+                    filtersOpen ? "open" : ""
+                  }`}
+                  aria-expanded={filtersOpen}
+                  onClick={() => setFiltersOpen((o) => !o)}
                 >
-                  All days
+                  <svg
+                    className="mf-funnel"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M1.5 3h13L9.5 8.5V13L6.5 14.5V8.5L1.5 3Z"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span>Filters</span>
+                  {activeCats.length > 0 && (
+                    <span className="mf-count">{activeCats.length}</span>
+                  )}
                 </button>
-                {planRender.days.map((d, i) => (
-                  <button
-                    key={i}
-                    className={`day-chip ${activeDay === i ? "on" : ""}`}
-                    onClick={() => {
-                      const next = activeDay === i ? "all" : i;
-                      setActiveDay(next);
-                      setBriefDay(next === "all" ? null : i);
-                    }}
-                  >
-                    <span className="dot" style={{ background: d.color }} />
-                    {d.label}
-                  </button>
-                ))}
-                {unassignedCount > 0 && (
-                  <button
-                    className={`day-chip ${
-                      activeDay === "unassigned" ? "on" : ""
-                    }`}
-                    onClick={() => {
-                      setActiveDay((cur) =>
-                        cur === "unassigned" ? "all" : "unassigned"
-                      );
-                      setBriefDay(null);
-                    }}
-                  >
-                    Unassigned <span className="chip-n">{unassignedCount}</span>
-                  </button>
-                )}
+                <div className="mf-tray" inert={!filtersOpen}>
+                  {catCounts.map(([cat, n], i) => {
+                    const on = activeCats.includes(cat);
+                    return (
+                      <button
+                        key={cat}
+                        className={`mf-chip ${on ? "on" : ""}`}
+                        style={{
+                          transitionDelay: filtersOpen ? `${i * 22}ms` : "0ms",
+                        }}
+                        onClick={() => {
+                          setActiveCats((prev) =>
+                            prev.includes(cat)
+                              ? prev.filter((c) => c !== cat)
+                              : [...prev, cat]
+                          );
+                          setFiltersOpen(false); // picking one applies + collapses
+                        }}
+                      >
+                        <span className="mf-emoji">{CATEGORY_EMOJI[cat]}</span>
+                        <span className="mf-label">{cat}</span>
+                        <span className="mf-n">{n}</span>
+                      </button>
+                    );
+                  })}
+                  {activeCats.length > 0 && (
+                    <button
+                      className="mf-clear"
+                      style={{
+                        transitionDelay: filtersOpen
+                          ? `${catCounts.length * 22}ms`
+                          : "0ms",
+                      }}
+                      onClick={() => {
+                        setActiveCats([]);
+                        setFiltersOpen(false);
+                      }}
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
               </div>
             )}
-            {itinerary && briefDay !== null && itinerary.days[briefDay] && (
-              <DayBrief
-                day={itinerary.days[briefDay]}
-                color={dayColor(briefDay)}
-                spotById={spotById}
-                onSelectSpot={selectSpot}
-                onClose={() => {
-                  setBriefDay(null);
-                  setActiveDay("all");
-                }}
-              />
+            {trip.status === "processing" && (
+              <div className="map-progress">⚙️ {trip.progress}</div>
             )}
           </div>
         </div>
 
-        {/* Right rail: Pins (viewport grid / spot detail) or the day-by-day
-            trip overview built from the agent's itinerary */}
+        {/* Right rail: the Itinerary timeline (once a plan exists — the
+            primary tab) or Pins (viewport grid / spot detail). The segmented
+            control only appears after the agent has built an itinerary; before
+            that the rail is pins-only. */}
         <aside className="right-side" onClick={(e) => e.stopPropagation()}>
-          <div className="rail-tabs">
-            <div
-              className="rail-seg"
-              role="tablist"
-              aria-label="Right rail view"
-              data-active={rightTab}
-            >
-              <span className="rail-seg-thumb" aria-hidden="true" />
-              <button
-                role="tab"
-                aria-selected={rightTab === "pins"}
-                className={`rail-tab ${rightTab === "pins" ? "on" : ""}`}
-                onClick={() => setRightTab("pins")}
+          {hasItinerary && (
+            <div className="rail-tabs">
+              <div
+                className="rail-seg"
+                role="tablist"
+                aria-label="Right rail view"
+                data-active={rightTab}
               >
-                Pins
-              </button>
-              <button
-                role="tab"
-                aria-selected={rightTab === "overview"}
-                className={`rail-tab ${rightTab === "overview" ? "on" : ""}`}
-                onClick={() => setRightTab("overview")}
-              >
-                Trip overview
-              </button>
+                <span className="rail-seg-thumb" aria-hidden="true" />
+                <button
+                  role="tab"
+                  aria-selected={rightTab === "overview"}
+                  className={`rail-tab ${rightTab === "overview" ? "on" : ""}`}
+                  onClick={() => setRightTab("overview")}
+                >
+                  Itinerary
+                </button>
+                <button
+                  role="tab"
+                  aria-selected={rightTab === "pins"}
+                  className={`rail-tab ${rightTab === "pins" ? "on" : ""}`}
+                  onClick={() => setRightTab("pins")}
+                >
+                  Pins
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
-          {rightTab === "overview" ? (
+          {hasItinerary && rightTab === "overview" ? (
             <TripOverview
               itinerary={itinerary}
               spotById={spotById}
@@ -1190,86 +1160,6 @@ function DaySchedule({
         );
       })}
     </>
-  );
-}
-
-/** Clicking a day chip on the MAP opens this floating card — same visual
- *  language as the right rail's day cards. */
-function DayBrief({
-  day,
-  color,
-  spotById,
-  onSelectSpot,
-  onClose,
-}: {
-  day: ItineraryDay;
-  color: string;
-  spotById: Map<string, Spot>;
-  onSelectSpot: (id: string) => void;
-  onClose: () => void;
-}) {
-  const stops = day.stops.flatMap((st) => {
-    const spot = spotById.get(st.spotId);
-    return spot ? [{ ...st, spot }] : [];
-  });
-  const photoUrl = stops.map((s) => miniPhotoUrl(s.spot)).find(Boolean) ?? null;
-  const catCount = new Map<SpotCategory, number>();
-  for (const s of stops) {
-    catCount.set(s.spot.category, (catCount.get(s.spot.category) ?? 0) + 1);
-  }
-  const topCats = [...catCount.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 2)
-    .map(([c]) => c);
-
-  return (
-    <div className="day-brief ov-card" onClick={(e) => e.stopPropagation()}>
-      <button
-        className="ov-brief-close"
-        onClick={onClose}
-        aria-label="Close day brief"
-      >
-        ✕
-      </button>
-      {/* Same anatomy as the rail card: full-bleed cover, then text, then stops */}
-      {photoUrl && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img className="ov-cover" src={photoUrl} alt="" />
-      )}
-      <div className="ov-card-text">
-        <span className="ov-day-badge">
-          <span className="dot" style={{ background: color }} />
-          {day.label}
-          {day.date &&
-            ` · ${new Date(day.date + "T00:00:00").toLocaleDateString(
-              undefined,
-              { weekday: "short", month: "short", day: "numeric" }
-            )}`}
-        </span>
-        <div className="ov-title">{day.theme ?? day.label}</div>
-        {topCats.length > 0 && (
-          <div className="ov-chips">
-            {topCats.map((c) => (
-              <span className="ov-chip" key={c}>
-                {CATEGORY_EMOJI[c]} {c}
-              </span>
-            ))}
-          </div>
-        )}
-        {day.rationale && (
-          <p className="ov-rationale ov-rationale-teaser">{day.rationale}</p>
-        )}
-      </div>
-      <div className="ov-stops">
-        <DaySchedule
-          day={day}
-          spotById={spotById}
-          onSelectSpot={onSelectSpot}
-          showDate={false}
-          showRationale={false}
-        />
-      </div>
-    </div>
   );
 }
 
