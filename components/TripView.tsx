@@ -1066,17 +1066,9 @@ function TripOverview({
               <div className={`ov-card ${open ? "open" : ""}`}>
                 <button className="ov-card-main" onClick={() => onToggleDay(i)}>
                   <div className="ov-card-text">
-                    <span className="ov-day-badge">
-                      {day.label}
-                      {day.date &&
-                        ` · ${new Date(
-                          day.date + "T00:00:00"
-                        ).toLocaleDateString(undefined, {
-                          weekday: "short",
-                          month: "short",
-                          day: "numeric",
-                        })}`}
-                    </span>
+                    {/* Badge is just "Day N" (reference) — the date lives in
+                        the expanded schedule so the pill never wraps. */}
+                    <span className="ov-day-badge">{day.label}</span>
                     <div className="ov-title">{day.theme ?? day.label}</div>
                     {day.rationale && (
                       <div className="ov-desc">{day.rationale}</div>
@@ -1098,11 +1090,25 @@ function TripOverview({
                 </button>
                 {open && (
                   <div className="ov-stops">
-                    {first && (
+                    {(first || day.date) && (
                       <div className="ov-span">
-                        <span>Start {first}</span>
-                        {end && <span className="ov-span-sep">→</span>}
-                        {end && <span>done ~{end}</span>}
+                        {day.date && (
+                          <span>
+                            {new Date(
+                              day.date + "T00:00:00"
+                            ).toLocaleDateString(undefined, {
+                              weekday: "short",
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </span>
+                        )}
+                        {day.date && first && (
+                          <span className="ov-span-sep">·</span>
+                        )}
+                        {first && <span>Start {first}</span>}
+                        {first && end && <span className="ov-span-sep">→</span>}
+                        {first && end && <span>done ~{end}</span>}
                       </div>
                     )}
                     {stops.map((st, k) => {
