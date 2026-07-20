@@ -231,6 +231,84 @@ cost-related (model splits, summarization, Routes API), check
 cache_read should dominate input tokens — if not, a silent cache
 invalidator crept in.
 
+**Two capture paths, one schema — and the AI-SDK path had three bugs.**
+`lib/llm.ts` wraps the raw Anthropic SDK (discover/extract); the chat route
+hand-rolls its own `$ai_generation` around `streamText`. They must stay in
+sync. The route's copy drifted and mis-reported for a while:
+- **Inflated cost (~3×).** PostHog uses **exclusive** cache counting for
+  Anthropic (auto-detected from `$ai_provider: "anthropic"` when
+  `$ai_cache_reporting_exclusive` is unset — see
+  [calculating-costs](https://posthog.com/docs/llm-analytics/calculating-costs)):
+  `$ai_input_tokens` must be the *uncached* input, and `cache_read`/
+  `cache_creation` are priced as separate buckets on top. But the AI SDK's
+  `usage.inputTokens` is the **total** (`= noCache + cacheRead + cacheWrite`;
+  confirmed in `@ai-sdk/anthropic` `dist/index.js`, the `inputTokens.total`
+  field). Sending that total made PostHog bill the cached prefix twice — once
+  full, once discounted. Fix: send `inputTokens − cacheRead − cacheWrite`.
+  (The raw-SDK path is immune: Anthropic's `usage.input_tokens` already
+  excludes cache.) Diagnostic that nailed it: a warm turn's cost equalled
+  `input×full + cacheRead×0.1 + cacheWrite×1.25 + output` to 4 sig-figs.
+- **Empty Input panel.** The route never set `$ai_input`. Fixed by
+  flattening `modelMessages` (mirrors `lib/llm.ts` `formatInput`).
+- **Empty Output on tool turns.** Captured only `event.text`, which excludes
+  tool-call and reasoning parts — so an `update_itinerary`-only turn logged a
+  blank assistant message. Fixed by adding `tool_calls` to the output choice
+  from `event.toolCalls` (`{toolName, input}` in v7).
+
+**Capture built for behavior debugging (why the agent decides what it does).**
+The route now records the full decision context:
+- **Reasoning** — `event.reasoningText` folded into the assistant output
+  choice, labeled `[reasoning]` ahead of the final text. It's the single
+  highest-value signal for tuning the persona. (It lives in the *output*, not
+  the input — it's what the model produced.) A `reasoning_chars` custom
+  property (no `$ai_` prefix → cost-neutral) records thinking volume for a
+  thinking-vs-answer ratio; Anthropic exposes no separate thinking-token
+  count, so text length is the honest proxy.
+  - **Do NOT emit `$ai_reasoning_tokens` for Anthropic.** PostHog issue #3160
+    (fixed, PR #55480) makes PostHog *add* reasoning tokens to output cost —
+    correct for providers whose `output_tokens` is text-only, but Anthropic's
+    `output_tokens` **already includes thinking** (confirmed: `@ai-sdk/
+    anthropic` maps `outputTokens.total = usage.output_tokens`, leaves
+    `reasoning` void). Emitting it would double-count. Unlike cache (distinct
+    0.1×/1.25× rates → separate buckets required), thinking is billed at the
+    plain output rate, so `output_tokens × rate` already prices it exactly —
+    there is no independent cost accounting to add.
+- **Rich `$ai_input` by role** — `renderContent` labels each structured part:
+  `[reasoning]`, `[tool-call: name] {args}`, `[tool-result: name] {output}`.
+  Roles stay distinct — `system` (persona + trip header + volatile context),
+  `user` (traveler's text), `assistant` (model's prior turns + tool calls),
+  `tool` (results fed back, e.g. travel times). The token bulk is `system` +
+  `assistant`/`tool` history, not user text.
+
+Guard when adding `$ai_input`: PostHog **silently drops events over ~1MB**.
+Per-message truncation (50K) isn't enough — a windowed history can sum past
+it — so `formatInput` also caps the serialized total (`MAX_INPUT_CHARS` 300K),
+dropping oldest history first (system prefix + recent turns kept, a
+`[N older message(s) omitted]` breadcrumb inserted). Without this, a long
+session would vanish from analytics entirely (worse than a blank field).
+
+**Trace = one sitting, generation = one API call, group by tripId.**
+`$ai_trace_id` (= the client-minted `traceId`, a `useRef` UUID in
+`PlannerChat` — renamed from the misleading `chatSessionId`) groups every
+generation in a **sitting** into one trace; each generation is one POST to the
+route, i.e. one Anthropic call (thinking lives *inside* a generation, not as
+its own). A single user turn that hits a tool spawns **two** generations — the
+tool-call round and the post-tool-result round — because tools execute
+client-side and `sendAutomaticallyWhen` re-sends. The UUID is minted per mount
+(**not** persisted), so a reload deliberately starts a fresh trace = one trace
+per sitting. To follow a conversation *across* sittings/reloads, group by the
+`tripId` property (emitted on every event, stable for the trip's life) — which
+matches the product model: one chat per trip. `tripId` collides only across
+users of a shared *sample* trip (no accounts to separate them anyway); a
+user's own local trips have unique ids. A persisted, independent
+`chatSessionId` property is only worth adding if per-person separation on
+shared trips ever matters (deferred).
+
+Reminder that shaped the reading of all this: caching does **not** make the
+prefix "cost once" — each turn re-reads the whole (growing) prefix at ~0.1×,
+and any plan-changing turn rewrites the post-breakpoint tail at 1.25×
+(§5.2). Latency is not a cost driver; Anthropic bills tokens, not seconds.
+
 ### 5.6 Anthropic platform facts that shaped decisions
 - Subscription/OAuth reuse in third-party apps is **banned & enforced**
   (2026-01/02) — API key (later BYOK) is the only compliant path.
