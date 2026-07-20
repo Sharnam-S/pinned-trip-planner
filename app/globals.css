@@ -1975,6 +1975,29 @@ button {
   line-height: 1;
 }
 
+/* "Covered" pins — already in the itinerary. A whisper-quiet green wash + a
+   small check so, while filtering by a category (e.g. every beach), you can
+   scan which places you've worked in vs. which you're still missing. No
+   day/order info — just covered vs. not. `.selected`/`.highlight` are defined
+   after this and keep their yellow, so an active pin still reads as active. */
+.pin-pill.covered {
+  background: #f2f8f2;
+  border-color: rgba(45, 122, 62, 0.28);
+}
+
+.pin-check {
+  margin-left: 3px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #2d7a3e;
+  line-height: 1;
+}
+
+.pin-pill.selected .pin-check,
+.pin-pill.highlight .pin-check {
+  color: rgba(0, 0, 0, 0.5);
+}
+
 /* The name is collapsed by default so dense clusters stay legible; it slides
    open when the pin is hovered, selected, or highlighted. */
 .pin-name {

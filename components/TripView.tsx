@@ -633,6 +633,17 @@ export default function TripView({
     return trip.spots.filter((s) => activeSet.has(s.category));
   }, [trip, activeCats]);
 
+  // Every spot that sits somewhere in the itinerary. Feeds the map's subtle
+  // "covered" pin treatment — kept separate from the plan overlay so it stays
+  // visible while a category filter is applied (the overlay is hidden then).
+  const coveredIds = useMemo(
+    () =>
+      itinerary
+        ? itinerary.days.flatMap((d) => d.stops.map((s) => s.spotId))
+        : [],
+    [itinerary]
+  );
+
   function addVideos() {
     setAddError("");
     const entries = addLinks
@@ -860,6 +871,7 @@ export default function TripView({
               // routes) is hidden so the two don't stack confusingly.
               plan={activeCats.length > 0 ? null : planRender}
               mustSeeIds={mustSeeIds}
+              coveredIds={coveredIds}
               popupSpot={
                 selectedSpot
                   ? {

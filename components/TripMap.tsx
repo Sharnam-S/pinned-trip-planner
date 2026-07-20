@@ -93,6 +93,11 @@ interface Props {
   plan?: PlanRender | null;
   /** Spot ids the user starred as must-sees — pills get a star badge. */
   mustSeeIds?: string[];
+  /** Spot ids that sit somewhere in the itinerary. Their pills get a subtle
+   *  "covered" tint + check so you can tell, at a glance while filtering, which
+   *  places you've already worked into the trip and which you're missing. This
+   *  is independent of the day-by-day plan overlay so it survives filtering. */
+  coveredIds?: string[];
   /** Small photo card anchored to the selected spot (the full detail card
    *  lives in the page's right rail now). */
   popupSpot?: {
@@ -116,6 +121,7 @@ export default function TripMap({
   fitVideoId = null,
   plan = null,
   mustSeeIds = [],
+  coveredIds = [],
   popupSpot = null,
   onSelect,
   onBoundsChange,
@@ -216,6 +222,7 @@ export default function TripMap({
     const map = mapRef.current;
     if (!map) return;
 
+    const coveredSet = new Set(coveredIds);
     for (const spot of spots) {
       const isSelected = spot.id === selectedId;
       const isHighlighted =
@@ -232,10 +239,15 @@ export default function TripMap({
           : plan.activeDay !== "all" && !isSelected);
       const isDimmed =
         (highlightVideoId != null && !isHighlighted) || planDimmed;
+      // "Covered" = already in the itinerary somewhere. A quiet tint + check so
+      // that while filtering (say, every beach) you can see which you've worked
+      // in and which you're still missing, without any day/order detail.
+      const isCovered = coveredSet.has(spot.id);
       const pillClass = [
         "pin-pill",
         isSelected ? "selected" : "",
         isHighlighted ? "highlight" : "",
+        isCovered ? "covered" : "",
         isDimmed ? "dimmed" : "",
         planHidden ? "plan-hidden" : "",
       ]
@@ -246,9 +258,12 @@ export default function TripMap({
       const star = mustSeeIds.includes(spot.id)
         ? `<span class="pin-star">⭐</span>`
         : "";
+      const check = isCovered
+        ? `<span class="pin-check" aria-hidden="true">✓</span>`
+        : "";
       const html = `<div class="${pillClass}">${star}<span class="pin-emoji">${
         CATEGORY_EMOJI[spot.category]
-      }</span><span class="pin-name">${escapeHtml(shorten(spot.name))}</span>${
+      }</span>${check}<span class="pin-name">${escapeHtml(shorten(spot.name))}</span>${
         spot.mentions.length > 1 ? `<span class="pin-count">×${spot.mentions.length}</span>` : ""
       }</div>`;
 
@@ -301,7 +316,7 @@ export default function TripMap({
     }
     // planKey covers everything the pill classes read from `plan`.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spots, selectedId, highlightVideoId, onSelect, planKey, mustSeeIds.join(",")]);
+  }, [spots, selectedId, highlightVideoId, onSelect, planKey, mustSeeIds.join(","), coveredIds.join(",")]);
 
   // Draw the plan overlay: numbered pins in day colors + a route line per day.
   useEffect(() => {
