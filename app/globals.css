@@ -3935,8 +3935,18 @@ button {
 
 /* Expanded day: clean schedule rows, hairline-separated */
 .ov-stops {
-  border-top: 1px solid #f0f1f3;
+  position: relative;
   padding: 8px 18px 16px;
+}
+/* Inset divider — stops short of the card edges rather than running edge to edge */
+.ov-stops::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 18px;
+  right: 18px;
+  height: 1px;
+  background: #f0f1f3;
 }
 .ov-span {
   display: flex;
@@ -4109,7 +4119,7 @@ button {
   line-height: 1.6;
   color: #6b7280;
 }
-/* On the collapsed overview card it sits under the chips as a teaser. */
+/* On the collapsed overview card it sits above the chips as a teaser. */
 .ov-rationale-teaser {
   margin: 12px 0 0;
 }

@@ -1170,6 +1170,11 @@ function TripOverview({
                         })}`}
                     </span>
                     <div className="ov-title">{day.theme ?? day.label}</div>
+                    {day.rationale && (
+                      <p className="ov-rationale ov-rationale-teaser">
+                        {day.rationale}
+                      </p>
+                    )}
                     {topCats.length > 0 && (
                       <div className="ov-chips">
                         {topCats.map((c) => (
@@ -1178,11 +1183,6 @@ function TripOverview({
                           </span>
                         ))}
                       </div>
-                    )}
-                    {day.rationale && (
-                      <p className="ov-rationale ov-rationale-teaser">
-                        {day.rationale}
-                      </p>
                     )}
                   </div>
                 </button>
