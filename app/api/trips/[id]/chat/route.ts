@@ -101,6 +101,22 @@ function tripHeader(ctx: PlannerContext): string {
     .join("\n");
 }
 
+// Tool descriptions — single source of truth, used both in the streamText
+// `tools` map (sent to the model) and in the $ai_tools PostHog property (so
+// the analytics know the full tool surface, not just tools that got called).
+const UPDATE_ITINERARY_DESCRIPTION =
+  "Replace the trip's day-by-day itinerary. Send the COMPLETE plan every time (all days), not a diff. The user sees it rendered on their map immediately.";
+const GET_TRAVEL_TIMES_DESCRIPTION =
+  "Estimate walking and driving/transit minutes between pairs of spots (straight-line based; good for day planning).";
+
+// The available tool surface, in PostHog's $ai_tools shape. Analytics-only —
+// this rides in the telemetry event, NOT in the Anthropic request (the model
+// already gets the tools via streamText), so it adds nothing to model billing.
+const AI_TOOLS = [
+  { type: "function", function: { name: "update_itinerary", description: UPDATE_ITINERARY_DESCRIPTION } },
+  { type: "function", function: { name: "get_travel_times", description: GET_TRAVEL_TIMES_DESCRIPTION } },
+];
+
 // --- PostHog $ai_generation, mirroring lib/llm.ts (which wraps the raw
 // Anthropic SDK and can't observe AI SDK calls) ---
 
@@ -267,6 +283,14 @@ async function captureGeneration(opts: {
         $ai_latency: opts.latencySec,
         $ai_http_status: opts.error ? 500 : 200,
         $ai_trace_id: opts.traceId,
+        // Trace = one sitting; session = the whole trip's conversation across
+        // sittings/reloads. One chat per trip, so tripId is the session key —
+        // this lights up PostHog's Sessions tab with per-trip rollups.
+        // ($ai_session_id is LLM-analytics-specific, NOT PostHog's $session_id.)
+        ...(opts.tripId ? { $ai_session_id: opts.tripId } : {}),
+        // The tools available to the model this turn — lets PostHog's Tools tab
+        // show the full surface, including turns where nothing was called.
+        $ai_tools: AI_TOOLS,
         $ai_span_name: "planner-chat",
         ...(opts.error ? { $ai_is_error: true, $ai_error: String(opts.error) } : {}),
         // Custom analytics dimension (deliberately NOT $ai_-prefixed so it
@@ -363,13 +387,11 @@ export async function POST(
       // Client-executed: the browser validates against the real spot list,
       // writes localStorage, and re-renders the map. No execute() here.
       update_itinerary: tool({
-        description:
-          "Replace the trip's day-by-day itinerary. Send the COMPLETE plan every time (all days), not a diff. The user sees it rendered on their map immediately.",
+        description: UPDATE_ITINERARY_DESCRIPTION,
         inputSchema: ItineraryInputSchema,
       }),
       get_travel_times: tool({
-        description:
-          "Estimate walking and driving/transit minutes between pairs of spots (straight-line based; good for day planning).",
+        description: GET_TRAVEL_TIMES_DESCRIPTION,
         inputSchema: TravelTimesInputSchema,
       }),
     },
