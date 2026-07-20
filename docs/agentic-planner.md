@@ -118,6 +118,13 @@ user-trust lessons that produced it:
 5. **Day-of-week awareness** — clubs Fri/Sat, weekend-crowded spots on
    weekday mornings, closure days, trip-level arcs (beach first, party
    Saturday).
+5b. **Time-of-day fit** — slot each spot at the hour its nature is best
+   (sunset beach at golden hour, swimming beach mid-morning, shaded/cave
+   beach at hot midday, viewpoints pre-crowd), anchor the time-sensitive
+   ones first and route the flexible spots around them, and when a
+   deciding fact (shade? which way does it face? swimmable?) isn't in the
+   spot data, state the assumption and invite correction rather than
+   ordering silently on a guess.
 6. **Creator consensus weights picks** — 2+ mention spots get priority;
    dropping one requires an explicit stated reason.
 7. **Meal logic** — one food spot per meal slot; consecutive food stops
@@ -142,8 +149,12 @@ spot names with +"). Keep stored types optional for backward compat.
 Sonnet follows short, explicit, targeted rules reliably. Real examples:
 back-to-back restaurants (fixed by MEAL LOGIC rule naming the exact
 anti-pattern), skipped 3-creator spot (CONSENSUS rule), invented stay
-(NEVER-INVENT rule). When live testing surfaces a bad judgment call,
-prefer one added persona line naming the anti-pattern over re-architecting.
+(NEVER-INVENT rule), beaches ordered by proximity with no regard for
+sunset/swimming/shade (TIME-OF-DAY FIT rule — it now anchors
+time-sensitive spots first and, when the deciding fact isn't in the spot
+data, states its assumption instead of guessing silently). When live
+testing surfaces a bad judgment call, prefer one added persona line
+naming the anti-pattern over re-architecting.
 
 ### 4.3 Trust is rationale at every zoom level
 The user's core demand ("trips are how people spend their most precious
