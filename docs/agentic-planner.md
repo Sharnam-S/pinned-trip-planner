@@ -304,6 +304,19 @@ user's own local trips have unique ids. A persisted, independent
 `chatSessionId` property is only worth adding if per-person separation on
 shared trips ever matters (deferred).
 
+Two properties light up PostHog's native tabs:
+- **`$ai_session_id` = `tripId`** — populates the **Sessions** tab (one session
+  per trip, spanning all sittings, with cost/generation/duration rollups).
+  Note: `$ai_session_id` is LLM-analytics-specific and **distinct** from
+  PostHog's standard `$session_id` (which we'd only have from a browser SDK).
+- **`$ai_tools`** — the available tool surface (`update_itinerary`,
+  `get_travel_times`), so the **Tools** tab shows tools even on turns where none
+  was called. Analytics-only: it rides in the telemetry event, not the Anthropic
+  request, so it adds nothing to model billing (the model already gets the tools
+  via `streamText`). Descriptions are a single source of truth so the model-facing
+  and analytics-facing copies can't drift. Tool *calls* themselves come from
+  `$ai_output_choices[].tool_calls` (captured in the §5.5 output fix).
+
 Reminder that shaped the reading of all this: caching does **not** make the
 prefix "cost once" — each turn re-reads the whole (growing) prefix at ~0.1×,
 and any plan-changing turn rewrites the post-breakpoint tail at 1.25×
