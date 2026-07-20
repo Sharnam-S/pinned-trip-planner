@@ -2812,38 +2812,6 @@ button {
   }
 }
 
-.planner-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 18px 12px;
-  border-bottom: 1px solid var(--line);
-  background: var(--surface);
-}
-.planner-title {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--text);
-}
-.planner-head .close {
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-size: 13px;
-  color: var(--text-soft);
-  padding: 4px 6px;
-  border-radius: 8px;
-  white-space: nowrap;
-}
-.planner-head .close:hover {
-  background: var(--surface-alt);
-}
-.planner-head .close:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
 .planner-scroll {
   flex: 1;
   overflow-y: auto;
@@ -4030,10 +3998,6 @@ button {
   box-shadow: 0 3px 10px rgba(16, 17, 26, 0.08);
   transform: translateY(-1px);
 }
-.planner-head {
-  border-bottom: 1px solid #f0f1f3;
-}
-
 /* ===== Unified day schedule (map brief + rail expansion share these) ===== */
 .ov-day-badge {
   display: inline-flex;
