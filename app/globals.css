@@ -3035,22 +3035,45 @@ button {
   max-width: 100%;
   font-size: 14px;
   line-height: 1.65;
-  white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
 .pm-assistant .pm-text strong {
   font-weight: 650;
 }
+
+/* Block rhythm for the light markdown the model writes — paragraphs and lists
+   get real vertical spacing so replies read as chunks, not a wall of text.
+   Applies in both the assistant column and the user bubble. */
+.pm-text p,
+.pm-text ul,
+.pm-text ol {
+  margin: 0 0 0.7em;
+}
+.pm-text > :last-child {
+  margin-bottom: 0;
+}
+.pm-text ul,
+.pm-text ol {
+  padding-left: 1.4em;
+}
+.pm-text li {
+  margin-bottom: 0.3em;
+}
+.pm-text li:last-child {
+  margin-bottom: 0;
+}
+/* Transient progress chips (sketching, checking travel times) — quiet and
+   neutral, on-palette. Not success: they're in-flight status, so no green. */
 .pm-tool {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: #3f6a48;
-  background: #f1f7f2;
-  border: 1px solid #e0ece2;
-  padding: 6px 13px;
+  gap: 7px;
+  font-size: var(--fs-support);
+  font-weight: 500;
+  color: var(--text-soft);
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
+  padding: 6px 12px;
   border-radius: var(--radius-chip);
   width: fit-content;
 }
@@ -3058,9 +3081,53 @@ button {
   animation: pm-pulse 1.4s ease-in-out infinite;
 }
 .pm-tool.error {
-  background: #fdf0f0;
-  border-color: #e8c4c4;
-  color: #a33;
+  color: var(--red);
+  background: #fff5f4;
+  border-color: #f3d6d3;
+}
+
+/* Plan-updated confirmation — the panel's one "success event". A calm card,
+   not a shouty pill: two-tone text like the rest of the panel, the accent
+   color carried only by the check chip, and a gentle radius so the wrap reads
+   tidy instead of cramped. */
+.pm-event {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  max-width: 100%;
+  width: fit-content;
+  padding: 11px 14px;
+  background: var(--surface-alt);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.pm-event-icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+}
+.pm-event-body {
+  min-width: 0;
+}
+.pm-event-title {
+  font-size: var(--fs-support);
+  font-weight: 650;
+  color: var(--text);
+  line-height: 1.35;
+}
+.pm-event-meta {
+  margin-top: 2px;
+  font-size: var(--fs-support);
+  color: var(--text-soft);
+  line-height: 1.45;
 }
 @keyframes pm-pulse {
   0%, 100% { opacity: 1; }
