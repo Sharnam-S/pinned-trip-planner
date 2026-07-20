@@ -336,12 +336,6 @@ export default function PlannerChat({
 
   return (
     <aside className="planner-panel" onClick={(e) => e.stopPropagation()}>
-      <div className="planner-head">
-        <div className="planner-title">
-          <span aria-hidden="true">✨</span> Local planner
-        </div>
-      </div>
-
       <div className="planner-scroll" ref={scrollRef}>
         {messages.length === 0 &&
           (!hasOwnTrips && !isLocal && !nudgeDismissed ? (
