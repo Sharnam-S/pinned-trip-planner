@@ -69,7 +69,10 @@ interface PlannerCtx {
   trip: Trip;
   itinerary: Itinerary | null;
   mustSeeIds: string[];
-  chatSessionId: string;
+  // One PostHog trace = one sitting. Minted per component mount, so a page
+  // reload starts a fresh trace; group across sittings by tripId (one chat
+  // per trip). See docs/agentic-planner.md §5.5.
+  traceId: string;
 }
 
 // --- Chat history: per-trip, in localStorage (same as plans and stars —
@@ -227,7 +230,7 @@ function makeTransport(tripId: string, ctxRef: { current: PlannerCtx }) {
           ctxRef.current.itinerary,
           ctxRef.current.mustSeeIds
         ),
-        chatSessionId: ctxRef.current.chatSessionId,
+        traceId: ctxRef.current.traceId,
       },
     }),
   });
@@ -283,7 +286,7 @@ export default function PlannerChat({
     trip,
     itinerary,
     mustSeeIds,
-    chatSessionId: crypto.randomUUID(),
+    traceId: crypto.randomUUID(),
   });
   useEffect(() => {
     ctxRef.current.trip = trip;

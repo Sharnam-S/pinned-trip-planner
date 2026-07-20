@@ -112,20 +112,115 @@ const posthog = process.env.POSTHOG_API_KEY
     })
   : null;
 
+// PostHog drops events over ~1MB; the prompt (persona + spot digest + history)
+// can be tens of KB per message — keep the debugging value, cap the payload.
+// Mirrors lib/llm.ts.
+const MAX_CONTENT_CHARS = 50_000;
+
+function truncate(text: string): string {
+  return text.length > MAX_CONTENT_CHARS
+    ? `${text.slice(0, MAX_CONTENT_CHARS)}… [truncated ${text.length - MAX_CONTENT_CHARS} chars]`
+    : text;
+}
+
+// PostHog silently DROPS any event over ~1MB. Per-message truncation isn't
+// enough on its own — a long windowed history can still sum past the limit —
+// so cap the serialized input total too. Well under 1MB leaves headroom for
+// the output + other properties.
+const MAX_INPUT_CHARS = 300_000;
+
+/** Render one message's content as readable text, preserving the parts that
+ *  explain agent decisions: prior reasoning, tool calls (with args), and tool
+ *  results (e.g. travel times the agent planned around). A plain-string
+ *  message passes through; structured content is labeled per part. */
+function renderContent(content: unknown): string {
+  if (typeof content === "string") return content;
+  if (!Array.isArray(content)) return JSON.stringify(content);
+  return content
+    .map((part) => {
+      if (!part || typeof part !== "object") return String(part);
+      const p = part as {
+        type?: string;
+        text?: string;
+        toolName?: string;
+        input?: unknown;
+        output?: unknown;
+      };
+      switch (p.type) {
+        case "text":
+          return p.text ?? "";
+        case "reasoning":
+          return `[reasoning] ${p.text ?? ""}`;
+        case "tool-call":
+          return `[tool-call: ${p.toolName}] ${JSON.stringify(p.input)}`;
+        case "tool-result":
+          return `[tool-result: ${p.toolName}] ${JSON.stringify(p.output)}`;
+        default:
+          return `[${p.type ?? "part"}] ${JSON.stringify(part)}`;
+      }
+    })
+    .filter(Boolean)
+    .join("\n");
+}
+
+/** Flatten the model prompt into PostHog's `$ai_input` shape — one entry per
+ *  message, tagged by role (system / user / assistant / tool) so app-, user-,
+ *  and model-origin content stay distinguishable. Oldest history is dropped
+ *  if the payload would risk PostHog's event-size limit; the system prefix
+ *  and most recent turns (the useful debugging context) are kept. */
+function formatInput(messages: ModelMessage[]): { role: string; content: string }[] {
+  const formatted = messages.map((m) => ({
+    role: m.role,
+    content: truncate(renderContent(m.content)),
+  }));
+  let total = formatted.reduce((n, m) => n + m.content.length, 0);
+  let dropped = 0;
+  while (total > MAX_INPUT_CHARS) {
+    // Drop the oldest non-system message (system prefix stays; it's bounded).
+    const idx = formatted.findIndex((m) => m.role !== "system");
+    if (idx === -1) break;
+    total -= formatted[idx].content.length;
+    formatted.splice(idx, 1);
+    dropped++;
+  }
+  if (dropped > 0) {
+    const idx = formatted.findIndex((m) => m.role !== "system");
+    formatted.splice(Math.max(idx, 0), 0, {
+      role: "system",
+      content: `[${dropped} older message(s) omitted to fit PostHog's event-size limit]`,
+    });
+  }
+  return formatted;
+}
+
 async function captureGeneration(opts: {
   traceId: string;
   tripId: string;
   tripName: string;
   latencySec: number;
+  input: { role: string; content: string }[];
   inputTokens?: number;
   outputTokens?: number;
   cacheRead?: number;
   cacheWrite?: number;
   outputText: string;
+  reasoning?: string;
+  toolCalls?: { name: string; args: unknown }[];
   error?: unknown;
 }) {
   if (!posthog) return;
   try {
+    // The AI SDK reports `inputTokens` as the TOTAL prompt (cache reads +
+    // writes + uncached). PostHog treats $ai_input_tokens as the uncached
+    // remainder and prices the cache buckets separately, so sending the total
+    // double-bills the cached prefix (~3x inflated cost). Send only the
+    // genuinely-new tokens.
+    const cacheRead = opts.cacheRead ?? 0;
+    const cacheWrite = opts.cacheWrite ?? 0;
+    const uncachedInput = Math.max(
+      0,
+      (opts.inputTokens ?? 0) - cacheRead - cacheWrite
+    );
     posthog.capture({
       distinctId: opts.traceId,
       event: "$ai_generation",
@@ -133,22 +228,53 @@ async function captureGeneration(opts: {
         $process_person_profile: false,
         $ai_provider: "anthropic",
         $ai_model: MODEL,
-        $ai_input_tokens: opts.inputTokens ?? 0,
+        $ai_input: opts.input,
+        $ai_input_tokens: uncachedInput,
         $ai_output_tokens: opts.outputTokens ?? 0,
-        ...(opts.cacheRead
-          ? { $ai_cache_read_input_tokens: opts.cacheRead }
-          : {}),
-        ...(opts.cacheWrite
-          ? { $ai_cache_creation_input_tokens: opts.cacheWrite }
-          : {}),
+        ...(cacheRead ? { $ai_cache_read_input_tokens: cacheRead } : {}),
+        ...(cacheWrite ? { $ai_cache_creation_input_tokens: cacheWrite } : {}),
         $ai_output_choices: [
-          { role: "assistant", content: opts.outputText.slice(0, 50_000) },
+          {
+            role: "assistant",
+            // Reasoning is the agent's decision process — the highest-value
+            // signal for understanding/improving behavior. It's part of the
+            // output, not the input, and `event.text` omits it, so fold it in
+            // labeled and ahead of the final answer.
+            content: truncate(
+              [
+                opts.reasoning ? `[reasoning]\n${opts.reasoning}` : "",
+                opts.outputText,
+              ]
+                .filter(Boolean)
+                .join("\n\n")
+            ),
+            // Tool-call turns (e.g. update_itinerary) carry no text, so
+            // capturing only outputText logged an empty assistant message.
+            // Surface the calls so those turns are readable.
+            ...(opts.toolCalls?.length
+              ? {
+                  tool_calls: opts.toolCalls.map((c) => ({
+                    type: "function",
+                    function: {
+                      name: c.name,
+                      arguments: truncate(JSON.stringify(c.args)),
+                    },
+                  })),
+                }
+              : {}),
+          },
         ],
         $ai_latency: opts.latencySec,
         $ai_http_status: opts.error ? 500 : 200,
         $ai_trace_id: opts.traceId,
         $ai_span_name: "planner-chat",
         ...(opts.error ? { $ai_is_error: true, $ai_error: String(opts.error) } : {}),
+        // Custom analytics dimension (deliberately NOT $ai_-prefixed so it
+        // never touches cost): how much of the turn was thinking. Anthropic
+        // fuses thinking into output_tokens and exposes no separate count, so
+        // reasoning-text length is the honest proxy for a thinking-vs-answer
+        // ratio when tuning the persona.
+        ...(opts.reasoning ? { reasoning_chars: opts.reasoning.length } : {}),
         tripId: opts.tripId,
         tripName: opts.tripName,
       },
@@ -178,11 +304,11 @@ export async function POST(
   const {
     messages,
     context,
-    chatSessionId,
+    traceId: clientTraceId,
   }: {
     messages: UIMessage[];
     context: PlannerContext;
-    chatSessionId?: string;
+    traceId?: string;
   } = await req.json();
 
   if (!context?.spots?.length) {
@@ -192,7 +318,10 @@ export async function POST(
     );
   }
 
-  const traceId = chatSessionId ?? crypto.randomUUID();
+  // The client mints one traceId per sitting (survives the tool-call
+  // round-trips within a mount, resets on reload). Group across sittings by
+  // the tripId property — one chat per trip.
+  const traceId = clientTraceId ?? crypto.randomUUID();
   const start = Date.now();
 
   const history = await convertToModelMessages(messages);
@@ -250,11 +379,17 @@ export async function POST(
         tripId,
         tripName: context.tripName,
         latencySec: (Date.now() - start) / 1000,
+        input: formatInput(modelMessages),
         inputTokens: event.usage.inputTokens,
         outputTokens: event.usage.outputTokens,
         cacheRead: event.usage.inputTokenDetails?.cacheReadTokens,
         cacheWrite: event.usage.inputTokenDetails?.cacheWriteTokens,
         outputText: event.text,
+        reasoning: event.reasoningText,
+        toolCalls: event.toolCalls?.map((c) => ({
+          name: c.toolName,
+          args: c.input,
+        })),
       });
     },
     onError: ({ error }) => {
@@ -263,6 +398,7 @@ export async function POST(
         tripId,
         tripName: context.tripName,
         latencySec: (Date.now() - start) / 1000,
+        input: formatInput(modelMessages),
         outputText: "",
         error,
       });
