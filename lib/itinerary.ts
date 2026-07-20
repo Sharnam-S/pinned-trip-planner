@@ -82,7 +82,7 @@ export const ItineraryInputSchema = z.object({
               why: z
                 .string()
                 .describe(
-                  "1-2 sentences answering all three: (1) why this spot is worth the user's time (what makes it special — lean on the creators' takes), (2) why THIS day, (3) why THIS time of day (crowds, light, weekday, what it pairs with). Shown on the spot's card. Not a practical tip — tips go in note."
+                  "1-2 sentences answering all three: (1) why this spot is worth the user's time (what makes it special — lean on the creators' takes), (2) why THIS day, (3) why THIS time of day — for a time-sensitive spot (sunset light, calm morning water, midday shade/heat, tide/swell, pre-crowd) this MUST name that reason, not a generic \"afternoon works\". Shown on the spot's card. Not a practical tip — tips go in note."
                 ),
               note: z
                 .string()
