@@ -7,7 +7,7 @@
  * mid-conversation, which is what makes the map feel like the agent's
  * whiteboard.
  */
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useChat } from "@ai-sdk/react";
 import {
@@ -134,14 +134,83 @@ function windowMessages(messages: UIMessage[]): UIMessage[] {
   return out.length > 0 ? out : messages.slice(-1);
 }
 
-/** Chat text with **bold** rendered (the model writes light markdown). */
+/** Inline formatting within a line: **bold** → <strong>. */
+function inline(text: string): ReactNode[] {
+  return text
+    .split(/\*\*(.+?)\*\*/g)
+    .map((p, i) => (i % 2 === 1 ? <strong key={i}>{p}</strong> : p));
+}
+
+const BULLET_RE = /^\s*[-*•]\s+(.*)$/;
+const NUMBERED_RE = /^\s*\d+[.)]\s+(.*)$/;
+
+/**
+ * Renders the model's light markdown as real blocks so replies read like a
+ * chat, not one wall of text: blank lines separate paragraphs, and runs of
+ * "- "/"1. " lines become <ul>/<ol>. The vertical rhythm is what gives the
+ * panel its breathing space — a full markdown library isn't worth the weight
+ * for the handful of constructs the persona actually writes.
+ */
 function FormattedText({ text }: { text: string }) {
-  const parts = text.split(/\*\*(.+?)\*\*/g);
-  return (
-    <>
-      {parts.map((p, i) => (i % 2 === 1 ? <strong key={i}>{p}</strong> : p))}
-    </>
-  );
+  const lines = text.replace(/\r\n/g, "\n").split("\n");
+  const blocks: ReactNode[] = [];
+  let para: string[] = [];
+  let list: { ordered: boolean; items: string[] } | null = null;
+
+  const flushPara = () => {
+    if (!para.length) return;
+    const lines = para;
+    blocks.push(
+      <p key={blocks.length}>
+        {lines.map((l, i) => (
+          <span key={i}>
+            {i > 0 && <br />}
+            {inline(l)}
+          </span>
+        ))}
+      </p>
+    );
+    para = [];
+  };
+  const flushList = () => {
+    if (!list) return;
+    const { ordered, items } = list;
+    const children = items.map((it, i) => <li key={i}>{inline(it)}</li>);
+    blocks.push(
+      ordered ? (
+        <ol key={blocks.length}>{children}</ol>
+      ) : (
+        <ul key={blocks.length}>{children}</ul>
+      )
+    );
+    list = null;
+  };
+
+  for (const line of lines) {
+    if (!line.trim()) {
+      flushPara();
+      flushList();
+      continue;
+    }
+    const bullet = line.match(BULLET_RE);
+    const numbered = bullet ? null : line.match(NUMBERED_RE);
+    if (bullet || numbered) {
+      flushPara();
+      const ordered = Boolean(numbered);
+      if (!list || list.ordered !== ordered) {
+        flushList();
+        list = { ordered, items: [] };
+      }
+      list.items.push((bullet ?? numbered)![1]);
+    } else {
+      flushList();
+      para.push(line);
+    }
+  }
+  flushPara();
+  flushList();
+
+  return <>{blocks}</>;
 }
 
 // Module scope so the request-time callback reads the ref outside render
@@ -430,10 +499,18 @@ export default function PlannerChat({
                   const days = input?.days ?? [];
                   const stops = days.reduce((n, d) => n + (d.stops?.length ?? 0), 0);
                   return (
-                    <div key={i} className="pm-tool done">
-                      🗺️ Updated your plan — {days.length} day
-                      {days.length === 1 ? "" : "s"}, {stops} stop
-                      {stops === 1 ? "" : "s"}. See the day filters on the map.
+                    <div key={i} className="pm-event">
+                      <span className="pm-event-icon" aria-hidden="true">
+                        ✓
+                      </span>
+                      <div className="pm-event-body">
+                        <div className="pm-event-title">Plan updated</div>
+                        <div className="pm-event-meta">
+                          {days.length} day{days.length === 1 ? "" : "s"} ·{" "}
+                          {stops} stop{stops === 1 ? "" : "s"} · see the day
+                          filters on the map
+                        </div>
+                      </div>
                     </div>
                   );
                 }

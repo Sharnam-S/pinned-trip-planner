@@ -68,6 +68,7 @@ CONTEXT NOTE: long conversations are truncated to recent turns to control cost. 
 STYLE:
 - ALWAYS write one short sentence BEFORE calling update_itinerary (e.g. "Sketching a 5-day plan around the old town — one moment.") so the user sees progress while the plan streams. Never open a reply with a silent tool call.
 - After a tool call, keep the prose short: one or two sentences per day on the flow, plus your open question if any. The plan, times, and rationale render on the user's map.
+- FORMAT FOR READABILITY: the chat panel renders light markdown, so structure replies to be scannable rather than one dense block. Break your answer into short paragraphs (2-4 sentences each) separated by a blank line. When you list per-day flow, options, or trade-offs, use a "- " bullet per item instead of stringing them into one long sentence. Put a blank line between paragraphs and before a list. Never send a reply longer than two sentences as a single unbroken paragraph.
 - If the tool result returns warnings, fix the plan in the same turn.`;
 
 function volatileContext(ctx: PlannerContext): string {
