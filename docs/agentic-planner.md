@@ -287,6 +287,20 @@ dropping oldest history first (system prefix + recent turns kept, a
 `[N older message(s) omitted]` breadcrumb inserted). Without this, a long
 session would vanish from analytics entirely (worse than a blank field).
 
+**Deliver the capture with `after()`, not fire-and-forget.** Symptom that
+exposed this: a completed post-tool-call summary turn streamed to the user but
+was **missing from its trace**. Cause: the capture ran as `void
+captureGeneration(...)` in `onEnd` — the `await posthog.flush()` inside it can't
+help once the *route* doesn't await it, because a serverless function can freeze
+the instant the response stream closes and drop the detached flush. The
+**trailing** turn is most exposed (nothing keeps the function warm after it).
+Fix: a barrier promise resolved by the lifecycle callback, awaited via Next's
+`after()` (`next/server`) — it keeps the function alive past the response and
+runs even on error/abort. Also added an **`onAbort`** path (fires on client
+disconnect or the §5.1 maxDuration timeout — neither onEnd nor onError fire):
+logs partial text + best-effort step-usage tokens, flagged `aborted: true` with
+`$ai_http_status: 499`, so a killed turn is visible instead of silently gone.
+
 **Trace = one sitting, generation = one API call, group by tripId.**
 `$ai_trace_id` (= the client-minted `traceId`, a `useRef` UUID in
 `PlannerChat` — renamed from the misleading `chatSessionId`) groups every

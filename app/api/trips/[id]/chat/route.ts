@@ -5,7 +5,7 @@
  * (update_itinerary writes localStorage; get_travel_times has the coords).
  * This route just runs the model and streams back text + tool calls.
  */
-import { NextRequest } from "next/server";
+import { NextRequest, after } from "next/server";
 import { anthropic } from "@ai-sdk/anthropic";
 import {
   convertToModelMessages,
@@ -223,6 +223,9 @@ async function captureGeneration(opts: {
   reasoning?: string;
   toolCalls?: { name: string; args: unknown }[];
   error?: unknown;
+  /** Turn was cut off (client disconnect or the Vercel maxDuration timeout).
+   *  Tokens/text are partial. */
+  aborted?: boolean;
 }) {
   if (!posthog) return;
   try {
@@ -281,7 +284,9 @@ async function captureGeneration(opts: {
           },
         ],
         $ai_latency: opts.latencySec,
-        $ai_http_status: opts.error ? 500 : 200,
+        // 499 = client closed request (aborted/timed-out turn); 500 = error.
+        $ai_http_status: opts.error ? 500 : opts.aborted ? 499 : 200,
+        ...(opts.aborted ? { aborted: true } : {}),
         $ai_trace_id: opts.traceId,
         // Trace = one sitting; session = the whole trip's conversation across
         // sittings/reloads. One chat per trip, so tripId is the session key —
@@ -373,6 +378,17 @@ export async function POST(
     ...history,
   ];
 
+  // Telemetry must outlive the response. A serverless function can freeze the
+  // instant the stream closes, so a fire-and-forget capture in onEnd/onError
+  // races function teardown and gets dropped — which is exactly how trailing
+  // turns (e.g. a post-tool-call summary) went missing from PostHog. This
+  // barrier is resolved by whichever lifecycle callback fires (end/error/
+  // abort); `after()` below keeps the function alive until it settles.
+  let settleCapture: () => void = () => {};
+  const captureSettled = new Promise<void>((resolve) => {
+    settleCapture = resolve;
+  });
+
   const result = streamText({
     model: anthropic(MODEL),
     messages: modelMessages,
@@ -396,7 +412,7 @@ export async function POST(
       }),
     },
     onEnd: (event) => {
-      void captureGeneration({
+      captureGeneration({
         traceId,
         tripId,
         tripName: context.tripName,
@@ -412,10 +428,10 @@ export async function POST(
           name: c.toolName,
           args: c.input,
         })),
-      });
+      }).finally(settleCapture);
     },
     onError: ({ error }) => {
-      void captureGeneration({
+      captureGeneration({
         traceId,
         tripId,
         tripName: context.tripName,
@@ -423,9 +439,30 @@ export async function POST(
         input: formatInput(modelMessages),
         outputText: "",
         error,
-      });
+      }).finally(settleCapture);
+    },
+    // A turn cut off by a client disconnect or the Vercel maxDuration timeout
+    // (the §5.1 production hang) fires neither onEnd nor onError — without this
+    // the turn vanishes from analytics. Log the partial output + best-effort
+    // token totals from the finished steps, flagged aborted.
+    onAbort: ({ steps }) => {
+      captureGeneration({
+        traceId,
+        tripId,
+        tripName: context.tripName,
+        latencySec: (Date.now() - start) / 1000,
+        input: formatInput(modelMessages),
+        inputTokens: steps.reduce((n, s) => n + (s.usage?.inputTokens ?? 0), 0),
+        outputTokens: steps.reduce((n, s) => n + (s.usage?.outputTokens ?? 0), 0),
+        outputText: steps.map((s) => s.text ?? "").join(""),
+        aborted: true,
+      }).finally(settleCapture);
     },
   });
+
+  // Keep the function alive past the response so the capture's PostHog flush
+  // completes. `after()` runs even when the response errored or was aborted.
+  after(() => captureSettled);
 
   return createUIMessageStreamResponse({
     stream: toUIMessageStream({
