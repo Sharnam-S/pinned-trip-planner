@@ -19,6 +19,7 @@ import {
 import { PostHog } from "posthog-node";
 import {
   AskQuestionsInputSchema,
+  FindSpotsInputSchema,
   ItineraryInputSchema,
   TravelTimesInputSchema,
   spotDigest,
@@ -55,6 +56,7 @@ PLAN IN TWO STEPS — sketch the shape first, commit the pins second:
 THE PLAN — the committed plan always goes through the update_itinerary tool:
 - Only the rough shape is described in prose; the actual plan is never prose-only. The tool replaces the whole plan, so always send every day, not just the changed one.
 - Use spot ids exactly as given. Only plan with spots from the context; local knowledge (neighborhoods, transport, opening hours) goes in themes, notes, and rationale.
+- FINDING NEW SPOTS: the context is the traveler's saved spots — you can't invent pins that aren't there. When the user asks for an area or a type of place the current spots don't cover ("more spots in Ahangama", "a spa or yoga day", "any night markets?"), and nothing on the list fits, call find_spots with the area and/or interest — it searches fresh videos and adds real pins to the map, then returns them for you to place. Say what you're doing first ("Let me pull some Ahangama spots — one sec…"), since it takes ~20-30s. Don't reach for it when existing spots already satisfy the ask, or to re-fetch something you just fetched — prefer what's on the map.
 - Starred must-sees (in context) are NON-NEGOTIABLE — every one appears in the plan. If one genuinely can't fit, say so explicitly and ask what to drop instead. Never silently skip an iconic spot: if something like the destination's most famous sight sits unassigned, flag it.
 - TIMES ARE REQUIRED: give every stop a realistic arrival time ("time", 24h) and duration ("durationMin"), accounting for travel between stops (use the "near:" distances or get_travel_times), meal breaks, and typical opening hours. The user must be able to see when their day starts, when they'll finish, and how long each stop gets.
 - RATIONALE IS REQUIRED: fill each day's "rationale" with 1-2 sentences on why these spots are grouped and ordered this way (geography, hours, energy curve). This is shown on the map when the user inspects a day — it's how you earn trust.
@@ -115,6 +117,8 @@ const GET_TRAVEL_TIMES_DESCRIPTION =
   "Estimate walking and driving/transit minutes between pairs of spots (straight-line based; good for day planning).";
 const ASK_QUESTIONS_DESCRIPTION =
   "Ask the user a few quick multiple-choice questions to gather what you need (who's going, pace, budget, a specific preference). Renders as a fast tap-through form, one question at a time — use this instead of asking in prose whenever the user is choosing between options. Their answers come back as the tool result.";
+const FIND_SPOTS_DESCRIPTION =
+  "Find NEW spots the trip doesn't have yet by searching fresh YouTube travel videos for a specific area or interest, then adding the resulting pins to the map. Call ONLY when the user wants somewhere or something the current spots don't cover (a locality like 'Ahangama', a theme like 'a spa/yoga day') — not when existing spots already fit. It's slow (~20-30s) and costs quota, so say what you're doing first. The new spots (id, name, category) come back as the tool result for you to fold into the plan.";
 
 // The available tool surface, in PostHog's $ai_tools shape. Analytics-only —
 // this rides in the telemetry event, NOT in the Anthropic request (the model
@@ -123,6 +127,7 @@ const AI_TOOLS = [
   { type: "function", function: { name: "update_itinerary", description: UPDATE_ITINERARY_DESCRIPTION } },
   { type: "function", function: { name: "get_travel_times", description: GET_TRAVEL_TIMES_DESCRIPTION } },
   { type: "function", function: { name: "ask_questions", description: ASK_QUESTIONS_DESCRIPTION } },
+  { type: "function", function: { name: "find_spots", description: FIND_SPOTS_DESCRIPTION } },
 ];
 
 // --- PostHog $ai_generation, mirroring lib/llm.ts (which wraps the raw
@@ -423,6 +428,12 @@ export async function POST(
       ask_questions: tool({
         description: ASK_QUESTIONS_DESCRIPTION,
         inputSchema: AskQuestionsInputSchema,
+      }),
+      // Client-executed: the browser runs a scoped YouTube discovery, adds the
+      // new pins to localStorage (map re-renders), and returns the new spots.
+      find_spots: tool({
+        description: FIND_SPOTS_DESCRIPTION,
+        inputSchema: FindSpotsInputSchema,
       }),
     },
     onEnd: (event) => {

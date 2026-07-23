@@ -147,6 +147,19 @@ export const AskQuestionsInputSchema = z.object({
 
 export type AskQuestionsInput = z.infer<typeof AskQuestionsInputSchema>;
 
+export const FindSpotsInputSchema = z.object({
+  area: z
+    .string()
+    .optional()
+    .describe("A locality/neighbourhood to search within, e.g. 'Ahangama'"),
+  interest: z
+    .string()
+    .optional()
+    .describe("A theme or activity to find, e.g. 'spa, yoga' or 'street food'"),
+});
+
+export type FindSpotsInput = z.infer<typeof FindSpotsInputSchema>;
+
 const MAX_DAYS = 14;
 const MAX_STOPS_PER_DAY = 10;
 

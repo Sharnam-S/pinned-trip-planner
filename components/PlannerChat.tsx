@@ -20,6 +20,7 @@ import { listLocalTrips, readOwnedIds } from "@/lib/clientStore";
 import { spotCoverUrl } from "@/lib/photoUrl";
 import {
   AskQuestionsInput,
+  FindSpotsInput,
   ItineraryInput,
   TravelTimesInput,
   buildPlannerContext,
@@ -28,6 +29,7 @@ import {
   travelEstimate,
   validateItinerary,
 } from "@/lib/itinerary";
+import { findSpots } from "@/lib/findSpots";
 
 type PlannerQuestion = {
   id: string;
@@ -466,6 +468,12 @@ export default function PlannerChat({
     ];
   }, [trip]);
 
+  // find_spots (agent tool): live status per tool call, plus guards against
+  // re-fetching or spamming the slow, quota-costing YouTube discovery.
+  const [findProgress, setFindProgress] = useState<Record<string, string>>({});
+  const findCache = useRef<Set<string>>(new Set());
+  const findCount = useRef(0);
+
   // The transport only reads the ref at request time
   // (prepareSendMessagesRequest), never during render.
   // eslint-disable-next-line react-hooks/refs
@@ -512,6 +520,75 @@ export default function PlannerChat({
           toolCallId: toolCall.toolCallId,
           output: results,
         });
+      } else if (toolCall.toolName === "find_spots") {
+        const { area, interest } = toolCall.input as FindSpotsInput;
+        const id = toolCall.toolCallId;
+        const reply = (output: unknown) =>
+          addToolOutput({ tool: "find_spots", toolCallId: id, output });
+        if (!isLocal) {
+          reply({
+            ok: false,
+            message:
+              "Finding new spots only works on your own trips, not this sample.",
+          });
+          return;
+        }
+        const key = `${area ?? ""}|${interest ?? ""}`.trim().toLowerCase();
+        if (key && findCache.current.has(key)) {
+          reply({
+            ok: false,
+            message: "Already pulled fresh spots for that — they're on the map.",
+          });
+          return;
+        }
+        if (findCount.current >= 3) {
+          reply({
+            ok: false,
+            message:
+              "Reached the limit for fetching new spots this session — plan with what's on the map.",
+          });
+          return;
+        }
+        findCount.current += 1;
+        if (key) findCache.current.add(key);
+        const t = ctxRef.current.trip;
+        const dest =
+          t.destination?.name ??
+          t.query?.resolvedDestination ??
+          t.query?.destination ??
+          "";
+        try {
+          const res = await findSpots(
+            t.id,
+            { destination: area ? `${area}, ${dest}` : dest, interests: interest },
+            (msg) => setFindProgress((p) => ({ ...p, [id]: msg }))
+          );
+          reply(
+            res.added > 0
+              ? {
+                  ok: true,
+                  added: res.added,
+                  spots: res.spots,
+                  message: `Added ${res.added} spot${
+                    res.added === 1 ? "" : "s"
+                  }${area ? ` around ${area}` : ""}.`,
+                }
+              : {
+                  ok: false,
+                  message: `Couldn't find good new spots${
+                    area ? ` for ${area}` : ""
+                  } — want me to plan with what's on the map?`,
+                }
+          );
+        } catch {
+          // Let the model retry a hard failure — don't cache the miss.
+          if (key) findCache.current.delete(key);
+          reply({
+            ok: false,
+            message:
+              "That spot search hit a snag — let's plan with existing spots, or try again.",
+          });
+        }
       }
     },
   });
@@ -769,6 +846,43 @@ export default function PlannerChat({
                 return (
                   <div key={i} className="pm-tool working">
                     ✍️ Preparing a few quick questions…
+                  </div>
+                );
+              }
+              if (part.type === "tool-find_spots") {
+                if (part.state === "output-available") {
+                  const out = part.output as
+                    | { ok?: boolean; added?: number; message?: string }
+                    | undefined;
+                  return out?.ok ? (
+                    <div key={i} className="pm-event">
+                      <span className="pm-event-icon" aria-hidden="true">
+                        ✓
+                      </span>
+                      <div className="pm-event-body">
+                        <div className="pm-event-title">
+                          Added {out.added} new spot
+                          {out.added === 1 ? "" : "s"}
+                        </div>
+                        <div className="pm-event-meta">now on your map</div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div key={i} className="pm-tool">
+                      🔎 {out?.message ?? "No new spots found"}
+                    </div>
+                  );
+                }
+                if (part.state === "output-error") {
+                  return (
+                    <div key={i} className="pm-tool error">
+                      Spot search failed
+                    </div>
+                  );
+                }
+                return (
+                  <div key={i} className="pm-tool working">
+                    🔎 {findProgress[part.toolCallId] ?? "Finding more spots…"}
                   </div>
                 );
               }
