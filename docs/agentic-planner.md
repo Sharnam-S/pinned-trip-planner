@@ -50,6 +50,18 @@ category filter if it would hide the picked result. Map fly-to is a
 one-shot `flyTo={lat,lng,zoom,key}` prop on `TripMap`; bumping `key`
 re-fires. See `map-search` / `pins-filters` in `TripView.tsx` + globals.css.)
 
+(2026-07-23b, follow-up feedback: (1) **search now covers the real map**,
+not just our spots. `GET /api/geocode` proxies OSM Nominatim (UA set
+server-side, edge-cached, viewbox-biased to the trip); the dropdown shows
+two groups — "Pinned in this trip" (our YouTube spots, 📍-tagged, and they
+pulse on the map as you type via `searchMatchIds` → `.pin-pill.search-match`)
+and "Places on the map". Picking a place drops a transient `searchMarker`
+and fits its bbox (`flyTo.bounds` → `flyToBounds`) so nearby pins come into
+view. (2) The pins-rail filters were too heavy always-open, so they now
+**collapse to a `pf-toggle` button** that fans open (`pins-filters.open`).
+(3) Removed the category badge (`tile-cat`) from grid photos — name + photo
+are self-explanatory.)
+
 **Core principle: the itinerary is a data object, not chat prose.** The
 agent edits it via one tool (`update_itinerary`, full replace); the map,
 day briefs, and spot cards all render that same object. The chat is a
