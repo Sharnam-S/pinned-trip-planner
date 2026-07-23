@@ -80,7 +80,6 @@ function QuestionFlow({
   const q = questions[step];
   const chosen = picks[q.id] ?? [];
   const typed = other[q.id] ?? "";
-  const answered = chosen.length > 0 || typed.trim().length > 0;
   const isLast = step === questions.length - 1;
 
   function toggle(opt: string) {
@@ -103,6 +102,10 @@ function QuestionFlow({
     } else {
       setStep((s) => s + 1);
     }
+  }
+
+  function back() {
+    setStep((s) => Math.max(0, s - 1));
   }
 
   return (
@@ -135,10 +138,30 @@ function QuestionFlow({
           }
         />
       )}
-      <div className="pm-qa-actions">
-        <button type="button" className="pm-qa-next" onClick={advance}>
-          {answered ? (isLast ? submitLabel : "Next →") : "Skip →"}
+      <div className="pm-qa-nav">
+        <button
+          type="button"
+          className="pm-qa-arrow"
+          onClick={back}
+          disabled={step === 0}
+          aria-label="Previous question"
+        >
+          ←
         </button>
+        {isLast ? (
+          <button type="button" className="pm-qa-next" onClick={advance}>
+            {submitLabel}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="pm-qa-arrow next"
+            onClick={advance}
+            aria-label="Next question"
+          >
+            →
+          </button>
+        )}
       </div>
     </div>
   );
@@ -599,10 +622,12 @@ export default function PlannerChat({
               </button>
             </div>
           ) : !itinerary ? (
-            <div className="planner-intro">
-              <p>
-                {`I know these ${trip.spots.length} spots well — a few quick questions and I'll sketch your days.`}
-              </p>
+            <div className="pm pm-assistant pm-intake">
+              <div className="pm-text">
+                <p>
+                  {`I know these ${trip.spots.length} spots inside out. Tell me a few quick things and I'll sketch your days.`}
+                </p>
+              </div>
               <QuestionFlow
                 questions={intakeQuestions}
                 submitLabel="Plan my trip →"
