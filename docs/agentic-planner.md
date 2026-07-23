@@ -22,13 +22,13 @@ rationale on the spot cards.
 ```
 ┌──────────────┬────────────────────────────┬────────────────────┐
 │ Trip head    │  Map, center stage         │ Tabs: Pins │ Trip  │
-│ (name, meta, │  · day chips → day brief   │ overview.  Pins =  │
-│ videos ▾)    │  · numbered day pins       │ detail card / 2-col│
-│──────────────│  · route polylines         │ viewport grid.     │
-│ Planner chat │  · mini photo popup on     │ Overview = numbered│
-│ (open by     │    pin click               │ timeline of expand-│
-│ default)     │  (category filters live    │ able day cards     │
-│              │   in the top bar)          │ (+ empty state)    │
+│ (name, meta, │  · search box (fly-to) in  │ overview.  Pins =  │
+│ videos ▾)    │    the top bar             │ detail card / 2-col│
+│──────────────│  · day chips → day brief   │ viewport grid, with│
+│ Planner chat │  · numbered day pins       │ category filter    │
+│ (open by     │  · route polylines         │ chips above it.    │
+│ default)     │  · mini photo popup on     │ Overview = numbered│
+│              │    pin click               │ timeline (+ empty).│
 └──────────────┴────────────────────────────┴────────────────────┘
 ```
 (Redesigned 2026-07-19 to a Rentizy-style map-center layout — selection
@@ -40,6 +40,15 @@ grayscale CARTO Positron tiles, Poppins. The chat has no close button:
 one trip, one always-open conversation. The map's day-brief opens only
 from the map's own chips; the overview's expanded cards are the
 right-rail equivalent.)
+
+(2026-07-23: the map top bar now holds a Google-Maps-style **search box**
+instead of the Filters pill — typing matches spots by name/category and
+picking a result flies the map there + opens the detail. Category filter
+chips moved to the pins rail, right above the grid, where testers
+instinctively looked for them. Search spans all spots and clears an active
+category filter if it would hide the picked result. Map fly-to is a
+one-shot `flyTo={lat,lng,zoom,key}` prop on `TripMap`; bumping `key`
+re-fires. See `map-search` / `pins-filters` in `TripView.tsx` + globals.css.)
 
 **Core principle: the itinerary is a data object, not chat prose.** The
 agent edits it via one tool (`update_itinerary`, full replace); the map,

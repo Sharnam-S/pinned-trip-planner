@@ -1285,147 +1285,131 @@ button {
    A frosted glass pill that fans open into the full list of category chips.
    Picking one applies it and collapses the tray again. Anchored top-left of
    the map frame, matching the pins' glass language. */
-.map-filters {
+/* Google-Maps-style search over the map: a glass search box top-left that
+   drops a results list. Sits where the old Filters pill lived. */
+.map-search {
   position: absolute;
   top: 14px;
   left: 14px;
-  right: 14px;
   z-index: 1000;
+  width: min(360px, calc(100% - 28px));
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   gap: 8px;
-  /* Let the map handle drags through the container's empty gaps; the
-     interactive bits opt back in. */
-  pointer-events: none;
-}
-.map-filters > * {
-  pointer-events: auto;
 }
 
-.mf-toggle {
-  display: inline-flex;
+.ms-box {
+  display: flex;
   align-items: center;
-  gap: 7px;
-  background: rgba(255, 255, 255, 0.7);
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: var(--radius-chip);
-  padding: 7px 14px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--text);
-  cursor: pointer;
+  padding: 9px 12px;
   box-shadow: 0 1px 2px rgba(16, 17, 26, 0.06), 0 4px 14px rgba(16, 17, 26, 0.1);
-  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease,
-    color 0.15s ease;
+  transition: box-shadow 0.15s ease, background 0.15s ease;
 }
-.mf-toggle:hover {
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 2px 6px rgba(16, 17, 26, 0.08), 0 6px 18px rgba(16, 17, 26, 0.12);
-  transform: translateY(-1px);
+.ms-box:focus-within {
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 2px 6px rgba(16, 17, 26, 0.08), 0 8px 22px rgba(16, 17, 26, 0.14);
 }
-/* Active (a filter is applied) — the ink pill, same accent as a selected chip */
-.mf-toggle.active {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: #fff;
-  box-shadow: 0 3px 12px rgba(16, 17, 26, 0.3);
+.ms-icon {
+  flex-shrink: 0;
+  color: var(--text-soft);
 }
-.mf-funnel {
-  transition: transform 0.28s cubic-bezier(0.32, 0.72, 0.25, 1);
+.ms-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text);
 }
-.mf-toggle.open .mf-funnel {
-  transform: rotate(180deg);
+.ms-input::placeholder {
+  color: var(--text-soft);
+  font-weight: 500;
 }
-.mf-count {
+.ms-clear {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.28);
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(16, 17, 26, 0.08);
+  color: var(--text-soft);
   font-size: 11px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.ms-clear:hover {
+  background: rgba(16, 17, 26, 0.16);
+  color: var(--text);
 }
 
-/* The chip tray fans down under the toggle; collapsed it clips to nothing. */
-.mf-tray {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  max-width: 100%;
-  max-height: 0;
-  opacity: 0;
-  transform: translateY(-6px);
-  overflow: hidden;
-  transition: max-height 0.32s cubic-bezier(0.32, 0.72, 0.25, 1),
-    opacity 0.22s ease, transform 0.28s cubic-bezier(0.32, 0.72, 0.25, 1);
-}
-.map-filters.open .mf-tray {
-  max-height: 60vh;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.mf-chip,
-.mf-clear {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: rgba(255, 255, 255, 0.72);
+/* Results dropdown — a floating white card of matches. */
+.ms-results {
+  background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: var(--radius-chip);
-  padding: 6px 12px;
-  font-size: 12.5px;
+  border-radius: 16px;
+  padding: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+  box-shadow: 0 2px 6px rgba(16, 17, 26, 0.08), 0 12px 30px rgba(16, 17, 26, 0.16);
+}
+.ms-result {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 10px;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.ms-result:hover {
+  background: rgba(16, 17, 26, 0.05);
+}
+.ms-result-emoji {
+  flex-shrink: 0;
+  font-size: 16px;
+  line-height: 1;
+}
+.ms-result-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.ms-result-name {
+  font-size: 13.5px;
   font-weight: 600;
   color: var(--text);
-  cursor: pointer;
   white-space: nowrap;
-  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.06), 0 4px 14px rgba(16, 17, 26, 0.1);
-  /* Fan-in: each chip lifts + fades, staggered by an inline transition-delay */
-  opacity: 0;
-  transform: translateY(-8px) scale(0.94);
-  transition: background 0.15s ease, box-shadow 0.15s ease, color 0.15s ease,
-    opacity 0.22s ease, transform 0.28s cubic-bezier(0.32, 0.72, 0.25, 1);
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.mf-chip {
+.ms-result-sub {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-soft);
   text-transform: capitalize;
 }
-.map-filters.open .mf-chip,
-.map-filters.open .mf-clear {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-.mf-chip:hover,
-.mf-clear:hover {
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 2px 6px rgba(16, 17, 26, 0.08), 0 6px 18px rgba(16, 17, 26, 0.12);
-}
-.mf-chip.on {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: #fff;
-  box-shadow: 0 3px 12px rgba(16, 17, 26, 0.3);
-}
-.mf-emoji {
-  font-size: 12px;
-}
-.mf-n {
-  font-weight: 500;
-  opacity: 0.55;
-  font-variant-numeric: tabular-nums;
-}
-.mf-chip.on .mf-n {
-  opacity: 0.7;
-}
-.mf-clear {
+.ms-empty {
+  padding: 12px 10px;
+  font-size: 13px;
   color: var(--text-soft);
 }
 
@@ -1450,17 +1434,6 @@ button {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .mf-chip,
-  .mf-clear,
-  .mf-tray,
-  .mf-funnel {
-    transition: opacity 0.15s ease;
-    transform: none !important;
-    transition-delay: 0ms !important;
-  }
 }
 
 /* Cards + map split below the header; both start at the same height */
@@ -1581,6 +1554,58 @@ button {
 }
 
 /* Spot tiles — Airbnb listing-card grid */
+/* Category filters, now living in the pins rail right above the grid. */
+.pins-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 18px;
+}
+.pf-chip,
+.pf-clear {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-chip);
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.pf-chip {
+  text-transform: capitalize;
+}
+.pf-chip:hover,
+.pf-clear:hover {
+  border-color: var(--ink);
+}
+.pf-chip.on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(16, 17, 26, 0.22);
+}
+.pf-emoji {
+  font-size: 12px;
+}
+.pf-n {
+  font-weight: 500;
+  opacity: 0.55;
+  font-variant-numeric: tabular-nums;
+}
+.pf-chip.on .pf-n {
+  opacity: 0.7;
+}
+.pf-clear {
+  color: var(--text-soft);
+}
+
 .spot-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

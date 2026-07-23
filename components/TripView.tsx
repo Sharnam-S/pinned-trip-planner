@@ -483,9 +483,19 @@ export default function TripView({
   // any store subscription fires (sample trips have none).
   const [itineraryOverride, setItineraryOverride] = useState<Itinerary | null>(null);
   const [activeDay, setActiveDay] = useState<PlanRender["activeDay"]>("all");
-  // The map's category filter is a collapsed glass pill that fans open into
-  // the full list of category chips; picking one applies it and collapses.
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  // Map search: type a place and the map flies to it (Google-Maps style). The
+  // category filter now lives in the right rail alongside the pins.
+  const [searchQuery, setSearchQuery] = useState("");
+  // Whether the search results dropdown is showing (focused with a query).
+  const [searchOpen, setSearchOpen] = useState(false);
+  // A one-shot fly-to command for the map. Bumping `key` re-triggers the fly
+  // even to the same coords (search the same place twice → it re-centers).
+  const [flyTo, setFlyTo] = useState<{
+    lat: number;
+    lng: number;
+    zoom: number;
+    key: number;
+  } | null>(null);
   // Right rail: "pins" (viewport grid / spot detail) or the day-by-day
   // itinerary timeline. Selecting any spot flips back to pins. The itinerary
   // tab (and the whole segmented control) only appears once a plan exists.
@@ -718,6 +728,44 @@ export default function TripView({
       )
     : sortedSpots;
 
+  // Map search matches across ALL spots (not just the filtered/in-view set) so
+  // it can find any place — the whole point is jumping to something you can't
+  // see. Name matches first, then category matches, capped to keep the
+  // dropdown glanceable.
+  const searchResults = (() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+    return trip.spots
+      .filter(
+        (s) =>
+          s.name.toLowerCase().includes(q) || s.category.toLowerCase().includes(q)
+      )
+      .sort((a, b) => {
+        const an = a.name.toLowerCase().startsWith(q) ? 0 : 1;
+        const bn = b.name.toLowerCase().startsWith(q) ? 0 : 1;
+        return an - bn || b.mentions.length - a.mentions.length;
+      })
+      .slice(0, 8);
+  })();
+
+  // Picking a search result flies the map to that spot and opens its detail.
+  // If a category filter would hide it, clear the filter so the pin is there
+  // when we arrive — search overrides filtering, like Google Maps.
+  const goToSearchResult = (spot: Spot) => {
+    if (activeCats.length > 0 && !activeCats.includes(spot.category)) {
+      setActiveCats([]);
+    }
+    setFlyTo((prev) => ({
+      lat: spot.lat,
+      lng: spot.lng,
+      zoom: 14,
+      key: (prev?.key ?? 0) + 1,
+    }));
+    selectSpot(spot.id);
+    setSearchQuery(spot.name);
+    setSearchOpen(false);
+  };
+
   // Resolve the itinerary to drawable days (skip ids that no longer exist).
   const spotById = new Map(trip.spots.map((s) => [s.id, s]));
   const planRender: PlanRender | null =
@@ -801,7 +849,7 @@ export default function TripView({
       onClick={() => {
         setPinnedVideoId(null);
         setVideosOpen(false);
-        setFiltersOpen(false);
+        setSearchOpen(false);
       }}
     >
       <div className="trip-body" ref={bodyRef}>
@@ -890,84 +938,95 @@ export default function TripView({
               }
               onSelect={selectSpot}
               onBoundsChange={setBounds}
+              flyTo={flyTo}
             />
-            {/* Category filter lives over the map now — a glass pill that fans
-                open into the full list of categories. Picking one applies it
-                and collapses the tray. */}
-            {catCounts.length > 1 && (
-              <div
-                className={`map-filters ${filtersOpen ? "open" : ""}`}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <button
-                  className={`mf-toggle ${activeCats.length > 0 ? "active" : ""} ${
-                    filtersOpen ? "open" : ""
-                  }`}
-                  aria-expanded={filtersOpen}
-                  onClick={() => setFiltersOpen((o) => !o)}
+            {/* Search lives over the map now — type a place and the map flies
+                to it, like Google Maps. Category filters moved to the pins rail. */}
+            <div
+              className={`map-search ${searchOpen && searchResults.length > 0 ? "open" : ""}`}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="ms-box">
+                <svg
+                  className="ms-icon"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden="true"
                 >
-                  <svg
-                    className="mf-funnel"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    aria-hidden="true"
+                  <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.6" />
+                  <path
+                    d="M11 11l3.5 3.5"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <input
+                  className="ms-input"
+                  type="text"
+                  placeholder="Search places on the map…"
+                  value={searchQuery}
+                  aria-label="Search places on the map"
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setSearchOpen(true);
+                  }}
+                  onFocus={() => setSearchOpen(true)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && searchResults.length > 0) {
+                      goToSearchResult(searchResults[0]);
+                    } else if (e.key === "Escape") {
+                      setSearchOpen(false);
+                      (e.target as HTMLInputElement).blur();
+                    }
+                  }}
+                />
+                {searchQuery && (
+                  <button
+                    className="ms-clear"
+                    aria-label="Clear search"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setSearchOpen(false);
+                    }}
                   >
-                    <path
-                      d="M1.5 3h13L9.5 8.5V13L6.5 14.5V8.5L1.5 3Z"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <span>Filters</span>
-                  {activeCats.length > 0 && (
-                    <span className="mf-count">{activeCats.length}</span>
-                  )}
-                </button>
-                <div className="mf-tray" inert={!filtersOpen}>
-                  {catCounts.map(([cat, n], i) => {
-                    const on = activeCats.includes(cat);
-                    return (
+                    ✕
+                  </button>
+                )}
+              </div>
+              {searchOpen && searchQuery.trim() && (
+                <div className="ms-results">
+                  {searchResults.length === 0 ? (
+                    <div className="ms-empty">No places match “{searchQuery}”</div>
+                  ) : (
+                    searchResults.map((spot) => (
                       <button
-                        key={cat}
-                        className={`mf-chip ${on ? "on" : ""}`}
-                        style={{
-                          transitionDelay: filtersOpen ? `${i * 22}ms` : "0ms",
-                        }}
-                        onClick={() =>
-                          // Stay open so several categories can be picked; the
-                          // tray only closes on a toggle re-click / outside click.
-                          setActiveCats((prev) =>
-                            prev.includes(cat)
-                              ? prev.filter((c) => c !== cat)
-                              : [...prev, cat]
-                          )
-                        }
+                        key={spot.id}
+                        className="ms-result"
+                        onClick={() => goToSearchResult(spot)}
                       >
-                        <span className="mf-emoji">{CATEGORY_EMOJI[cat]}</span>
-                        <span className="mf-label">{cat}</span>
-                        <span className="mf-n">{n}</span>
+                        <span className="ms-result-emoji">
+                          {CATEGORY_EMOJI[spot.category]}
+                        </span>
+                        <span className="ms-result-text">
+                          <span className="ms-result-name">{spot.name}</span>
+                          <span className="ms-result-sub">
+                            {spot.category}
+                            {spot.mentions.length > 0
+                              ? ` · ${spot.mentions.length} creator${
+                                  spot.mentions.length === 1 ? "" : "s"
+                                }`
+                              : ""}
+                          </span>
+                        </span>
                       </button>
-                    );
-                  })}
-                  {activeCats.length > 0 && (
-                    <button
-                      className="mf-clear"
-                      style={{
-                        transitionDelay: filtersOpen
-                          ? `${catCounts.length * 22}ms`
-                          : "0ms",
-                      }}
-                      onClick={() => setActiveCats([])}
-                    >
-                      Clear
-                    </button>
+                    ))
                   )}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
             {trip.status === "processing" && (
               <div className="map-progress">⚙️ {trip.progress}</div>
             )}
@@ -1041,36 +1100,76 @@ export default function TripView({
                 setRightTab(spotOrigin);
               }}
             />
-          ) : visibleSpots.length === 0 ? (
-            <div className="empty-area">
-              No spots in this part of the map — zoom out or pan around to see
-              more.
-            </div>
           ) : (
-            <div className="spot-grid">
-              {visibleSpots.map((spot) => (
-                <button
-                  key={spot.id}
-                  className={`spot-tile ${
-                    selectedId === spot.id ? "selected" : ""
-                  }`}
-                  onClick={() => selectSpot(spot.id)}
-                >
-                  <TilePhotos
-                    spot={spot}
-                    tripId={trip.id}
-                    local={isLocal === true}
-                  />
-                  <div className="tile-meta">
-                    <div className="tile-name">{spot.name}</div>
-                    <div className="tile-sub">
-                      {spot.mentions.length === 1
-                        ? spot.mentions[0].channelName
-                        : `${spot.mentions.length} creators recommend`}
-                    </div>
-                  </div>
-                </button>
-              ))}
+            <div className="pins-view">
+              {/* Category filters live here now — beside the pins they filter,
+                  where people instinctively look for them. Multi-select; empty
+                  = show everything. */}
+              {catCounts.length > 1 && (
+                <div className="pins-filters">
+                  {catCounts.map(([cat, n]) => {
+                    const on = activeCats.includes(cat);
+                    return (
+                      <button
+                        key={cat}
+                        className={`pf-chip ${on ? "on" : ""}`}
+                        aria-pressed={on}
+                        onClick={() =>
+                          setActiveCats((prev) =>
+                            prev.includes(cat)
+                              ? prev.filter((c) => c !== cat)
+                              : [...prev, cat]
+                          )
+                        }
+                      >
+                        <span className="pf-emoji">{CATEGORY_EMOJI[cat]}</span>
+                        <span className="pf-label">{cat}</span>
+                        <span className="pf-n">{n}</span>
+                      </button>
+                    );
+                  })}
+                  {activeCats.length > 0 && (
+                    <button
+                      className="pf-clear"
+                      onClick={() => setActiveCats([])}
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+              )}
+              {visibleSpots.length === 0 ? (
+                <div className="empty-area">
+                  No spots in this part of the map — zoom out or pan around to
+                  see more.
+                </div>
+              ) : (
+                <div className="spot-grid">
+                  {visibleSpots.map((spot) => (
+                    <button
+                      key={spot.id}
+                      className={`spot-tile ${
+                        selectedId === spot.id ? "selected" : ""
+                      }`}
+                      onClick={() => selectSpot(spot.id)}
+                    >
+                      <TilePhotos
+                        spot={spot}
+                        tripId={trip.id}
+                        local={isLocal === true}
+                      />
+                      <div className="tile-meta">
+                        <div className="tile-name">{spot.name}</div>
+                        <div className="tile-sub">
+                          {spot.mentions.length === 1
+                            ? spot.mentions[0].channelName
+                            : `${spot.mentions.length} creators recommend`}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </aside>

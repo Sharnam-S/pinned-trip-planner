@@ -111,6 +111,9 @@ interface Props {
   /** null = clicked the map background (deselect). */
   onSelect: (id: string | null) => void;
   onBoundsChange?: (bounds: MapBounds) => void;
+  /** One-shot fly-to from the search box. `key` bumps to re-fire even to the
+   *  same coords; the map animates to (lat, lng) at `zoom`. */
+  flyTo?: { lat: number; lng: number; zoom: number; key: number } | null;
 }
 
 export default function TripMap({
@@ -125,6 +128,7 @@ export default function TripMap({
   popupSpot = null,
   onSelect,
   onBoundsChange,
+  flyTo = null,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -422,6 +426,17 @@ export default function TripMap({
     const spot = spots.find((s) => s.id === selectedId);
     if (spot) map.panTo([spot.lat, spot.lng], { animate: true });
   }, [selectedId, spots]);
+
+  // Fly to a searched place. Runs after the pan-to-selected effect so, when a
+  // search result sets both selection and fly-to in the same commit, the zoom
+  // wins. `key` (not the coords) is the trigger — searching the same place
+  // twice re-centers it.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !flyTo) return;
+    map.flyTo([flyTo.lat, flyTo.lng], flyTo.zoom, { animate: true, duration: 0.6 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flyTo?.key]);
 
   // Mini photo popup on the selected spot — the detail card is in the page's
   // right rail, so the map just shows a glanceable photo + name.
