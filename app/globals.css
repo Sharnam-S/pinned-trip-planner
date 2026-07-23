@@ -4582,7 +4582,7 @@ button {
   border: none;
   border-radius: 12px;
   padding: 9px 16px;
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 550;
   letter-spacing: -0.005em;
   white-space: nowrap;
@@ -4619,8 +4619,8 @@ button {
   text-align: left;
   padding: 8px 10px;
   border-radius: 8px;
-  font-size: 13.5px;
-  font-weight: 480;
+  font-size: 14px;
+  font-weight: 450;
   color: #3f3f46;
   transition: background 0.12s, color 0.12s;
 }
@@ -4648,7 +4648,7 @@ button {
 .dx-badge {
   margin-left: auto;
   font-size: 12px;
-  font-weight: 480;
+  font-weight: 400;
   color: #a1a1aa;
   font-variant-numeric: tabular-nums;
 }
@@ -4697,7 +4697,7 @@ button {
 }
 
 .dx-account-email {
-  font-size: 11.5px;
+  font-size: 12px;
   color: #a1a1aa;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4711,8 +4711,8 @@ button {
   text-align: left;
   padding: 7px 10px;
   border-radius: 8px;
-  font-size: 12.5px;
-  font-weight: 480;
+  font-size: 13px;
+  font-weight: 400;
   color: #71717a;
   transition: background 0.12s, color 0.12s;
 }
@@ -4738,8 +4738,8 @@ button {
 
 .dx-head-sub {
   margin-top: 4px;
-  font-size: 13.5px;
-  font-weight: 430;
+  font-size: 14px;
+  font-weight: 400;
   color: #71717a;
 }
 
@@ -4760,7 +4760,7 @@ button {
 
 .dx-stat-n {
   font-size: 24px;
-  font-weight: 620;
+  font-weight: 600;
   letter-spacing: -0.015em;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
@@ -4768,10 +4768,10 @@ button {
 
 .dx-stat-label {
   margin-top: 6px;
-  font-size: 10.5px;
-  font-weight: 570;
+  font-size: 11px;
+  font-weight: 550;
   text-transform: uppercase;
-  letter-spacing: 0.075em;
+  letter-spacing: 0.06em;
   color: #a1a1aa;
 }
 
@@ -4781,8 +4781,8 @@ button {
   margin-top: 12px;
   padding-top: 11px;
   border-top: 1px solid #ececf0;
-  font-size: 12.5px;
-  font-weight: 450;
+  font-size: 13px;
+  font-weight: 400;
   color: #3f3f46;
 }
 
@@ -4800,7 +4800,7 @@ button {
 }
 
 .dx-list-head h2 {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -4833,7 +4833,7 @@ button {
   border: none;
   background: none;
   font: inherit;
-  font-size: 13px;
+  font-size: 13.5px;
   color: #18181b;
   outline: none;
   width: 100%;
@@ -4920,8 +4920,8 @@ button {
 
 .dx-card-name {
   margin-top: 10px;
-  font-size: 14.5px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 550;
   letter-spacing: -0.005em;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4931,7 +4931,7 @@ button {
 .dx-card-meta {
   margin-top: 2px;
   font-size: 13px;
-  font-weight: 430;
+  font-weight: 400;
   color: #71717a;
 }
 
@@ -4967,13 +4967,13 @@ button {
   border-radius: 12px;
   padding: 52px 24px;
   text-align: center;
-  font-size: 13.5px;
-  font-weight: 430;
+  font-size: 14px;
+  font-weight: 400;
   color: #71717a;
 }
 
 .dx-empty-title {
-  font-size: 15.5px;
+  font-size: 16px;
   font-weight: 600;
   color: #18181b;
 }
@@ -5054,7 +5054,7 @@ button {
 .dx-modal-sub {
   margin: 6px 0 18px;
   font-size: 13px;
-  font-weight: 430;
+  font-weight: 400;
   line-height: 1.55;
   color: #71717a;
 }
@@ -5079,10 +5079,10 @@ button {
 }
 
 .dx-field label {
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 550;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   color: #a1a1aa;
 }
 
@@ -5116,14 +5116,14 @@ button {
 .dx-modal-error {
   margin-top: 10px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 550;
   color: #b3352f;
 }
 
 .dx-modal-fineprint {
   margin-top: 12px;
   font-size: 12px;
-  font-weight: 430;
+  font-weight: 400;
   line-height: 1.5;
   color: #a1a1aa;
 }
