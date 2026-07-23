@@ -18,6 +18,7 @@ import {
 } from "ai";
 import { PostHog } from "posthog-node";
 import {
+  AskQuestionsInputSchema,
   ItineraryInputSchema,
   TravelTimesInputSchema,
   spotDigest,
@@ -35,13 +36,11 @@ const MODEL = "claude-sonnet-5";
 
 const PERSONA = `You are a seasoned local guide helping a traveler turn their saved spots into a day-by-day itinerary. The spots come from YouTube travel videos they researched; each has an id, category, creator mentions, and nearest-neighbor distances. Trips are how people spend their most precious money and days off — your job is to be RELIABLE and to show your reasoning, not just to be fast.
 
-INTAKE — before your first plan:
-Your first reply to a planning request is ONE compact intake message (a short bulleted list, not an interrogation spread over many turns) covering whatever the context does not already answer:
-1. Exact travel dates — even when the number of days is known, the actual dates matter (weekday museum closures, weekend crowds, seasonal hours).
-2. Where they're staying — booked already, and if so where? If not booked, offer to recommend an area once you've seen how their spots cluster.
-3. Rough budget and pace (packed vs relaxed).
-4. Must-sees — ask which spots they 100% refuse to miss. Point out 2-3 obviously iconic spots from their list they'd probably regret skipping, so they can confirm.
-Never re-ask what the trip context or starred must-sees already answer. If the user explicitly says "just plan it", draft immediately with stated assumptions.
+INTAKE — gather what you need with the ask_questions tool, never a wall of prose:
+- The user often arrives having already answered the basics (who's going, pace, budget, dates) — a quick intake form runs before you're called. If the context and their message already cover the essentials, DON'T ask again — go straight to THE SHAPE.
+- When something you genuinely need is still missing (or you need a specific choice mid-planning — e.g. which area for a free day, stay booked or not), call ask_questions with a few quick multiple-choice questions. It renders as a fast tap-through form and the answers come back to you. Use it whenever the user is choosing between options; a single open-ended clarification can be one short prose sentence.
+- Things worth asking when unknown: exact travel dates (weekday closures, weekend crowds), where they're staying (or offer to recommend an area once you've seen how spots cluster), budget + pace, and must-sees (proactively surface 2-3 obviously iconic spots they'd regret skipping).
+- Never re-ask what the trip context or starred must-sees already answer. If the user says "just plan it", go straight to a draft with stated assumptions.
 
 NEVER invent facts about the user:
 - Do not set the stay field unless the user told you where they're staying OR asked you to recommend — and a recommendation must come with rationale (which spots it's near, transit, vibe) and be clearly labeled as your suggestion they can change.
@@ -114,6 +113,8 @@ const UPDATE_ITINERARY_DESCRIPTION =
   "Replace the trip's day-by-day itinerary. Send the COMPLETE plan every time (all days), not a diff. The user sees it rendered on their map immediately.";
 const GET_TRAVEL_TIMES_DESCRIPTION =
   "Estimate walking and driving/transit minutes between pairs of spots (straight-line based; good for day planning).";
+const ASK_QUESTIONS_DESCRIPTION =
+  "Ask the user a few quick multiple-choice questions to gather what you need (who's going, pace, budget, a specific preference). Renders as a fast tap-through form, one question at a time — use this instead of asking in prose whenever the user is choosing between options. Their answers come back as the tool result.";
 
 // The available tool surface, in PostHog's $ai_tools shape. Analytics-only —
 // this rides in the telemetry event, NOT in the Anthropic request (the model
@@ -121,6 +122,7 @@ const GET_TRAVEL_TIMES_DESCRIPTION =
 const AI_TOOLS = [
   { type: "function", function: { name: "update_itinerary", description: UPDATE_ITINERARY_DESCRIPTION } },
   { type: "function", function: { name: "get_travel_times", description: GET_TRAVEL_TIMES_DESCRIPTION } },
+  { type: "function", function: { name: "ask_questions", description: ASK_QUESTIONS_DESCRIPTION } },
 ];
 
 // --- PostHog $ai_generation, mirroring lib/llm.ts (which wraps the raw
@@ -415,6 +417,12 @@ export async function POST(
       get_travel_times: tool({
         description: GET_TRAVEL_TIMES_DESCRIPTION,
         inputSchema: TravelTimesInputSchema,
+      }),
+      // Client-executed via the question UI: the browser renders the tap-through
+      // form and returns the user's answers as the tool output.
+      ask_questions: tool({
+        description: ASK_QUESTIONS_DESCRIPTION,
+        inputSchema: AskQuestionsInputSchema,
       }),
     },
     onEnd: (event) => {

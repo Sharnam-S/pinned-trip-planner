@@ -19,6 +19,7 @@ import { Itinerary, Trip } from "@/lib/types";
 import { listLocalTrips, readOwnedIds } from "@/lib/clientStore";
 import { spotCoverUrl } from "@/lib/photoUrl";
 import {
+  AskQuestionsInput,
   ItineraryInput,
   TravelTimesInput,
   buildPlannerContext,
@@ -27,6 +28,121 @@ import {
   travelEstimate,
   validateItinerary,
 } from "@/lib/itinerary";
+
+type PlannerQuestion = {
+  id: string;
+  prompt: string;
+  options: string[];
+  multiSelect?: boolean;
+  allowOther?: boolean;
+};
+
+type QuestionAnswer = { id: string; prompt: string; answer: string };
+
+/** Tap-through question form: one question at a time (series), answers collected
+ *  locally, submitted in one shot. Shared by the instant intake card and the
+ *  agent's ask_questions tool — the parent decides what onSubmit does. */
+function QuestionFlow({
+  questions,
+  submitLabel,
+  onSubmit,
+}: {
+  questions: PlannerQuestion[];
+  submitLabel: string;
+  onSubmit: (answers: QuestionAnswer[]) => void;
+}) {
+  const [step, setStep] = useState(0);
+  const [picks, setPicks] = useState<Record<string, string[]>>({});
+  const [other, setOther] = useState<Record<string, string>>({});
+  const [done, setDone] = useState(false);
+
+  const compile = (): QuestionAnswer[] =>
+    questions.map((q) => {
+      const chosen = picks[q.id] ?? [];
+      const typed = (other[q.id] ?? "").trim();
+      const answer = [...chosen, ...(typed ? [typed] : [])].join(", ");
+      return { id: q.id, prompt: q.prompt, answer: answer || "no preference" };
+    });
+
+  if (done) {
+    return (
+      <div className="pm-qa done">
+        {compile().map((a) => (
+          <div key={a.id} className="pm-qa-answered">
+            <span className="pm-qa-q">{a.prompt}</span>
+            <span className="pm-qa-a">{a.answer}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  const q = questions[step];
+  const chosen = picks[q.id] ?? [];
+  const typed = other[q.id] ?? "";
+  const answered = chosen.length > 0 || typed.trim().length > 0;
+  const isLast = step === questions.length - 1;
+
+  function toggle(opt: string) {
+    setPicks((prev) => {
+      const cur = prev[q.id] ?? [];
+      if (q.multiSelect) {
+        return {
+          ...prev,
+          [q.id]: cur.includes(opt) ? cur.filter((o) => o !== opt) : [...cur, opt],
+        };
+      }
+      return { ...prev, [q.id]: cur.includes(opt) ? [] : [opt] };
+    });
+  }
+
+  function advance() {
+    if (isLast) {
+      setDone(true);
+      onSubmit(compile());
+    } else {
+      setStep((s) => s + 1);
+    }
+  }
+
+  return (
+    <div className="pm-qa">
+      <div className="pm-qa-progress">
+        {step + 1} of {questions.length}
+      </div>
+      <div className="pm-qa-prompt">{q.prompt}</div>
+      {q.options.length > 0 && (
+        <div className="pm-qa-options">
+          {q.options.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              className={`pm-qa-chip${chosen.includes(opt) ? " on" : ""}`}
+              onClick={() => toggle(opt)}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+      {q.allowOther && (
+        <input
+          className="pm-qa-other"
+          placeholder="Something else…"
+          value={typed}
+          onChange={(e) =>
+            setOther((prev) => ({ ...prev, [q.id]: e.target.value }))
+          }
+        />
+      )}
+      <div className="pm-qa-actions">
+        <button type="button" className="pm-qa-next" onClick={advance}>
+          {answered ? (isLast ? submitLabel : "Next →") : "Skip →"}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 const SUGGESTIONS = [
   "Plan my days for me",
@@ -304,6 +420,29 @@ export default function PlannerChat({
     return mustSeeIds.filter((id) => !planned.has(id));
   }, [itinerary, mustSeeIds]);
 
+  // Instant intake — a few universal questions rendered client-side (no model
+  // round-trip). Answers compile into the first message; the agent then
+  // proposes the rough shape (route persona §PLAN IN TWO STEPS). Dates only if
+  // the trip has none set.
+  const intakeQuestions = useMemo<PlannerQuestion[]>(() => {
+    const iconic = [...trip.spots]
+      .sort((a, b) => b.mentions.length - a.mentions.length)
+      .slice(0, 3)
+      .map((s) => s.name);
+    const hasDates = Boolean(trip.query?.startDate && trip.query?.endDate);
+    return [
+      { id: "who", prompt: "Who's going?", options: ["Solo", "Couple", "Family", "Friends"], allowOther: true },
+      { id: "pace", prompt: "How packed should it be?", options: ["Relaxed", "Balanced", "Packed"], allowOther: true },
+      ...(iconic.length
+        ? [{ id: "mustsee", prompt: "Anything you must include?", options: iconic, multiSelect: true, allowOther: true }]
+        : []),
+      { id: "budget", prompt: "Budget vibe?", options: ["Backpacker", "Mid-range", "Splurge"] },
+      ...(!hasDates
+        ? [{ id: "dates", prompt: "Rough dates? (a month is fine)", options: [], allowOther: true }]
+        : []),
+    ];
+  }, [trip]);
+
   // The transport only reads the ref at request time
   // (prepareSendMessagesRequest), never during render.
   // eslint-disable-next-line react-hooks/refs
@@ -400,6 +539,21 @@ export default function PlannerChat({
     if (el) el.style.height = "auto";
   }
 
+  // Instant intake answers → one compiled first message. The agent (persona)
+  // then proposes the rough shape rather than a full pin plan.
+  function submitIntake(answers: QuestionAnswer[]) {
+    const stated = answers.filter(
+      (a) => a.answer && a.answer !== "no preference"
+    );
+    send(
+      stated.length
+        ? `Here's my trip:\n${stated
+            .map((a) => `- ${a.prompt} ${a.answer}`)
+            .join("\n")}\n\nPlan my days.`
+        : "Plan my days for me."
+    );
+  }
+
   // Grow with the content (up to ~5 lines), like any modern chat input.
   function autosize(el: HTMLTextAreaElement) {
     el.style.height = "auto";
@@ -444,10 +598,21 @@ export default function PlannerChat({
                 or test-drive me on this sample →
               </button>
             </div>
+          ) : !itinerary ? (
+            <div className="planner-intro">
+              <p>
+                {`I know these ${trip.spots.length} spots well — a few quick questions and I'll sketch your days.`}
+              </p>
+              <QuestionFlow
+                questions={intakeQuestions}
+                submitLabel="Plan my trip →"
+                onSubmit={submitIntake}
+              />
+            </div>
           ) : (
             <div className="planner-intro">
               <p>
-                {`I know these ${trip.spots.length} spots well — tell me how many days you have and I'll sketch a day-by-day plan on the map.`}
+                {`I know these ${trip.spots.length} spots well — tell me what to tweak and I'll update the plan on the map.`}
               </p>
               <div className="planner-suggestions">
                 {SUGGESTIONS.map((s) => (
@@ -534,6 +699,46 @@ export default function PlannerChat({
                 ) : (
                   <div key={i} className="pm-tool working">
                     📏 Checking travel times…
+                  </div>
+                );
+              }
+              if (part.type === "tool-ask_questions") {
+                if (part.state === "output-available") {
+                  const answers = part.output as QuestionAnswer[] | undefined;
+                  return (
+                    <div key={i} className="pm-qa done">
+                      {(answers ?? []).map((a) => (
+                        <div key={a.id} className="pm-qa-answered">
+                          <span className="pm-qa-q">{a.prompt}</span>
+                          <span className="pm-qa-a">{a.answer}</span>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                }
+                if (part.state === "input-available") {
+                  const qs =
+                    (part.input as AskQuestionsInput | undefined)?.questions ??
+                    [];
+                  if (qs.length === 0) return null;
+                  return (
+                    <QuestionFlow
+                      key={i}
+                      questions={qs}
+                      submitLabel="Send answers →"
+                      onSubmit={(answers) =>
+                        addToolOutput({
+                          tool: "ask_questions",
+                          toolCallId: part.toolCallId,
+                          output: answers,
+                        })
+                      }
+                    />
+                  );
+                }
+                return (
+                  <div key={i} className="pm-tool working">
+                    ✍️ Preparing a few quick questions…
                   </div>
                 );
               }

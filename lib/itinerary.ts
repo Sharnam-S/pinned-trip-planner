@@ -118,6 +118,35 @@ export const TravelTimesInputSchema = z.object({
 
 export type TravelTimesInput = z.infer<typeof TravelTimesInputSchema>;
 
+export const AskQuestionsInputSchema = z.object({
+  questions: z
+    .array(
+      z.object({
+        id: z.string().describe("Short stable id, e.g. 'pace' or 'who'"),
+        prompt: z.string().describe("The question, one short line"),
+        options: z
+          .array(z.string())
+          .describe(
+            "2-6 concrete choices shown as tappable chips. Empty array = free-text only."
+          ),
+        multiSelect: z
+          .boolean()
+          .optional()
+          .describe("true if the user may pick more than one option"),
+        allowOther: z
+          .boolean()
+          .optional()
+          .describe("true to show a free-text 'something else' box"),
+      })
+    )
+    .max(6)
+    .describe(
+      "3-5 quick questions the user taps through one at a time. Use to gather intake or a specific preference — never ask these in prose."
+    ),
+});
+
+export type AskQuestionsInput = z.infer<typeof AskQuestionsInputSchema>;
+
 const MAX_DAYS = 14;
 const MAX_STOPS_PER_DAY = 10;
 
