@@ -4569,7 +4569,7 @@ button {
 }
 
 .dx-brand {
-  padding: 2px 10px 18px;
+  padding: 2px 10px 14px;
 }
 
 .dx-primary {
@@ -4601,11 +4601,6 @@ button {
   font-size: 14px;
   font-weight: 550;
   line-height: 1;
-}
-
-.dx-side-new {
-  width: 100%;
-  margin-bottom: 16px;
 }
 
 .dx-nav {
@@ -5181,12 +5176,6 @@ button {
   }
   .dx-brand {
     padding: 0 8px 0 0;
-  }
-  .dx-side-new {
-    width: auto;
-    margin: 0 10px 0 0;
-    order: 3;
-    margin-left: auto;
   }
   .dx-nav {
     flex-direction: row;

@@ -727,10 +727,6 @@ function Dashboard({ user }: { user: SessionUser }) {
           <Logo className="brand" />
         </div>
 
-        <button className="dx-primary dx-side-new" onClick={() => setModalOpen(true)}>
-          <span className="dx-plus">+</span> Plan a new trip
-        </button>
-
         <nav className="dx-nav">
           <button
             className={`dx-nav-item ${view === "mine" ? "on" : ""}`}
