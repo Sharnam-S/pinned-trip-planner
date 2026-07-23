@@ -101,11 +101,15 @@ deliberate — see Learnings §4.1.
 The persona is the product spec. Current contract, in order of the
 user-trust lessons that produced it:
 
-1. **Intake before planning** — ONE compact batched message asking only
-   what context doesn't answer: exact dates (weekday reasoning needs
-   them), stay booked/where, budget + pace, must-sees (proactively
-   flagging 2–3 iconic spots). "Just plan it" → draft with stated
-   assumptions.
+1. **Intake before planning — structured, not prose.** A client-rendered
+   **instant intake card** (`QuestionFlow`, no model round-trip) collects the
+   universals on trip-open (who/pace/must-sees/budget, + dates if unset) and
+   compiles them into the first message — so the model's first act is the shape
+   (§3b), not a 40s think-then-interrogate. Mid-planning, the model gathers any
+   missing choice with the **`ask_questions` tool** (same tap-through card, one
+   question at a time, answers returned in one shot) — never a wall of prose.
+   Things to ask when unknown: dates (weekday reasoning), stay, budget + pace,
+   must-sees (flag 2–3 iconic). "Just plan it" → draft with stated assumptions.
 2. **Never invent user facts** — stay is only set when told, or as a
    labeled recommendation with rationale.
 3. **Every plan change goes through `update_itinerary`** (full replace,
@@ -386,7 +390,7 @@ and any plan-changing turn rewrites the post-breakpoint tail at 1.25×
 |---|---|
 | `app/api/trips/[id]/chat/route.ts` | Chat route: persona, context assembly, caching breakpoints, tool schemas (no execute), PostHog capture |
 | `lib/itinerary.ts` | Zod schemas (tool input), validation/normalization, localStorage helpers (itinerary overlay, must-sees), haversine + travel estimates, spot digest builder, day colors, `PlannerContext` |
-| `components/PlannerChat.tsx` | Chat UI: useChat wiring, client tool execution, history persistence (save/sanitize/window), reasoning + tool part rendering, must-see bar, auto-growing input, first-trip nudge (visitors with no own trips see fanned spot photos + a create-trip CTA → `/?start=1` instead of the planning intro) |
+| `components/PlannerChat.tsx` | Chat UI: useChat wiring, client tool execution, history persistence (save/sanitize/window), reasoning + tool part rendering, must-see bar, auto-growing input, first-trip nudge; `QuestionFlow` tap-through form powering the instant intake card and the `ask_questions` tool (renders when no itinerary yet; `ask_questions` collects answers → `addToolOutput`) |
 | `components/TripView.tsx` | Page shell: 3-panel layout, itinerary/must-see state, day chips, `DayBrief` (timeline + rationale), `SpotCard` ("In your plan" + star) |
 | `components/TripMap.tsx` | Leaflet map: pill markers (star badges), plan overlay (numbered day pins, polylines, stay pin), day-fit behavior |
 | `lib/types.ts` | `Itinerary`/`ItineraryDay`/`ItineraryStop` on `Trip` (stored shapes — optional fields for back-compat) |
