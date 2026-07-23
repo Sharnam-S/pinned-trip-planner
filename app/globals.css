@@ -4580,7 +4580,7 @@ button {
   background: #18181b;
   color: white;
   border: none;
-  border-radius: 999px;
+  border-radius: 12px;
   padding: 9px 16px;
   font-size: 13px;
   font-weight: 550;
@@ -5147,7 +5147,6 @@ button {
   margin-top: 6px;
   padding: 11px 16px;
   font-size: 13.5px;
-  border-radius: 10px;
 }
 
 .dx-modal-error {
