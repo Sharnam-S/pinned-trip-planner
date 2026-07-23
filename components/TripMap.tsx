@@ -112,8 +112,20 @@ interface Props {
   onSelect: (id: string | null) => void;
   onBoundsChange?: (bounds: MapBounds) => void;
   /** One-shot fly-to from the search box. `key` bumps to re-fire even to the
-   *  same coords; the map animates to (lat, lng) at `zoom`. */
-  flyTo?: { lat: number; lng: number; zoom: number; key: number } | null;
+   *  same coords; the map fits `bounds` if given, else animates to (lat, lng)
+   *  at `zoom`. */
+  flyTo?: {
+    lat: number;
+    lng: number;
+    zoom?: number;
+    bounds?: [[number, number], [number, number]] | null;
+    key: number;
+  } | null;
+  /** Spot ids matching the live search query — their pills pulse so you can see
+   *  which searched places are ones we pinned from YouTube. */
+  searchMatchIds?: string[];
+  /** A transient marker for a searched place that isn't one of our spots. */
+  searchMarker?: { lat: number; lng: number; label: string } | null;
 }
 
 export default function TripMap({
@@ -129,6 +141,8 @@ export default function TripMap({
   onSelect,
   onBoundsChange,
   flyTo = null,
+  searchMatchIds = [],
+  searchMarker = null,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -227,8 +241,10 @@ export default function TripMap({
     if (!map) return;
 
     const coveredSet = new Set(coveredIds);
+    const searchMatchSet = new Set(searchMatchIds);
     for (const spot of spots) {
       const isSelected = spot.id === selectedId;
+      const isSearchMatch = searchMatchSet.has(spot.id);
       const isHighlighted =
         highlightVideoId != null &&
         spot.mentions.some((m) => m.videoId === highlightVideoId);
@@ -254,6 +270,7 @@ export default function TripMap({
         isCovered ? "covered" : "",
         isDimmed ? "dimmed" : "",
         planHidden ? "plan-hidden" : "",
+        isSearchMatch ? "search-match" : "",
       ]
         .filter(Boolean)
         .join(" ");
@@ -278,7 +295,13 @@ export default function TripMap({
         iconAnchor: [0, 0],
       });
 
-      const zIndex = isSelected ? 1000 : isHighlighted ? 800 : spot.mentions.length * 10;
+      const zIndex = isSelected
+        ? 1000
+        : isSearchMatch
+        ? 900
+        : isHighlighted
+        ? 800
+        : spot.mentions.length * 10;
       const existing = markersRef.current.get(spot.id);
       if (existing) {
         existing.setIcon(icon);
@@ -320,7 +343,7 @@ export default function TripMap({
     }
     // planKey covers everything the pill classes read from `plan`.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spots, selectedId, highlightVideoId, onSelect, planKey, mustSeeIds.join(","), coveredIds.join(",")]);
+  }, [spots, selectedId, highlightVideoId, onSelect, planKey, mustSeeIds.join(","), coveredIds.join(","), searchMatchIds.join(",")]);
 
   // Draw the plan overlay: numbered pins in day colors + a route line per day.
   useEffect(() => {
@@ -434,7 +457,21 @@ export default function TripMap({
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !flyTo) return;
-    map.flyTo([flyTo.lat, flyTo.lng], flyTo.zoom, { animate: true, duration: 0.6 });
+    if (flyTo.bounds) {
+      // A geocoded place with an extent (a town, a park) — frame the whole
+      // area so our pins inside it come into view alongside it.
+      map.flyToBounds(L.latLngBounds(flyTo.bounds), {
+        maxZoom: 15,
+        animate: true,
+        duration: 0.6,
+        padding: [40, 40],
+      });
+    } else {
+      map.flyTo([flyTo.lat, flyTo.lng], flyTo.zoom ?? 14, {
+        animate: true,
+        duration: 0.6,
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flyTo?.key]);
 
@@ -470,6 +507,34 @@ export default function TripMap({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [popupSpot?.id, popupSpot?.photoUrl]);
+
+  // A dropped-pin marker for a searched map place that isn't one of our spots,
+  // so a geocoder result you jumped to is visible on the map.
+  const searchMarkerRef = useRef<L.Marker | null>(null);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    searchMarkerRef.current?.remove();
+    searchMarkerRef.current = null;
+    if (!searchMarker) return;
+    const icon = L.divIcon({
+      className: "",
+      html: `<div class="search-pin"><span class="search-pin-dot"></span><span class="search-pin-label">${escapeHtml(
+        shorten(searchMarker.label)
+      )}</span></div>`,
+      iconSize: undefined,
+      iconAnchor: [7, 7],
+    });
+    searchMarkerRef.current = L.marker([searchMarker.lat, searchMarker.lng], {
+      icon,
+      zIndexOffset: 2000,
+      interactive: false,
+    }).addTo(map);
+    return () => {
+      searchMarkerRef.current?.remove();
+      searchMarkerRef.current = null;
+    };
+  }, [searchMarker?.lat, searchMarker?.lng, searchMarker?.label]);
 
   return <div ref={containerRef} style={{ width: "100%", height: "100%" }} />;
 }

@@ -30,6 +30,17 @@ import type { MapBounds, PlanRender } from "./TripMap";
 
 const TripMap = dynamic(() => import("./TripMap"), { ssr: false });
 
+/** A place returned by the map geocoder (OSM), not one of our scraped spots. */
+interface GeoPlace {
+  id: string;
+  name: string;
+  label: string;
+  lat: number;
+  lng: number;
+  /** [[south, west], [north, east]] when the place has an extent. */
+  bounds: [[number, number], [number, number]] | null;
+}
+
 const STATUS_ICON: Record<TripVideo["status"], string> = {
   pending: "⏳",
   processing: "⚙️",
@@ -303,9 +314,6 @@ function TilePhotos({ spot, tripId, local }: { spot: Spot; tripId: string; local
       ) : (
         <div className="tile-photo-fallback">{CATEGORY_EMOJI[spot.category]}</div>
       )}
-      <span className="tile-cat">
-        {CATEGORY_EMOJI[spot.category]} {spot.category}
-      </span>
       <CarouselControls i={i} total={total} step={step} />
     </div>
   );
@@ -488,12 +496,27 @@ export default function TripView({
   const [searchQuery, setSearchQuery] = useState("");
   // Whether the search results dropdown is showing (focused with a query).
   const [searchOpen, setSearchOpen] = useState(false);
+  // Geocoded "real map" places for the current query (OSM Nominatim, via our
+  // proxy), and whether that request is in flight.
+  const [geoResults, setGeoResults] = useState<GeoPlace[]>([]);
+  const [geoLoading, setGeoLoading] = useState(false);
+  // A transient marker for a searched place that isn't one of our pins.
+  const [searchMarker, setSearchMarker] = useState<{
+    lat: number;
+    lng: number;
+    label: string;
+  } | null>(null);
+  // The pins-rail category filters collapse to a single button by default and
+  // fan open on click — the full chip grid was too heavy to sit open always.
+  const [pinFiltersOpen, setPinFiltersOpen] = useState(false);
   // A one-shot fly-to command for the map. Bumping `key` re-triggers the fly
   // even to the same coords (search the same place twice → it re-centers).
   const [flyTo, setFlyTo] = useState<{
     lat: number;
     lng: number;
-    zoom: number;
+    zoom?: number;
+    /** When set, the map fits this box instead of centering on lat/lng. */
+    bounds?: [[number, number], [number, number]] | null;
     key: number;
   } | null>(null);
   // Right rail: "pins" (viewport grid / spot detail) or the day-by-day
@@ -643,6 +666,60 @@ export default function TripView({
     return trip.spots.filter((s) => activeSet.has(s.category));
   }, [trip, activeCats]);
 
+  // A Nominatim viewbox around this trip's spots so geocoder results are
+  // biased to the destination (searching "beach" in a Sri Lanka trip shouldn't
+  // surface a beach in Australia first). Format: left,top,right,bottom.
+  const geoViewbox = useMemo(() => {
+    if (!trip || trip.spots.length === 0) return null;
+    let minLat = 90,
+      maxLat = -90,
+      minLng = 180,
+      maxLng = -180;
+    for (const s of trip.spots) {
+      minLat = Math.min(minLat, s.lat);
+      maxLat = Math.max(maxLat, s.lat);
+      minLng = Math.min(minLng, s.lng);
+      maxLng = Math.max(maxLng, s.lng);
+    }
+    return `${minLng},${maxLat},${maxLng},${minLat}`;
+  }, [trip]);
+
+  // Query the real map (OSM geocoder, via our proxy) as the user types —
+  // debounced, and only for queries long enough to be meaningful. Results are
+  // merged with our own pinned spots in the dropdown so search covers both the
+  // actual map and the YouTube-scraped points.
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if (q.length < 3) {
+      setGeoResults([]);
+      setGeoLoading(false);
+      return;
+    }
+    setGeoLoading(true);
+    const ctrl = new AbortController();
+    const t = setTimeout(async () => {
+      try {
+        const url = `/api/geocode?q=${encodeURIComponent(q)}${
+          geoViewbox ? `&viewbox=${encodeURIComponent(geoViewbox)}` : ""
+        }`;
+        const res = await fetch(url, { signal: ctrl.signal });
+        if (!res.ok) throw new Error(`geocode ${res.status}`);
+        const data: GeoPlace[] = await res.json();
+        setGeoResults(data);
+      } catch {
+        // Aborted (new keystroke) or network error — just drop map results;
+        // the local spot matches still show.
+        if (!ctrl.signal.aborted) setGeoResults([]);
+      } finally {
+        if (!ctrl.signal.aborted) setGeoLoading(false);
+      }
+    }, 350);
+    return () => {
+      ctrl.abort();
+      clearTimeout(t);
+    };
+  }, [searchQuery, geoViewbox]);
+
   // Every spot that sits somewhere in the itinerary. Feeds the map's subtle
   // "covered" pin treatment — kept separate from the plan overlay so it stays
   // visible while a category filter is applied (the overlay is hidden then).
@@ -728,11 +805,10 @@ export default function TripView({
       )
     : sortedSpots;
 
-  // Map search matches across ALL spots (not just the filtered/in-view set) so
-  // it can find any place — the whole point is jumping to something you can't
-  // see. Name matches first, then category matches, capped to keep the
-  // dropdown glanceable.
-  const searchResults = (() => {
+  // Our own scraped spots that match the query, across ALL spots (not just the
+  // filtered/in-view set). Name matches first, then category matches. These are
+  // the "pinned" results — the ones from our YouTube research.
+  const spotResults = (() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return [];
     return trip.spots
@@ -745,24 +821,48 @@ export default function TripView({
         const bn = b.name.toLowerCase().startsWith(q) ? 0 : 1;
         return an - bn || b.mentions.length - a.mentions.length;
       })
-      .slice(0, 8);
+      .slice(0, 5);
   })();
+  const hasResults = spotResults.length > 0 || geoResults.length > 0;
+  // While typing, the matching pinned spots pulse on the map so you can see
+  // which of the searched places are ones we scraped from YouTube.
+  const searchMatchIds =
+    searchOpen && searchQuery.trim() ? spotResults.map((s) => s.id) : [];
 
-  // Picking a search result flies the map to that spot and opens its detail.
-  // If a category filter would hide it, clear the filter so the pin is there
-  // when we arrive — search overrides filtering, like Google Maps.
+  // Picking a pinned spot flies the map to it and opens its detail. If a
+  // category filter would hide it, clear the filter so the pin is there when we
+  // arrive — search overrides filtering, like Google Maps.
   const goToSearchResult = (spot: Spot) => {
     if (activeCats.length > 0 && !activeCats.includes(spot.category)) {
       setActiveCats([]);
     }
+    setSearchMarker(null);
     setFlyTo((prev) => ({
       lat: spot.lat,
       lng: spot.lng,
       zoom: 14,
+      bounds: null,
       key: (prev?.key ?? 0) + 1,
     }));
     selectSpot(spot.id);
     setSearchQuery(spot.name);
+    setSearchOpen(false);
+  };
+
+  // Picking a plain map place (not one of our spots): fly there, drop a
+  // transient marker so you can see where it landed, and leave our pins in
+  // place so any that sit inside the area come into view alongside it.
+  const goToPlace = (place: GeoPlace) => {
+    setSelectedId(null);
+    setSearchMarker({ lat: place.lat, lng: place.lng, label: place.name });
+    setFlyTo((prev) => ({
+      lat: place.lat,
+      lng: place.lng,
+      zoom: 14,
+      bounds: place.bounds,
+      key: (prev?.key ?? 0) + 1,
+    }));
+    setSearchQuery(place.name);
     setSearchOpen(false);
   };
 
@@ -939,11 +1039,13 @@ export default function TripView({
               onSelect={selectSpot}
               onBoundsChange={setBounds}
               flyTo={flyTo}
+              searchMatchIds={searchMatchIds}
+              searchMarker={searchMarker}
             />
-            {/* Search lives over the map now — type a place and the map flies
-                to it, like Google Maps. Category filters moved to the pins rail. */}
+            {/* Search over the actual map: our pinned spots + real OSM places.
+                Type a place and the map flies to it, like Google Maps. */}
             <div
-              className={`map-search ${searchOpen && searchResults.length > 0 ? "open" : ""}`}
+              className={`map-search ${searchOpen && hasResults ? "open" : ""}`}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="ms-box">
@@ -975,8 +1077,9 @@ export default function TripView({
                   }}
                   onFocus={() => setSearchOpen(true)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" && searchResults.length > 0) {
-                      goToSearchResult(searchResults[0]);
+                    if (e.key === "Enter") {
+                      if (spotResults.length > 0) goToSearchResult(spotResults[0]);
+                      else if (geoResults.length > 0) goToPlace(geoResults[0]);
                     } else if (e.key === "Escape") {
                       setSearchOpen(false);
                       (e.target as HTMLInputElement).blur();
@@ -990,6 +1093,7 @@ export default function TripView({
                     onClick={() => {
                       setSearchQuery("");
                       setSearchOpen(false);
+                      setSearchMarker(null);
                     }}
                   >
                     ✕
@@ -998,32 +1102,74 @@ export default function TripView({
               </div>
               {searchOpen && searchQuery.trim() && (
                 <div className="ms-results">
-                  {searchResults.length === 0 ? (
-                    <div className="ms-empty">No places match “{searchQuery}”</div>
-                  ) : (
-                    searchResults.map((spot) => (
-                      <button
-                        key={spot.id}
-                        className="ms-result"
-                        onClick={() => goToSearchResult(spot)}
-                      >
-                        <span className="ms-result-emoji">
-                          {CATEGORY_EMOJI[spot.category]}
-                        </span>
-                        <span className="ms-result-text">
-                          <span className="ms-result-name">{spot.name}</span>
-                          <span className="ms-result-sub">
-                            {spot.category}
-                            {spot.mentions.length > 0
-                              ? ` · ${spot.mentions.length} creator${
-                                  spot.mentions.length === 1 ? "" : "s"
-                                }`
-                              : ""}
+                  {/* Our YouTube-scraped pins first — the "highlighted" ones. */}
+                  {spotResults.length > 0 && (
+                    <>
+                      <div className="ms-group">Pinned in this trip</div>
+                      {spotResults.map((spot) => (
+                        <button
+                          key={spot.id}
+                          className="ms-result pinned"
+                          onClick={() => goToSearchResult(spot)}
+                        >
+                          <span className="ms-result-emoji">
+                            {CATEGORY_EMOJI[spot.category]}
                           </span>
-                        </span>
-                      </button>
-                    ))
+                          <span className="ms-result-text">
+                            <span className="ms-result-name">{spot.name}</span>
+                            <span className="ms-result-sub">
+                              {spot.category}
+                              {spot.mentions.length > 0
+                                ? ` · ${spot.mentions.length} creator${
+                                    spot.mentions.length === 1 ? "" : "s"
+                                  }`
+                                : ""}
+                            </span>
+                          </span>
+                          <span className="ms-pin-tag" aria-label="Pinned spot">
+                            📍
+                          </span>
+                        </button>
+                      ))}
+                    </>
                   )}
+
+                  {/* Anywhere else on the real map, via the OSM geocoder. */}
+                  {geoResults.length > 0 && (
+                    <>
+                      <div className="ms-group">Places on the map</div>
+                      {geoResults.map((place) => (
+                        <button
+                          key={place.id}
+                          className="ms-result"
+                          onClick={() => goToPlace(place)}
+                        >
+                          <span className="ms-result-emoji ms-geo-icon" aria-hidden="true">
+                            <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+                              <path
+                                d="M8 1.5c-2.5 0-4.5 2-4.5 4.5 0 3.2 4.5 8 4.5 8s4.5-4.8 4.5-8c0-2.5-2-4.5-4.5-4.5Z"
+                                stroke="currentColor"
+                                strokeWidth="1.4"
+                                strokeLinejoin="round"
+                              />
+                              <circle cx="8" cy="6" r="1.6" fill="currentColor" />
+                            </svg>
+                          </span>
+                          <span className="ms-result-text">
+                            <span className="ms-result-name">{place.name}</span>
+                            <span className="ms-result-sub">{place.label}</span>
+                          </span>
+                        </button>
+                      ))}
+                    </>
+                  )}
+
+                  {!hasResults &&
+                    (geoLoading ? (
+                      <div className="ms-empty">Searching the map…</div>
+                    ) : (
+                      <div className="ms-empty">No places match “{searchQuery}”</div>
+                    ))}
                 </div>
               )}
             </div>
@@ -1102,40 +1248,80 @@ export default function TripView({
             />
           ) : (
             <div className="pins-view">
-              {/* Category filters live here now — beside the pins they filter,
-                  where people instinctively look for them. Multi-select; empty
-                  = show everything. */}
+              {/* Category filters — collapsed to a single button by default,
+                  fanning open into the full multi-select chip grid on click.
+                  Empty selection = show everything. */}
               {catCounts.length > 1 && (
-                <div className="pins-filters">
-                  {catCounts.map(([cat, n]) => {
-                    const on = activeCats.includes(cat);
-                    return (
-                      <button
-                        key={cat}
-                        className={`pf-chip ${on ? "on" : ""}`}
-                        aria-pressed={on}
-                        onClick={() =>
-                          setActiveCats((prev) =>
-                            prev.includes(cat)
-                              ? prev.filter((c) => c !== cat)
-                              : [...prev, cat]
-                          )
-                        }
-                      >
-                        <span className="pf-emoji">{CATEGORY_EMOJI[cat]}</span>
-                        <span className="pf-label">{cat}</span>
-                        <span className="pf-n">{n}</span>
-                      </button>
-                    );
-                  })}
-                  {activeCats.length > 0 && (
-                    <button
-                      className="pf-clear"
-                      onClick={() => setActiveCats([])}
+                <div className={`pins-filters ${pinFiltersOpen ? "open" : ""}`}>
+                  <button
+                    className={`pf-toggle ${activeCats.length > 0 ? "active" : ""}`}
+                    aria-expanded={pinFiltersOpen}
+                    onClick={() => setPinFiltersOpen((o) => !o)}
+                  >
+                    <svg
+                      className="pf-funnel"
+                      width="14"
+                      height="14"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      aria-hidden="true"
                     >
-                      Clear
-                    </button>
-                  )}
+                      <path
+                        d="M1.5 3h13L9.5 8.5V13L6.5 14.5V8.5L1.5 3Z"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <span>Filters</span>
+                    {activeCats.length > 0 && (
+                      <span className="pf-count">{activeCats.length}</span>
+                    )}
+                    <svg
+                      className="pf-chevron"
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M2.5 4.5L6 8l3.5-3.5"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                  <div className="pf-tray" inert={!pinFiltersOpen}>
+                    {catCounts.map(([cat, n]) => {
+                      const on = activeCats.includes(cat);
+                      return (
+                        <button
+                          key={cat}
+                          className={`pf-chip ${on ? "on" : ""}`}
+                          aria-pressed={on}
+                          onClick={() =>
+                            setActiveCats((prev) =>
+                              prev.includes(cat)
+                                ? prev.filter((c) => c !== cat)
+                                : [...prev, cat]
+                            )
+                          }
+                        >
+                          <span className="pf-emoji">{CATEGORY_EMOJI[cat]}</span>
+                          <span className="pf-label">{cat}</span>
+                          <span className="pf-n">{n}</span>
+                        </button>
+                      );
+                    })}
+                    {activeCats.length > 0 && (
+                      <button className="pf-clear" onClick={() => setActiveCats([])}>
+                        Clear
+                      </button>
+                    )}
+                  </div>
                 </div>
               )}
               {visibleSpots.length === 0 ? (

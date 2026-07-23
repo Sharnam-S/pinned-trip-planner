@@ -1362,7 +1362,7 @@ button {
   border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 16px;
   padding: 6px;
-  max-height: 320px;
+  max-height: min(60vh, 440px);
   overflow-y: auto;
   box-shadow: 0 2px 6px rgba(16, 17, 26, 0.08), 0 12px 30px rgba(16, 17, 26, 0.16);
 }
@@ -1405,11 +1405,46 @@ button {
   font-size: 11.5px;
   font-weight: 500;
   color: var(--text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ms-result.pinned .ms-result-sub {
   text-transform: capitalize;
 }
 .ms-empty {
   padding: 12px 10px;
   font-size: 13px;
+  color: var(--text-soft);
+}
+
+/* Section label separating our pinned spots from generic map places. */
+.ms-group {
+  padding: 8px 10px 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
+.ms-group:not(:first-child) {
+  border-top: 1px solid var(--line);
+  margin-top: 4px;
+}
+/* The little "this is one of ours" marker on a pinned result. */
+.ms-pin-tag {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 13px;
+  line-height: 1;
+  opacity: 0.9;
+}
+/* Geocoder results use a muted location glyph instead of a category emoji. */
+.ms-geo-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
   color: var(--text-soft);
 }
 
@@ -1554,12 +1589,79 @@ button {
 }
 
 /* Spot tiles — Airbnb listing-card grid */
-/* Category filters, now living in the pins rail right above the grid. */
+/* Category filters in the pins rail — a collapsed toggle that fans open into
+   the chip grid, so the rail stays clean until you reach for filters. */
 .pins-filters {
+  margin-bottom: 18px;
+}
+
+/* The collapsed pill: funnel + "Filters" + optional active-count + chevron. */
+.pf-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-chip);
+  padding: 7px 13px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.pf-toggle:hover {
+  border-color: var(--ink);
+}
+.pf-toggle.active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(16, 17, 26, 0.22);
+}
+.pf-funnel {
+  opacity: 0.85;
+}
+.pf-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.28);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.pf-chevron {
+  transition: transform 0.24s cubic-bezier(0.32, 0.72, 0.25, 1);
+  opacity: 0.7;
+}
+.pins-filters.open .pf-chevron {
+  transform: rotate(180deg);
+}
+
+/* The chip grid fans open below the toggle; collapsed it clips to nothing. */
+.pf-tray {
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
-  margin-bottom: 18px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateY(-4px);
+  transition: max-height 0.3s cubic-bezier(0.32, 0.72, 0.25, 1),
+    opacity 0.2s ease, transform 0.26s cubic-bezier(0.32, 0.72, 0.25, 1),
+    margin-top 0.3s cubic-bezier(0.32, 0.72, 0.25, 1);
+}
+.pins-filters.open .pf-tray {
+  max-height: 320px;
+  opacity: 1;
+  transform: translateY(0);
+  margin-top: 10px;
 }
 .pf-chip,
 .pf-clear {
@@ -1790,20 +1892,6 @@ button {
 
 .map-frame.skeleton {
   border: 1px solid var(--line);
-}
-
-.spot-tile .tile-cat {
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: capitalize;
-  background: rgba(255, 255, 255, 0.92);
-  padding: 4px 10px;
-  border-radius: var(--radius-chip);
-  box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(6px);
 }
 
 /* Tile photo carousel — arrows on hover, dots for position */
@@ -2071,6 +2159,55 @@ button {
 
 .pin-pill.dimmed {
   opacity: 0.3;
+}
+
+/* Search match: our pinned spots matching the live query pulse so you can see
+   which searched places are ones we scraped from YouTube. */
+.pin-pill.search-match {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px rgba(16, 17, 26, 0.14), 0 4px 14px rgba(16, 17, 26, 0.2);
+  animation: search-pulse 1.4s ease-in-out infinite;
+}
+@keyframes search-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(16, 17, 26, 0.14), 0 4px 14px rgba(16, 17, 26, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(16, 17, 26, 0.08), 0 4px 16px rgba(16, 17, 26, 0.26);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pin-pill.search-match {
+    animation: none;
+  }
+}
+
+/* Dropped-pin marker for a searched map place (not one of our spots). */
+.search-pin {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+.search-pin-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #e0483d;
+  border: 2.5px solid #fff;
+  box-shadow: 0 2px 6px rgba(16, 17, 26, 0.35);
+  flex-shrink: 0;
+}
+.search-pin-label {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.1), 0 4px 12px rgba(16, 17, 26, 0.14);
 }
 
 /* Spot detail card — fills the right rail. (It renders nowhere else; the old
