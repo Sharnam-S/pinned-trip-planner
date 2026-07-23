@@ -583,11 +583,16 @@ export default function PlannerChat({
     el.style.height = `${Math.min(el.scrollHeight, 132)}px`;
   }
 
+  const showNudge = !hasOwnTrips && !isLocal && !nudgeDismissed;
+  // While the instant intake form is up it's the single call-to-action — hide
+  // the free-text input so the user isn't facing two competing inputs.
+  const intakeActive = messages.length === 0 && !showNudge && !itinerary;
+
   return (
     <aside className="planner-panel" onClick={(e) => e.stopPropagation()}>
       <div className="planner-scroll" ref={scrollRef}>
         {messages.length === 0 &&
-          (!hasOwnTrips && !isLocal && !nudgeDismissed ? (
+          (showNudge ? (
             <div className="planner-nudge">
               {nudgePhotos.length > 0 && (
                 <div className="nudge-stack" aria-hidden="true">
@@ -815,34 +820,40 @@ export default function PlannerChat({
         </div>
       )}
 
-      <form
-        className="planner-inputrow"
-        onSubmit={(e) => {
-          e.preventDefault();
-          send(input);
-        }}
-      >
-        <textarea
-          ref={inputRef}
-          value={input}
-          rows={1}
-          onChange={(e) => {
-            setInput(e.target.value);
-            autosize(e.target);
+      {!intakeActive && (
+        <form
+          className="planner-inputrow"
+          onSubmit={(e) => {
+            e.preventDefault();
+            send(input);
           }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              send(input);
-            }
-          }}
-          placeholder="Ask your local planner…"
-          aria-label="Message the planner"
-        />
-        <button type="submit" disabled={!input.trim() || busy} aria-label="Send">
-          ↑
-        </button>
-      </form>
+        >
+          <textarea
+            ref={inputRef}
+            value={input}
+            rows={1}
+            onChange={(e) => {
+              setInput(e.target.value);
+              autosize(e.target);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                send(input);
+              }
+            }}
+            placeholder="Ask your local planner…"
+            aria-label="Message the planner"
+          />
+          <button
+            type="submit"
+            disabled={!input.trim() || busy}
+            aria-label="Send"
+          >
+            ↑
+          </button>
+        </form>
+      )}
     </aside>
   );
 }
