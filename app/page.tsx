@@ -443,27 +443,21 @@ const GlobeIcon = ({ size = 15 }: { size?: number }) => (
   </svg>
 );
 
-/** Row thumbnail, falling back to the pin placeholder when there is no cover
- *  or its URL no longer resolves (photo links can expire). */
-function RowThumb({ url }: { url: string | null }) {
+/** Card cover photo, falling back to the pin placeholder when there is no
+ *  cover or its URL no longer resolves (photo links can expire). */
+function CardCover({ url }: { url: string | null }) {
   const [broken, setBroken] = useState(false);
   if (url && !broken) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img className="dx-thumb" src={url} alt="" loading="lazy" onError={() => setBroken(true)} />
+      <img src={url} alt="" loading="lazy" onError={() => setBroken(true)} />
     );
   }
   return (
-    <div className="dx-thumb dx-thumb-empty" aria-hidden="true">
-      <PinIcon size={14} />
+    <div className="dx-cover-empty" aria-hidden="true">
+      <PinIcon size={22} />
     </div>
   );
-}
-
-function StatusChip({ status }: { status: string }) {
-  if (status === "ready") return <span className="dx-chip ready">Ready</span>;
-  if (status === "error") return <span className="dx-chip error">Failed</span>;
-  return <span className="dx-chip building">Building…</span>;
 }
 
 /** The plan-a-new-trip form in a small centered modal. */
@@ -845,58 +839,46 @@ function Dashboard({ user }: { user: SessionUser }) {
               )}
             </div>
           ) : (
-            <div className="dx-table-wrap">
-              <table className="dx-table">
-                <thead>
-                  <tr>
-                    <th>Trip</th>
-                    <th>Dates</th>
-                    <th className="num">Spots</th>
-                    <th className="num">Videos</th>
-                    <th>Plan</th>
-                    <th>Status</th>
-                    {view === "mine" && <th aria-label="Actions" />}
-                  </tr>
-                </thead>
-                <tbody>
-                  {shown.map((t) => (
-                    <tr key={t.id} onClick={() => router.push(`/trip/${t.id}`)}>
-                      <td>
-                        <div className="dx-trip-cell">
-                          <RowThumb url={t.cover} />
-                          <span className="dx-trip-name">{t.name}</span>
-                        </div>
-                      </td>
-                      <td className="dim">{fmtDates(t.startDate, t.endDate) ?? "—"}</td>
-                      <td className="num">{t.spotCount || "—"}</td>
-                      <td className="num">{t.videoCount || "—"}</td>
-                      <td className="dim">
-                        {t.plannedDays > 0
-                          ? `${t.plannedDays} day${t.plannedDays === 1 ? "" : "s"}`
-                          : "Not planned"}
-                      </td>
-                      <td>
-                        <StatusChip status={t.status} />
-                      </td>
-                      {view === "mine" && (
-                        <td className="dx-actions">
-                          <button
-                            className="dx-row-del"
-                            title="Delete this trip"
-                            aria-label={`Delete ${t.name}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeTrip(t.id);
-                            }}
-                          >
-                            ×
-                          </button>
-                        </td>
+            <div className="dx-cards">
+              {shown.map((t) => (
+                <div key={t.id} className="dx-card">
+                  <button
+                    className="dx-card-hit"
+                    onClick={() => router.push(`/trip/${t.id}`)}
+                  >
+                    <div className="dx-card-cover">
+                      <CardCover url={t.cover} />
+                      {t.status !== "ready" && (
+                        <span className={`dx-card-badge ${t.status}`}>
+                          {t.status === "processing" ? "Building…" : "Build failed"}
+                        </span>
                       )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                    </div>
+                    <div className="dx-card-name">{t.name}</div>
+                    <div className="dx-card-meta">
+                      {[
+                        fmtDates(t.startDate, t.endDate),
+                        t.spotCount > 0
+                          ? `${t.spotCount} spot${t.spotCount === 1 ? "" : "s"}`
+                          : null,
+                        t.plannedDays > 0 ? `${t.plannedDays}‑day plan` : null,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ") || "Just created"}
+                    </div>
+                  </button>
+                  {view === "mine" && (
+                    <button
+                      className="dx-card-del"
+                      title="Delete this trip"
+                      aria-label={`Delete ${t.name}`}
+                      onClick={() => removeTrip(t.id)}
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              ))}
             </div>
           )}
         </section>

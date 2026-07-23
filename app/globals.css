@@ -4844,151 +4844,120 @@ button {
   color: #a1a1aa;
 }
 
-/* Table */
-.dx-table-wrap {
-  border: 1px solid #ececf0;
-  border-radius: 12px;
-  overflow: hidden;
+/* Image-first trip cards (Airbnb-style: photo, then name + muted meta) */
+.dx-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 28px 18px;
 }
 
-.dx-table {
+.dx-card {
+  position: relative;
+}
+
+.dx-card-hit {
+  border: none;
+  background: none;
+  padding: 0;
   width: 100%;
-  border-collapse: collapse;
-  font-size: 13.5px;
-}
-
-.dx-table th {
   text-align: left;
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  color: #a1a1aa;
-  border-bottom: 1px solid #ececf0;
-  padding: 10px 16px;
-}
-
-.dx-table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #f4f4f5;
-  vertical-align: middle;
-}
-
-.dx-table tbody tr {
   cursor: pointer;
-  transition: background 0.1s;
+  display: block;
 }
 
-.dx-table tbody tr:hover {
-  background: #fafafa;
-}
-
-.dx-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.dx-table .num {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-.dx-table .dim {
-  color: #71717a;
-  font-weight: 430;
-}
-
-.dx-trip-cell {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.dx-trip-name {
-  font-weight: 500;
+.dx-card-cover {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dx-thumb {
-  flex: none;
-  width: 48px;
-  height: 34px;
-  border-radius: 6px;
-  object-fit: cover;
   background: #f4f4f5;
 }
 
-.dx-thumb-empty {
+.dx-card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.dx-cover-empty {
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #d4d4d8;
 }
 
-/* Status: a quiet dot + label, not a filled pill */
-.dx-chip {
+/* Status overlays the photo as a small white pill (only when not ready) */
+.dx-card-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-size: 12.5px;
-  font-weight: 480;
-  color: #71717a;
+  gap: 6px;
+  background: white;
+  border-radius: 999px;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-weight: 550;
+  color: #18181b;
+  box-shadow: 0 1px 4px rgba(24, 24, 27, 0.14);
 }
 
-.dx-chip::before {
+.dx-card-badge::before {
   content: "";
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #d4d4d8;
-}
-
-.dx-chip.ready::before {
-  background: #34a565;
-}
-
-.dx-chip.building {
-  color: #3f3f46;
-}
-
-.dx-chip.building::before {
   background: #4d7cf3;
 }
 
-.dx-chip.error {
-  color: #b3352f;
-}
-
-.dx-chip.error::before {
+.dx-card-badge.error::before {
   background: #d8544e;
 }
 
-.dx-actions {
-  width: 40px;
-  text-align: right;
+.dx-card-name {
+  margin-top: 10px;
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.dx-row-del {
+.dx-card-meta {
+  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 430;
+  color: #71717a;
+}
+
+.dx-card-del {
+  position: absolute;
+  top: 10px;
+  right: 10px;
   border: none;
-  background: none;
-  width: 26px;
-  height: 26px;
-  border-radius: 7px;
-  color: #a1a1aa;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #3f3f46;
   font-size: 15px;
   line-height: 1;
+  box-shadow: 0 1px 4px rgba(24, 24, 27, 0.14);
   opacity: 0;
-  transition: opacity 0.12s, background 0.12s, color 0.12s;
+  transition: opacity 0.12s, color 0.12s;
 }
 
-.dx-table tbody tr:hover .dx-row-del,
-.dx-row-del:focus-visible {
+.dx-card:hover .dx-card-del,
+.dx-card-del:focus-visible {
   opacity: 1;
 }
 
-.dx-row-del:hover {
-  background: #f4f4f5;
+.dx-card-del:hover {
   color: #b3352f;
 }
 
