@@ -111,6 +111,14 @@ user-trust lessons that produced it:
 3. **Every plan change goes through `update_itinerary`** (full replace,
    never prose-only), preceded by one short sentence so the stream shows
    progress before a long tool call.
+3b. **Shape before pins (initial build only)** — the first plan is proposed
+   as a rough prose skeleton (area/base + vibe + routing logic per day, no
+   spot ids or times, no tool call), then the user confirms/adjusts the shape,
+   then `update_itinerary` commits the pins. Course-correcting a rough shape is
+   cheap; reworking a screen of placed pins is overwhelming. "Just plan it"
+   skips it; later edits go straight through the tool. The prose skeleton is
+   the ONE exception to rule 3's "never prose-only" — it precedes the commit,
+   it doesn't replace it.
 4. **Times required** (arrival + duration per stop, accounting for
    travel/meals/opening hours); **rationale required** per day; **why
    required** per stop answering: worth it why / this day why / this
