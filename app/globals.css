@@ -3190,9 +3190,42 @@ button {
   outline: none;
   border-color: var(--ink);
 }
-.pm-qa-actions {
+.pm-qa-nav {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+.pm-qa-arrow {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease,
+    opacity 0.15s ease;
+}
+.pm-qa-arrow:hover:not(:disabled) {
+  border-color: var(--ink);
+}
+.pm-qa-arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.pm-qa-arrow.next {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.pm-qa-arrow.next:hover {
+  opacity: 0.88;
 }
 .pm-qa-next {
   border: none;
@@ -3207,6 +3240,11 @@ button {
 }
 .pm-qa-next:hover {
   opacity: 0.88;
+}
+/* Intake rendered as the agent's first message — the question card sits inside
+   an assistant bubble so it reads as the planner talking, not a separate form. */
+.pm-intake {
+  padding-top: 2px;
 }
 .pm-qa.done {
   padding: 12px 14px;
