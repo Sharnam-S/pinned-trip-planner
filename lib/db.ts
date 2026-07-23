@@ -11,7 +11,8 @@
  *
  * Server-side only — imported by API routes, never by client code.
  */
-import { Trip } from "./types";
+import { Spot, Trip } from "./types";
+import { spotCoverUrl } from "./photoUrl";
 
 type Row = Record<string, unknown>;
 
@@ -121,6 +122,9 @@ export interface TripSummary {
   createdAt: string;
   updatedAt: string;
   spotCount: number;
+  videoCount: number;
+  /** Days in the planner itinerary (0 = not planned yet). */
+  plannedDays: number;
   startDate: string | null;
   endDate: string | null;
   cover: string | null;
@@ -135,17 +139,32 @@ export async function listTripSummaries(ownerId: string): Promise<TripSummary[]>
             t.data->>'createdAt'       AS created_at,
             t.updated_at               AS updated_at,
             COALESCE(jsonb_array_length(t.data->'spots'), 0) AS spot_count,
+            COALESCE(jsonb_array_length(t.data->'videos'), 0) AS video_count,
+            COALESCE(jsonb_array_length(t.data->'itinerary'->'days'), 0) AS planned_days,
             t.data->'query'->>'startDate' AS start_date,
             t.data->'query'->>'endDate'   AS end_date,
-            (SELECT s->'photo'->>'url'
+            (SELECT s
                FROM jsonb_array_elements(t.data->'spots') s
               WHERE s->'photo'->>'url' IS NOT NULL
-              LIMIT 1) AS cover
+                 OR COALESCE(jsonb_array_length(s->'mentions'), 0) > 0
+              LIMIT 1) AS cover_spot
        FROM trips t
       WHERE t.owner_id = $1
       ORDER BY t.data->>'createdAt' DESC NULLS LAST`,
     [ownerId]
   );
+  // Stored Google photo URLs expire, so the cover is rebuilt from the spot
+  // (placeId-keyed /api/photo proxy or a creator-video frame) — same rule the
+  // trip page uses (lib/photoUrl.ts).
+  const coverOf = (raw: unknown): string | null => {
+    if (!raw) return null;
+    try {
+      const spot = (typeof raw === "string" ? JSON.parse(raw) : raw) as Spot;
+      return spotCoverUrl(spot);
+    } catch {
+      return null;
+    }
+  };
   return rows.map((r) => ({
     id: String(r.id),
     name: String(r.name ?? "Untitled trip"),
@@ -153,9 +172,11 @@ export async function listTripSummaries(ownerId: string): Promise<TripSummary[]>
     createdAt: String(r.created_at ?? ""),
     updatedAt: r.updated_at instanceof Date ? r.updated_at.toISOString() : String(r.updated_at ?? ""),
     spotCount: Number(r.spot_count ?? 0),
+    videoCount: Number(r.video_count ?? 0),
+    plannedDays: Number(r.planned_days ?? 0),
     startDate: (r.start_date as string) ?? null,
     endDate: (r.end_date as string) ?? null,
-    cover: (r.cover as string) ?? null,
+    cover: coverOf(r.cover_spot),
   }));
 }
 

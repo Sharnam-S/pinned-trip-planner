@@ -135,10 +135,15 @@ client-first architecture above. The design:
 - **Landing UX:** signed out = the marketing hero (+ Sign in pill);
   "Build my map" stashes the form in `pinned.pending-trip`, rides through
   SSO, and the dashboard auto-creates the trip on landing. Signed in = a
-  **dashboard** (same sky/clouds): left = trip cards from
+  **functional app shell** (Linkrunner-style, owner-requested — the sky
+  stays marketing-only): white sidebar (brand, "+ Plan a new trip" →
+  modal, My trips / Community views, account + sign-out) and a main
+  column with welcome header, stat cards (trips / spots / videos read /
+  days planned), search, and a clickable trips **table** fed by
   `GET /api/me/trips` (dashboard-sized summaries computed in SQL from the
-  jsonb — never ship full trips to a list), right = a stacked
-  plan-a-new-trip card.
+  jsonb — never ship full trips to a list; covers rebuilt via the
+  placeId-keyed photo proxy because stored Google URLs expire). The
+  Community view lists the shared Blob gallery read-only.
 - **Chat across devices:** the chat route stays stateless; persistence
   mirrors the localStorage save — the browser PUTs the sanitized message
   array (debounced), and a fresh device seeds `useChat` from the server
