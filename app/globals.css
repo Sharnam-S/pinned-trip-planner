@@ -1589,10 +1589,16 @@ button {
 }
 
 /* Spot tiles — Airbnb listing-card grid */
+/* The pins view holds the filters + grid; its padding is the single source of
+   the rail's content inset so the Filters button lines up with the cards. */
+.pins-view {
+  padding: 16px 16px 0;
+}
+
 /* Category filters in the pins rail — a collapsed toggle that fans open into
    the chip grid, so the rail stays clean until you reach for filters. */
 .pins-filters {
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 /* The collapsed pill: funnel + "Filters" + optional active-count + chevron. */
@@ -3948,11 +3954,12 @@ button {
   max-height: 38vh;
 }
 
-/* Right rail: compact 2-col grid of in-view spots */
+/* Right rail: compact 2-col grid of in-view spots. Horizontal + top inset come
+   from .pins-view; only the scroll-clearance bottom padding lives here. */
 .right-side .spot-grid {
   grid-template-columns: repeat(2, 1fr);
   gap: 18px 12px;
-  padding: 16px 16px 48px;
+  padding: 0 0 48px;
 }
 .right-side .spot-tile .tile-name {
   font-size: 13px;
