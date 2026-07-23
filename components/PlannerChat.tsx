@@ -17,6 +17,7 @@ import {
 } from "ai";
 import { Itinerary, Trip } from "@/lib/types";
 import { listLocalTrips, readOwnedIds } from "@/lib/clientStore";
+import { fetchServerChat, pushChatDebounced } from "@/lib/sync";
 import { spotCoverUrl } from "@/lib/photoUrl";
 import {
   AskQuestionsInput,
@@ -214,8 +215,9 @@ interface PlannerCtx {
   traceId: string;
 }
 
-// --- Chat history: per-trip, in localStorage (same as plans and stars —
-// nothing user-specific ever lives on the server) ---
+// --- Chat history: per-trip. localStorage is the working copy (fast, offline,
+// works signed-out); owned trips additionally sync to the account so the
+// conversation follows the user across devices (lib/sync.ts). ---
 
 const CHAT_PREFIX = "pinned.chat.";
 const CHAT_MAX_MESSAGES = 80;
@@ -471,7 +473,7 @@ export default function PlannerChat({
   // eslint-disable-next-line react-hooks/refs
   const transport = useMemo(() => makeTransport(trip.id, ctxRef), [trip.id]);
 
-  const { messages, sendMessage, addToolOutput, status, error, regenerate } = useChat({
+  const { messages, setMessages, sendMessage, addToolOutput, status, error, regenerate } = useChat({
     transport,
     messages: initialMessages,
     sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
@@ -537,6 +539,23 @@ export default function PlannerChat({
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages, busy, error, streamDropped]);
 
+  // A trip opened on a fresh device has no localStorage chat — pull the
+  // account's saved conversation. Local always wins when it exists (it is
+  // what got synced up in the first place).
+  useEffect(() => {
+    if (!trip.ownerId || initialMessages.length > 0) return;
+    let cancelled = false;
+    void fetchServerChat(trip.id).then((msgs) => {
+      if (cancelled || !msgs || msgs.length === 0) return;
+      // Updater form: if the user already typed while we fetched, keep theirs.
+      setMessages((cur) => (cur.length > 0 ? cur : sanitizeChat(msgs as UIMessage[])));
+    });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [trip.id]);
+
   // Persist continuously (debounced against streaming churn) AND flush on
   // unmount — closing the panel mid-turn must never lose the conversation.
   // The load-time sanitizer handles any half-finished turn this captures.
@@ -545,8 +564,10 @@ export default function PlannerChat({
     messagesRef.current = messages;
     if (messages.length === 0) return;
     const t = setTimeout(() => saveChat(trip.id, messages), 400);
+    // Owned trips also ride up to the account (its own longer debounce).
+    if (trip.ownerId) pushChatDebounced(trip.id, messages.slice(-CHAT_MAX_MESSAGES));
     return () => clearTimeout(t);
-  }, [messages, trip.id]);
+  }, [messages, trip.id, trip.ownerId]);
   useEffect(() => {
     return () => {
       if (messagesRef.current.length > 0) saveChat(trip.id, messagesRef.current);

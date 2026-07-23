@@ -3,11 +3,19 @@ import { getTrip, isReadOnly } from "@/lib/store";
 import { deleteTripFromBlob, getBlobTrip } from "@/lib/blobStore";
 import { backfillPhotos, needsGoogleUpgrade, upgradeTripWithGoogle } from "@/lib/pipeline";
 import { rateLimit, rateLimited } from "@/lib/ratelimit";
+import { authEnabled, getSessionUser } from "@/lib/auth";
+import { dbEnabled, deleteDbTrip, getDbTrip, upsertDbTrip } from "@/lib/db";
+import { asValidTrip } from "@/lib/validateTrip";
 
 export const runtime = "nodejs";
 
-/** Serves a trip by id: repo sample first, then the shared Blob library.
- *  Visitor-created trips render from localStorage and never reach this. */
+// A trip JSON is typically tens-to-hundreds of KB; anything past this is not
+// a trip this app produced.
+const MAX_TRIP_BYTES = 4 * 1024 * 1024;
+
+/** Serves a trip by id: repo sample first, then the caller's own saved trip,
+ *  then the shared Blob library. Local in-progress trips render from
+ *  localStorage and never reach this. */
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -29,21 +37,92 @@ export async function GET(
     return NextResponse.json({ ...sample, upgrading });
   }
 
+  // The caller's own saved copy (fresher than any published one) — private:
+  // someone else's trip URL keeps falling through to the public library.
+  if (dbEnabled()) {
+    const user = await getSessionUser();
+    if (user) {
+      const owned = await getDbTrip(id).catch(() => null);
+      if (owned && owned.ownerId === user.id) {
+        return NextResponse.json({ ...owned.trip, ownerId: user.id });
+      }
+    }
+  }
+
   const shared = await getBlobTrip(id).catch(() => null);
   if (shared) return NextResponse.json(shared);
 
   return NextResponse.json({ error: "Trip not found" }, { status: 404 });
 }
 
-/** Remove a trip from the shared library. The client only offers this for
- *  trips this browser created/uploaded (its "owned" set), so it doubles as
- *  the un-publish action. */
+/** Saves the signed-in user's trip (create or update). The client pushes its
+ *  localStorage copy here — debounced — so trips survive the browser and
+ *  follow the account across devices. */
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  if (!rateLimit(req, "trip-save", 120)) return rateLimited();
+  const user = await getSessionUser();
+  if (!user) return NextResponse.json({ error: "Not signed in." }, { status: 401 });
+
+  const raw = await req.text();
+  if (raw.length > MAX_TRIP_BYTES) {
+    return NextResponse.json({ error: "Trip is too large." }, { status: 413 });
+  }
+  let body: unknown;
+  try {
+    body = JSON.parse(raw);
+  } catch {
+    body = null;
+  }
+  const { id } = await params;
+  const trip = asValidTrip(body);
+  if (!trip || trip.id !== id) {
+    return NextResponse.json({ error: "That doesn't look like a trip." }, { status: 400 });
+  }
+
+  delete trip.upgrading; // transient API flag, never stored
+  trip.ownerId = user.id;
+  try {
+    const ok = await upsertDbTrip(id, user.id, trip);
+    if (!ok) {
+      return NextResponse.json(
+        { error: "This trip belongs to another account." },
+        { status: 403 }
+      );
+    }
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Could not save the trip." },
+      { status: 500 }
+    );
+  }
+}
+
+/** Deletes a trip: the caller's saved copy (if signed in and theirs) plus the
+ *  published community copy. A trip saved to someone else's account can't be
+ *  removed by other callers. */
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   if (!rateLimit(req, "unpublish", 60)) return rateLimited();
   const { id } = await params;
+
+  if (dbEnabled() && authEnabled()) {
+    const user = await getSessionUser();
+    const saved = await getDbTrip(id).catch(() => null);
+    if (saved && saved.ownerId !== user?.id) {
+      return NextResponse.json(
+        { error: "This trip belongs to another account." },
+        { status: 403 }
+      );
+    }
+    if (saved && user) await deleteDbTrip(id, user.id).catch(() => {});
+  }
+
   try {
     await deleteTripFromBlob(id);
   } catch {

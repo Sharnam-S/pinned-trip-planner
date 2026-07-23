@@ -12,7 +12,14 @@ import {
   TripVideo,
 } from "@/lib/types";
 import { CATEGORY_EMOJI, formatTimestamp, youtubeLink } from "@/lib/categories";
-import { getLocalTrip, saveLocalTrip, subscribeLocalTrips } from "@/lib/clientStore";
+import {
+  getLocalTrip,
+  publishTrip,
+  readOwnedIds,
+  saveLocalTrip,
+  subscribeLocalTrips,
+} from "@/lib/clientStore";
+import { getSession } from "@/lib/useSession";
 import { addVideosToTrip, ensureRunning, isRunning } from "@/lib/runner";
 import { parseVideoId } from "@/lib/links";
 import { googlePhotoProxy, spotCoverUrl, spotPhotoUrl } from "@/lib/photoUrl";
@@ -334,10 +341,12 @@ function TripHead({
   pinnedId,
   onHoverVideo,
   onClickVideo,
+  canShare,
 }: {
   trip: Trip;
   meta: string;
   canAdd: boolean;
+  canShare: boolean;
   addLinks: string;
   setAddLinks: (v: string) => void;
   addError: string;
@@ -359,6 +368,7 @@ function TripHead({
           <h1 className="th-name">{trip.name}</h1>
           <div className="th-meta">{meta}</div>
         </div>
+        {canShare && <ShareButton trip={trip} />}
         <button
           className={`th-videos ${open ? "open" : ""}`}
           aria-expanded={open}
@@ -416,6 +426,42 @@ function TripHead({
         </div>
       </div>
     </div>
+  );
+}
+
+/** Puts a finished trip into the public community library (the landing-page
+ *  gallery). Explicit — with accounts, nothing is shared unless asked. */
+function ShareButton({ trip }: { trip: Trip }) {
+  const [state, setState] = useState<"idle" | "sharing" | "shared" | "error">(() =>
+    readOwnedIds().includes(trip.id) ? "shared" : "idle"
+  );
+  if (trip.status !== "ready" || trip.spots.length === 0) return null;
+
+  async function share() {
+    if (state === "sharing") return;
+    setState("sharing");
+    // Owner id is for the private account copy only — the public copy is
+    // anonymous.
+    const ok = await publishTrip({ ...trip, ownerId: undefined });
+    setState(ok ? "shared" : "error");
+  }
+
+  return (
+    <button
+      className={`th-share ${state}`}
+      onClick={share}
+      disabled={state === "sharing"}
+      title={
+        state === "shared"
+          ? "In the community gallery — click to update the shared copy"
+          : "Publish this map to the community gallery on the homepage"
+      }
+    >
+      {state === "idle" && "Share"}
+      {state === "sharing" && "Sharing…"}
+      {state === "shared" && "Shared ✓"}
+      {state === "error" && "Retry share"}
+    </button>
   );
 }
 
@@ -593,6 +639,10 @@ export default function TripView({
     setTrip(data);
   }, [tripId]);
 
+  // Bumped when a cross-device fetch adopts the trip into localStorage, so
+  // this effect re-runs and takes the local branch.
+  const [adoptTick, setAdoptTick] = useState(0);
+
   useEffect(() => {
     const local = getLocalTrip(tripId);
     if (local) {
@@ -608,8 +658,34 @@ export default function TripView({
       });
     }
     setIsLocal(false);
-    loadSample();
-  }, [tripId, loadSample]);
+    // Not in this browser. If the fetch turns out to be the signed-in user's
+    // own trip (opened on a new device), adopt it as the live local copy —
+    // editing, build resume, and account sync then work exactly as at home.
+    let cancelled = false;
+    (async () => {
+      const res = await fetch(`/api/trips/${tripId}`).catch(() => null);
+      if (cancelled) return;
+      if (!res || res.status === 404) {
+        setNotFound(true);
+        return;
+      }
+      const data: Trip = await res.json();
+      if (cancelled) return;
+      const session = await getSession();
+      if (cancelled) return;
+      if (data.ownerId && session.user && data.ownerId === session.user.id) {
+        delete data.upgrading;
+        if (saveLocalTrip(data)) {
+          setAdoptTick((t) => t + 1);
+          return;
+        }
+      }
+      setTrip(data);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [tripId, adoptTick]);
 
   // Local trips carry the plan on the Trip object; sample trips keep a
   // per-browser overlay. Freshest of the two wins.
@@ -969,6 +1045,7 @@ export default function TripView({
                 .filter(Boolean)
                 .join(" · ")}
               canAdd={isLocal === true}
+              canShare={isLocal === true}
               addLinks={addLinks}
               setAddLinks={setAddLinks}
               addError={addError}

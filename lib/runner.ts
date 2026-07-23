@@ -7,6 +7,7 @@
  * it on the next visit (pending videos are picked up where they left off).
  */
 import { getLocalTrip, publishTrip, saveLocalTrip } from "./clientStore";
+import { getSession } from "./useSession";
 import { applyVideoResult, pendingVideo, VideoResult } from "./merge";
 import { Trip } from "./types";
 
@@ -115,11 +116,16 @@ async function run(tripId: string) {
       : `Done — ${finished.spots.length} spots on the map.`;
     save(finished);
 
-    // One shared pool: a finished trip publishes to the shared library so it
-    // shows up everywhere (your phone, the deployed site, friends). Best-
-    // effort — a publish failure never blocks the local trip.
+    // With accounts, trips are private to their creator (the account syncs
+    // them across devices) and the community library only gets trips the user
+    // explicitly shares from the trip page. On a no-auth deploy the old
+    // behavior stands: publish to the shared pool, it's the only cross-device
+    // path. Best-effort — a publish failure never blocks the local trip.
     if (!allFailed && finished.spots.length > 0) {
-      void publishTrip(finished);
+      const done = finished;
+      void getSession().then((s) => {
+        if (!s.enabled) void publishTrip(done);
+      });
     }
   } catch (err) {
     const t = getLocalTrip(tripId);

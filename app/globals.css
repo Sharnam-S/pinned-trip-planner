@@ -209,6 +209,9 @@ button {
   align-items: center;
   justify-content: space-between;
   padding: 20px 38px;
+  /* Above sibling page sections (all z-index:1) so the account menu's
+     popover isn't painted under later cards. */
+  z-index: 30;
 }
 
 .brand {
@@ -4502,4 +4505,374 @@ button {
 .ov-expand-clip {
   overflow: hidden;
   min-height: 0;
+}
+
+/* ---------- Dashboard (signed-in landing) + account menu ---------- */
+
+.dash-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 26px;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 26px 38px 80px;
+}
+
+.dash-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.dash-head h2 {
+  font-size: clamp(26px, 3vw, 34px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #17232e;
+}
+
+.dash-count {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #4a6076;
+}
+
+.dash-empty {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(20, 50, 70, 0.1);
+  border-radius: 16px;
+  padding: 26px 24px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: #3d5266;
+}
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.dash-card {
+  position: relative;
+  background: white;
+  border: 1px solid rgba(20, 50, 70, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(20, 50, 70, 0.06);
+  transition: box-shadow 0.15s, transform 0.12s ease;
+}
+
+.dash-card:hover {
+  box-shadow: 0 1px 2px rgba(20, 50, 70, 0.06), 0 10px 26px rgba(20, 50, 70, 0.14);
+  transform: translateY(-1px);
+}
+
+.dash-card-main {
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+
+.dash-cover {
+  display: block;
+  width: 100%;
+  height: 118px;
+  object-fit: cover;
+  background: #e7eef4;
+}
+
+.dash-cover-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9fb4c6;
+}
+
+.dash-card-body {
+  padding: 12px 14px 13px;
+}
+
+.dash-card-name {
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  color: #17232e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dash-card-meta {
+  margin-top: 3px;
+  font-size: 12.5px;
+  color: #64798d;
+}
+
+.dash-status {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 11.5px;
+  font-weight: 650;
+  border-radius: 999px;
+  padding: 3px 10px;
+  background: #eaf1fb;
+  color: #2c5fbe;
+}
+
+.dash-status.error {
+  background: #fdecec;
+  color: #b3352f;
+}
+
+.dash-del {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(20, 50, 70, 0.12);
+  color: #4a6076;
+  font-size: 15px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.12s, background 0.12s;
+}
+
+.dash-card:hover .dash-del,
+.dash-del:focus-visible {
+  opacity: 1;
+}
+
+.dash-del:hover {
+  background: #fdecec;
+  color: #b3352f;
+}
+
+/* The right-hand "plan a new trip" card: the hero search bar, stacked */
+.dash-new {
+  flex: none;
+  width: 320px;
+  position: sticky;
+  top: 22px;
+  background: white;
+  border: 1px solid rgba(20, 50, 70, 0.1);
+  border-radius: 18px;
+  box-shadow: 0 1px 2px rgba(20, 50, 70, 0.06), 0 10px 30px rgba(20, 50, 70, 0.12);
+  padding: 22px;
+}
+
+.dash-new h3 {
+  font-size: 19px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: #17232e;
+}
+
+.dash-new-sub {
+  margin: 6px 0 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #64798d;
+}
+
+.dash-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border: 1px solid #e2e9ef;
+  border-radius: 12px;
+  padding: 9px 13px;
+  margin-bottom: 10px;
+  min-width: 0;
+  flex: 1;
+  transition: border-color 0.15s;
+}
+
+.dash-field:focus-within {
+  border-color: #9fb4c6;
+}
+
+.dash-field label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #7b8a98;
+}
+
+.dash-field input {
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  color: #17232e;
+  outline: none;
+  padding: 0;
+  width: 100%;
+}
+
+.dash-field input::placeholder {
+  color: #9fadba;
+}
+
+.dash-field-row {
+  display: flex;
+  gap: 10px;
+}
+
+.dash-cta {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.dash-fineprint {
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #7b8a98;
+}
+
+.dash .hero-error {
+  margin-top: 12px;
+}
+
+@media (max-width: 860px) {
+  .dash-body {
+    flex-direction: column-reverse;
+    padding: 18px 20px 60px;
+  }
+  .dash-new {
+    position: static;
+    width: 100%;
+  }
+}
+
+/* Account chip + menu (top-right of the nav) */
+.account-menu {
+  position: relative;
+}
+
+.account-chip {
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  border-radius: 50%;
+  border: 1px solid rgba(27, 43, 58, 0.14);
+  background: rgba(255, 255, 255, 0.85);
+  transition: box-shadow 0.15s, background 0.15s;
+}
+
+.account-chip:hover {
+  background: white;
+  box-shadow: var(--shadow-soft);
+}
+
+.account-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.account-initial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--blue-primary);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.account-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  min-width: 210px;
+  background: white;
+  border: 1px solid rgba(20, 50, 70, 0.1);
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(20, 50, 70, 0.06), 0 12px 32px rgba(20, 50, 70, 0.16);
+  padding: 6px;
+}
+
+.account-who {
+  padding: 9px 12px 10px;
+  border-bottom: 1px solid #eef2f6;
+}
+
+.account-name {
+  font-size: 14px;
+  font-weight: 650;
+  color: #17232e;
+}
+
+.account-email {
+  margin-top: 1px;
+  font-size: 12px;
+  color: #64798d;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-signout {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin-top: 4px;
+  padding: 8px 12px;
+  border-radius: 9px;
+  font-size: 13.5px;
+  font-weight: 550;
+  color: #17232e;
+  transition: background 0.12s;
+}
+
+.account-signout:hover {
+  background: #f2f5f8;
+}
+
+/* Share-to-community button in the trip header */
+.th-share {
+  flex: none;
+  align-self: center;
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--ink, #17232e);
+  background: white;
+  border: 1px solid rgba(20, 50, 70, 0.14);
+  border-radius: 999px;
+  padding: 7px 14px;
+  white-space: nowrap;
+  transition: background 0.12s, box-shadow 0.12s;
+}
+
+.th-share:hover {
+  box-shadow: 0 1px 2px rgba(20, 50, 70, 0.08);
+}
+
+.th-share.shared {
+  color: #2c7a4b;
+  border-color: rgba(44, 122, 75, 0.3);
+  background: #f2faf5;
+}
+
+.th-share.error {
+  color: #b3352f;
+  border-color: rgba(179, 53, 47, 0.3);
+}
+
+.th-share:disabled {
+  opacity: 0.6;
 }
