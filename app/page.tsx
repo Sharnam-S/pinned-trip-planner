@@ -443,20 +443,6 @@ const GlobeIcon = ({ size = 15 }: { size?: number }) => (
   </svg>
 );
 
-const PlayIcon = ({ size = 15 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 22 22" fill="none" aria-hidden="true">
-    <rect x="2.4" y="4.4" width="17.2" height="13.2" rx="3.6" stroke="currentColor" strokeWidth="2" />
-    <path d="M9.4 8.4l4.6 2.6-4.6 2.6V8.4z" fill="currentColor" />
-  </svg>
-);
-
-const CalendarIcon = ({ size = 15 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 22 22" fill="none" aria-hidden="true">
-    <rect x="3" y="4.6" width="16" height="14.4" rx="3" stroke="currentColor" strokeWidth="2" />
-    <path d="M3 9.4h16M7.4 2.6v3.6M14.6 2.6v3.6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-  </svg>
-);
-
 /** Row thumbnail, falling back to the pin placeholder when there is no cover
  *  or its URL no longer resolves (photo links can expire). */
 function RowThumb({ url }: { url: string | null }) {
@@ -642,15 +628,58 @@ function Dashboard({ user }: { user: SessionUser }) {
     [community]
   );
 
-  const stats = useMemo(
-    () => ({
-      trips: myTrips.length,
-      spots: myTrips.reduce((n, t) => n + t.spotCount, 0),
-      videos: myTrips.reduce((n, t) => n + t.videoCount, 0),
-      days: myTrips.reduce((n, t) => n + t.plannedDays, 0),
-    }),
-    [myTrips]
-  );
+  // Wispr-style stat cards: the number states the fact, the subtext makes it
+  // mean something ("Next: Tbilisi in 51 days", "≈ 9h of watching saved").
+  const stats = useMemo(() => {
+    const trips = myTrips.length;
+    const spots = myTrips.reduce((n, t) => n + t.spotCount, 0);
+    const videos = myTrips.reduce((n, t) => n + t.videoCount, 0);
+    const days = myTrips.reduce((n, t) => n + t.plannedDays, 0);
+
+    const todayIso = new Date().toISOString().slice(0, 10);
+    const next = myTrips
+      .filter((t) => t.startDate && t.startDate >= todayIso)
+      .sort((a, b) => a.startDate!.localeCompare(b.startDate!))[0];
+    let tripsSub = "Where to first?";
+    if (next) {
+      const until = Math.round(
+        (new Date(next.startDate! + "T00:00:00").getTime() -
+          new Date(todayIso + "T00:00:00").getTime()) /
+          86400000
+      );
+      const place = next.name.split(",")[0];
+      tripsSub =
+        until === 0
+          ? `${place} starts today!`
+          : until === 1
+            ? `${place} starts tomorrow!`
+            : `Next: ${place} in ${until} days`;
+    } else if (trips > 0) {
+      tripsSub = "All mapped — where next?";
+    }
+
+    const spotsSub =
+      spots === 0
+        ? "Your map is waiting"
+        : `≈ ${Math.max(1, Math.round(spots / 8))} days of exploring`;
+
+    // A travel guide runs ~20 minutes; reading the transcript takes seconds.
+    const savedMin = videos * 20;
+    const videosSub =
+      videos === 0
+        ? "We watch, you travel"
+        : savedMin < 60
+          ? `≈ ${savedMin} min of watching saved`
+          : `≈ ${Math.round(savedMin / 60)}h of watching saved`;
+
+    const plannedTrips = myTrips.filter((t) => t.plannedDays > 0).length;
+    const daysSub =
+      days === 0
+        ? "The planner builds day one"
+        : `Across ${plannedTrips} ${plannedTrips === 1 ? "itinerary" : "itineraries"}`;
+
+    return { trips, spots, videos, days, tripsSub, spotsSub, videosSub, daysSub };
+  }, [myTrips]);
 
   const shown = useMemo(() => {
     const list = view === "mine" ? myTrips : communityTrips;
@@ -753,24 +782,24 @@ function Dashboard({ user }: { user: SessionUser }) {
 
         <section className="dx-stats">
           <div className="dx-stat">
-            <div className="dx-stat-icon"><PinIcon size={16} /></div>
             <div className="dx-stat-n">{stats.trips}</div>
             <div className="dx-stat-label">{stats.trips === 1 ? "Trip" : "Trips"}</div>
+            <div className="dx-stat-sub">{stats.tripsSub}</div>
           </div>
           <div className="dx-stat">
-            <div className="dx-stat-icon"><GlobeIcon size={16} /></div>
             <div className="dx-stat-n">{stats.spots.toLocaleString()}</div>
             <div className="dx-stat-label">Spots pinned</div>
+            <div className="dx-stat-sub">{stats.spotsSub}</div>
           </div>
           <div className="dx-stat">
-            <div className="dx-stat-icon"><PlayIcon size={16} /></div>
             <div className="dx-stat-n">{stats.videos}</div>
             <div className="dx-stat-label">Videos read</div>
+            <div className="dx-stat-sub">{stats.videosSub}</div>
           </div>
           <div className="dx-stat">
-            <div className="dx-stat-icon"><CalendarIcon size={16} /></div>
             <div className="dx-stat-n">{stats.days}</div>
             <div className="dx-stat-label">Days planned</div>
+            <div className="dx-stat-sub">{stats.daysSub}</div>
           </div>
         </section>
 

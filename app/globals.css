@@ -4760,28 +4760,35 @@ button {
   background: white;
   border: 1px solid #ececf0;
   border-radius: 12px;
-  padding: 16px 18px;
-}
-
-.dx-stat-icon {
-  display: inline-flex;
-  color: #a1a1aa;
-  margin-bottom: 14px;
+  padding: 18px 20px;
 }
 
 .dx-stat-n {
-  font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-size: 24px;
+  font-weight: 620;
+  letter-spacing: -0.015em;
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 
 .dx-stat-label {
-  margin-top: 3px;
+  margin-top: 6px;
+  font-size: 10.5px;
+  font-weight: 570;
+  text-transform: uppercase;
+  letter-spacing: 0.075em;
+  color: #a1a1aa;
+}
+
+/* The Wispr move: a hairline, then a subtext that turns the number into
+   something felt ("Next: Tbilisi in 51 days"). */
+.dx-stat-sub {
+  margin-top: 12px;
+  padding-top: 11px;
+  border-top: 1px solid #ececf0;
   font-size: 12.5px;
-  font-weight: 430;
-  color: #71717a;
+  font-weight: 450;
+  color: #3f3f46;
 }
 
 /* Trip list */
