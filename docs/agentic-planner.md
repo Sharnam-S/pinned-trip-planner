@@ -6,7 +6,7 @@ importantly — the learnings from 9+ rounds of live-testing iteration.
 Update it when you change behavior or learn something that cost time.
 
 Status: **shipped, iterating on live feedback** · Owner: Sharnam ·
-Last updated: 2026-07-19 (PRs #23–#32)
+Last updated: 2026-07-23 (accounts/multi-user — §2b)
 
 ---
 
@@ -69,9 +69,10 @@ means; the artifact is the product.
 
 ## 2. Architecture (and the one fact that shapes everything)
 
-**User trips live ONLY in browser localStorage.** The server never stores
-user data (deployed Vercel copies are read-only, `lib/store.ts
-isReadOnly`). Everything follows from this:
+**localStorage is the working copy of every trip; the browser orchestrates
+everything.** (Since 2026-07-23 there are also accounts — see §2b — but they
+sync *copies* of the localStorage state; nothing about the planner's
+client-first design changed.) Everything follows from this:
 
 - **The chat route is stateless.** The client sends trip context (spot
   digest + current itinerary + must-sees) with every request.
@@ -86,6 +87,67 @@ isReadOnly`). Everything follows from this:
     (local trips carry `trip.itinerary` directly)
   - `pinned.mustsee.<id>` — user-starred must-see spot ids
   - `pinned.chat.<id>` — conversation history (last 80 messages)
+  - `pinned.pushed.<id>` / `pinned.pending-trip` — account-sync change
+    hashes and the through-SSO form stash (§2b)
+
+### 2b. Accounts & multi-user (2026-07-23)
+
+Google SSO + per-user server storage, added without disturbing the
+client-first architecture above. The design:
+
+- **Auth is hand-rolled OIDC** (`lib/auth.ts`, `app/api/auth/*`): Google
+  authorization-code flow, id_token verified against Google's JWKS (jose),
+  session = HS256 JWT in an **httpOnly cookie** (`pinned_session`, 30d) —
+  deliberately NOT localStorage, where injected scripts could read it. No
+  auth framework: two small routes, no version coupling with Next 16.
+- **Storage: Postgres via `lib/db.ts`** — Neon serverless when
+  `DATABASE_URL` is set; **PGlite** (in-process Postgres under `.data/`)
+  in local dev, so `npm run dev` needs zero setup. Three tables:
+  `users`, `trips` (id, owner_id, data jsonb), `chats` (trip_id, messages
+  jsonb). Schema bootstraps with `CREATE TABLE IF NOT EXISTS` — no
+  migration toolchain.
+- **Three env modes** (`.env.example`): Google creds + `DATABASE_URL` +
+  `AUTH_SECRET` = real SSO · local dev with none of them = instant
+  "Dev User" fallback sign-in (never active in prod builds) · Vercel with
+  none = auth disabled, the app behaves exactly as before accounts
+  (`/api/me` → `{enabled:false}` and the client keeps the legacy flow —
+  safe rollout before env vars exist).
+- **Sync, not migration** (`lib/sync.ts` + `components/SyncAgent.tsx` in
+  the root layout): localStorage stays the fast working copy; every local
+  change debounce-pushes owned trips (PUT `/api/trips/[id]`) and chats
+  (PUT `/api/trips/[id]/messages`). Local trips with no `ownerId` are
+  **adopted** by the signed-in account on first sweep (pre-account trips
+  migrate silently); trips owned by a *different* account on a shared
+  computer are never pushed. Change detection = djb2 hash remembered in
+  `pinned.pushed.<id>`.
+- **Cross-device open = adoption in reverse** (`TripView`): a trip URL not
+  in this browser fetches from the API; if it comes back with my
+  `ownerId`, it's saved into localStorage and flips to the local pipeline
+  (editing, build resume, sync all work as at home).
+- **Privacy model:** DB trips are served only to their owner — anyone else
+  falls through to samples/Blob and gets 404. The Blob community library
+  is now **explicit opt-in** (Share button in the trip header, owner id
+  stripped from the public copy); the runner's auto-publish only fires on
+  no-auth deploys where it remains the only cross-device path. The
+  **video cache stays global** (`lib/videoCache.ts`) — extractions are
+  trip- and user-independent, so one user processing a video benefits
+  everyone (and the bill is paid once).
+- **Landing UX:** ONE page for everyone — the sky/clouds landing (owner
+  iterated through a separate app-shell dashboard on 2026-07-24 and
+  reverted the same day: "the current landing page looks much better").
+  Signed out: hero + Sign in pill + community gallery; "Build my map"
+  stashes the form in `pinned.pending-trip`, rides through SSO, and the
+  build auto-resumes on return. Signed in: same page with a **profile
+  chip** (avatar → name/email/sign-out popover) in the nav, the
+  browser-frame section shows **your account trips** (light summaries
+  from `GET /api/me/trips`, computed in SQL — never full trips in a
+  list) instead of the community library, and the hero stat chip adds
+  "≈ Nh watching saved" (~20 min per video read).
+- **Chat across devices:** the chat route stays stateless; persistence
+  mirrors the localStorage save — the browser PUTs the sanitized message
+  array (debounced), and a fresh device seeds `useChat` from the server
+  copy only when localStorage is empty (local always wins; it is what got
+  synced up in the first place).
 
 ### Stack
 
@@ -415,7 +477,11 @@ and any plan-changing turn rewrites the post-breakpoint tail at 1.25×
 | `components/PlannerChat.tsx` | Chat UI: useChat wiring, client tool execution, history persistence (save/sanitize/window), reasoning + tool part rendering, must-see bar, auto-growing input, first-trip nudge; `QuestionFlow` tap-through form powering the instant intake card and the `ask_questions` tool (renders when no itinerary yet; `ask_questions` collects answers → `addToolOutput`) |
 | `components/TripView.tsx` | Page shell: 3-panel layout, itinerary/must-see state, day chips, `DayBrief` (timeline + rationale), `SpotCard` ("In your plan" + star) |
 | `components/TripMap.tsx` | Leaflet map: pill markers (star badges), plan overlay (numbered day pins, polylines, stay pin), day-fit behavior |
-| `lib/types.ts` | `Itinerary`/`ItineraryDay`/`ItineraryStop` on `Trip` (stored shapes — optional fields for back-compat) |
+| `lib/types.ts` | `Itinerary`/`ItineraryDay`/`ItineraryStop` on `Trip` (stored shapes — optional fields for back-compat); `Trip.ownerId` |
+| `lib/auth.ts` + `app/api/auth/*` + `app/api/me*` | Google SSO, session cookie, dev-user fallback (§2b) |
+| `lib/db.ts` | Postgres (Neon prod / PGlite dev): users, trips, chats + ownership-enforcing queries (§2b) |
+| `lib/sync.ts` + `components/SyncAgent.tsx` | Debounced localStorage→account push, adoption of pre-account trips, chat sync (§2b) |
+| `lib/useSession.ts` + `components/AccountMenu.tsx` | Client session cache (one `/api/me` per load), avatar menu |
 | `app/globals.css` | Everything under `/* Planner agent */` (~end of file) |
 
 ## 8. Working on this project
@@ -441,8 +507,8 @@ and any plan-changing turn rewrites the post-breakpoint tail at 1.25×
 - **BYOK** (v3) — friends bring their own Anthropic key via header →
   `createAnthropic({apiKey})`; localStorage-only, never stored server-side.
 - **Proposal/accept diffs, drag-to-reorder + locks, opening hours from
-  Places, cross-device sync (needs accounts), stay-area recommendation
-  mode with candidate pins.**
+  Places, stay-area recommendation mode with candidate pins.**
+  (Cross-device sync shipped 2026-07-23 with accounts — §2b.)
 - **Rejected:** LangChain/LangGraph (see §2), LLM summarization of chat
   (§5.3), Vercel AI Gateway (fragmenting billing/analytics), Claude
   subscription harnessing (ToS, §5.6).

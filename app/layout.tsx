@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import SyncAgent from "@/components/SyncAgent";
 import "./globals.css";
 
 // Inter is a variable font — all weights (including 650/750) render exactly.
@@ -21,7 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
-      <body>{children}</body>
+      <body>
+        <SyncAgent />
+        {children}
+      </body>
     </html>
   );
 }

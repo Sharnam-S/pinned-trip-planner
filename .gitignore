@@ -43,3 +43,6 @@ next-env.d.ts
 
 # half-written trip saves
 /data/trips/*.tmp
+
+# local dev database (PGlite)
+/.data/

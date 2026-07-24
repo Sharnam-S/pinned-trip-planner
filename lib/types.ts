@@ -133,6 +133,9 @@ export interface Itinerary {
 
 export interface Trip {
   id: string;
+  /** Account that owns this trip ("google:<sub>"). Absent on pre-account
+   *  trips, samples, and copies published to the community library. */
+  ownerId?: string;
   name: string;
   destination: Destination | null;
   createdAt: string;
