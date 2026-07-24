@@ -132,18 +132,17 @@ client-first architecture above. The design:
   **video cache stays global** (`lib/videoCache.ts`) — extractions are
   trip- and user-independent, so one user processing a video benefits
   everyone (and the bill is paid once).
-- **Landing UX:** signed out = the marketing hero (+ Sign in pill);
-  "Build my map" stashes the form in `pinned.pending-trip`, rides through
-  SSO, and the dashboard auto-creates the trip on landing. Signed in = a
-  **functional app shell** (Linkrunner-style, owner-requested — the sky
-  stays marketing-only): white sidebar (brand, "+ Plan a new trip" →
-  modal, My trips / Community views, account + sign-out) and a main
-  column with welcome header, stat cards (trips / spots / videos read /
-  days planned), search, and a clickable trips **table** fed by
-  `GET /api/me/trips` (dashboard-sized summaries computed in SQL from the
-  jsonb — never ship full trips to a list; covers rebuilt via the
-  placeId-keyed photo proxy because stored Google URLs expire). The
-  Community view lists the shared Blob gallery read-only.
+- **Landing UX:** ONE page for everyone — the sky/clouds landing (owner
+  iterated through a separate app-shell dashboard on 2026-07-24 and
+  reverted the same day: "the current landing page looks much better").
+  Signed out: hero + Sign in pill + community gallery; "Build my map"
+  stashes the form in `pinned.pending-trip`, rides through SSO, and the
+  build auto-resumes on return. Signed in: same page with a **profile
+  chip** (avatar → name/email/sign-out popover) in the nav, the
+  browser-frame section shows **your account trips** (light summaries
+  from `GET /api/me/trips`, computed in SQL — never full trips in a
+  list) instead of the community library, and the hero stat chip adds
+  "≈ Nh watching saved" (~20 min per video read).
 - **Chat across devices:** the chat route stays stateless; persistence
   mirrors the localStorage save — the browser PUTs the sanitized message
   array (debounced), and a fresh device seeds `useChat` from the server

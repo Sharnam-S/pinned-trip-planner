@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Trip } from "@/lib/types";
 import {
@@ -13,7 +13,6 @@ import {
   unpublishTrip,
 } from "@/lib/clientStore";
 import { newSearchTrip } from "@/lib/merge";
-import { spotCoverUrl } from "@/lib/photoUrl";
 import { ensureRunning } from "@/lib/runner";
 import { SessionUser, signIn, signOut, useSession } from "@/lib/useSession";
 import type { TripSummary } from "@/lib/db";
@@ -27,7 +26,7 @@ const PREVIEW_W = 1600;
 const PREVIEW_H = 1000;
 
 // A "Build my map" submitted while signed out parks the form here, rides
-// through the Google redirect, and resumes on the dashboard.
+// through the Google redirect, and resumes on return.
 const PENDING_KEY = "pinned.pending-trip";
 
 interface TripFormValues {
@@ -71,11 +70,33 @@ function startTrip(values: TripFormValues, ownerId?: string): string | null {
   return id;
 }
 
+/** What the trips rail + stat chip need — light, works for both a full local
+ *  Trip and an account TripSummary. */
+interface RailTrip {
+  id: string;
+  name: string;
+  status: string;
+  spotCount: number;
+  videoCount: number;
+  createdAt: string;
+}
+
+function railFromTrip(t: Trip): RailTrip {
+  return {
+    id: t.id,
+    name: t.name,
+    status: t.status,
+    spotCount: t.spots.length,
+    videoCount: t.videos.length,
+    createdAt: t.createdAt,
+  };
+}
+
 export default function Home() {
   const session = useSession();
 
-  // Until we know who's asking, show just sky + nav — flashing the marketing
-  // hero at a returning user (or the dashboard at a visitor) reads as a bug.
+  // Until we know who's asking, show just sky + nav — flashing the wrong nav
+  // state at a returning user reads as a bug.
   if (session.loading) {
     return (
       <main className="landing">
@@ -87,8 +108,7 @@ export default function Home() {
     );
   }
 
-  if (session.enabled && session.user) return <Dashboard user={session.user} />;
-  return <SignedOutLanding authEnabled={session.enabled} />;
+  return <Landing authEnabled={session.enabled} user={session.user} />;
 }
 
 function CloudLayer() {
@@ -101,12 +121,73 @@ function CloudLayer() {
   );
 }
 
-/* ---------------- Signed-out landing (the original hero + gallery) -------- */
+/** The signed-in avatar chip in the top nav: who you are + sign out. */
+function ProfileButton({ user }: { user: SessionUser }) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
 
-function SignedOutLanding({ authEnabled }: { authEnabled: boolean }) {
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: PointerEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    window.addEventListener("pointerdown", close);
+    return () => window.removeEventListener("pointerdown", close);
+  }, [open]);
+
+  const initial = (user.name ?? user.email)[0]?.toUpperCase() ?? "?";
+
+  return (
+    <div className="profile" ref={rootRef}>
+      <button
+        className="profile-chip"
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        title={user.email}
+      >
+        {user.picture ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            className="profile-avatar"
+            src={user.picture}
+            alt=""
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <span className="profile-avatar profile-initial">{initial}</span>
+        )}
+      </button>
+      {open && (
+        <div className="profile-pop" role="menu">
+          <div className="profile-who">
+            <div className="profile-name">{user.name ?? "Signed in"}</div>
+            <div className="profile-email">{user.email}</div>
+          </div>
+          <button
+            className="profile-signout"
+            role="menuitem"
+            onClick={() => void signOut()}
+          >
+            Sign out
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Landing({
+  authEnabled,
+  user,
+}: {
+  authEnabled: boolean;
+  user: SessionUser | null;
+}) {
   const router = useRouter();
   const [localTrips, setLocalTrips] = useState<Trip[]>([]);
   const [shared, setShared] = useState<Trip[]>([]);
+  const [serverTrips, setServerTrips] = useState<TripSummary[]>([]);
   const [ownedIds, setOwnedIds] = useState<string[]>([]);
   const [destination, setDestination] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -145,50 +226,90 @@ function SignedOutLanding({ authEnabled }: { authEnabled: boolean }) {
     };
     sync();
     const unsub = subscribeLocalTrips(sync);
-    // The shared library: repo samples + everything published to Blob.
-    fetch("/api/trips")
-      .then((r) => r.json())
-      .then((data) => Array.isArray(data) && setShared(data))
-      .catch(() => {});
+    if (user) {
+      // Signed in: the section below shows YOUR trips, from the account.
+      fetch("/api/me/trips")
+        .then((r) => (r.ok ? r.json() : []))
+        .then((data) => Array.isArray(data) && setServerTrips(data))
+        .catch(() => {});
+    } else {
+      // Signed out: the shared library — repo samples + published trips.
+      fetch("/api/trips")
+        .then((r) => r.json())
+        .then((data) => Array.isArray(data) && setShared(data))
+        .catch(() => {});
+    }
     return unsub;
-  }, []);
+  }, [user]);
 
-  // One deduped list: your in-progress local trips merged over the shared
-  // library (a local copy is the freshest on this machine, so it wins).
-  const allTrips = useMemo(() => {
-    const byId = new Map<string, Trip>();
-    for (const t of shared) byId.set(t.id, t);
-    for (const t of localTrips) byId.set(t.id, t);
-    return [...byId.values()].sort((a, b) =>
-      b.createdAt.localeCompare(a.createdAt)
-    );
-  }, [shared, localTrips]);
+  // A form submitted before sign-in resumes here: create the trip and jump
+  // straight into the building screen.
+  useEffect(() => {
+    if (!user) return;
+    const pending = takePending();
+    if (!pending) return;
+    const id = startTrip(pending, user.id);
+    if (id) router.push(`/trip/${id}`);
+  }, [user, router]);
 
-  // Trips this browser may delete: anything it created locally or owns in the
-  // shared library.
+  // The trips rail: signed in = your account trips merged with this browser's
+  // local copies (local wins — it's the live, building copy); signed out =
+  // your local trips merged over the shared library.
+  const railTrips = useMemo(() => {
+    const byId = new Map<string, RailTrip>();
+    if (user) {
+      for (const t of serverTrips) byId.set(t.id, t);
+      for (const t of localTrips) {
+        if (!t.ownerId || t.ownerId === user.id) byId.set(t.id, railFromTrip(t));
+      }
+    } else {
+      for (const t of shared) byId.set(t.id, railFromTrip(t));
+      for (const t of localTrips) byId.set(t.id, railFromTrip(t));
+    }
+    return [...byId.values()].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }, [user, serverTrips, shared, localTrips]);
+
+  // Trips this visitor may delete: signed in, everything here is yours;
+  // signed out, anything this browser created locally or published.
   const deletableIds = useMemo(() => {
+    if (user) return new Set(railTrips.map((t) => t.id));
     const s = new Set(ownedIds);
     for (const t of localTrips) s.add(t.id);
     return s;
-  }, [ownedIds, localTrips]);
+  }, [user, railTrips, ownedIds, localTrips]);
 
   const totalSpots = useMemo(
-    () => allTrips.reduce((n, t) => n + t.spots.length, 0),
-    [allTrips]
+    () => railTrips.reduce((n, t) => n + t.spotCount, 0),
+    [railTrips]
   );
+
+  // ~20 minutes of footage per travel guide, read for you in seconds.
+  const watchSaved = useMemo(() => {
+    const min = railTrips.reduce((n, t) => n + t.videoCount, 0) * 20;
+    if (min <= 0) return null;
+    return min < 60 ? `${min} min` : `${Math.round(min / 60)}h`;
+  }, [railTrips]);
 
   const selectedTrip = useMemo(
     () =>
-      allTrips.find((t) => t.id === selectedTripId) ??
-      allTrips.find((t) => t.status === "ready" && t.spots.length > 0) ??
-      allTrips[0] ??
+      railTrips.find((t) => t.id === selectedTripId) ??
+      railTrips.find((t) => t.status === "ready" && t.spotCount > 0) ??
+      railTrips[0] ??
       null,
-    [allTrips, selectedTripId]
+    [railTrips, selectedTripId]
   );
 
   function removeTrip(id: string) {
     deleteLocalTrip(id); // no-op if it isn't a local trip
-    void unpublishTrip(id); // remove from the shared library + owned set
+    if (user) {
+      setServerTrips((ts) => ts.filter((t) => t.id !== id));
+      fetch(`/api/trips/${id}`, { method: "DELETE" }).catch(() => {});
+      try {
+        localStorage.removeItem(`pinned.pushed.${id}`);
+      } catch {}
+    } else {
+      void unpublishTrip(id); // remove from the shared library + owned set
+    }
   }
 
   function createTrip() {
@@ -201,16 +322,16 @@ function SignedOutLanding({ authEnabled }: { authEnabled: boolean }) {
       setError("The end date is before the start date.");
       return;
     }
-    // Trips belong to an account now: park the form, sign in with Google,
-    // and the dashboard picks the build up the moment you're back.
-    if (authEnabled) {
+    // Trips belong to an account: signed out, park the form, sign in with
+    // Google, and the build picks up the moment you're back.
+    if (authEnabled && !user) {
       stashPending({ destination, startDate, endDate, interests });
       setCreating(true);
       signIn("/");
       return;
     }
     setCreating(true);
-    const id = startTrip({ destination, startDate, endDate, interests });
+    const id = startTrip({ destination, startDate, endDate, interests }, user?.id);
     if (!id) {
       setError("Your browser storage is full — delete an old trip first.");
       setCreating(false);
@@ -225,10 +346,14 @@ function SignedOutLanding({ authEnabled }: { authEnabled: boolean }) {
 
       <nav className="top-nav">
         <Logo className="brand" />
-        {authEnabled && (
-          <button className="nav-pill" onClick={() => signIn("/")}>
-            Sign in
-          </button>
+        {user ? (
+          <ProfileButton user={user} />
+        ) : (
+          authEnabled && (
+            <button className="nav-pill" onClick={() => signIn("/")}>
+              Sign in
+            </button>
+          )
         )}
       </nav>
 
@@ -237,6 +362,12 @@ function SignedOutLanding({ authEnabled }: { authEnabled: boolean }) {
           <div className="stat-chip rise r1">
             <span className="stat-dot" />
             <strong>{totalSpots.toLocaleString()}</strong>spots pinned
+            {watchSaved && (
+              <>
+                <span className="stat-sep" aria-hidden="true" />
+                <strong>≈ {watchSaved}</strong>watching saved
+              </>
+            )}
           </div>
         )}
         <h1 className="rise r1">
@@ -300,7 +431,7 @@ Every YouTube travel
         </div>
         {error && <div className="hero-error">{error}</div>}
         <p className="hero-fineprint rise r2">
-          {authEnabled
+          {authEnabled && !user
             ? "You'll sign in with Google first — your trips stay yours, on any device."
             : "Dates and interests are optional — they tune which videos we pick."}
         </p>
@@ -325,8 +456,8 @@ Every YouTube travel
           </div>
           <div className="app-body">
             <aside className="rail">
-              <div className="rail-label">Trips</div>
-              {allTrips.map((t) => (
+              <div className="rail-label">{user ? "Your trips" : "Trips"}</div>
+              {railTrips.map((t) => (
                 <div
                   key={t.id}
                   className={`rail-row ${selectedTrip.id === t.id ? "on" : ""}`}
@@ -374,528 +505,6 @@ Every YouTube travel
           Built from creators&rsquo; actual words — never sponsored lists.
         </p>
       </footer>
-    </main>
-  );
-}
-/* ---------------- Signed-in dashboard (app shell) ------------------------- */
-
-interface DashTrip {
-  id: string;
-  name: string;
-  status: string;
-  spotCount: number;
-  videoCount: number;
-  plannedDays: number;
-  startDate: string | null;
-  endDate: string | null;
-  cover: string | null;
-  createdAt: string;
-}
-
-function summarizeTrip(t: Trip): DashTrip {
-  return {
-    id: t.id,
-    name: t.name,
-    status: t.status,
-    spotCount: t.spots.length,
-    videoCount: t.videos.length,
-    plannedDays: t.itinerary?.days.length ?? 0,
-    startDate: t.query?.startDate ?? null,
-    endDate: t.query?.endDate ?? null,
-    cover: (() => {
-      const s = t.spots.find((sp) => sp.photo?.url || sp.mentions.length > 0);
-      return s ? spotCoverUrl(s) : null;
-    })(),
-    createdAt: t.createdAt,
-  };
-}
-
-function fmtDates(start: string | null, end: string | null): string | null {
-  if (!start) return null;
-  const f = (iso: string, withYear: boolean) => {
-    const d = new Date(iso + "T00:00:00");
-    return d.toLocaleDateString("en-GB", {
-      day: "numeric",
-      month: "short",
-      ...(withYear ? { year: "numeric" } : {}),
-    });
-  };
-  return end && end !== start ? `${f(start, false)} – ${f(end, true)}` : f(start, true);
-}
-
-const PinIcon = ({ size = 15 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 22 22" fill="none" aria-hidden="true">
-    <path
-      d="M11 20s7-6.1 7-11a7 7 0 10-14 0c0 4.9 7 11 7 11z"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinejoin="round"
-    />
-    <circle cx="11" cy="9" r="2.5" stroke="currentColor" strokeWidth="2" />
-  </svg>
-);
-
-const GlobeIcon = ({ size = 15 }: { size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 22 22" fill="none" aria-hidden="true">
-    <circle cx="11" cy="11" r="8.2" stroke="currentColor" strokeWidth="2" />
-    <ellipse cx="11" cy="11" rx="3.6" ry="8.2" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M3.2 11h15.6" stroke="currentColor" strokeWidth="1.6" />
-  </svg>
-);
-
-/** Card cover photo, falling back to the pin placeholder when there is no
- *  cover or its URL no longer resolves (photo links can expire). */
-function CardCover({ url }: { url: string | null }) {
-  const [broken, setBroken] = useState(false);
-  if (url && !broken) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={url} alt="" loading="lazy" onError={() => setBroken(true)} />
-    );
-  }
-  return (
-    <div className="dx-cover-empty" aria-hidden="true">
-      <PinIcon size={22} />
-    </div>
-  );
-}
-
-/** The plan-a-new-trip form in a small centered modal. */
-function NewTripModal({
-  open,
-  creating,
-  error,
-  onClose,
-  onCreate,
-}: {
-  open: boolean;
-  creating: boolean;
-  error: string;
-  onClose: () => void;
-  onCreate: (values: TripFormValues) => void;
-}) {
-  const [destination, setDestination] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [interests, setInterests] = useState("");
-  const destRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (!open) return;
-    const t = setTimeout(() => destRef.current?.focus(), 50);
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", onKey);
-    return () => {
-      clearTimeout(t);
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [open, onClose]);
-
-  if (!open) return null;
-  const submit = () => onCreate({ destination, startDate, endDate, interests });
-
-  return (
-    <div className="dx-modal-backdrop" onClick={onClose}>
-      <div
-        className="dx-modal"
-        role="dialog"
-        aria-label="Plan a new trip"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="dx-modal-head">
-          <h3>Plan a new trip</h3>
-          <button className="dx-modal-close" onClick={onClose} aria-label="Close">
-            ×
-          </button>
-        </div>
-        <p className="dx-modal-sub">
-          We&rsquo;ll find the best YouTube guides and pin every place they rave
-          about.
-        </p>
-        <div className="dx-field">
-          <label htmlFor="dx-dest">Where</label>
-          <input
-            id="dx-dest"
-            ref={destRef}
-            type="text"
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && submit()}
-            placeholder="Tbilisi, Georgia"
-            disabled={creating}
-          />
-        </div>
-        <div className="dx-field-row">
-          <div className="dx-field">
-            <DatePicker label="From" value={startDate} onChange={setStartDate} disabled={creating} />
-          </div>
-          <div className="dx-field">
-            <DatePicker
-              label="To"
-              value={endDate}
-              min={startDate || undefined}
-              onChange={setEndDate}
-              disabled={creating}
-            />
-          </div>
-        </div>
-        <div className="dx-field">
-          <label htmlFor="dx-interests">Interests</label>
-          <input
-            id="dx-interests"
-            type="text"
-            value={interests}
-            onChange={(e) => setInterests(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && submit()}
-            placeholder="skiing, wine, street food…"
-            disabled={creating}
-          />
-        </div>
-        <button className="dx-primary dx-modal-cta" onClick={submit} disabled={creating}>
-          {creating ? "Searching…" : "Build my map"}
-        </button>
-        {error && <div className="dx-modal-error">{error}</div>}
-        <p className="dx-modal-fineprint">
-          Dates and interests are optional — they tune which videos we pick.
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function Dashboard({ user }: { user: SessionUser }) {
-  const router = useRouter();
-  const [serverTrips, setServerTrips] = useState<TripSummary[]>([]);
-  const [localTrips, setLocalTrips] = useState<Trip[]>([]);
-  const [community, setCommunity] = useState<Trip[]>([]);
-  const [loaded, setLoaded] = useState(false);
-  const [view, setView] = useState<"mine" | "community">("mine");
-  const [query, setQuery] = useState("");
-  const [modalOpen, setModalOpen] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const [createError, setCreateError] = useState("");
-
-  const refreshServer = useCallback(() => {
-    fetch("/api/me/trips")
-      .then((r) => (r.ok ? r.json() : []))
-      .then((data) => Array.isArray(data) && setServerTrips(data))
-      .catch(() => {})
-      .finally(() => setLoaded(true));
-  }, []);
-
-  useEffect(() => {
-    const sync = () => setLocalTrips(listLocalTrips());
-    sync();
-    refreshServer();
-    fetch("/api/trips")
-      .then((r) => r.json())
-      .then((data) => Array.isArray(data) && setCommunity(data))
-      .catch(() => {});
-    return subscribeLocalTrips(sync);
-  }, [refreshServer]);
-
-  // A form submitted before sign-in resumes here: create the trip and jump
-  // straight into the building screen.
-  useEffect(() => {
-    const pending = takePending();
-    if (!pending) return;
-    const id = startTrip(pending, user.id);
-    if (id) router.push(`/trip/${id}`);
-  }, [user.id, router]);
-
-  // Account trips merged with this browser's local copies — local wins (it's
-  // the live, building copy; the account copy trails it by a debounce).
-  const myTrips = useMemo(() => {
-    const byId = new Map<string, DashTrip>();
-    for (const t of serverTrips) byId.set(t.id, t);
-    for (const t of localTrips) {
-      if (!t.ownerId || t.ownerId === user.id) byId.set(t.id, summarizeTrip(t));
-    }
-    return [...byId.values()].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-  }, [serverTrips, localTrips, user.id]);
-
-  const communityTrips = useMemo(
-    () =>
-      community
-        .map(summarizeTrip)
-        .sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
-    [community]
-  );
-
-  // Wispr-style stat cards: the number states the fact, the subtext makes it
-  // mean something ("Next: Tbilisi in 51 days", "≈ 9h of watching saved").
-  const stats = useMemo(() => {
-    const trips = myTrips.length;
-    const spots = myTrips.reduce((n, t) => n + t.spotCount, 0);
-    const videos = myTrips.reduce((n, t) => n + t.videoCount, 0);
-    const days = myTrips.reduce((n, t) => n + t.plannedDays, 0);
-
-    const todayIso = new Date().toISOString().slice(0, 10);
-    const next = myTrips
-      .filter((t) => t.startDate && t.startDate >= todayIso)
-      .sort((a, b) => a.startDate!.localeCompare(b.startDate!))[0];
-    let tripsSub = "Where to first?";
-    if (next) {
-      const until = Math.round(
-        (new Date(next.startDate! + "T00:00:00").getTime() -
-          new Date(todayIso + "T00:00:00").getTime()) /
-          86400000
-      );
-      const place = next.name.split(",")[0];
-      tripsSub =
-        until === 0
-          ? `${place} starts today!`
-          : until === 1
-            ? `${place} starts tomorrow!`
-            : `Next: ${place} in ${until} days`;
-    } else if (trips > 0) {
-      tripsSub = "All mapped — where next?";
-    }
-
-    const spotsSub =
-      spots === 0
-        ? "Your map is waiting"
-        : `≈ ${Math.max(1, Math.round(spots / 8))} days of exploring`;
-
-    // A travel guide runs ~20 minutes; reading the transcript takes seconds.
-    const savedMin = videos * 20;
-    const videosSub =
-      videos === 0
-        ? "We watch, you travel"
-        : savedMin < 60
-          ? `≈ ${savedMin} min of watching saved`
-          : `≈ ${Math.round(savedMin / 60)}h of watching saved`;
-
-    const plannedTrips = myTrips.filter((t) => t.plannedDays > 0).length;
-    const daysSub =
-      days === 0
-        ? "The planner builds day one"
-        : `Across ${plannedTrips} ${plannedTrips === 1 ? "itinerary" : "itineraries"}`;
-
-    return { trips, spots, videos, days, tripsSub, spotsSub, videosSub, daysSub };
-  }, [myTrips]);
-
-  const shown = useMemo(() => {
-    const list = view === "mine" ? myTrips : communityTrips;
-    const q = query.trim().toLowerCase();
-    return q ? list.filter((t) => t.name.toLowerCase().includes(q)) : list;
-  }, [view, myTrips, communityTrips, query]);
-
-  function removeTrip(id: string) {
-    deleteLocalTrip(id);
-    setServerTrips((ts) => ts.filter((t) => t.id !== id));
-    fetch(`/api/trips/${id}`, { method: "DELETE" }).catch(() => {});
-    try {
-      localStorage.removeItem(`pinned.pushed.${id}`);
-    } catch {}
-  }
-
-  function createTrip(values: TripFormValues) {
-    setCreateError("");
-    if (!values.destination.trim()) {
-      setCreateError("Tell us where you're going.");
-      return;
-    }
-    if (values.startDate && values.endDate && values.endDate < values.startDate) {
-      setCreateError("The end date is before the start date.");
-      return;
-    }
-    setCreating(true);
-    const id = startTrip(values, user.id);
-    if (!id) {
-      setCreateError("Your browser storage is full — delete an old trip first.");
-      setCreating(false);
-      return;
-    }
-    router.push(`/trip/${id}`);
-  }
-
-  const firstName = user.name?.split(" ")[0] ?? null;
-  const initial = (user.name ?? user.email)[0]?.toUpperCase() ?? "?";
-
-  return (
-    <main className="dx">
-      {/* ----- Sidebar ----- */}
-      <aside className="dx-side">
-        <div className="dx-brand">
-          <Logo className="brand" />
-        </div>
-
-        <nav className="dx-nav">
-          <button
-            className={`dx-nav-item ${view === "mine" ? "on" : ""}`}
-            onClick={() => setView("mine")}
-          >
-            <PinIcon />
-            My trips
-            {myTrips.length > 0 && <span className="dx-badge">{myTrips.length}</span>}
-          </button>
-          <button
-            className={`dx-nav-item ${view === "community" ? "on" : ""}`}
-            onClick={() => setView("community")}
-          >
-            <GlobeIcon />
-            Community
-            {communityTrips.length > 0 && (
-              <span className="dx-badge">{communityTrips.length}</span>
-            )}
-          </button>
-        </nav>
-
-        <div className="dx-side-foot">
-          <div className="dx-account">
-            {user.picture ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img className="dx-avatar" src={user.picture} alt="" referrerPolicy="no-referrer" />
-            ) : (
-              <span className="dx-avatar dx-avatar-initial">{initial}</span>
-            )}
-            <div className="dx-account-who">
-              <div className="dx-account-name">{user.name ?? "Signed in"}</div>
-              <div className="dx-account-email">{user.email}</div>
-            </div>
-          </div>
-          <button className="dx-signout" onClick={() => void signOut()}>
-            Sign out
-          </button>
-        </div>
-      </aside>
-
-      {/* ----- Main ----- */}
-      <div className="dx-main">
-        <header className="dx-head">
-          <div>
-            <h1>{firstName ? `Welcome back, ${firstName}` : "Welcome back"}</h1>
-            <p className="dx-head-sub">Pick up where you left off, or start a new map.</p>
-          </div>
-        </header>
-
-        <section className="dx-stats">
-          <div className="dx-stat">
-            <div className="dx-stat-n">{stats.trips}</div>
-            <div className="dx-stat-label">{stats.trips === 1 ? "Trip" : "Trips"}</div>
-            <div className="dx-stat-sub">{stats.tripsSub}</div>
-          </div>
-          <div className="dx-stat">
-            <div className="dx-stat-n">{stats.spots.toLocaleString()}</div>
-            <div className="dx-stat-label">Spots pinned</div>
-            <div className="dx-stat-sub">{stats.spotsSub}</div>
-          </div>
-          <div className="dx-stat">
-            <div className="dx-stat-n">{stats.videos}</div>
-            <div className="dx-stat-label">Videos read</div>
-            <div className="dx-stat-sub">{stats.videosSub}</div>
-          </div>
-          <div className="dx-stat">
-            <div className="dx-stat-n">{stats.days}</div>
-            <div className="dx-stat-label">Days planned</div>
-            <div className="dx-stat-sub">{stats.daysSub}</div>
-          </div>
-        </section>
-
-        <section className="dx-list">
-          <div className="dx-list-head">
-            <h2>{view === "mine" ? "My trips" : "Community trips"}</h2>
-            <div className="dx-toolbar">
-              <div className="dx-search">
-                <svg width="13" height="13" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                  <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="2" />
-                  <path d="M13.5 13.5L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-                <input
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder={view === "mine" ? "Search my trips" : "Search community trips"}
-                />
-              </div>
-              {view === "mine" && (
-                <button className="dx-primary" onClick={() => setModalOpen(true)}>
-                  <span className="dx-plus">+</span> New trip
-                </button>
-              )}
-            </div>
-          </div>
-
-          {shown.length === 0 ? (
-            <div className="dx-empty">
-              {view === "community" ? (
-                "No community trips match."
-              ) : !loaded ? (
-                "Loading your trips…"
-              ) : query ? (
-                "No trips match your search."
-              ) : (
-                <>
-                  <div className="dx-empty-title">Plan your first trip</div>
-                  <p>
-                    Tell us where you&rsquo;re going — we&rsquo;ll watch the best
-                    YouTube guides and pin every place they rave about.
-                  </p>
-                  <button className="dx-primary" onClick={() => setModalOpen(true)}>
-                    <span className="dx-plus">+</span> Plan a new trip
-                  </button>
-                </>
-              )}
-            </div>
-          ) : (
-            <div className="dx-cards">
-              {shown.map((t) => (
-                <div key={t.id} className="dx-card">
-                  <button
-                    className="dx-card-hit"
-                    onClick={() => router.push(`/trip/${t.id}`)}
-                  >
-                    <div className="dx-card-cover">
-                      <CardCover url={t.cover} />
-                      {t.status !== "ready" && (
-                        <span className={`dx-card-badge ${t.status}`}>
-                          {t.status === "processing" ? "Building…" : "Build failed"}
-                        </span>
-                      )}
-                    </div>
-                    <div className="dx-card-name">{t.name}</div>
-                    <div className="dx-card-meta">
-                      {[
-                        fmtDates(t.startDate, t.endDate),
-                        t.spotCount > 0
-                          ? `${t.spotCount} spot${t.spotCount === 1 ? "" : "s"}`
-                          : null,
-                        t.plannedDays > 0 ? `${t.plannedDays}‑day plan` : null,
-                      ]
-                        .filter(Boolean)
-                        .join(" · ") || "Just created"}
-                    </div>
-                  </button>
-                  {view === "mine" && (
-                    <button
-                      className="dx-card-del"
-                      title="Delete this trip"
-                      aria-label={`Delete ${t.name}`}
-                      onClick={() => removeTrip(t.id)}
-                    >
-                      ×
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      </div>
-
-      <NewTripModal
-        open={modalOpen}
-        creating={creating}
-        error={createError}
-        onClose={() => {
-          if (!creating) {
-            setModalOpen(false);
-            setCreateError("");
-          }
-        }}
-        onCreate={createTrip}
-      />
     </main>
   );
 }
