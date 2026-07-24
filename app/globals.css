@@ -765,6 +765,11 @@ button {
   border-right: 1px solid #eef2f6;
   padding: 16px 12px;
   min-width: 0;
+  /* The preview's aspect-ratio sets the row height; height:0 + min-height:100%
+     keeps a long trip list from stretching the frame (it scrolls instead). */
+  height: 0;
+  min-height: 100%;
+  overflow-y: auto;
 }
 
 .rail-label {
@@ -884,26 +889,30 @@ button {
   transform-origin: top left;
 }
 
-/* Quiet escape hatch to the real page, floating over the live demo */
-.preview-open {
-  position: absolute;
-  right: 14px;
-  bottom: 14px;
-  z-index: 5;
-  background: var(--blue-primary);
-  color: white;
-  padding: 9px 16px;
-  border-radius: var(--radius-chip);
-  font-size: 12.5px;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(20, 50, 70, 0.25);
-  opacity: 0.92;
-  transition: opacity 0.15s, transform 0.12s ease;
+/* Escape hatch to the real page: an ↗ on each rail row, next to delete.
+   Always visible on the selected row, hover-revealed on the rest. */
+.rail-open {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  color: #9db4c4;
+  opacity: 0;
+  transition: opacity 0.12s, background 0.12s, color 0.12s;
 }
 
-.preview-open:hover {
+.rail-row:hover .rail-open,
+.rail-row.on .rail-open,
+.rail-open:focus-visible {
   opacity: 1;
-  transform: scale(1.04);
+}
+
+.rail-open:hover {
+  background: #e8f0fe;
+  color: var(--blue-primary);
 }
 
 /* On phones the scaled-down UI is too small to use — link out instead */
