@@ -14,8 +14,6 @@ import {
 import { CATEGORY_EMOJI, formatTimestamp, youtubeLink } from "@/lib/categories";
 import {
   getLocalTrip,
-  publishTrip,
-  readOwnedIds,
   saveLocalTrip,
   subscribeLocalTrips,
 } from "@/lib/clientStore";
@@ -341,12 +339,10 @@ function TripHead({
   pinnedId,
   onHoverVideo,
   onClickVideo,
-  canShare,
 }: {
   trip: Trip;
   meta: string;
   canAdd: boolean;
-  canShare: boolean;
   addLinks: string;
   setAddLinks: (v: string) => void;
   addError: string;
@@ -368,7 +364,6 @@ function TripHead({
           <h1 className="th-name">{trip.name}</h1>
           <div className="th-meta">{meta}</div>
         </div>
-        {canShare && <ShareButton trip={trip} />}
         <button
           className={`th-videos ${open ? "open" : ""}`}
           aria-expanded={open}
@@ -426,42 +421,6 @@ function TripHead({
         </div>
       </div>
     </div>
-  );
-}
-
-/** Puts a finished trip into the public community library (the landing-page
- *  gallery). Explicit — with accounts, nothing is shared unless asked. */
-function ShareButton({ trip }: { trip: Trip }) {
-  const [state, setState] = useState<"idle" | "sharing" | "shared" | "error">(() =>
-    readOwnedIds().includes(trip.id) ? "shared" : "idle"
-  );
-  if (trip.status !== "ready" || trip.spots.length === 0) return null;
-
-  async function share() {
-    if (state === "sharing") return;
-    setState("sharing");
-    // Owner id is for the private account copy only — the public copy is
-    // anonymous.
-    const ok = await publishTrip({ ...trip, ownerId: undefined });
-    setState(ok ? "shared" : "error");
-  }
-
-  return (
-    <button
-      className={`th-share ${state}`}
-      onClick={share}
-      disabled={state === "sharing"}
-      title={
-        state === "shared"
-          ? "In the community gallery — click to update the shared copy"
-          : "Publish this map to the community gallery on the homepage"
-      }
-    >
-      {state === "idle" && "Share"}
-      {state === "sharing" && "Sharing…"}
-      {state === "shared" && "Shared ✓"}
-      {state === "error" && "Retry share"}
-    </button>
   );
 }
 
@@ -1045,7 +1004,6 @@ export default function TripView({
                 .filter(Boolean)
                 .join(" · ")}
               canAdd={isLocal === true}
-              canShare={isLocal === true}
               addLinks={addLinks}
               setAddLinks={setAddLinks}
               addError={addError}
