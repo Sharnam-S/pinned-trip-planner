@@ -287,7 +287,9 @@ function Landing({
   const watchSaved = useMemo(() => {
     const min = railTrips.reduce((n, t) => n + t.videoCount, 0) * 20;
     if (min <= 0) return null;
-    return min < 60 ? `${min} min` : `${Math.round(min / 60)}h`;
+    if (min < 60) return { n: min, label: "min saved" };
+    const h = Math.round(min / 60);
+    return { n: h, label: h === 1 ? "hour saved" : "hours saved" };
   }, [railTrips]);
 
   const selectedTrip = useMemo(
@@ -365,7 +367,8 @@ function Landing({
             {watchSaved && (
               <>
                 <span className="stat-sep" aria-hidden="true" />
-                <strong>≈ {watchSaved}</strong>watching saved
+                <strong>{watchSaved.n}</strong>
+                {watchSaved.label}
               </>
             )}
           </div>
