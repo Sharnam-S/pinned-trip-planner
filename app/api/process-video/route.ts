@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { parseTripTag } from "@/lib/llm";
+import { parseTripTag, withLlmUser } from "@/lib/llm";
+import { getSessionUser } from "@/lib/auth";
 import { processVideo } from "@/lib/pipeline";
 import { rateLimit, rateLimited } from "@/lib/ratelimit";
 
@@ -31,7 +32,10 @@ export async function POST(req: NextRequest) {
     : [];
 
   try {
-    const result = await processVideo(videoId, knownSpotNames, parseTripTag(body));
+    const user = await getSessionUser();
+    const result = await withLlmUser(user, () =>
+      processVideo(videoId, knownSpotNames, parseTripTag(body))
+    );
     return NextResponse.json(result);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);

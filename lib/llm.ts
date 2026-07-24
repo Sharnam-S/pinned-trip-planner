@@ -9,6 +9,7 @@
  * straight through and nothing is sent.
  */
 import Anthropic from "@anthropic-ai/sdk";
+import { AsyncLocalStorage } from "async_hooks";
 import { PostHog } from "posthog-node";
 
 export const client = new Anthropic();
@@ -29,6 +30,56 @@ export type TripTag = {
   tripId?: string;
   tripName?: string;
 };
+
+// --- User attribution -------------------------------------------------------
+// With accounts, generations are keyed to the signed-in user (distinctId +
+// person profile) so PostHog can slice cost/usage per user and build cohorts.
+// The user comes from the session cookie SERVER-side (never a client-sent
+// field — that would be spoofable) and rides request-scoped AsyncLocalStorage
+// so deep pipeline code (extract, discover) needs no signature changes.
+
+export type LlmUser = {
+  id: string; // "google:<sub>" | "dev:local"
+  email?: string | null;
+  name?: string | null;
+};
+
+const llmUserStore = new AsyncLocalStorage<LlmUser | null>();
+
+/** Route handlers wrap their LLM work in this so every capture inside is
+ *  attributed to the signed-in user (pass null for anonymous callers). */
+export function withLlmUser<T>(user: LlmUser | null, fn: () => Promise<T>): Promise<T> {
+  return llmUserStore.run(user, fn);
+}
+
+/** distinctId + person/event properties for the current request's user.
+ *  Anonymous: key by trace, skip person profiles (the pre-accounts behavior). */
+export function userAttribution(fallbackDistinctId: string): {
+  distinctId: string;
+  properties: Record<string, unknown>;
+} {
+  const user = llmUserStore.getStore() ?? null;
+  if (!user) {
+    return {
+      distinctId: fallbackDistinctId,
+      properties: { $process_person_profile: false },
+    };
+  }
+  return {
+    distinctId: user.id,
+    properties: {
+      userId: user.id,
+      ...(user.email || user.name
+        ? {
+            $set: {
+              ...(user.email ? { email: user.email } : {}),
+              ...(user.name ? { name: user.name } : {}),
+            },
+          }
+        : {}),
+    },
+  };
+}
 
 export type LlmCallOptions = {
   /** Label shown on the generation in PostHog's trace view. */
@@ -105,13 +156,14 @@ async function captureGeneration(
       .filter((b): b is Anthropic.TextBlock => b.type === "text")
       .map((b) => b.text)
       .join("");
+    const who = userAttribution(opts.traceId);
     posthog.capture({
-      // No user accounts in this app — key events by trace, skip person
-      // profiles (mirrors what the official wrapper does without a user id).
-      distinctId: opts.traceId,
+      // Signed-in: keyed to the account (person profile + cohorts). Anonymous:
+      // keyed by trace with person processing off, as before accounts.
+      distinctId: who.distinctId,
       event: "$ai_generation",
       properties: {
-        $process_person_profile: false,
+        ...who.properties,
         $ai_provider: "anthropic",
         $ai_model: message?.model ?? params.model,
         $ai_model_parameters: { max_tokens: params.max_tokens },

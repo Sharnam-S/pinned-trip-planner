@@ -326,6 +326,18 @@ cost-related (model splits, summarization, Routes API), check
 cache_read should dominate input tokens — if not, a silent cache
 invalidator crept in.
 
+**User-level attribution (2026-07-24, post-accounts).** Every
+`$ai_generation` is keyed to the signed-in account: `distinctId` = the
+session user's id (`google:<sub>`), a plain `userId` event property for
+breakdowns, and `$set: {email, name}` so PostHog person profiles/cohorts
+populate. Anonymous callers keep the old behavior (`distinctId` = traceId,
+`$process_person_profile: false`). The user always comes from the session
+cookie SERVER-side (client-sent ids would be spoofable). Plumbing: the chat
+route passes the user explicitly into its capture opts (its callbacks run
+under `after()`, where ambient context is risky); the discover/process-video
+pipeline uses `withLlmUser()` — request-scoped AsyncLocalStorage in
+`lib/llm.ts` — so `extract.ts`/`discover.ts` needed no signature changes.
+
 **Two capture paths, one schema — and the AI-SDK path had three bugs.**
 `lib/llm.ts` wraps the raw Anthropic SDK (discover/extract); the chat route
 hand-rolls its own `$ai_generation` around `streamText`. They must stay in

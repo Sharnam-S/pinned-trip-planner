@@ -434,9 +434,7 @@ Every YouTube travel
         </div>
         {error && <div className="hero-error">{error}</div>}
         <p className="hero-fineprint rise r2">
-          {authEnabled && !user
-            ? "You'll sign in with Google first — your trips stay yours, on any device."
-            : "Dates and interests are optional — they tune which videos we pick."}
+          Dates and interests are optional — they tune which videos we pick.
         </p>
       </section>
 
