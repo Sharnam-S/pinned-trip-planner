@@ -1,7 +1,8 @@
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { curateVideos, gatherCandidates, planSearchQueries } from "@/lib/discover";
-import { parseTripTag } from "@/lib/llm";
+import { parseTripTag, withLlmUser } from "@/lib/llm";
+import { getSessionUser } from "@/lib/auth";
 import { rateLimit, rateLimited } from "@/lib/ratelimit";
 import { TripQuery } from "@/lib/types";
 
@@ -45,11 +46,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // One PostHog trace groups both LLM calls of this discover request
+  // One PostHog trace groups both LLM calls of this discover request;
+  // withLlmUser attributes every capture inside to the signed-in account.
   const traceId = randomUUID();
   const trip = parseTripTag(body);
-
-  const plan = await planSearchQueries(query, traceId, trip);
+  const user = await getSessionUser();
+  return withLlmUser(user, async () => {
+    const plan = await planSearchQueries(query, traceId, trip);
   const candidates = await gatherCandidates(plan.queries);
   if (candidates.length === 0) {
     return NextResponse.json(
@@ -78,6 +81,7 @@ export async function POST(req: NextRequest) {
       title: byId.get(id)?.title ?? "",
       channelName: byId.get(id)?.channelName ?? "",
     })),
-    bench: ranked.slice(PICK_COUNT),
+      bench: ranked.slice(PICK_COUNT),
+    });
   });
 }

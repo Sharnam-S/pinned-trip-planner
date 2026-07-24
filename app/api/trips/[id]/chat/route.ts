@@ -26,6 +26,7 @@ import {
   type PlannerContext,
 } from "@/lib/itinerary";
 import { rateLimit, rateLimited } from "@/lib/ratelimit";
+import { getSessionUser, type SessionUser } from "@/lib/auth";
 
 export const runtime = "nodejs";
 // Sonnet thinks before it answers, and a multi-day plan is a long think plus
@@ -226,6 +227,9 @@ async function captureGeneration(opts: {
   traceId: string;
   tripId: string;
   tripName: string;
+  /** Signed-in account (from the session cookie) — keys the event to a PostHog
+   *  person so cost/usage slice per user. Null = anonymous, keyed by trace. */
+  user: SessionUser | null;
   latencySec: number;
   input: { role: string; content: string }[];
   inputTokens?: number;
@@ -254,10 +258,18 @@ async function captureGeneration(opts: {
       (opts.inputTokens ?? 0) - cacheRead - cacheWrite
     );
     posthog.capture({
-      distinctId: opts.traceId,
+      distinctId: opts.user?.id ?? opts.traceId,
       event: "$ai_generation",
       properties: {
-        $process_person_profile: false,
+        ...(opts.user
+          ? {
+              userId: opts.user.id,
+              $set: {
+                ...(opts.user.email ? { email: opts.user.email } : {}),
+                ...(opts.user.name ? { name: opts.user.name } : {}),
+              },
+            }
+          : { $process_person_profile: false }),
         $ai_provider: "anthropic",
         $ai_model: MODEL,
         $ai_input: opts.input,
@@ -343,6 +355,8 @@ export async function POST(
   if (!rateLimit(req, "planner-chat", 300)) return rateLimited();
 
   const { id: tripId } = await params;
+  // Who's chatting — attributes this turn's telemetry to the account.
+  const sessionUser = await getSessionUser();
   const {
     messages,
     context,
@@ -441,6 +455,7 @@ export async function POST(
         traceId,
         tripId,
         tripName: context.tripName,
+        user: sessionUser,
         latencySec: (Date.now() - start) / 1000,
         input: formatInput(modelMessages),
         inputTokens: event.usage.inputTokens,
@@ -460,6 +475,7 @@ export async function POST(
         traceId,
         tripId,
         tripName: context.tripName,
+        user: sessionUser,
         latencySec: (Date.now() - start) / 1000,
         input: formatInput(modelMessages),
         outputText: "",
@@ -475,6 +491,7 @@ export async function POST(
         traceId,
         tripId,
         tripName: context.tripName,
+        user: sessionUser,
         latencySec: (Date.now() - start) / 1000,
         input: formatInput(modelMessages),
         inputTokens: steps.reduce((n, s) => n + (s.usage?.inputTokens ?? 0), 0),
