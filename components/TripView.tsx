@@ -341,12 +341,10 @@ function TripHead({
   pinnedId,
   onHoverVideo,
   onClickVideo,
-  canShare,
 }: {
   trip: Trip;
   meta: string;
   canAdd: boolean;
-  canShare: boolean;
   addLinks: string;
   setAddLinks: (v: string) => void;
   addError: string;
@@ -368,7 +366,6 @@ function TripHead({
           <h1 className="th-name">{trip.name}</h1>
           <div className="th-meta">{meta}</div>
         </div>
-        {canShare && <ShareButton trip={trip} />}
         <button
           className={`th-videos ${open ? "open" : ""}`}
           aria-expanded={open}
@@ -429,39 +426,135 @@ function TripHead({
   );
 }
 
-/** Puts a finished trip into the public community library (the landing-page
- *  gallery). Explicit — with accounts, nothing is shared unless asked. */
-function ShareButton({ trip }: { trip: Trip }) {
-  const [state, setState] = useState<"idle" | "sharing" | "shared" | "error">(() =>
-    readOwnedIds().includes(trip.id) ? "shared" : "idle"
-  );
-  if (trip.status !== "ready" || trip.spots.length === 0) return null;
+/**
+ * Share, top-right of the right rail. First share publishes the trip to the
+ * public community gallery (owner id stripped — the public copy is anonymous)
+ * and opens a popover with a copyable link. Once public, the button just
+ * copies the link (and silently refreshes the public copy so friends see the
+ * latest version).
+ */
+function ShareTrip({ trip }: { trip: Trip }) {
+  const [shared, setShared] = useState(() => readOwnedIds().includes(trip.id));
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [copied, setCopied] = useState(false); // button flash (already-shared path)
+  const [popupCopied, setPopupCopied] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
 
-  async function share() {
-    if (state === "sharing") return;
-    setState("sharing");
-    // Owner id is for the private account copy only — the public copy is
-    // anonymous.
+  const link =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/trip/${trip.id}`
+      : `/trip/${trip.id}`;
+
+  useEffect(() => {
+    if (!popupOpen) return;
+    const onPointer = (e: PointerEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setPopupOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setPopupOpen(false);
+    window.addEventListener("pointerdown", onPointer);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("pointerdown", onPointer);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [popupOpen]);
+
+  async function copyLink(): Promise<boolean> {
+    try {
+      await navigator.clipboard.writeText(link);
+      return true;
+    } catch {
+      return false; // e.g. no clipboard permission — the popup input is the fallback
+    }
+  }
+
+  async function onShareClick() {
+    if (busy) return;
+    setFailed(false);
+    if (shared) {
+      // Already public: hand over the link; refresh the public copy quietly.
+      void publishTrip({ ...trip, ownerId: undefined });
+      if (await copyLink()) {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } else {
+        setPopupOpen(true);
+      }
+      return;
+    }
+    setBusy(true);
     const ok = await publishTrip({ ...trip, ownerId: undefined });
-    setState(ok ? "shared" : "error");
+    setBusy(false);
+    if (!ok) {
+      setFailed(true);
+      return;
+    }
+    setShared(true);
+    setPopupCopied(false);
+    setPopupOpen(true);
   }
 
   return (
-    <button
-      className={`th-share ${state}`}
-      onClick={share}
-      disabled={state === "sharing"}
-      title={
-        state === "shared"
-          ? "In the community gallery — click to update the shared copy"
-          : "Publish this map to the community gallery on the homepage"
-      }
-    >
-      {state === "idle" && "Share"}
-      {state === "sharing" && "Sharing…"}
-      {state === "shared" && "Shared ✓"}
-      {state === "error" && "Retry share"}
-    </button>
+    <div className="share-trip" ref={rootRef}>
+      <button
+        className={`share-btn${shared ? " shared" : ""}`}
+        onClick={onShareClick}
+        disabled={busy}
+        title={
+          shared
+            ? "Public — click to copy the link"
+            : "Make this trip public and get a shareable link"
+        }
+      >
+        <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path
+            d="M9.5 4.5L7 2m0 0L4.5 4.5M7 2v7"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M2.5 7.5v3A1.5 1.5 0 004 12h6a1.5 1.5 0 001.5-1.5v-3"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+          />
+        </svg>
+        {busy ? "Sharing…" : failed ? "Retry share" : copied ? "Link copied ✓" : "Share"}
+      </button>
+
+      {popupOpen && (
+        <div className="share-pop" role="dialog" aria-label="Share this trip">
+          <div className="share-pop-title">This trip is now public</div>
+          <p className="share-pop-sub">
+            Anyone with the link can view the map and plan — it&rsquo;s also in
+            the community gallery on the homepage.
+          </p>
+          <div className="share-pop-row">
+            <input
+              type="text"
+              readOnly
+              value={link}
+              onFocus={(e) => e.currentTarget.select()}
+            />
+            <button
+              className="share-pop-copy"
+              onClick={async () => {
+                if (await copyLink()) {
+                  setPopupCopied(true);
+                  setTimeout(() => setPopupCopied(false), 2000);
+                }
+              }}
+            >
+              {popupCopied ? "Copied ✓" : "Copy"}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -702,6 +795,15 @@ export default function TripView({
   // adjust-state-on-change pattern) so the itinerary shows without a
   // one-frame flash of the pins tab.
   const hasItinerary = itinerary != null && itinerary.days.length > 0;
+
+  // Sharing lives in the right rail's top row: your own finished trip, not
+  // the embedded landing preview, and only once there's something to show.
+  const canShare =
+    !embed &&
+    isLocal === true &&
+    trip != null &&
+    trip.status === "ready" &&
+    trip.spots.length > 0;
   const [prevHasItinerary, setPrevHasItinerary] = useState(false);
   if (hasItinerary !== prevHasItinerary) {
     setPrevHasItinerary(hasItinerary);
@@ -1045,7 +1147,6 @@ export default function TripView({
                 .filter(Boolean)
                 .join(" · ")}
               canAdd={isLocal === true}
-              canShare={isLocal === true}
               addLinks={addLinks}
               setAddLinks={setAddLinks}
               addError={addError}
@@ -1261,32 +1362,37 @@ export default function TripView({
             control only appears after the agent has built an itinerary; before
             that the rail is pins-only. */}
         <aside className="right-side" ref={rightRef} onClick={(e) => e.stopPropagation()}>
-          {hasItinerary && (
+          {(hasItinerary || canShare) && (
             <div className="rail-tabs">
-              <div
-                className="rail-seg"
-                role="tablist"
-                aria-label="Right rail view"
-                data-active={rightTab}
-              >
-                <span className="rail-seg-thumb" aria-hidden="true" />
-                <button
-                  role="tab"
-                  aria-selected={rightTab === "overview"}
-                  className={`rail-tab ${rightTab === "overview" ? "on" : ""}`}
-                  onClick={() => setRightTab("overview")}
+              {hasItinerary ? (
+                <div
+                  className="rail-seg"
+                  role="tablist"
+                  aria-label="Right rail view"
+                  data-active={rightTab}
                 >
-                  Itinerary
-                </button>
-                <button
-                  role="tab"
-                  aria-selected={rightTab === "pins"}
-                  className={`rail-tab ${rightTab === "pins" ? "on" : ""}`}
-                  onClick={() => setRightTab("pins")}
-                >
-                  Pins
-                </button>
-              </div>
+                  <span className="rail-seg-thumb" aria-hidden="true" />
+                  <button
+                    role="tab"
+                    aria-selected={rightTab === "overview"}
+                    className={`rail-tab ${rightTab === "overview" ? "on" : ""}`}
+                    onClick={() => setRightTab("overview")}
+                  >
+                    Itinerary
+                  </button>
+                  <button
+                    role="tab"
+                    aria-selected={rightTab === "pins"}
+                    className={`rail-tab ${rightTab === "pins" ? "on" : ""}`}
+                    onClick={() => setRightTab("pins")}
+                  >
+                    Pins
+                  </button>
+                </div>
+              ) : (
+                <span />
+              )}
+              {canShare && <ShareTrip trip={trip} />}
             </div>
           )}
 

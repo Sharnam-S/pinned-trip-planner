@@ -197,6 +197,8 @@ function Landing({
   const [error, setError] = useState("");
   const [creating, setCreating] = useState(false);
   const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
+  // Set = the delete-confirmation dialog is open for this trip.
+  const [confirmDelete, setConfirmDelete] = useState<RailTrip | null>(null);
   // ?start=1 (the planner panel's "Create your first trip" nudge) lands the
   // user ready to type: destination focused, search bar pulsing once.
   const destRef = useRef<HTMLInputElement>(null);
@@ -503,7 +505,7 @@ Every YouTube travel
                       className="rail-del"
                       title="Delete this trip"
                       aria-label={`Delete ${t.name}`}
-                      onClick={() => removeTrip(t.id)}
+                      onClick={() => setConfirmDelete(t)}
                     >
                       ×
                     </button>
@@ -523,7 +525,68 @@ Every YouTube travel
           Built from creators&rsquo; actual words — never sponsored lists.
         </p>
       </footer>
+
+      {confirmDelete && (
+        <ConfirmDelete
+          trip={confirmDelete}
+          signedIn={Boolean(user)}
+          onCancel={() => setConfirmDelete(null)}
+          onConfirm={() => {
+            removeTrip(confirmDelete.id);
+            setConfirmDelete(null);
+          }}
+        />
+      )}
     </main>
+  );
+}
+
+/** "Are you sure?" dialog for trip deletion — a mis-click here would throw
+ *  away a built map and its plan, so deletion is never one click. */
+function ConfirmDelete({
+  trip,
+  signedIn,
+  onCancel,
+  onConfirm,
+}: {
+  trip: RailTrip;
+  signedIn: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onCancel();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onCancel]);
+
+  return (
+    <div className="confirm-backdrop" onClick={onCancel}>
+      <div
+        className="confirm-card"
+        role="alertdialog"
+        aria-label={`Delete ${trip.name}?`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3>Delete &ldquo;{trip.name}&rdquo;?</h3>
+        <p>
+          {trip.spotCount > 0
+            ? `The map, its ${trip.spotCount} pinned spot${trip.spotCount === 1 ? "" : "s"}, and any plan go with it. `
+            : "The trip and anything in it go with it. "}
+          {signedIn
+            ? "It's removed from your account on every device — this can't be undone."
+            : "This can't be undone."}
+        </p>
+        <div className="confirm-actions">
+          <button className="confirm-cancel" onClick={onCancel}>
+            Keep trip
+          </button>
+          <button className="confirm-delete" onClick={onConfirm}>
+            Delete trip
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
