@@ -126,12 +126,15 @@ client-first architecture above. The design:
   (editing, build resume, sync all work as at home).
 - **Privacy model:** DB trips are served only to their owner — anyone else
   falls through to samples/Blob and gets 404. The Blob community library
-  is **explicit opt-in only** — and currently has NO publish UI: a Share
-  button lived in the trip header briefly (2026-07-24) but the owner cut
-  it ("not the right spot"); `POST /api/publish` + `publishTrip()` remain
-  for whenever a better home is found (strip `ownerId` before
-  publishing). The runner's auto-publish only fires on no-auth deploys
-  where it remains the only cross-device path. The
+  is **explicit opt-in**: the `ShareTrip` button top-right of the trip
+  page's right rail (owner-picked spot after rejecting the trip header).
+  First click publishes (owner id stripped — the public copy is
+  anonymous) and pops a copyable link; once public, clicking just copies
+  the link and silently re-publishes so the shared copy stays fresh.
+  "Shared" state = `pinned.owned-ids`, so it's per-browser (a second
+  device shows "Share" again — harmless, it re-publishes + copies). The
+  runner's auto-publish only fires on no-auth deploys where it remains
+  the only cross-device path. The
   **video cache stays global** (`lib/videoCache.ts`) — extractions are
   trip- and user-independent, so one user processing a video benefits
   everyone (and the bill is paid once).
