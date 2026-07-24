@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Trip } from "@/lib/types";
 import {
@@ -481,6 +482,22 @@ Every YouTube travel
                       <span className={`rail-status ${t.status}`} />
                     )}
                   </button>
+                  <Link
+                    className="rail-open"
+                    title="Open full trip"
+                    aria-label={`Open ${t.name}`}
+                    href={`/trip/${t.id}`}
+                  >
+                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                      <path
+                        d="M3 1.5h7.5V9M10.5 1.5L1.5 10.5"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </Link>
                   {deletableIds.has(t.id) && (
                     <button
                       className="rail-del"
@@ -536,9 +553,6 @@ function TripPreview({ tripId }: { tripId: string }) {
         height={PREVIEW_H}
         style={{ transform: `scale(${scale})` }}
       />
-      <a className="preview-open" href={`/trip/${tripId}`}>
-        Open full trip ↗
-      </a>
     </div>
   );
 }
