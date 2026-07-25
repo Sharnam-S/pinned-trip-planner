@@ -1333,6 +1333,7 @@ button {
 }
 
 .trip-facets {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1343,10 +1344,6 @@ button {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-}
-
-.facet {
-  position: relative;
 }
 
 .facet-pill {
@@ -1375,9 +1372,12 @@ button {
   border-color: #dcdcdc;
 }
 
+/* The open pill sits raised above the row, like the active segment of Airbnb's
+   search bar — it's the anchor the popover belongs to. */
 .facet-pill.open {
   border-color: var(--text);
   background: var(--surface);
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.06), 0 6px 16px rgba(16, 17, 26, 0.12);
 }
 
 .facet-icon {
@@ -1397,36 +1397,103 @@ button {
   white-space: nowrap;
 }
 
-.facet-pop {
+/* ---- The one popover, and how it moves ----
+   All three sections share a single box. Switching sections slides it to the
+   new pill and morphs it to the new content's size, rather than closing one
+   popover and opening another — the continuity is the whole point of the
+   motion. Three elements, one job each, so their transforms never fight:
+     .facet-anchor    position (translateX) + size (width/height)
+     .facet-pop       open/close (opacity + scale) and the visible chrome
+     .facet-pop-inner the content, measured to drive the box's size
+   JS sets the anchor's transform/width/height from the open pill's centre and
+   the inner's natural size; everything else is CSS. */
+.facet-anchor {
   position: absolute;
-  top: calc(100% + 8px);
-  left: 50%;
+  top: calc(100% + 10px);
+  left: 0;
   z-index: 60;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: max-content;
-  min-width: 236px;
-  max-width: 340px;
-  padding: 14px;
+  transition: transform 0.42s cubic-bezier(0.32, 0.72, 0, 1),
+    width 0.42s cubic-bezier(0.32, 0.72, 0, 1),
+    height 0.42s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Opening from closed: park under the pill with no travel. Only a switch
+   between two open sections should animate across the header. */
+.facet-anchor[data-mode="enter"] {
+  transition: none;
+}
+
+.facet-pop {
+  width: 100%;
+  height: 100%;
+  /* Clips the incoming content for the frame before the box has grown to fit
+     it — the same trick that makes Airbnb's morph read as one surface. */
+  overflow: hidden;
   background: var(--surface);
   border: 1px solid rgba(20, 50, 70, 0.1);
   border-radius: 16px;
   box-shadow: 0 2px 6px rgba(20, 50, 70, 0.08), 0 18px 44px rgba(20, 50, 70, 0.2);
   cursor: default;
-  animation: facet-in 0.16s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: top center;
+  transition: opacity 0.2s ease, transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Carries the centering translate — an animation's transform replaces the
-   base one, so it can't live in .facet-pop alone. */
-@keyframes facet-in {
+.facet-pop[data-state="closed"] {
+  opacity: 0;
+  transform: translateY(-6px) scale(0.97);
+  pointer-events: none;
+}
+
+.facet-pop[data-state="open"] {
+  opacity: 1;
+  transform: none;
+}
+
+.facet-pop-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* Natural size, independent of the box it's measured for. The sections are
+     deliberately different widths — that size change is half the motion. */
+  width: max-content;
+  min-width: 248px;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  animation: facet-content-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* The incoming section catches up with the box: it starts a touch low and
+   transparent while the box is still travelling, so the two read as one move. */
+/* The month grid needs room to breathe; 7 columns at the base width would put
+   the day cells under 30px. */
+.facet-pop-inner[data-facet="dates"] {
+  min-width: 300px;
+}
+
+@keyframes facet-content-in {
   from {
     opacity: 0;
-    transform: translate(-50%, -4px);
+    transform: translateY(6px);
+  }
+  40% {
+    opacity: 0.4;
   }
   to {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .facet-anchor,
+  .facet-pop {
+    transition: none;
+  }
+  .facet-pop-inner {
+    animation: none;
   }
 }
 

@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import MonthGrid, {
   formatDay,
   parseKey,
@@ -61,65 +67,6 @@ function IconPeople() {
       <path d="M3.5 19c0-3 2.5-4.8 5.5-4.8s5.5 1.8 5.5 4.8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
       <path d="M16 5.6a3.2 3.2 0 010 4.9M17.5 14.6c2 .5 3.5 2.1 3.5 4.4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
-  );
-}
-
-/** A header pill plus its popover editor. `value` present = answered. */
-function Facet({
-  icon,
-  value,
-  placeholder,
-  dialogLabel,
-  children,
-}: {
-  icon: ReactNode;
-  value: string | null;
-  placeholder: string;
-  dialogLabel: string;
-  children: (close: () => void) => ReactNode;
-}) {
-  const [open, setOpen] = useState(false);
-  const rootRef = useRef<HTMLDivElement>(null);
-
-  // Close on outside press or Escape. `pointerdown` so a press outside
-  // dismisses before it lands on whatever is underneath; the date picker's own
-  // popover is inside rootRef, so picking a day doesn't close this.
-  useEffect(() => {
-    if (!open) return;
-    const onDown = (e: PointerEvent) => {
-      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("pointerdown", onDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("pointerdown", onDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
-
-  return (
-    <div className="facet" ref={rootRef}>
-      <button
-        type="button"
-        className={`facet-pill${value ? " set" : ""}${open ? " open" : ""}`}
-        onClick={() => setOpen((o) => !o)}
-        aria-haspopup="dialog"
-        aria-expanded={open}
-      >
-        <span className="facet-icon" aria-hidden="true">
-          {icon}
-        </span>
-        <span className="facet-value">{value ?? placeholder}</span>
-      </button>
-      {open && (
-        <div className="facet-pop" role="dialog" aria-label={dialogLabel}>
-          {children(() => setOpen(false))}
-        </div>
-      )}
-    </div>
   );
 }
 
@@ -300,6 +247,43 @@ function InterestsEditor({
   );
 }
 
+
+/** Who's going — one tap commits and closes, so no footer. */
+function PartyEditor({
+  party,
+  onChange,
+  close,
+}: {
+  party?: TripParty;
+  onChange: (patch: { party?: TripParty }) => void;
+  close: () => void;
+}) {
+  return (
+    <>
+      <span className="facet-pop-label">Who&rsquo;s going?</span>
+      <div className="facet-options">
+        {PARTY_OPTIONS.map((o) => (
+          <button
+            type="button"
+            key={o.value}
+            className={`facet-option${party === o.value ? " on" : ""}`}
+            aria-pressed={party === o.value}
+            onClick={() => {
+              onChange({ party: party === o.value ? undefined : o.value });
+              close();
+            }}
+          >
+            <span aria-hidden="true">{o.emoji}</span>
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </>
+  );
+}
+
+type FacetKey = "dates" | "interests" | "party";
+
 export default function TripHeader({
   name,
   facets,
@@ -312,81 +296,181 @@ export default function TripHeader({
   /** Share control — the header's rightmost slot. */
   action?: ReactNode;
 }) {
+  // One editor open at a time, and ONE popover for all three — switching
+  // sections slides and resizes that single box instead of closing one popover
+  // and opening another. `shown` lags `open` by a close so the box still has
+  // content to fade out with.
+  const [open, setOpen] = useState<FacetKey | null>(null);
+  const [shown, setShown] = useState<FacetKey | null>(null);
+  // "enter" parks the box under the pill with transitions off (opening from
+  // closed shouldn't fly across the header); "move" is the switch animation.
+  const [mode, setMode] = useState<"enter" | "move">("enter");
+  const [geom, setGeom] = useState({ x: 0, w: 260, h: 180 });
+
+  const rowRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const pills = useRef<Partial<Record<FacetKey, HTMLButtonElement | null>>>({});
+
+  const toggle = (key: FacetKey) => {
+    if (open === key) {
+      setOpen(null);
+      return;
+    }
+    if (open === null) setMode("enter");
+    setOpen(key);
+    setShown(key);
+  };
+  const close = () => setOpen(null);
+
+  // Park the box under the open pill at its content's natural size. Re-runs on
+  // content resize (the interests chips wrap, the month grid changes height),
+  // so those changes ride the same transition.
+  useLayoutEffect(() => {
+    const inner = innerRef.current;
+    const row = rowRef.current;
+    const pill = open ? pills.current[open] : null;
+    if (!open || !inner || !row || !pill) return;
+    const place = () => {
+      const w = inner.offsetWidth;
+      const h = inner.offsetHeight;
+      const rowLeft = row.getBoundingClientRect().left;
+      const pillRect = pill.getBoundingClientRect();
+      const centered = pillRect.left - rowLeft + pillRect.width / 2 - w / 2;
+      // Keep it inside the viewport: the row is only as wide as the pills, so
+      // a centered box under the first or last pill can overhang the header.
+      const x = Math.min(
+        Math.max(centered, 12 - rowLeft),
+        window.innerWidth - 12 - w - rowLeft
+      );
+      setGeom({ x, w, h });
+    };
+    place();
+    const ro = new ResizeObserver(place);
+    ro.observe(inner);
+    // The row is centred in the header, so its pills move on resize without
+    // changing size — which a ResizeObserver alone would never see.
+    window.addEventListener("resize", place);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", place);
+    };
+  }, [open, shown]);
+
+  // Let the parked position paint, then allow transitions so the next switch
+  // animates. Two frames: one for the layout effect's styles, one to be sure
+  // they're committed before the transition is armed.
+  useEffect(() => {
+    if (!open || mode !== "enter") return;
+    let inner = 0;
+    const outer = requestAnimationFrame(() => {
+      inner = requestAnimationFrame(() => setMode("move"));
+    });
+    return () => {
+      cancelAnimationFrame(outer);
+      cancelAnimationFrame(inner);
+    };
+  }, [open, mode]);
+
+  // Dismiss on outside press or Escape.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      if (!rowRef.current?.contains(e.target as Node)) close();
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
   const dates = formatDateRange(facets.startDate, facets.endDate);
+  const interests = facets.interests?.trim() ? facets.interests : null;
   const party = partyLabel(facets.party);
+
+  const FACETS: {
+    key: FacetKey;
+    icon: ReactNode;
+    value: string | null;
+    placeholder: string;
+    label: string;
+  }[] = [
+    { key: "dates", icon: <IconCalendar />, value: dates, placeholder: "Add dates", label: "Trip dates" },
+    { key: "interests", icon: <IconSparkle />, value: interests, placeholder: "Add interests", label: "Trip interests" },
+    { key: "party", icon: <IconPeople />, value: party, placeholder: "Who's going?", label: "Who's going" },
+  ];
 
   return (
     <header className="trip-header">
       <h1 className="trip-header-name">{name}</h1>
 
-      <div className="trip-facets">
-        <Facet
-          icon={<IconCalendar />}
-          value={dates}
-          placeholder="Add dates"
-          dialogLabel="Trip dates"
-        >
-          {(close) => (
-            <DatesEditor
-              startDate={facets.startDate}
-              endDate={facets.endDate}
-              onChange={onChange}
-              close={close}
-            />
-          )}
-        </Facet>
+      <div className="trip-facets" ref={rowRef}>
+        {FACETS.map((f) => (
+          <button
+            type="button"
+            key={f.key}
+            ref={(el) => {
+              pills.current[f.key] = el;
+            }}
+            className={`facet-pill${f.value ? " set" : ""}${open === f.key ? " open" : ""}`}
+            onClick={() => toggle(f.key)}
+            aria-haspopup="dialog"
+            aria-expanded={open === f.key}
+          >
+            <span className="facet-icon" aria-hidden="true">
+              {f.icon}
+            </span>
+            <span className="facet-value">{f.value ?? f.placeholder}</span>
+          </button>
+        ))}
 
-        <Facet
-          icon={<IconSparkle />}
-          value={facets.interests?.trim() ? facets.interests : null}
-          placeholder="Add interests"
-          dialogLabel="Trip interests"
+        <div
+          className="facet-anchor"
+          data-mode={mode}
+          style={{ transform: `translateX(${geom.x}px)`, width: geom.w, height: geom.h }}
         >
-          {(close) => (
-            <InterestsEditor
-              value={facets.interests ?? ""}
-              onChange={(next) =>
-                onChange({ interests: next.trim() || undefined })
-              }
-              close={close}
-            />
-          )}
-        </Facet>
-
-        <Facet
-          icon={<IconPeople />}
-          value={party}
-          placeholder="Who's going?"
-          dialogLabel="Who's going"
-        >
-          {(close) => (
-            <>
-              <span className="facet-pop-label">Who&rsquo;s going?</span>
-              <div className="facet-options">
-                {PARTY_OPTIONS.map((o) => (
-                  <button
-                    type="button"
-                    key={o.value}
-                    className={`facet-option${facets.party === o.value ? " on" : ""}`}
-                    aria-pressed={facets.party === o.value}
-                    onClick={() => {
-                      onChange({
-                        party:
-                          facets.party === o.value
-                            ? undefined
-                            : (o.value as TripParty),
-                      });
-                      close();
-                    }}
-                  >
-                    <span aria-hidden="true">{o.emoji}</span>
-                    {o.label}
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
-        </Facet>
+          <div
+            className="facet-pop"
+            data-state={open ? "open" : "closed"}
+            role="dialog"
+            aria-label={FACETS.find((f) => f.key === shown)?.label}
+            aria-hidden={!open}
+            inert={!open}
+          >
+            {/* Keyed so switching sections mounts fresh content — it fades in
+                while the box is still travelling. Absolute + max-content so
+                the box measures the content, not the other way round. */}
+            <div
+              className="facet-pop-inner"
+              data-facet={shown ?? "none"}
+              key={shown ?? "none"}
+              ref={innerRef}
+            >
+              {shown === "dates" && (
+                <DatesEditor
+                  startDate={facets.startDate}
+                  endDate={facets.endDate}
+                  onChange={onChange}
+                  close={close}
+                />
+              )}
+              {shown === "interests" && (
+                <InterestsEditor
+                  value={facets.interests ?? ""}
+                  onChange={(next) => onChange({ interests: next.trim() || undefined })}
+                  close={close}
+                />
+              )}
+              {shown === "party" && (
+                <PartyEditor party={facets.party} onChange={onChange} close={close} />
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="trip-header-actions">{action}</div>
