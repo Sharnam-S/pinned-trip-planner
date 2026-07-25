@@ -349,6 +349,8 @@ export interface PlannerContext {
   startDate?: string;
   endDate?: string;
   interests?: string;
+  /** Who's going ("couple", "family", …) — set from the trip header. */
+  party?: string;
   spots: CompactSpot[];
   itinerary: Itinerary | null;
   /** Spot ids the user starred as non-negotiable must-sees. */
@@ -366,6 +368,7 @@ export function buildPlannerContext(
     startDate: trip.query?.startDate,
     endDate: trip.query?.endDate,
     interests: trip.query?.interests,
+    party: trip.query?.party,
     mustSeeSpotIds: mustSeeSpotIds.length > 0 ? mustSeeSpotIds : undefined,
     spots: trip.spots.map((s) => ({
       id: s.id,

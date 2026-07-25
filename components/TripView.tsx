@@ -32,10 +32,19 @@ import {
   saveMustSees,
   travelEstimate,
 } from "@/lib/itinerary";
+import {
+  applyFacets,
+  formatDateRange,
+  loadFacets,
+  saveFacets,
+  type TripFacets,
+} from "@/lib/tripFacets";
+import { ICON_CARD, ICON_NAV } from "@/lib/ui";
 import { useIsMobile } from "@/lib/useIsMobile";
 import BuildingScreen from "./BuildingScreen";
 import BottomSheet, { SheetSnap } from "./BottomSheet";
 import PlannerChat from "./PlannerChat";
+import TripHeader from "./TripHeader";
 import type { MapBounds, PlanRender } from "./TripMap";
 
 const TripMap = dynamic(() => import("./TripMap"), { ssr: false });
@@ -108,15 +117,7 @@ function VideoStrip({
 }
 
 function formatTripDates(trip: Trip): string | null {
-  const { startDate, endDate } = trip.query ?? {};
-  if (!startDate && !endDate) return null;
-  const fmt = (iso: string) =>
-    new Date(iso + "T00:00:00").toLocaleDateString(undefined, {
-      month: "short",
-      day: "numeric",
-    });
-  if (startDate && endDate) return `${fmt(startDate)} – ${fmt(endDate)}`;
-  return fmt((startDate ?? endDate)!);
+  return formatDateRange(trip.query?.startDate, trip.query?.endDate);
 }
 
 // How far a drag must travel horizontally before it pages the photo, and how
@@ -318,11 +319,12 @@ function CarouselImage({ src, alt }: { src: string; alt: string }) {
 }
 
 // --- Monochrome line icons for the spot card (stroke-2, round caps — the
-// same language as the carousel chevrons). Colored by currentColor. ---
+// same language as the carousel chevrons). Colored by currentColor. Sized by
+// the design system's two icon steps (ICON_NAV / ICON_CARD). ---
 
 function IconCamera() {
   return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg width={ICON_NAV} height={ICON_NAV} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <rect x="3" y="7" width="18" height="13" rx="3" stroke="currentColor" strokeWidth="2" />
       <path d="M9 7l1.6-2.6h2.8L15 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       <circle cx="12" cy="13.5" r="3.5" stroke="currentColor" strokeWidth="2" />
@@ -332,7 +334,7 @@ function IconCamera() {
 
 function IconVideo() {
   return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg width={ICON_NAV} height={ICON_NAV} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <rect x="3" y="5" width="18" height="14" rx="3.5" stroke="currentColor" strokeWidth="2" />
       <path d="M10.5 9.3l4.6 2.7-4.6 2.7z" fill="currentColor" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
     </svg>
@@ -341,7 +343,7 @@ function IconVideo() {
 
 function IconStar() {
   return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg width={ICON_CARD} height={ICON_CARD} viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
         d="M12 3.6l2.5 5.1 5.6.8-4 4 .9 5.6-5-2.7-5 2.7.9-5.6-4-4 5.6-.8L12 3.6z"
         stroke="currentColor"
@@ -354,7 +356,7 @@ function IconStar() {
 
 function IconPlay() {
   return (
-    <svg width="8" height="8" viewBox="0 0 10 10" aria-hidden="true">
+    <svg width={ICON_NAV} height={ICON_NAV} viewBox="0 0 10 10" aria-hidden="true">
       <path d="M2.5 1.3l6 3.7-6 3.7z" fill="currentColor" strokeLinejoin="round" />
     </svg>
   );
@@ -362,7 +364,7 @@ function IconPlay() {
 
 function IconClose() {
   return (
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+    <svg width={ICON_NAV} height={ICON_NAV} viewBox="0 0 12 12" fill="none" aria-hidden="true">
       <path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
@@ -387,11 +389,14 @@ function TilePhotos({ spot, tripId, local }: { spot: Spot; tripId: string; local
   );
 }
 
-// The trip's identity block at the top of the left rail: name + meta line,
-// with the YouTube-videos list (and add-videos box) expanding below it.
+// The source-videos control at the top of the left rail, with the video list
+// (and add-videos box) expanding below it. On phones it also carries the trip's
+// identity line, because the phone layout has no trip header to put it in —
+// `identity` is what tells the two apart.
 function TripHead({
   trip,
   meta,
+  identity,
   canAdd,
   addLinks,
   setAddLinks,
@@ -405,6 +410,7 @@ function TripHead({
 }: {
   trip: Trip;
   meta: string;
+  identity: boolean;
   canAdd: boolean;
   addLinks: string;
   setAddLinks: (v: string) => void;
@@ -423,10 +429,12 @@ function TripHead({
       onClick={(e) => e.stopPropagation()}
     >
       <div className="th-row">
-        <div className="th-id">
-          <h1 className="th-name">{trip.name}</h1>
-          <div className="th-meta">{meta}</div>
-        </div>
+        {identity && (
+          <div className="th-id">
+            <h1 className="th-name">{trip.name}</h1>
+            <div className="th-meta">{meta}</div>
+          </div>
+        )}
         <button
           className={`th-videos ${open ? "open" : ""}`}
           aria-expanded={open}
@@ -475,7 +483,7 @@ function TripHead({
               </div>
             )}
             {!canAdd && (
-              <div className="hero-hint" style={{ padding: "8px 4px 2px" }}>
+              <div className="videos-note">
                 This is a sample trip — build your own from the homepage to add
                 videos.
               </div>
@@ -569,7 +577,7 @@ function ShareTrip({ trip }: { trip: Trip }) {
             : "Make this trip public and get a shareable link"
         }
       >
-        <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <svg width={ICON_NAV} height={ICON_NAV} viewBox="0 0 14 14" fill="none" aria-hidden="true">
           <path
             d="M9.5 4.5L7 2m0 0L4.5 4.5M7 2v7"
             stroke="currentColor"
@@ -624,15 +632,22 @@ function ShareTrip({ trip }: { trip: Trip }) {
 function TripSkeleton({ embed = false }: { embed?: boolean }) {
   return (
     <div className="trip-page">
+      {!embed && (
+        <header className="trip-header">
+          <div className="skeleton sk-line title" style={{ width: 180 }} />
+          <div className="trip-facets">
+            {[104, 116, 108].map((w) => (
+              <div className="skeleton sk-facet" key={w} style={{ width: w }} />
+            ))}
+          </div>
+          <div className="trip-header-actions" />
+        </header>
+      )}
       <div className="trip-body">
         {!embed && (
           <aside className="left-side">
             <div className="trip-head">
               <div className="th-row">
-                <div className="th-id">
-                  <div className="skeleton sk-line title" style={{ width: 140 }} />
-                  <div className="skeleton sk-line sub" style={{ width: 180 }} />
-                </div>
                 <div className="skeleton sk-pill-videos" />
               </div>
             </div>
@@ -730,6 +745,9 @@ export default function TripView({
   const [expandedDay, setExpandedDay] = useState<number | null>(null);
   // Spots the user starred as non-negotiable — the agent must include them.
   const [mustSeeIds, setMustSeeIds] = useState<string[]>(() => loadMustSees(tripId));
+  // The header's three answers (dates / interests / who's going). They come off
+  // the loaded trip, so they can't be read until it lands.
+  const [facets, setFacets] = useState<TripFacets>({});
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Mobile layout: the map is the page background and everything else lives
@@ -851,6 +869,17 @@ export default function TripView({
     };
   }, [tripId, adoptTick]);
 
+  // Read the header's answers when the trip lands, and re-read them if the
+  // stored query changes underneath us (account sync, another tab). Adjusted
+  // during render rather than in an effect — same pattern as `rightTab` below,
+  // and it avoids a frame of empty pills. Edits go through `updateFacets`.
+  const facetSource = trip ? `${trip.id}:${JSON.stringify(trip.query ?? null)}` : null;
+  const [facetsFrom, setFacetsFrom] = useState<string | null>(null);
+  if (trip && facetSource !== facetsFrom) {
+    setFacetsFrom(facetSource);
+    setFacets(loadFacets(trip));
+  }
+
   // Local trips carry the plan on the Trip object; sample trips keep a
   // per-browser overlay. Freshest of the two wins.
   const itinerary =
@@ -867,8 +896,9 @@ export default function TripView({
   // one-frame flash of the pins tab.
   const hasItinerary = itinerary != null && itinerary.days.length > 0;
 
-  // Sharing lives in the right rail's top row: your own finished trip, not
-  // the embedded landing preview, and only once there's something to show.
+  // Sharing sits in the trip header (desktop) / the pins panel (phone): your
+  // own finished trip, not the embedded landing preview, and only once there's
+  // something to show.
   const canShare =
     !embed &&
     isLocal === true &&
@@ -1166,6 +1196,14 @@ export default function TripView({
     });
   };
 
+  // Header edits write through immediately: onto the trip for a trip you own,
+  // into a per-browser overlay for a sample trip.
+  const updateFacets = (patch: Partial<TripFacets>) => {
+    const next = { ...facets, ...patch };
+    setFacets(next);
+    saveFacets(tripId, isLocal === true, next);
+  };
+
   // Selecting a spot from anywhere (map pin, grid tile, day brief, overview
   // stop) shows its detail — which lives on the pins tab.
   const selectSpot = (id: string | null) => {
@@ -1213,13 +1251,21 @@ export default function TripView({
 
   // ---- Building blocks shared by the desktop rails and the mobile sheet ----
 
+  // What the planner sees: the stored trip with the header's answers folded in,
+  // so editing dates or who's going reaches the agent on the next message.
+  // Not memoized — every hook in this component sits above the early returns
+  // above, and the merge is two object spreads.
+  const plannerTrip = applyFacets(trip, facets);
+
   const tripHeadEl = !embed ? (
     <TripHead
       trip={trip}
+      // Desktop puts identity in the trip header instead (see below).
+      identity={isMobile}
       meta={[
         `${catFiltered.length} spots`,
-        formatTripDates(trip),
-        trip.query?.interests,
+        formatTripDates(plannerTrip),
+        plannerTrip.query?.interests,
       ]
         .filter(Boolean)
         .join(" · ")}
@@ -1240,7 +1286,7 @@ export default function TripView({
 
   const chatEl = !embed ? (
     <PlannerChat
-      trip={trip}
+      trip={plannerTrip}
       isLocal={isLocal === true}
       itinerary={itinerary}
       mustSeeIds={mustSeeIds}
@@ -1487,8 +1533,8 @@ export default function TripView({
                   >
                     <svg
                       className="pf-funnel"
-                      width="14"
-                      height="14"
+                      width={ICON_NAV}
+                      height={ICON_NAV}
                       viewBox="0 0 16 16"
                       fill="none"
                       aria-hidden="true"
@@ -1506,8 +1552,8 @@ export default function TripView({
                     )}
                     <svg
                       className="pf-chevron"
-                      width="12"
-                      height="12"
+                      width={ICON_NAV}
+                      height={ICON_NAV}
                       viewBox="0 0 12 12"
                       fill="none"
                       aria-hidden="true"
@@ -1682,14 +1728,24 @@ export default function TripView({
     );
   }
 
-  // ---- Desktop: [trip head + chat] | map (center) | [itinerary/pins] ----
+  // ---- Desktop: header over [chat] | map (center) | [itinerary/pins] ----
   return (
     <div
       className={`trip-page ${resizing ? "resizing" : ""}`}
       onClick={clearTransients}
     >
+      {/* One header for the whole trip: the place, the three answers the
+          planner needs, and sharing. The landing preview (embed) drops it. */}
+      {!embed && (
+        <TripHeader
+          name={trip.name}
+          facets={facets}
+          onChange={updateFacets}
+          action={canShare ? <ShareTrip trip={trip} /> : null}
+        />
+      )}
       <div className="trip-body" ref={bodyRef}>
-        {/* Left rail: trip identity + the planner agent */}
+        {/* Left rail: source videos + the planner agent */}
         {!embed && (
           <aside
             className="left-side"
@@ -1722,37 +1778,32 @@ export default function TripView({
             control only appears after the agent has built an itinerary; before
             that the rail is pins-only. */}
         <aside className="right-side" ref={rightRef} onClick={(e) => e.stopPropagation()}>
-          {(hasItinerary || canShare) && (
+          {hasItinerary && (
             <div className="rail-tabs">
-              {hasItinerary ? (
-                <div
-                  className="rail-seg"
-                  role="tablist"
-                  aria-label="Right rail view"
-                  data-active={rightTab}
+              <div
+                className="rail-seg"
+                role="tablist"
+                aria-label="Right rail view"
+                data-active={rightTab}
+              >
+                <span className="rail-seg-thumb" aria-hidden="true" />
+                <button
+                  role="tab"
+                  aria-selected={rightTab === "overview"}
+                  className={`rail-tab ${rightTab === "overview" ? "on" : ""}`}
+                  onClick={() => setRightTab("overview")}
                 >
-                  <span className="rail-seg-thumb" aria-hidden="true" />
-                  <button
-                    role="tab"
-                    aria-selected={rightTab === "overview"}
-                    className={`rail-tab ${rightTab === "overview" ? "on" : ""}`}
-                    onClick={() => setRightTab("overview")}
-                  >
-                    Itinerary
-                  </button>
-                  <button
-                    role="tab"
-                    aria-selected={rightTab === "pins"}
-                    className={`rail-tab ${rightTab === "pins" ? "on" : ""}`}
-                    onClick={() => setRightTab("pins")}
-                  >
-                    Pins
-                  </button>
-                </div>
-              ) : (
-                <span />
-              )}
-              {canShare && <ShareTrip trip={trip} />}
+                  Itinerary
+                </button>
+                <button
+                  role="tab"
+                  aria-selected={rightTab === "pins"}
+                  className={`rail-tab ${rightTab === "pins" ? "on" : ""}`}
+                  onClick={() => setRightTab("pins")}
+                >
+                  Pins
+                </button>
+              </div>
             </div>
           )}
 
@@ -2069,7 +2120,7 @@ function SpotCard({
               aria-label="Open in Google Maps"
               title="Open in Google Maps"
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <svg width={ICON_CARD} height={ICON_CARD} viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path
                   d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"
                   stroke="currentColor"
@@ -2125,7 +2176,7 @@ function SpotCard({
           target="_blank"
           rel="noopener noreferrer"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <svg width={ICON_NAV} height={ICON_NAV} viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path
               d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"
               stroke="currentColor"
