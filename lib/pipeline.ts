@@ -110,7 +110,7 @@ export async function processVideoRaw(
       thingsToKnow: (raw.things_to_know ?? []).slice(0, 6),
       photo: resolved.photo ?? null,
       photos: resolved.photos,
-      morePhotoNames: resolved.morePhotoNames,
+      morePhotos: resolved.morePhotos,
     };
     byName.set(normalizeName(raw.name), spot);
     spots.push(spot);
@@ -167,7 +167,7 @@ async function resolveSpotData(
   placeId: string | null | undefined;
   photo: SpotPhotoRef | null | undefined;
   photos: SpotPhotoRef[] | undefined;
-  morePhotoNames: string[] | undefined;
+  morePhotos: number | undefined;
 }> {
   if (isGoogleEnabled()) {
     try {
@@ -191,7 +191,7 @@ async function resolveSpotData(
           placeId: place.id,
           photo,
           photos,
-          morePhotoNames: names.slice(1),
+          morePhotos: Math.max(0, names.length - 1),
         };
       }
     } catch (err) {
@@ -206,7 +206,7 @@ async function resolveSpotData(
     placeId: isGoogleEnabled() ? null : undefined,
     photo: await findSpotPhoto(name, destinationName).catch(() => undefined),
     photos: undefined,
-    morePhotoNames: undefined,
+    morePhotos: undefined,
   };
 }
 
@@ -289,7 +289,7 @@ export async function upgradeTripWithGoogle(tripId: string): Promise<void> {
             spot.lng = place.lng;
             spot.geocodeSource = "google";
             spot.photos = await resolvePhotoSet(names.slice(0, 1));
-            spot.morePhotoNames = names.slice(1);
+            spot.morePhotos = Math.max(0, names.length - 1);
             if (spot.photos[0]) spot.photo = spot.photos[0];
           } else {
             spot.placeId = null; // keep the existing coords + photo
@@ -301,7 +301,7 @@ export async function upgradeTripWithGoogle(tripId: string): Promise<void> {
             MAX_PHOTOS
           );
           spot.photos = await resolvePhotoSet(names.slice(0, 1));
-          spot.morePhotoNames = names.slice(1);
+          spot.morePhotos = Math.max(0, names.length - 1);
           if (spot.photos[0]) spot.photo = spot.photos[0];
         } else {
           continue;

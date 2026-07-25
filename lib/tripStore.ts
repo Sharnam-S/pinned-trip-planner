@@ -84,30 +84,75 @@ export function peekTrip(id: string): Trip | null {
 /** Fetch a trip into the working copy. Server mode asks the account first and
  *  falls back to localStorage (a trip created while signed out, not yet
  *  migrated); local mode is localStorage only. Returns null when neither has
- *  it — the caller then tries samples/published copies. */
+ *  it — the caller then tries samples/published copies.
+ *
+ *  A trip already in the working copy is returned immediately and refreshed
+ *  behind the render: reopening a trip in the same tab used to re-download the
+ *  whole document (~240KB) before anything appeared. */
 export async function loadTrip(id: string): Promise<Trip | null> {
   const at = await tripStoreMode();
+  const cached = working.get(id);
+  if (cached) {
+    if (at === "server") void revalidate(id);
+    return cached;
+  }
   if (at === "server") {
-    try {
-      const res = await fetch(`/api/trips/${id}`, { cache: "no-store" });
-      if (res.ok) {
-        const trip = (await res.json()) as Trip;
-        // Only the account's own copy is authoritative; a public sample coming
-        // back from the same route is not this user's trip to edit.
-        if (trip?.id === id && trip.ownerId) {
-          delete trip.upgrading;
-          working.set(id, trip);
-          notifyTripsChanged();
-          return trip;
-        }
-      }
-    } catch {
-      // offline: fall through to whatever this browser still has
+    const fresh = await fetchTrip(id);
+    if (fresh && fresh !== "unchanged") {
+      working.set(id, fresh);
+      notifyTripsChanged();
+      return fresh;
     }
   }
   const local = getLocalTrip(id);
   if (local) working.set(id, local);
   return local;
+}
+
+/** The route's ETag per trip, so a re-read of an unchanged trip costs a header
+ *  exchange instead of a few hundred KB. `cache: "no-cache"` also lets the
+ *  browser's own cache revalidate across page loads (where this map is empty),
+ *  but the conditional request is sent explicitly rather than left to cache
+ *  heuristics we can't see. */
+const etags = new Map<string, string>();
+
+/** The account's copy, "unchanged" when the ETag still matches, or null if it
+ *  isn't this user's trip. */
+async function fetchTrip(
+  id: string,
+  conditional = false
+): Promise<Trip | "unchanged" | null> {
+  const known = conditional ? etags.get(id) : undefined;
+  try {
+    const res = await fetch(`/api/trips/${id}`, {
+      cache: "no-cache",
+      headers: known ? { "If-None-Match": known } : undefined,
+    });
+    if (res.status === 304) return "unchanged";
+    if (!res.ok) return null;
+    const trip = (await res.json()) as Trip;
+    // Only the account's own copy is authoritative; a public sample coming back
+    // from the same route is not this user's trip to edit.
+    if (trip?.id !== id || !trip.ownerId) return null;
+    const tag = res.headers.get("etag");
+    if (tag) etags.set(id, tag);
+    delete trip.upgrading;
+    return trip;
+  } catch {
+    return null; // offline: keep whatever this browser has
+  }
+}
+
+/** Refresh a cached trip in the background (another device may have edited it).
+ *  Skipped while this tab has unsaved or in-flight changes — ours are newer. */
+async function revalidate(id: string): Promise<void> {
+  if (dirty.has(id) || inFlight.has(id)) return;
+  const fresh = await fetchTrip(id, true);
+  if (fresh === "unchanged" || !fresh) return;
+  if (dirty.has(id) || inFlight.has(id)) return;
+  if (JSON.stringify(fresh) === JSON.stringify(working.get(id))) return;
+  working.set(id, fresh);
+  notifyTripsChanged();
 }
 
 // --- Writes ---
@@ -133,6 +178,7 @@ async function writeThrough(trip: Trip): Promise<boolean> {
         body: JSON.stringify(trip),
       });
       if (res.ok) {
+        etags.delete(trip.id); // the account's copy just changed
         reportError(null);
         return true;
       }
@@ -167,6 +213,7 @@ async function drain(id: string): Promise<boolean> {
 /** Store a trip. The working copy and subscribers update synchronously; the
  *  returned promise resolves false if it couldn't be persisted. */
 export function saveTrip(trip: Trip): Promise<boolean> {
+  compactPhotos(trip);
   working.set(trip.id, trip);
   dirty.add(trip.id);
   notifyTripsChanged();
@@ -175,6 +222,23 @@ export function saveTrip(trip: Trip): Promise<boolean> {
   const started = drain(trip.id);
   inFlight.set(trip.id, started);
   return started;
+}
+
+/** Drop the legacy Google photo-name lists once a spot can be served by index
+ *  (placeId + a resolved google photo): /api/photo never used the names, and at
+ *  ~1.9KB per spot they were about half of a stored trip. In place, so the
+ *  working copy matches what gets stored — and so every existing trip shrinks
+ *  the next time anything touches it. */
+function compactPhotos(trip: Trip): void {
+  for (const spot of trip.spots) {
+    if (!spot.morePhotoNames || !spot.placeId) continue;
+    const servedByIndex =
+      spot.photo?.source === "google" ||
+      (spot.photos?.some((p) => p.source === "google") ?? false);
+    if (!servedByIndex) continue; // still needs the names (/api/photos by name)
+    spot.morePhotos = spot.morePhotoNames.length;
+    delete spot.morePhotoNames;
+  }
 }
 
 export async function deleteTrip(id: string): Promise<void> {

@@ -13,11 +13,33 @@ export const runtime = "nodejs";
 // a trip this app produced.
 const MAX_TRIP_BYTES = 4 * 1024 * 1024;
 
+/** A trip is tens-to-hundreds of KB and reopening one is common, so every
+ *  response carries an ETag and a revalidating cache directive: an unchanged
+ *  trip costs a header exchange instead of the whole document. `private`
+ *  because the same URL serves a different body per caller (your own copy vs
+ *  the public one). */
+function tripResponse(req: NextRequest, payload: unknown) {
+  const body = JSON.stringify(payload);
+  // djb2 over the body — same cheap hash the client uses for change detection.
+  let h = 5381;
+  for (let i = 0; i < body.length; i++) h = ((h << 5) + h + body.charCodeAt(i)) | 0;
+  const etag = `"${(h >>> 0).toString(36)}-${body.length.toString(36)}"`;
+  const headers = {
+    "Cache-Control": "private, no-cache",
+    ETag: etag,
+    "Content-Type": "application/json",
+  };
+  if (req.headers.get("if-none-match") === etag) {
+    return new NextResponse(null, { status: 304, headers });
+  }
+  return new NextResponse(body, { status: 200, headers });
+}
+
 /** Serves a trip by id: repo sample first, then the caller's own saved trip,
- *  then the shared Blob library. Local in-progress trips render from
- *  localStorage and never reach this. */
+ *  then the shared Blob library. Trips still being built render from the
+ *  client's working copy and never reach this. */
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
@@ -34,7 +56,7 @@ export async function GET(
         backfillPhotos(id).catch(() => {});
       }
     }
-    return NextResponse.json({ ...sample, upgrading });
+    return tripResponse(req, { ...sample, upgrading });
   }
 
   // The caller's own saved copy (fresher than any published one) — private:
@@ -44,13 +66,13 @@ export async function GET(
     if (user) {
       const owned = await getDbTrip(id).catch(() => null);
       if (owned && owned.ownerId === user.id) {
-        return NextResponse.json({ ...owned.trip, ownerId: user.id });
+        return tripResponse(req, { ...owned.trip, ownerId: user.id });
       }
     }
   }
 
   const shared = await getBlobTrip(id).catch(() => null);
-  if (shared) return NextResponse.json(shared);
+  if (shared) return tripResponse(req, shared);
 
   return NextResponse.json({ error: "Trip not found" }, { status: 404 });
 }

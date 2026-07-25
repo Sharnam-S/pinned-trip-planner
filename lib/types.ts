@@ -43,8 +43,14 @@ export interface Spot {
   photo?: SpotPhotoRef | null;
   /** Photo carousel (Google Places, up to 5). [] = tried, none; undefined = not tried. */
   photos?: SpotPhotoRef[];
-  /** Google photo resource names not yet resolved to URLs — fetched lazily on
-   *  first carousel swipe so unswiped cards never bill the Photos API. */
+  /** How many more Google photos this spot has beyond the resolved ones. The
+   *  carousel needs the COUNT, not the names: /api/photo fetches by placeId +
+   *  index, so the names were never dereferenced — and at ~1.9KB per spot they
+   *  were half the weight of a stored trip. */
+  morePhotos?: number;
+  /** Legacy of the above: photo resource names, still read for spots resolved
+   *  before /api/photo existed (no placeId, so they must be resolved by name
+   *  through /api/photos on first swipe). Never written for new spots. */
   morePhotoNames?: string[];
   /** Google Places id; null = Google lookup tried and missed; undefined = not tried yet. */
   placeId?: string | null;

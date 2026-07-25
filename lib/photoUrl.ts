@@ -9,6 +9,12 @@
  */
 import type { Spot } from "./types";
 
+/** Google photos beyond the ones already resolved — from the stored count, or
+ *  from the legacy name list for spots that predate it. */
+export function extraPhotoCount(spot: Spot): number {
+  return spot.morePhotoNames?.length ?? spot.morePhotos ?? 0;
+}
+
 export function googlePhotoProxy(placeId: string, index = 0): string {
   return `/api/photo?place=${encodeURIComponent(placeId)}&i=${index}`;
 }
@@ -31,6 +37,6 @@ export function spotCoverUrl(spot: Spot): string | null {
     Boolean(spot.placeId) &&
     (spot.photo?.source === "google" ||
       (spot.photos?.some((p) => p.source === "google") ?? false) ||
-      (spot.morePhotoNames?.length ?? 0) > 0);
+      extraPhotoCount(spot) > 0);
   return isGoogle ? googlePhotoProxy(spot.placeId!, 0) : spotPhotoUrl(spot);
 }
