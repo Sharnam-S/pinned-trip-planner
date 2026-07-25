@@ -1324,9 +1324,33 @@ button {
 
 .trip-header-name {
   margin: 0;
+  display: flex;
+  align-items: center;
+  /* Tight, because the flag glyph carries its own side bearing. */
+  gap: 6px;
+  min-width: 0;
   font-size: var(--fs-title);
   font-weight: var(--fw-medium);
   color: var(--text);
+}
+
+/* The flag sits beside the name, never inside it: ellipsis needs its own box,
+   and the flag must not be the thing that gets truncated. Sized on the icon
+   steps rather than the type scale — it's a glyph doing an icon's job — which
+   also keeps a wide flag from out-shouting the place it belongs to. */
+.trip-flag {
+  flex-shrink: 0;
+  font-size: var(--fs-icon-card);
+  line-height: 1;
+}
+
+/* The phone sheet's identity row is body-sized, so its flag drops a step. */
+.th-name .trip-flag {
+  font-size: var(--fs-icon-nav);
+}
+
+.trip-name-text {
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4404,12 +4428,13 @@ button {
    the itinerary header, a spot's name, a zero-state headline. */
 .th-name {
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
   font-size: var(--fs-body);
   font-weight: var(--fw-medium);
   color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .th-meta {
   margin-top: 3px;

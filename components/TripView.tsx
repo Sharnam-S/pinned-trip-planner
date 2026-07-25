@@ -39,6 +39,7 @@ import {
   saveFacets,
   type TripFacets,
 } from "@/lib/tripFacets";
+import { tripFlag } from "@/lib/flags";
 import { ICON_CARD, ICON_NAV } from "@/lib/ui";
 import { useIsMobile } from "@/lib/useIsMobile";
 import BuildingScreen from "./BuildingScreen";
@@ -397,6 +398,7 @@ function TripHead({
   trip,
   meta,
   identity,
+  flag,
   canAdd,
   addLinks,
   setAddLinks,
@@ -411,6 +413,7 @@ function TripHead({
   trip: Trip;
   meta: string;
   identity: boolean;
+  flag: string | null;
   canAdd: boolean;
   addLinks: string;
   setAddLinks: (v: string) => void;
@@ -431,7 +434,14 @@ function TripHead({
       <div className="th-row">
         {identity && (
           <div className="th-id">
-            <h1 className="th-name">{trip.name}</h1>
+            <h1 className="th-name">
+              {flag && (
+                <span className="trip-flag" aria-hidden="true">
+                  {flag}
+                </span>
+              )}
+              <span className="trip-name-text">{trip.name}</span>
+            </h1>
             <div className="th-meta">{meta}</div>
           </div>
         )}
@@ -1262,6 +1272,7 @@ export default function TripView({
       trip={trip}
       // Desktop puts identity in the trip header instead (see below).
       identity={isMobile}
+      flag={tripFlag(trip)}
       meta={[
         `${catFiltered.length} spots`,
         formatTripDates(plannerTrip),
@@ -1739,6 +1750,7 @@ export default function TripView({
       {!embed && (
         <TripHeader
           name={trip.name}
+          flag={tripFlag(trip)}
           facets={facets}
           onChange={updateFacets}
           action={canShare ? <ShareTrip trip={trip} /> : null}

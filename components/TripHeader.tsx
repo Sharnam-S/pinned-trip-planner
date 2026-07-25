@@ -286,11 +286,14 @@ type FacetKey = "dates" | "interests" | "party";
 
 export default function TripHeader({
   name,
+  flag,
   facets,
   onChange,
   action,
 }: {
   name: string;
+  /** Country flag emoji, when the destination named a country we recognise. */
+  flag?: string | null;
   facets: TripFacets;
   onChange: (patch: Partial<TripFacets>) => void;
   /** Share control — the header's rightmost slot. */
@@ -406,7 +409,15 @@ export default function TripHeader({
 
   return (
     <header className="trip-header">
-      <h1 className="trip-header-name">{name}</h1>
+      <h1 className="trip-header-name">
+        {/* Decorative: the country is already in the name beside it. */}
+        {flag && (
+          <span className="trip-flag" aria-hidden="true">
+            {flag}
+          </span>
+        )}
+        <span className="trip-name-text">{name}</span>
+      </h1>
 
       <div className="trip-facets" ref={rowRef}>
         {FACETS.map((f) => (
