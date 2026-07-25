@@ -119,6 +119,11 @@ function formatTripDates(trip: Trip): string | null {
   return fmt((startDate ?? endDate)!);
 }
 
+// How far a drag must travel horizontally before it pages the photo, and how
+// far it must travel at all before we commit to calling it a swipe or a scroll.
+const SWIPE_PX = 40;
+const AXIS_LOCK_PX = 10;
+
 // Lazy photo carousel state, shared by the grid tiles and the detail card.
 // Photos beyond the cover resolve on the first swipe — a card nobody swipes
 // never bills the Photos API. Local trips persist the resolved URLs back to
@@ -191,13 +196,65 @@ function useSpotPhotos(spot: Spot, tripId: string, local: boolean) {
       });
   };
 
-  const step = (e: React.MouseEvent, delta: number) => {
-    e.stopPropagation(); // don't select the spot behind the arrow
+  const go = (delta: number) => {
     ensureAll();
     setIndex(Math.min(total - 1, Math.max(0, i + delta)));
   };
 
-  return { urls, i, total, step };
+  const step = (e: React.MouseEvent, delta: number) => {
+    e.stopPropagation(); // don't select the spot behind the arrow
+    go(delta);
+  };
+
+  // Drag across the photo to page through it — on touch that's the only way
+  // to get past the cover, since the hover arrows never appear. Move/up go on
+  // window: mouse pointers get no implicit capture, so element-scoped handlers
+  // would drop the gesture the moment it left the photo. The element's
+  // `touch-action: pan-y` leaves vertical scrolling to the browser.
+  const swipedRef = useRef(false);
+  const swipe = {
+    onPointerDown: (e: React.PointerEvent) => {
+      if (total <= 1) return;
+      const startX = e.clientX;
+      const startY = e.clientY;
+      let axis: "x" | "y" | null = null;
+      swipedRef.current = false;
+
+      const end = () => {
+        window.removeEventListener("pointermove", onMove);
+        window.removeEventListener("pointerup", end);
+        window.removeEventListener("pointercancel", end);
+      };
+      const onMove = (ev: PointerEvent) => {
+        const dx = ev.clientX - startX;
+        const dy = ev.clientY - startY;
+        // The first real movement decides swipe vs scroll; once it's a scroll
+        // we bow out for the rest of the gesture.
+        if (!axis) {
+          if (Math.abs(dx) < AXIS_LOCK_PX && Math.abs(dy) < AXIS_LOCK_PX) return;
+          axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+          if (axis === "y") return end();
+        }
+        if (Math.abs(dx) < SWIPE_PX) return;
+        swipedRef.current = true;
+        go(dx < 0 ? 1 : -1); // one photo per swipe
+        end();
+      };
+
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", end);
+      window.addEventListener("pointercancel", end);
+    },
+    // A swipe on a grid tile shouldn't also select the spot behind it.
+    onClickCapture: (e: React.MouseEvent) => {
+      if (!swipedRef.current) return;
+      swipedRef.current = false;
+      e.preventDefault();
+      e.stopPropagation();
+    },
+  };
+
+  return { urls, i, total, step, swipe };
 }
 
 function CarouselControls({
@@ -248,6 +305,7 @@ function CarouselImage({ src, alt }: { src: string; alt: string }) {
         src={src}
         alt={alt}
         loading="lazy"
+        draggable={false} // a mouse swipe shouldn't start a native image drag
         onLoad={() => setLoaded(true)}
         // A cached image can already be complete before onLoad is wired up.
         ref={(el) => {
@@ -313,10 +371,10 @@ function IconClose() {
 // Airbnb-style tile photo carousel: arrows appear on hover, dots track the
 // current photo. Single-photo spots render a plain image.
 function TilePhotos({ spot, tripId, local }: { spot: Spot; tripId: string; local: boolean }) {
-  const { urls, i, total, step } = useSpotPhotos(spot, tripId, local);
+  const { urls, i, total, step, swipe } = useSpotPhotos(spot, tripId, local);
 
   return (
-    <div className="tile-photo">
+    <div className="tile-photo" {...swipe}>
       {urls[i] ? (
         <CarouselImage key={urls[i]} src={urls[i]} alt={spot.name} />
       ) : urls.length > 0 ? (
@@ -1205,8 +1263,11 @@ export default function TripView({
               plan={activeCats.length > 0 ? null : planRender}
               mustSeeIds={mustSeeIds}
               coveredIds={coveredIds}
+              // On mobile the bottom sheet already shows the selected spot's
+              // card, so the map popup would just duplicate it (and cover the
+              // pin). Desktop keeps it.
               popupSpot={
-                selectedSpot
+                selectedSpot && !isMobile
                   ? {
                       id: selectedSpot.id,
                       lat: selectedSpot.lat,
@@ -1955,7 +2016,7 @@ function SpotCard({
   planColor?: string;
   onClose: () => void;
 }) {
-  const { urls, i, total, step } = useSpotPhotos(spot, tripId, local);
+  const { urls, i, total, step, swipe } = useSpotPhotos(spot, tripId, local);
   // Official Maps URL scheme — free, no API call. With a placeId it opens the
   // actual place page (reviews, hours, directions); without one it falls back
   // to a coordinate search. Rendered twice: a text pill in the body (desktop)
@@ -1983,7 +2044,7 @@ function SpotCard({
         <IconClose />
       </button>
       {urls.length > 0 && (
-        <div className="card-photo">
+        <div className="card-photo" {...swipe}>
           {urls[i] ? (
             <CarouselImage key={urls[i]} src={urls[i]} alt={spot.name} />
           ) : (
