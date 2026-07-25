@@ -17,7 +17,12 @@ import { publishTrip, readOwnedIds } from "@/lib/clientStore";
 import { loadTrip, peekTrip, saveTrip, subscribeTrips } from "@/lib/tripStore";
 import { addVideosToTrip, ensureRunning, isRunning } from "@/lib/runner";
 import { parseVideoId } from "@/lib/links";
-import { googlePhotoProxy, spotCoverUrl, spotPhotoUrl } from "@/lib/photoUrl";
+import {
+  extraPhotoCount,
+  googlePhotoProxy,
+  spotCoverUrl,
+  spotPhotoUrl,
+} from "@/lib/photoUrl";
 import {
   dayColor,
   haversineKm,
@@ -133,9 +138,9 @@ function useSpotPhotos(spot: Spot, tripId: string, local: boolean) {
     Boolean(spot.placeId) &&
     (spot.photo?.source === "google" ||
       (spot.photos?.some((p) => p.source === "google") ?? false) ||
-      (spot.morePhotoNames?.length ?? 0) > 0);
+      extraPhotoCount(spot) > 0);
   const googleCount =
-    (spot.photos?.length ?? (spot.photo ? 1 : 0)) + (spot.morePhotoNames?.length ?? 0);
+    (spot.photos?.length ?? (spot.photo ? 1 : 0)) + extraPhotoCount(spot);
 
   const baseUrls = isGooglePhotos
     ? Array.from({ length: Math.max(googleCount, 1) }, (_, k) =>

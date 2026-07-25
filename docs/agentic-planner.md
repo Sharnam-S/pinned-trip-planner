@@ -125,6 +125,25 @@ build, while the same trips sat safely in Neon. Reported from prod with a
   losing a trip is far worse than a full quota. It skips a trip mid-build to
   avoid racing the runner, and it's a no-op once nothing is left.
 - **Signed out is unchanged**: localStorage, no API writes, same quota message.
+- **Reads are cached-first, then revalidated** (2026-07-25b). `loadTrip` returns
+  the in-memory copy immediately and refreshes behind the render, so returning to
+  a trip in the same session paints in ~40ms instead of re-downloading the whole
+  document (measured 1513ms → 42ms on an in-app navigation). The refresh is
+  skipped while this tab has unsaved or in-flight changes — ours are newer than
+  the server's.
+- **`GET /api/trips/:id` carries an ETag** (djb2 over the body) with
+  `Cache-Control: private, no-cache` — private because the same URL serves a
+  different body per caller. The revalidation sends `If-None-Match` explicitly
+  rather than trusting cache heuristics, so an unchanged trip costs a header
+  exchange: measured **304, no body** on return vs a 104KB 200.
+- **Trips are ~55% smaller** (2026-07-25b): `Spot.morePhotoNames` — the Google
+  photo resource names — was ~1.9KB per spot and *never dereferenced* for a spot
+  served through `/api/photo` (that route fetches by placeId + index; only the
+  count was ever read). It's now `morePhotos: number`. The name list is still
+  read for spots that predate `/api/photo`, and `saveTrip` only drops it when the
+  spot has a placeId AND a google-sourced photo, so the legacy
+  resolve-by-name path keeps working. Every existing trip shrinks the next time
+  anything touches it: measured 235.8KB → 104.2KB on a 71-spot trip.
 - **Trade-off accepted:** every save is now a network round trip for signed-in
   users, so offline editing is gone (it was never really there — a
   `saveLocalTrip` that succeeded offline still couldn't build without the
@@ -558,6 +577,17 @@ and any plan-changing turn rewrites the post-breakpoint tail at 1.25×
   (2026-01/02) — API key (later BYOK) is the only compliant path.
 - `claude-sonnet-5` is the right model tier here; deeper thinking is a
   feature for this use case, `effort` is the knob if cost ever bites.
+
+### 5.7 Measure the wire, not the promise (2026-07-25)
+Verifying the ETag work, `page.on("response")` reported **200** for requests the
+server had answered **304** — a revalidated response is handed to JS as the
+cached 200, so both `status()` and `body()` describe the resolved resource, not
+what crossed the network. Two consequences worth remembering: read the server's
+own log (or a proxy) when the claim is about bytes, and don't verify caching
+through `page.goto`/`reload` in Playwright — its contexts don't reuse the HTTP
+cache across full loads, so a real win looks like no win. The honest test was an
+in-app (client-side) navigation, where both the in-memory copy and the
+conditional request are actually exercised.
 
 ## 6. Learnings — Vercel AI SDK v7 specifics
 
