@@ -1767,6 +1767,9 @@ button {
   overflow: hidden;
   background: var(--surface-alt);
   transition: box-shadow 0.15s ease;
+  /* Horizontal drags are ours (swipe between photos); vertical ones stay with
+     the browser so the list underneath still scrolls. */
+  touch-action: pan-y;
 }
 
 .spot-tile:hover .tile-photo {
@@ -2269,6 +2272,8 @@ button {
   border-radius: 20px;
   overflow: hidden;
   background: var(--surface-alt);
+  /* See .tile-photo — swipe horizontally, scroll the card vertically. */
+  touch-action: pan-y;
   box-shadow: 0 2px 6px rgba(16, 17, 26, 0.06), 0 12px 28px rgba(16, 17, 26, 0.09);
 }
 
