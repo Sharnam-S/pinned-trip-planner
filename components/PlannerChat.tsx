@@ -508,16 +508,12 @@ export default function PlannerChat({
   itinerary,
   mustSeeIds,
   onItineraryChange,
-  mobile = false,
 }: {
   trip: Trip;
   isLocal: boolean;
   itinerary: Itinerary | null;
   mustSeeIds: string[];
   onItineraryChange: (itin: Itinerary) => void;
-  /** Phone bottom-sheet rendering: conversational intake instead of the
-   *  tap-through card, editorial greeting instead of the fan hero. */
-  mobile?: boolean;
 }) {
   const initialMessages = useMemo(() => loadChat(trip.id), [trip.id]);
   const [input, setInput] = useState("");
@@ -549,17 +545,16 @@ export default function PlannerChat({
     ];
   }, [trip, hasOwnTrips]);
 
-  // Mobile intake (Z2-b): a leaning strip of the best-loved spots' photos
+  // Opening intake: a leaning strip of the best-loved spots' photos
   // under the greeting, and the hook that lets the composer answer the
   // current scripted question instead of messaging the LLM.
   const stripPhotos = useMemo(() => {
-    if (!mobile) return [];
     return [...trip.spots]
       .sort((a, b) => b.mentions.length - a.mentions.length)
       .map((s) => spotCoverUrl(s))
       .filter((u): u is string => Boolean(u))
       .slice(0, 5);
-  }, [trip, mobile]);
+  }, [trip]);
   const intakeAnswerRef = useRef<((text: string) => void) | null>(null);
   // "Arugam Bay, Sri Lanka" → "Sri Lanka"; fall back to the trip's name.
   const shortDest =
@@ -826,7 +821,7 @@ export default function PlannerChat({
     el.style.height = `${Math.min(el.scrollHeight, 132)}px`;
   }
 
-  // Composer submit. While the mobile conversational intake is running, typed
+  // Composer submit. While the opening intake is running, typed
   // text answers the current scripted question instead of messaging the LLM
   // (routing lives here — NOT in send(), which submitIntake itself calls to
   // deliver the compiled answers).
@@ -843,9 +838,6 @@ export default function PlannerChat({
   }
 
   const showNudge = !hasOwnTrips && !isLocal && !nudgeDismissed;
-  // While the instant intake form is up it's the single call-to-action — hide
-  // the free-text input so the user isn't facing two competing inputs.
-  const intakeActive = messages.length === 0 && !showNudge && !itinerary;
 
   return (
     <aside className="planner-panel" onClick={(e) => e.stopPropagation()}>
@@ -886,28 +878,13 @@ export default function PlannerChat({
               </button>
             </div>
           ) : !itinerary ? (
-            mobile ? (
-              <ConversationalIntake
-                title={`Let’s plan your days in ${shortDest}`}
-                photos={stripPhotos}
-                questions={intakeQuestions}
-                answerRef={intakeAnswerRef}
-                onSubmit={submitIntake}
-              />
-            ) : (
-              <div className="pm pm-assistant pm-intake">
-                <div className="pm-text">
-                  <p>
-                    {`I know these ${trip.spots.length} spots inside out. Tell me a few quick things and I'll sketch your days.`}
-                  </p>
-                </div>
-                <QuestionFlow
-                  questions={intakeQuestions}
-                  submitLabel="Plan my trip →"
-                  onSubmit={submitIntake}
-                />
-              </div>
-            )
+            <ConversationalIntake
+              title={`Let’s plan your days in ${shortDest}`}
+              photos={stripPhotos}
+              questions={intakeQuestions}
+              answerRef={intakeAnswerRef}
+              onSubmit={submitIntake}
+            />
           ) : (
             <div className="planner-intro">
               <p>
@@ -1126,40 +1103,34 @@ export default function PlannerChat({
         </div>
       )}
 
-      {(!intakeActive || mobile) && (
-        <form
-          className="planner-inputrow"
-          onSubmit={(e) => {
-            e.preventDefault();
-            submitComposer();
+      <form
+        className="planner-inputrow"
+        onSubmit={(e) => {
+          e.preventDefault();
+          submitComposer();
+        }}
+      >
+        <textarea
+          ref={inputRef}
+          value={input}
+          rows={1}
+          onChange={(e) => {
+            setInput(e.target.value);
+            autosize(e.target);
           }}
-        >
-          <textarea
-            ref={inputRef}
-            value={input}
-            rows={1}
-            onChange={(e) => {
-              setInput(e.target.value);
-              autosize(e.target);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                submitComposer();
-              }
-            }}
-            placeholder="Ask your local planner…"
-            aria-label="Message the planner"
-          />
-          <button
-            type="submit"
-            disabled={!input.trim() || busy}
-            aria-label="Send"
-          >
-            ↑
-          </button>
-        </form>
-      )}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              submitComposer();
+            }
+          }}
+          placeholder="Ask your local planner…"
+          aria-label="Message the planner"
+        />
+        <button type="submit" disabled={!input.trim() || busy} aria-label="Send">
+          ↑
+        </button>
+      </form>
     </aside>
   );
 }

@@ -1302,7 +1302,6 @@ export default function TripView({
       itinerary={itinerary}
       mustSeeIds={mustSeeIds}
       onItineraryChange={setItineraryOverride}
-      mobile={isMobile}
     />
   ) : null;
 
