@@ -132,31 +132,62 @@ export async function syncLocalTrips(): Promise<void> {
   }
 }
 
-// --- Chat sync (called by PlannerChat alongside its localStorage save) ---
+// --- Chat sync ---
 
-const chatTimers = new Map<string, ReturnType<typeof setTimeout>>();
+/** Hash of the last conversation successfully sent, per trip: a page load reads
+ *  the account's copy and would otherwise immediately write it back. */
+const chatPushed = new Map<string, string>();
 
-/** Debounced push of a trip's conversation. Only owned trips are sent. */
-export function pushChatDebounced(tripId: string, messages: unknown[]): void {
-  const existing = chatTimers.get(tripId);
-  if (existing) clearTimeout(existing);
-  chatTimers.set(
-    tripId,
-    setTimeout(async () => {
-      chatTimers.delete(tripId);
-      const session = await getSession();
-      if (!session.enabled || !session.user) return;
-      try {
-        await fetch(`/api/trips/${tripId}/messages`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages }),
-        });
-      } catch {
-        // offline — the next save retries
-      }
-    }, PUSH_DEBOUNCE_MS)
-  );
+/**
+ * Send a trip's conversation to the account. Called when a TURN ENDS, not on a
+ * timer: a debounce is a race against the user navigating away, and it lost —
+ * the reported symptom was a finished plan whose last turn was missing from the
+ * conversation, because the push was still pending when the page changed.
+ *
+ * `beacon` uses sendBeacon for the page-unload path: a normal fetch dies with
+ * the document, and keepalive caps the body at 64KB, which a chat carrying tool
+ * payloads exceeds.
+ */
+export function pushChat(
+  tripId: string,
+  messages: unknown[],
+  beacon = false
+): void {
+  const body = JSON.stringify({ messages });
+  const h = hash(body);
+  if (chatPushed.get(tripId) === h) return;
+  if (beacon && typeof navigator !== "undefined" && navigator.sendBeacon) {
+    const sent = navigator.sendBeacon(
+      `/api/trips/${tripId}/messages`,
+      new Blob([body], { type: "application/json" })
+    );
+    if (sent) chatPushed.set(tripId, h);
+    return;
+  }
+  // Claimed before the request, not after: unmounting fires a flush while this
+  // one is still open, and two identical writes is one too many.
+  chatPushed.set(tripId, h);
+  void (async () => {
+    const session = await getSession();
+    if (!session.enabled || !session.user) return;
+    try {
+      const res = await fetch(`/api/trips/${tripId}/messages`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body,
+      });
+      // 409 = the trip row isn't there yet; let the next turn retry.
+      if (!res.ok) chatPushed.delete(tripId);
+    } catch {
+      chatPushed.delete(tripId); // offline — the next completed turn tries again
+    }
+  })();
+}
+
+/** Remember what the account already has, so seeding a conversation from it
+ *  doesn't bounce straight back as a write. */
+export function noteChatFromServer(tripId: string, messages: unknown[]): void {
+  chatPushed.set(tripId, hash(JSON.stringify({ messages })));
 }
 
 /** The account's saved conversation for a trip, or null (none / signed out). */
