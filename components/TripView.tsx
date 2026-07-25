@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import {
   Itinerary,
   ItineraryDay,
@@ -31,7 +32,9 @@ import {
   saveMustSees,
   travelEstimate,
 } from "@/lib/itinerary";
+import { useIsMobile } from "@/lib/useIsMobile";
 import BuildingScreen from "./BuildingScreen";
+import BottomSheet, { SheetSnap } from "./BottomSheet";
 import PlannerChat from "./PlannerChat";
 import type { MapBounds, PlanRender } from "./TripMap";
 
@@ -671,6 +674,16 @@ export default function TripView({
   const [mustSeeIds, setMustSeeIds] = useState<string[]>(() => loadMustSees(tripId));
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Mobile layout: the map is the page background and everything else lives
+  // in a snap-point bottom sheet with its own tab strip (Agent / Itinerary /
+  // Pins). Both states are harmless to keep updated on desktop, so handlers
+  // shared between the layouts just set them unconditionally.
+  const isMobile = useIsMobile();
+  const [sheetSnap, setSheetSnap] = useState<SheetSnap>("half");
+  const [sheetTab, setSheetTab] = useState<"agent" | "overview" | "pins">(
+    embed ? "pins" : "agent"
+  );
+
   // Draggable divider between the planner rail and the map. `leftWidth` is a
   // pixel override; null means "use the responsive CSS width" (the default and
   // what a double-click restores). The map is flex:1 so it absorbs whatever the
@@ -1101,9 +1114,22 @@ export default function TripView({
     setSelectedId(id);
     if (id) {
       // Remember where we came from so the detail's close button returns there.
-      setSpotOrigin(rightTab);
+      setSpotOrigin(
+        isMobile ? (sheetTab === "overview" ? "overview" : "pins") : rightTab
+      );
       setRightTab("pins");
+      setSheetTab("pins");
+      // A pin tapped while the sheet is collapsed should actually show the
+      // card it just opened. Functional update: map pin handlers can hold a
+      // stale closure of this component's render.
+      setSheetSnap((s) => (s === "peek" ? "half" : s));
     }
+  };
+
+  const closeSpot = () => {
+    setSelectedId(null);
+    setRightTab(spotOrigin);
+    setSheetTab(spotOrigin);
   };
 
   // Expanding a day card in the overview filters the map to that day (pins +
@@ -1119,72 +1145,53 @@ export default function TripView({
     });
   };
 
-  return (
-    // Clicking anywhere outside the pill clears the pinned highlight and closes
-    // the videos dropdown
-    <div
-      className={`trip-page ${resizing ? "resizing" : ""}`}
-      onClick={() => {
-        setPinnedVideoId(null);
-        setVideosOpen(false);
-        setSearchOpen(false);
-      }}
-    >
-      <div className="trip-body" ref={bodyRef}>
-        {/* Left rail: trip identity + the planner agent */}
-        {!embed && (
-          <aside
-            className="left-side"
-            style={leftWidth != null ? { width: leftWidth, minWidth: 0 } : undefined}
-          >
-            <TripHead
-              trip={trip}
-              meta={[
-                `${catFiltered.length} spots`,
-                formatTripDates(trip),
-                trip.query?.interests,
-              ]
-                .filter(Boolean)
-                .join(" · ")}
-              canAdd={isLocal === true}
-              addLinks={addLinks}
-              setAddLinks={setAddLinks}
-              addError={addError}
-              onAddVideos={addVideos}
-              open={videosOpen}
-              setOpen={(fn) => setVideosOpen((o) => fn(o))}
-              pinnedId={pinnedVideoId}
-              onHoverVideo={setHoverVideoId}
-              onClickVideo={(id) =>
-                setPinnedVideoId((cur) => (cur === id ? null : id))
-              }
-            />
-            <PlannerChat
-              trip={trip}
-              isLocal={isLocal === true}
-              itinerary={itinerary}
-              mustSeeIds={mustSeeIds}
-              onItineraryChange={setItineraryOverride}
-            />
-          </aside>
-        )}
+  // Clicking anywhere outside the panels clears the pinned video highlight
+  // and closes the videos dropdown / search results.
+  const clearTransients = () => {
+    setPinnedVideoId(null);
+    setVideosOpen(false);
+    setSearchOpen(false);
+  };
 
-        {/* Drag to rebalance the planner rail and the map; double-click resets. */}
-        {!embed && (
-          <div
-            className={`rail-resizer ${resizing ? "resizing" : ""}`}
-            role="separator"
-            aria-orientation="vertical"
-            aria-label="Resize planner panel"
-            onPointerDown={startResize}
-            onDoubleClick={() => setLeftWidth(null)}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <span className="rail-resizer-grip" />
-          </div>
-        )}
+  // ---- Building blocks shared by the desktop rails and the mobile sheet ----
 
-        <div className="map-side">
+  const tripHeadEl = !embed ? (
+    <TripHead
+      trip={trip}
+      meta={[
+        `${catFiltered.length} spots`,
+        formatTripDates(trip),
+        trip.query?.interests,
+      ]
+        .filter(Boolean)
+        .join(" · ")}
+      canAdd={isLocal === true}
+      addLinks={addLinks}
+      setAddLinks={setAddLinks}
+      addError={addError}
+      onAddVideos={addVideos}
+      open={videosOpen}
+      setOpen={(fn) => setVideosOpen((o) => fn(o))}
+      pinnedId={pinnedVideoId}
+      onHoverVideo={setHoverVideoId}
+      onClickVideo={(id) =>
+        setPinnedVideoId((cur) => (cur === id ? null : id))
+      }
+    />
+  ) : null;
+
+  const chatEl = !embed ? (
+    <PlannerChat
+      trip={trip}
+      isLocal={isLocal === true}
+      itinerary={itinerary}
+      mustSeeIds={mustSeeIds}
+      onItineraryChange={setItineraryOverride}
+      mobile={isMobile}
+    />
+  ) : null;
+
+  const mapFrameEl = (
           <div className="map-frame">
             <TripMap
               destination={trip.destination}
@@ -1220,6 +1227,21 @@ export default function TripView({
               searchMatchIds={searchMatchIds}
               searchMarker={searchMarker}
             />
+            {/* Mobile only (hidden by CSS on desktop): the way back to the
+                trips list — the phone layout has no other exit. */}
+            {!embed && (
+              <Link className="m-back" href="/" aria-label="Back to your trips">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M19 12H5m0 0l7-7m-7 7l7 7"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </Link>
+            )}
             {/* Search over the actual map: our pinned spots + real OSM places.
                 Type a place and the map flies to it, like Google Maps. */}
             <div
@@ -1355,81 +1377,42 @@ export default function TripView({
               <div className="map-progress">⚙️ {trip.progress}</div>
             )}
           </div>
-        </div>
+  );
 
-        {/* Right rail: the Itinerary timeline (once a plan exists — the
-            primary tab) or Pins (viewport grid / spot detail). The segmented
-            control only appears after the agent has built an itinerary; before
-            that the rail is pins-only. */}
-        <aside className="right-side" ref={rightRef} onClick={(e) => e.stopPropagation()}>
-          {(hasItinerary || canShare) && (
-            <div className="rail-tabs">
-              {hasItinerary ? (
-                <div
-                  className="rail-seg"
-                  role="tablist"
-                  aria-label="Right rail view"
-                  data-active={rightTab}
-                >
-                  <span className="rail-seg-thumb" aria-hidden="true" />
-                  <button
-                    role="tab"
-                    aria-selected={rightTab === "overview"}
-                    className={`rail-tab ${rightTab === "overview" ? "on" : ""}`}
-                    onClick={() => setRightTab("overview")}
-                  >
-                    Itinerary
-                  </button>
-                  <button
-                    role="tab"
-                    aria-selected={rightTab === "pins"}
-                    className={`rail-tab ${rightTab === "pins" ? "on" : ""}`}
-                    onClick={() => setRightTab("pins")}
-                  >
-                    Pins
-                  </button>
-                </div>
-              ) : (
-                <span />
-              )}
-              {canShare && <ShareTrip trip={trip} />}
-            </div>
-          )}
+  const overviewEl = hasItinerary ? (
+    <TripOverview
+      itinerary={itinerary}
+      spotById={spotById}
+      expandedDay={expandedDay}
+      onToggleDay={toggleOverviewDay}
+      onSelectSpot={selectSpot}
+      onStartPlanning={() => {
+        // Chat lives in the left rail (desktop) or the Agent tab (mobile).
+        setSheetTab("agent");
+        document
+          .querySelector<HTMLTextAreaElement>(".planner-inputrow textarea")
+          ?.focus();
+      }}
+    />
+  ) : null;
 
-          {hasItinerary && rightTab === "overview" ? (
-            <TripOverview
-              itinerary={itinerary}
-              spotById={spotById}
-              expandedDay={expandedDay}
-              onToggleDay={toggleOverviewDay}
-              onSelectSpot={selectSpot}
-              onStartPlanning={() => {
-                // The chat is always open in the left rail — just focus it.
-                document
-                  .querySelector<HTMLTextAreaElement>(
-                    ".planner-inputrow textarea"
-                  )
-                  ?.focus();
-              }}
-            />
-          ) : selectedSpot ? (
-            <SpotCard
-              key={selectedSpot.id} // remount per spot — photo carousel state must not leak between spots
-              spot={selectedSpot}
-              tripId={trip.id}
-              local={isLocal === true}
-              mustSee={mustSeeIds.includes(selectedSpot.id)}
-              onToggleMustSee={() => toggleMustSee(selectedSpot.id)}
-              planInfo={selectedPlanInfo}
-              planColor={
-                selectedPlanInfo ? dayColor(selectedPlanInfo.dayIndex) : undefined
-              }
-              onClose={() => {
-                setSelectedId(null);
-                setRightTab(spotOrigin);
-              }}
-            />
-          ) : (
+  const spotCardEl = selectedSpot ? (
+    <SpotCard
+      key={selectedSpot.id} // remount per spot — photo carousel state must not leak between spots
+      spot={selectedSpot}
+      tripId={trip.id}
+      local={isLocal === true}
+      mustSee={mustSeeIds.includes(selectedSpot.id)}
+      onToggleMustSee={() => toggleMustSee(selectedSpot.id)}
+      planInfo={selectedPlanInfo}
+      planColor={
+        selectedPlanInfo ? dayColor(selectedPlanInfo.dayIndex) : undefined
+      }
+      onClose={closeSpot}
+    />
+  ) : null;
+
+  const pinsViewEl = (
             <div className="pins-view">
               {/* Category filters — collapsed to a single button by default,
                   fanning open into the full multi-select chip grid on click.
@@ -1527,6 +1510,25 @@ export default function TripView({
                         tripId={trip.id}
                         local={isLocal === true}
                       />
+                      {/* Mobile only (hidden on desktop by CSS). A span, not
+                          a <button> — it lives inside the tile button. */}
+                      <span
+                        className={`tile-star ${
+                          mustSeeIds.includes(spot.id) ? "on" : ""
+                        }`}
+                        role="button"
+                        aria-label={
+                          mustSeeIds.includes(spot.id)
+                            ? "Remove from must-sees"
+                            : "Star as a must-see"
+                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleMustSee(spot.id);
+                        }}
+                      >
+                        <IconStar />
+                      </span>
                       <div className="tile-meta">
                         <div className="tile-name">{spot.name}</div>
                         <div className="tile-sub">
@@ -1540,7 +1542,162 @@ export default function TripView({
                 </div>
               )}
             </div>
+  );
+
+  // ---- Mobile: fullscreen map + bottom sheet (Agent / Itinerary / Pins) ----
+  if (isMobile) {
+    // The stored tab can point at a panel that doesn't exist right now (the
+    // itinerary was cleared, or this is the embedded preview with no agent).
+    const activeTab =
+      (sheetTab === "overview" && !hasItinerary) ||
+      (sheetTab === "agent" && embed)
+        ? "pins"
+        : sheetTab;
+    return (
+      <div className="trip-page mobile" onClick={clearTransients}>
+        <div className="m-map">{mapFrameEl}</div>
+        <BottomSheet
+          snap={sheetSnap}
+          onSnapChange={setSheetSnap}
+          header={
+            <div className="sheet-tabs" role="tablist" aria-label="Trip panels">
+              {!embed && (
+                <button
+                  role="tab"
+                  aria-selected={activeTab === "agent"}
+                  className={`sheet-tab ${activeTab === "agent" ? "on" : ""}`}
+                  onClick={() => setSheetTab("agent")}
+                >
+                  Agent
+                </button>
+              )}
+              {hasItinerary && (
+                <button
+                  role="tab"
+                  aria-selected={activeTab === "overview"}
+                  className={`sheet-tab ${activeTab === "overview" ? "on" : ""}`}
+                  onClick={() => setSheetTab("overview")}
+                >
+                  Itinerary
+                </button>
+              )}
+              <button
+                role="tab"
+                aria-selected={activeTab === "pins"}
+                className={`sheet-tab ${activeTab === "pins" ? "on" : ""}`}
+                onClick={() => setSheetTab("pins")}
+              >
+                Pins
+              </button>
+            </div>
+          }
+        >
+          {/* Panels stay mounted while hidden so the chat (in-flight stream,
+              scroll position) survives tab switches. */}
+          {!embed && (
+            <div className="sheet-panel agent" hidden={activeTab !== "agent"}>
+              {tripHeadEl}
+              {chatEl}
+            </div>
           )}
+          {hasItinerary && (
+            <div
+              className="sheet-panel scroll"
+              hidden={activeTab !== "overview"}
+            >
+              {overviewEl}
+            </div>
+          )}
+          <div className="sheet-panel scroll" hidden={activeTab !== "pins"}>
+            {canShare && !selectedSpot && (
+              <div className="sheet-share">
+                <ShareTrip trip={trip} />
+              </div>
+            )}
+            {spotCardEl ?? pinsViewEl}
+          </div>
+        </BottomSheet>
+      </div>
+    );
+  }
+
+  // ---- Desktop: [trip head + chat] | map (center) | [itinerary/pins] ----
+  return (
+    <div
+      className={`trip-page ${resizing ? "resizing" : ""}`}
+      onClick={clearTransients}
+    >
+      <div className="trip-body" ref={bodyRef}>
+        {/* Left rail: trip identity + the planner agent */}
+        {!embed && (
+          <aside
+            className="left-side"
+            style={leftWidth != null ? { width: leftWidth, minWidth: 0 } : undefined}
+          >
+            {tripHeadEl}
+            {chatEl}
+          </aside>
+        )}
+
+        {/* Drag to rebalance the planner rail and the map; double-click resets. */}
+        {!embed && (
+          <div
+            className={`rail-resizer ${resizing ? "resizing" : ""}`}
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Resize planner panel"
+            onPointerDown={startResize}
+            onDoubleClick={() => setLeftWidth(null)}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <span className="rail-resizer-grip" />
+          </div>
+        )}
+
+        <div className="map-side">{mapFrameEl}</div>
+
+        {/* Right rail: the Itinerary timeline (once a plan exists — the
+            primary tab) or Pins (viewport grid / spot detail). The segmented
+            control only appears after the agent has built an itinerary; before
+            that the rail is pins-only. */}
+        <aside className="right-side" ref={rightRef} onClick={(e) => e.stopPropagation()}>
+          {(hasItinerary || canShare) && (
+            <div className="rail-tabs">
+              {hasItinerary ? (
+                <div
+                  className="rail-seg"
+                  role="tablist"
+                  aria-label="Right rail view"
+                  data-active={rightTab}
+                >
+                  <span className="rail-seg-thumb" aria-hidden="true" />
+                  <button
+                    role="tab"
+                    aria-selected={rightTab === "overview"}
+                    className={`rail-tab ${rightTab === "overview" ? "on" : ""}`}
+                    onClick={() => setRightTab("overview")}
+                  >
+                    Itinerary
+                  </button>
+                  <button
+                    role="tab"
+                    aria-selected={rightTab === "pins"}
+                    className={`rail-tab ${rightTab === "pins" ? "on" : ""}`}
+                    onClick={() => setRightTab("pins")}
+                  >
+                    Pins
+                  </button>
+                </div>
+              ) : (
+                <span />
+              )}
+              {canShare && <ShareTrip trip={trip} />}
+            </div>
+          )}
+
+          {hasItinerary && rightTab === "overview"
+            ? overviewEl
+            : spotCardEl ?? pinsViewEl}
         </aside>
       </div>
     </div>
@@ -1799,6 +1956,16 @@ function SpotCard({
   onClose: () => void;
 }) {
   const { urls, i, total, step } = useSpotPhotos(spot, tripId, local);
+  // Official Maps URL scheme — free, no API call. With a placeId it opens the
+  // actual place page (reviews, hours, directions); without one it falls back
+  // to a coordinate search. Rendered twice: a text pill in the body (desktop)
+  // and an icon-only square in the title row (mobile) — CSS shows one each.
+  const mapsHref =
+    typeof spot.placeId === "string"
+      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+          spot.name
+        )}&query_place_id=${spot.placeId}`
+      : `https://www.google.com/maps/search/?api=1&query=${spot.lat},${spot.lng}`;
   // Google photo sets are all-Google; otherwise it's the single legacy photo
   // (wikimedia) or a frame from the recommending creator's video
   const credit =
@@ -1832,19 +1999,39 @@ function SpotCard({
       <div className="card-body">
         <div className="card-title-row">
           <h2>{spot.name}</h2>
-          <button
-            className={`must-star ${mustSee ? "on" : ""}`}
-            onClick={onToggleMustSee}
-            title={
-              mustSee
-                ? "Remove from must-sees"
-                : "Star as a must-see — the planner will always include it"
-            }
-            aria-pressed={mustSee}
-          >
-            <IconStar />
-            Must-see
-          </button>
+          <div className="title-actions">
+            <a
+              className="gmaps-icon"
+              href={mapsHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Open in Google Maps"
+              title="Open in Google Maps"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinejoin="round"
+                />
+                <circle cx="12" cy="9" r="2.5" stroke="currentColor" strokeWidth="2" />
+              </svg>
+            </a>
+            <button
+              className={`must-star ${mustSee ? "on" : ""}`}
+              onClick={onToggleMustSee}
+              title={
+                mustSee
+                  ? "Remove from must-sees"
+                  : "Star as a must-see — the planner will always include it"
+              }
+              aria-pressed={mustSee}
+            >
+              <IconStar />
+              <span className="must-star-label">Must-see</span>
+            </button>
+          </div>
         </div>
 
         {/* One quiet meta line: the spot's key facts at a glance. When the
@@ -1873,16 +2060,7 @@ function SpotCard({
 
         <a
           className="gmaps-btn"
-          // Official Maps URL scheme — free, no API call. With a placeId it
-          // opens the actual place page (reviews, hours, directions); without
-          // one it falls back to a coordinate search.
-          href={
-            typeof spot.placeId === "string"
-              ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                  spot.name
-                )}&query_place_id=${spot.placeId}`
-              : `https://www.google.com/maps/search/?api=1&query=${spot.lat},${spot.lng}`
-          }
+          href={mapsHref}
           target="_blank"
           rel="noopener noreferrer"
         >

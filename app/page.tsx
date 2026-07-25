@@ -19,6 +19,8 @@ import { SessionUser, signIn, signOut, useSession } from "@/lib/useSession";
 import type { TripSummary } from "@/lib/db";
 import DatePicker from "@/components/DatePicker";
 import { Logo } from "@/components/Logo";
+import MobileLanding from "@/components/MobileLanding";
+import { useIsMobile } from "@/lib/useIsMobile";
 
 // The preview iframe renders the trip page at a fixed desktop size, then
 // scales it down to fit its frame. ?embed=1 drops the trip-overview header
@@ -80,6 +82,7 @@ interface RailTrip {
   spotCount: number;
   videoCount: number;
   createdAt: string;
+  cover?: string | null;
 }
 
 function railFromTrip(t: Trip): RailTrip {
@@ -90,6 +93,7 @@ function railFromTrip(t: Trip): RailTrip {
     spotCount: t.spots.length,
     videoCount: t.videos.length,
     createdAt: t.createdAt,
+    cover: t.videos.find((v) => v.thumbnail)?.thumbnail ?? null,
   };
 }
 
@@ -203,6 +207,7 @@ function Landing({
   // user ready to type: destination focused, search bar pulsing once.
   const destRef = useRef<HTMLInputElement>(null);
   const [pulse, setPulse] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -343,6 +348,38 @@ function Landing({
       return;
     }
     router.push(`/trip/${id}`);
+  }
+
+  if (isMobile) {
+    // The phone landing (glass hero + trips overlay). "Trips" here means the
+    // visitor's own maps — signed in that's the account rail; signed out,
+    // whatever this browser has built (not the shared library).
+    const myTrips = user
+      ? railTrips
+      : localTrips
+          .map(railFromTrip)
+          .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    return (
+      <MobileLanding
+        authEnabled={authEnabled}
+        profileSlot={user ? <ProfileButton user={user} /> : null}
+        myTrips={myTrips}
+        totalSpots={totalSpots}
+        watchSaved={watchSaved}
+        destination={destination}
+        setDestination={setDestination}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        interests={interests}
+        setInterests={setInterests}
+        creating={creating}
+        error={error}
+        onCreate={createTrip}
+        autoFocusDest={pulse}
+      />
+    );
   }
 
   return (

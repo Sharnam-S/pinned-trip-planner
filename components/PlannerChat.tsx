@@ -170,6 +170,127 @@ function QuestionFlow({
   );
 }
 
+/** Phone intake (Z2-b): the same questions as QuestionFlow, asked one at a
+ *  time as a scripted conversation — each tap becomes a "user message", the
+ *  next question streams in as the reply. Entirely client-side; the LLM is
+ *  called once, with the compiled answers (via onSubmit → submitIntake).
+ *  Typing in the main composer answers the current question too — the
+ *  parent routes it here through answerRef. */
+function ConversationalIntake({
+  title,
+  photos,
+  questions,
+  answerRef,
+  onSubmit,
+}: {
+  title: string;
+  photos: string[];
+  questions: PlannerQuestion[];
+  answerRef: React.MutableRefObject<((text: string) => void) | null>;
+  onSubmit: (answers: QuestionAnswer[]) => void;
+}) {
+  const [answers, setAnswers] = useState<QuestionAnswer[]>([]);
+  const [picks, setPicks] = useState<string[]>([]); // current multi-select
+  const endRef = useRef<HTMLDivElement>(null);
+
+  const step = answers.length;
+  const q: PlannerQuestion | undefined = questions[step];
+
+  const answer = (text: string) => {
+    if (!q) return;
+    const next = [
+      ...answers,
+      { id: q.id, prompt: q.prompt, answer: text.trim() || "no preference" },
+    ];
+    setAnswers(next);
+    setPicks([]);
+    if (next.length === questions.length) onSubmit(next);
+  };
+
+  // The parent's composer answers the current question while intake runs.
+  useEffect(() => {
+    answerRef.current = answer;
+    return () => {
+      answerRef.current = null;
+    };
+  });
+
+  // New turns appear below the fold in a half-height sheet — follow them.
+  useEffect(() => {
+    if (step > 0) endRef.current?.scrollIntoView({ block: "end", behavior: "smooth" });
+  }, [step]);
+
+  return (
+    <div className="ci">
+      <h3 className="ci-title">{title} ✨</h3>
+      {photos.length > 0 && (
+        <div className="ci-strip" aria-hidden="true">
+          {photos.map((url) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={url}
+              src={url}
+              alt=""
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+              }}
+            />
+          ))}
+        </div>
+      )}
+      {answers.map((a, i) => (
+        <div className="ci-turn" key={a.id}>
+          <div className="ci-q">{questions[i].prompt}</div>
+          <div className="ci-a">{a.answer}</div>
+        </div>
+      ))}
+      {q && (
+        <div className="ci-turn">
+          <div className="ci-q">{q.prompt}</div>
+          <div className="ci-chips">
+            {q.options.map((opt) =>
+              q.multiSelect ? (
+                <button
+                  key={opt}
+                  className={`suggestion-chip ${picks.includes(opt) ? "on" : ""}`}
+                  aria-pressed={picks.includes(opt)}
+                  onClick={() =>
+                    setPicks((p) =>
+                      p.includes(opt) ? p.filter((x) => x !== opt) : [...p, opt]
+                    )
+                  }
+                >
+                  {opt}
+                </button>
+              ) : (
+                <button
+                  key={opt}
+                  className="suggestion-chip"
+                  onClick={() => answer(opt)}
+                >
+                  {opt}
+                </button>
+              )
+            )}
+            {q.multiSelect && picks.length > 0 && (
+              <button className="ci-done" onClick={() => answer(picks.join(", "))}>
+                That&rsquo;s it →
+              </button>
+            )}
+            <button className="ci-skip" onClick={() => answer("")}>
+              Skip
+            </button>
+          </div>
+          {(q.allowOther || q.options.length === 0) && (
+            <div className="ci-hint">…or type your answer below.</div>
+          )}
+        </div>
+      )}
+      <div ref={endRef} />
+    </div>
+  );
+}
+
 const SUGGESTIONS = [
   "Plan my days for me",
   "Where should I stay?",
@@ -387,12 +508,16 @@ export default function PlannerChat({
   itinerary,
   mustSeeIds,
   onItineraryChange,
+  mobile = false,
 }: {
   trip: Trip;
   isLocal: boolean;
   itinerary: Itinerary | null;
   mustSeeIds: string[];
   onItineraryChange: (itin: Itinerary) => void;
+  /** Phone bottom-sheet rendering: conversational intake instead of the
+   *  tap-through card, editorial greeting instead of the fan hero. */
+  mobile?: boolean;
 }) {
   const initialMessages = useMemo(() => loadChat(trip.id), [trip.id]);
   const [input, setInput] = useState("");
@@ -423,6 +548,22 @@ export default function PlannerChat({
       ...(front ? [{ url: front, cls: "front" }] : []),
     ];
   }, [trip, hasOwnTrips]);
+
+  // Mobile intake (Z2-b): a leaning strip of the best-loved spots' photos
+  // under the greeting, and the hook that lets the composer answer the
+  // current scripted question instead of messaging the LLM.
+  const stripPhotos = useMemo(() => {
+    if (!mobile) return [];
+    return [...trip.spots]
+      .sort((a, b) => b.mentions.length - a.mentions.length)
+      .map((s) => spotCoverUrl(s))
+      .filter((u): u is string => Boolean(u))
+      .slice(0, 5);
+  }, [trip, mobile]);
+  const intakeAnswerRef = useRef<((text: string) => void) | null>(null);
+  // "Arugam Bay, Sri Lanka" → "Sri Lanka"; fall back to the trip's name.
+  const shortDest =
+    trip.destination?.name.split(",").map((s) => s.trim()).pop() || trip.name;
 
   // The transport is created once; the ctx ref keeps the request body current.
   const ctxRef = useRef<PlannerCtx>({
@@ -611,7 +752,11 @@ export default function PlannerChat({
     !busy && !error && (last?.role === "user" || lastAssistantEmpty);
 
   useEffect(() => {
-    // Follow the conversation as it streams.
+    // Follow the conversation as it streams. Not before it starts, though:
+    // with no messages the panel shows the intro/nudge, and in a short panel
+    // (the mobile half-height sheet) jumping to the bottom would clip the
+    // top of it — the photo fan cut mid-frame reads as broken layout.
+    if (messages.length === 0) return;
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages, busy, error, streamDropped]);
@@ -681,6 +826,22 @@ export default function PlannerChat({
     el.style.height = `${Math.min(el.scrollHeight, 132)}px`;
   }
 
+  // Composer submit. While the mobile conversational intake is running, typed
+  // text answers the current scripted question instead of messaging the LLM
+  // (routing lives here — NOT in send(), which submitIntake itself calls to
+  // deliver the compiled answers).
+  function submitComposer() {
+    const trimmed = input.trim();
+    if (trimmed && intakeAnswerRef.current) {
+      intakeAnswerRef.current(trimmed);
+      setInput("");
+      const el = inputRef.current;
+      if (el) el.style.height = "auto";
+      return;
+    }
+    send(input);
+  }
+
   const showNudge = !hasOwnTrips && !isLocal && !nudgeDismissed;
   // While the instant intake form is up it's the single call-to-action — hide
   // the free-text input so the user isn't facing two competing inputs.
@@ -725,18 +886,28 @@ export default function PlannerChat({
               </button>
             </div>
           ) : !itinerary ? (
-            <div className="pm pm-assistant pm-intake">
-              <div className="pm-text">
-                <p>
-                  {`I know these ${trip.spots.length} spots inside out. Tell me a few quick things and I'll sketch your days.`}
-                </p>
-              </div>
-              <QuestionFlow
+            mobile ? (
+              <ConversationalIntake
+                title={`Let’s plan your days in ${shortDest}`}
+                photos={stripPhotos}
                 questions={intakeQuestions}
-                submitLabel="Plan my trip →"
+                answerRef={intakeAnswerRef}
                 onSubmit={submitIntake}
               />
-            </div>
+            ) : (
+              <div className="pm pm-assistant pm-intake">
+                <div className="pm-text">
+                  <p>
+                    {`I know these ${trip.spots.length} spots inside out. Tell me a few quick things and I'll sketch your days.`}
+                  </p>
+                </div>
+                <QuestionFlow
+                  questions={intakeQuestions}
+                  submitLabel="Plan my trip →"
+                  onSubmit={submitIntake}
+                />
+              </div>
+            )
           ) : (
             <div className="planner-intro">
               <p>
@@ -955,12 +1126,12 @@ export default function PlannerChat({
         </div>
       )}
 
-      {!intakeActive && (
+      {(!intakeActive || mobile) && (
         <form
           className="planner-inputrow"
           onSubmit={(e) => {
             e.preventDefault();
-            send(input);
+            submitComposer();
           }}
         >
           <textarea
@@ -974,7 +1145,7 @@ export default function PlannerChat({
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                send(input);
+                submitComposer();
               }
             }}
             placeholder="Ask your local planner…"
