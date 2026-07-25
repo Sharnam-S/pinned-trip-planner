@@ -17,7 +17,7 @@ import {
 } from "ai";
 import { Itinerary, Spot, Trip } from "@/lib/types";
 import { listLocalTrips, readOwnedIds } from "@/lib/clientStore";
-import { fetchServerChat, pushChatDebounced } from "@/lib/sync";
+import { fetchServerChat, noteChatFromServer, pushChat } from "@/lib/sync";
 import { tripStoreMode } from "@/lib/tripStore";
 import { spotCoverUrl } from "@/lib/photoUrl";
 import {
@@ -346,23 +346,29 @@ interface PlannerCtx {
 const CHAT_PREFIX = "pinned.chat.";
 const CHAT_MAX_MESSAGES = 80;
 
-/** A refresh mid-turn can leave the last assistant message with a tool call
- *  that never got its output — replaying that to the API is invalid, so drop
- *  trailing messages until the conversation ends on solid ground. */
+/** A turn that was interrupted leaves rubbish at the end of the array: a tool
+ *  call with no output (invalid to replay to the API), or an assistant message
+ *  that only ever got as far as a reasoning block — a truncated "Thinking…"
+ *  paragraph that reads like the planner trailed off mid-sentence, and which
+ *  used to make the panel cry "the connection dropped" on a conversation that
+ *  had actually finished. Drop trailing messages until the conversation ends on
+ *  solid ground. */
 function sanitizeChat(messages: UIMessage[]): UIMessage[] {
   const out = [...messages];
   while (out.length > 0) {
     const last = out[out.length - 1];
-    const dangling =
-      last.role === "assistant" &&
-      last.parts.some(
-        (p) =>
-          p.type.startsWith("tool-") &&
-          "state" in p &&
-          p.state !== "output-available" &&
-          p.state !== "output-error"
-      );
-    if (!dangling) break;
+    if (last.role !== "assistant") break;
+    const dangling = last.parts.some(
+      (p) =>
+        p.type.startsWith("tool-") &&
+        "state" in p &&
+        p.state !== "output-available" &&
+        p.state !== "output-error"
+    );
+    const nothingSaid = !last.parts.some(
+      (p) => (p.type === "text" && p.text.trim()) || p.type.startsWith("tool-")
+    );
+    if (!dangling && !nothingSaid) break;
     out.pop();
   }
   return out;
@@ -379,8 +385,8 @@ function loadChat(tripId: string): UIMessage[] {
 }
 
 /** Signed out only: the conversation has nowhere else to live. Signed in, the
- *  account copy (pushChatDebounced) is the store — writing it here too would
- *  put the biggest consumer back into a 5M-character budget. */
+ *  account copy (pushChat) is the store — writing it here too would put the
+ *  biggest consumer back into a 5M-character budget. */
 async function saveChat(tripId: string, messages: UIMessage[]): Promise<void> {
   if ((await tripStoreMode()) === "server") return;
   try {
@@ -873,6 +879,12 @@ export default function PlannerChat({
   });
 
   const busy = status === "submitted" || status === "streaming";
+  // Set the first time a request goes out in this session. Without it, the
+  // dropped-stream notice below fires on a conversation merely *loaded* from
+  // storage — the plan long since built and on the map — because it can't tell
+  // "this turn died just now" from "this is how the history ends".
+  const [streamedHere, setStreamedHere] = useState(false);
+  if (busy && !streamedHere) setStreamedHere(true);
 
   // The stream can die server-side without an error event (e.g. a runtime
   // timeout kills the function mid-think) — the request "finishes" but the
@@ -885,7 +897,10 @@ export default function PlannerChat({
         (p.type === "text" && p.text.trim()) || p.type.startsWith("tool-")
     );
   const streamDropped =
-    !busy && !error && (last?.role === "user" || lastAssistantEmpty);
+    streamedHere &&
+    !busy &&
+    !error &&
+    (last?.role === "user" || lastAssistantEmpty);
 
   useEffect(() => {
     // Follow the conversation as it streams. Not before it starts, though:
@@ -905,6 +920,8 @@ export default function PlannerChat({
     let cancelled = false;
     void fetchServerChat(trip.id).then((msgs) => {
       if (cancelled || !msgs || msgs.length === 0) return;
+      // What the account has is not something to write back.
+      noteChatFromServer(trip.id, msgs);
       // Updater form: if the user already typed while we fetched, keep theirs.
       setMessages((cur) => (cur.length > 0 ? cur : sanitizeChat(msgs as UIMessage[])));
     });
@@ -914,23 +931,41 @@ export default function PlannerChat({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trip.id]);
 
-  // Persist continuously (debounced against streaming churn) AND flush on
-  // unmount — closing the panel mid-turn must never lose the conversation.
-  // The load-time sanitizer handles any half-finished turn this captures.
+  // Persist only BETWEEN turns. Mid-stream the array is a half-message —
+  // usually a reasoning block with nothing after it — and storing that is how a
+  // finished plan came back looking like a dropped connection. Streaming churn
+  // used to be handled with a debounce, which is a race, not a rule: a long
+  // think would outlast it and the snapshot would land.
   const messagesRef = useRef(initialMessages);
   useEffect(() => {
     messagesRef.current = messages;
-    if (messages.length === 0) return;
+    if (messages.length === 0 || busy) return;
     const t = setTimeout(() => void saveChat(trip.id, messages), 400);
-    // Owned trips also ride up to the account (its own longer debounce).
-    if (trip.ownerId) pushChatDebounced(trip.id, messages.slice(-CHAT_MAX_MESSAGES));
+    // Owned trips go up to the account right now — this only runs between
+    // turns, so it's one write per turn, and nothing is left pending for a
+    // navigation to cancel.
+    if (trip.ownerId) pushChat(trip.id, messages.slice(-CHAT_MAX_MESSAGES));
     return () => clearTimeout(t);
-  }, [messages, trip.id, trip.ownerId]);
+  }, [messages, busy, trip.id, trip.ownerId]);
+
+  // Leaving the page must not cost the last turn: a client-side navigation
+  // unmounts this panel while its debounce is still pending, and the account
+  // push would never fire. Flush immediately on unmount, and hand the browser a
+  // beacon for a real unload (close/reload), which cancels in-flight requests.
   useEffect(() => {
-    return () => {
-      if (messagesRef.current.length > 0) void saveChat(trip.id, messagesRef.current);
+    const flush = (beacon: boolean) => {
+      const msgs = messagesRef.current;
+      if (msgs.length === 0) return;
+      void saveChat(trip.id, msgs);
+      if (trip.ownerId) pushChat(trip.id, msgs.slice(-CHAT_MAX_MESSAGES), beacon);
     };
-  }, [trip.id]);
+    const onHide = () => flush(true);
+    window.addEventListener("pagehide", onHide);
+    return () => {
+      window.removeEventListener("pagehide", onHide);
+      flush(false);
+    };
+  }, [trip.id, trip.ownerId]);
 
   function send(text: string) {
     const trimmed = text.trim();

@@ -72,3 +72,8 @@ export async function PUT(
     );
   }
 }
+
+/** Same handler for `navigator.sendBeacon`, which the client uses to flush the
+ *  last turn as the page unloads — beacons are always POST, and it's the only
+ *  transport that survives the document going away. */
+export const POST = PUT;

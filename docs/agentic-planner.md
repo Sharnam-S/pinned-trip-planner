@@ -89,7 +89,7 @@ everything below still holds:
 - **What's still per-browser localStorage**, whichever mode you're in:
   - `pinned.trip.<id>` + `pinned.trip-ids` — signed-OUT trips only
   - `pinned.chat.<id>` — conversation history, signed-out only (signed in it's
-    a `chats` row)
+    a `chats` row, written at the end of each turn — §4.7)
   - `pinned.itin.<id>` / `pinned.mustsee.<id>` / `pinned.facets.<id>` — a
     visitor's overlays on a *sample/shared* trip they don't own (your own trip
     carries `trip.itinerary` / `trip.query` directly). Small and per-trip.
@@ -347,6 +347,41 @@ navigation, not decoration. `FormattedText` grew headings (two levels: the day
 at the title step, its parts at body/medium — all a ~400px rail can carry) and
 `---` rules to support it. Cost: the summary is ~3× the old skeleton's output
 tokens; worth it for the moment the plan first lands.
+
+### 4.7 Persist completed turns, and don't let history impersonate a live failure (2026-07-25)
+Reported: a Switzerland trip built a full itinerary, the user navigated away and
+came back, and the panel showed **"The connection dropped before the plan
+arrived — Try again"** above a "Thinking…" block cut off mid-sentence. The plan
+was fine and on the map; two separate bugs made it look otherwise.
+
+**1. A mid-stream snapshot got stored.** Chat persistence was debounced against
+streaming churn (400ms local, 2500ms to the account). A debounce is a race, not
+a rule: a long think outlasts it, so the pause between reasoning and the reply
+was long enough for a save to land — an assistant message holding *only* a
+reasoning part — and then the user navigated before the real turn was written.
+Worse, §2c had just made the account copy the only copy for signed-in users, so
+the unmount flush (which wrote localStorage) had become a no-op and the pending
+account push died with the page. Fix: **persist only between turns** (`busy`
+gates the effect) and **push the moment a turn ends**, not on a timer — one
+write per turn, nothing left pending for a navigation to cancel. Plus a
+`sendBeacon` on `pagehide` for a real unload, which needed `POST` on the
+messages route (beacons are always POST; a normal fetch dies with the document
+and `keepalive` caps the body at 64KB).
+
+**2. The "stream died" heuristic couldn't tell live from loaded.** It was
+derived purely from the shape of the last message (`role === "user"`, or an
+assistant message with no text and no tool part), so *any* conversation that
+ended that way — including one merely restored from storage — rendered the red
+retry box. Fix: it now also requires that a stream actually ran in this session,
+and `sanitizeChat` drops a trailing assistant message that never got past its
+reasoning, so the truncated "Thinking…" ghost goes with it. A conversation whose
+tail was lost now reads as the user's last message, quietly, with the plan intact
+on the map.
+
+Lesson worth keeping: **a debounce is not a durability mechanism.** Persist on
+the event that makes the data worth keeping (a turn completing), and treat
+"restored from storage" as a different state from "just happened" whenever the UI
+says something about *now*.
 
 ## 5. Learnings — infrastructure & cost
 
