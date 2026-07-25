@@ -1324,9 +1324,33 @@ button {
 
 .trip-header-name {
   margin: 0;
+  display: flex;
+  align-items: center;
+  /* Tight, because the flag glyph carries its own side bearing. */
+  gap: 6px;
+  min-width: 0;
   font-size: var(--fs-title);
   font-weight: var(--fw-medium);
   color: var(--text);
+}
+
+/* The flag sits beside the name, never inside it: ellipsis needs its own box,
+   and the flag must not be the thing that gets truncated. Sized on the icon
+   steps rather than the type scale — it's a glyph doing an icon's job — which
+   also keeps a wide flag from out-shouting the place it belongs to. */
+.trip-flag {
+  flex-shrink: 0;
+  font-size: var(--fs-icon-card);
+  line-height: 1;
+}
+
+/* The phone sheet's identity row is body-sized, so its flag drops a step. */
+.th-name .trip-flag {
+  font-size: var(--fs-icon-nav);
+}
+
+.trip-name-text {
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3515,6 +3539,97 @@ button {
   flex-direction: column;
   gap: 16px;
 }
+/* ---- Opening intake ----
+   The planner's first screen on every viewport: a greeting, a leaning strip of
+   the trip's best-loved photos, then one scripted question at a time with the
+   answers rendering as ink bubbles like real user messages. Typed answers go
+   through the composer below, which is why it stays visible. */
+.ci {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ci-title {
+  margin: 2px 0 0;
+  font-size: var(--fs-title);
+  font-weight: var(--fw-medium);
+  line-height: 1.25;
+  color: var(--text);
+}
+.ci-strip {
+  display: flex;
+  padding: 6px 0 2px;
+}
+.ci-strip img {
+  width: 58px;
+  height: 74px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 3px solid #fff;
+  box-shadow: 0 6px 16px rgba(20, 50, 70, 0.16);
+  margin-right: -10px;
+  background: var(--surface-alt);
+}
+.ci-strip img:nth-child(odd) {
+  transform: rotate(-4deg);
+}
+.ci-strip img:nth-child(even) {
+  transform: rotate(3deg);
+}
+.ci-turn {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ci-q {
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--text);
+}
+.ci-a {
+  align-self: flex-end;
+  max-width: 86%;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 18px 18px 6px 18px;
+  padding: 10px 15px;
+  font-size: var(--fs-support);
+  line-height: 1.5;
+}
+.ci-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+.suggestion-chip.on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.ci-done {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: var(--ink);
+  color: #fff;
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+}
+.ci-skip {
+  border: none;
+  background: none;
+  padding: 8px 10px;
+  font-size: var(--fs-support);
+  color: var(--text-soft);
+  cursor: pointer;
+}
+.ci-hint {
+  font-size: var(--fs-label);
+  color: var(--text-soft);
+}
+
 /* Column flex items default to min-width:auto, which lets a long token widen
    the row past the panel. Let them shrink so wrapping can take over. */
 .planner-scroll > .pm {
@@ -3905,11 +4020,6 @@ button {
 }
 .pm-qa-next:hover {
   opacity: 0.88;
-}
-/* Intake rendered as the agent's first message — the question card sits inside
-   an assistant bubble so it reads as the planner talking, not a separate form. */
-.pm-intake {
-  padding-top: 2px;
 }
 .pm-qa.done {
   padding: 12px 14px;
@@ -4404,12 +4514,13 @@ button {
    the itinerary header, a spot's name, a zero-state headline. */
 .th-name {
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
   font-size: var(--fs-body);
   font-weight: var(--fw-medium);
   color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .th-meta {
   margin-top: 3px;
@@ -5775,94 +5886,6 @@ button {
 }
 .sheet .nudge-alt {
   order: 3;
-}
-
-/* Conversational intake (Z2-b): greeting + one scripted question at a time;
-   answers render as ink bubbles like real user messages. */
-.ci {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.ci-title {
-  margin: 2px 0 0;
-  font-size: var(--fs-title);
-  font-weight: var(--fw-medium);
-  line-height: 1.25;
-  color: var(--text);
-}
-.ci-strip {
-  display: flex;
-  padding: 6px 0 2px;
-}
-.ci-strip img {
-  width: 58px;
-  height: 74px;
-  object-fit: cover;
-  border-radius: 10px;
-  border: 3px solid #fff;
-  box-shadow: 0 6px 16px rgba(20, 50, 70, 0.16);
-  margin-right: -10px;
-  background: var(--surface-alt);
-}
-.ci-strip img:nth-child(odd) {
-  transform: rotate(-4deg);
-}
-.ci-strip img:nth-child(even) {
-  transform: rotate(3deg);
-}
-.ci-turn {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.ci-q {
-  font-size: var(--fs-body);
-  line-height: 1.6;
-  color: var(--text);
-}
-.ci-a {
-  align-self: flex-end;
-  max-width: 86%;
-  background: var(--ink);
-  color: #fff;
-  border-radius: 18px 18px 6px 18px;
-  padding: 10px 15px;
-  font-size: var(--fs-support);
-  line-height: 1.5;
-}
-.ci-chips {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 7px;
-}
-.suggestion-chip.on {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: #fff;
-}
-.ci-done {
-  border: none;
-  border-radius: 999px;
-  padding: 8px 14px;
-  background: var(--ink);
-  color: #fff;
-  font-size: var(--fs-support);
-  font-weight: var(--fw-medium);
-  cursor: pointer;
-}
-.ci-skip {
-  border: none;
-  background: none;
-  padding: 8px 10px;
-  font-size: var(--fs-support);
-  color: var(--text-soft);
-  cursor: pointer;
-}
-.ci-hint {
-  font-size: var(--fs-label);
-  color: var(--text-soft);
 }
 
 /* Must-see star on the pins-grid tiles (mobile only) — same rounded-square
