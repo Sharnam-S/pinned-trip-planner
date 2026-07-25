@@ -1,7 +1,11 @@
 /**
- * Browser-side trip storage. Every visitor keeps their own trips in
- * localStorage — nothing they create is stored on the server. One key per
- * trip plus an id index, so saving a trip doesn't rewrite the others.
+ * Browser-side trip storage: the localStorage backend, one key per trip plus
+ * an id index so saving a trip doesn't rewrite the others.
+ *
+ * This is the source of truth for SIGNED-OUT visitors only. Signed in, trips
+ * live in the account and `lib/tripStore.ts` writes through to the API — go
+ * through that module, not this one; localStorage has a ~5M character ceiling
+ * that a few built trips fill.
  */
 import { Trip } from "./types";
 
@@ -70,6 +74,12 @@ export function deleteLocalTrip(id: string) {
 
 function notify() {
   window.dispatchEvent(new Event(CHANGE_EVENT));
+}
+
+/** Same change event, for writes that didn't go through localStorage (the
+ *  server-backed working copy in tripStore). */
+export function notifyTripsChanged() {
+  if (typeof window !== "undefined") notify();
 }
 
 /** Re-render hook: fires on any local-trip change in this tab. */

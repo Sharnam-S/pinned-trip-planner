@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Trip } from "@/lib/types";
-import { markOwned, saveLocalTrip } from "@/lib/clientStore";
+import { markOwned } from "@/lib/clientStore";
+import { saveTrip } from "@/lib/tripStore";
 
 /**
  * Share a trip JSON into the shared library. Drop in a file someone exported
@@ -54,7 +55,7 @@ export default function UploadTrip() {
       if (!res.ok) throw new Error(data.error ?? "Upload failed.");
       markOwned(trip.id);
       // keep a local copy too, so it's in your own gallery immediately
-      saveLocalTrip(trip);
+      await saveTrip(trip);
       router.push(`/trip/${trip.id}`);
     } catch (err) {
       setStatus("error");

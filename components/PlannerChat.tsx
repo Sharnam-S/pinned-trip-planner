@@ -18,6 +18,7 @@ import {
 import { Itinerary, Spot, Trip } from "@/lib/types";
 import { listLocalTrips, readOwnedIds } from "@/lib/clientStore";
 import { fetchServerChat, pushChatDebounced } from "@/lib/sync";
+import { tripStoreMode } from "@/lib/tripStore";
 import { spotCoverUrl } from "@/lib/photoUrl";
 import {
   AskQuestionsInput,
@@ -377,7 +378,11 @@ function loadChat(tripId: string): UIMessage[] {
   }
 }
 
-function saveChat(tripId: string, messages: UIMessage[]): void {
+/** Signed out only: the conversation has nowhere else to live. Signed in, the
+ *  account copy (pushChatDebounced) is the store — writing it here too would
+ *  put the biggest consumer back into a 5M-character budget. */
+async function saveChat(tripId: string, messages: UIMessage[]): Promise<void> {
+  if ((await tripStoreMode()) === "server") return;
   try {
     localStorage.setItem(
       CHAT_PREFIX + tripId,
@@ -643,9 +648,25 @@ export default function PlannerChat({
   // Visitors who haven't built a trip of their own only ever see this panel on
   // a sample trip — greet them with a create-your-first-trip nudge instead of
   // the planning intro. "Test-drive" dismisses it for this page view.
-  const [hasOwnTrips] = useState(
+  // Drives the create-your-first-trip nudge. Starts from what this browser can
+  // answer instantly, then confirms against the account (where a signed-in
+  // user's trips actually live).
+  const [hasOwnTrips, setHasOwnTrips] = useState(
     () => listLocalTrips().length > 0 || readOwnedIds().length > 0
   );
+  useEffect(() => {
+    if (hasOwnTrips) return;
+    let cancelled = false;
+    void (async () => {
+      if ((await tripStoreMode()) !== "server") return;
+      const res = await fetch("/api/me/trips").catch(() => null);
+      const trips = res?.ok ? await res.json().catch(() => null) : null;
+      if (!cancelled && Array.isArray(trips) && trips.length > 0) setHasOwnTrips(true);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [hasOwnTrips]);
   const [nudgeDismissed, setNudgeDismissed] = useState(false);
 
   // The three best-loved spots' photos, fanned like a hand of postcards. Best
@@ -900,14 +921,14 @@ export default function PlannerChat({
   useEffect(() => {
     messagesRef.current = messages;
     if (messages.length === 0) return;
-    const t = setTimeout(() => saveChat(trip.id, messages), 400);
+    const t = setTimeout(() => void saveChat(trip.id, messages), 400);
     // Owned trips also ride up to the account (its own longer debounce).
     if (trip.ownerId) pushChatDebounced(trip.id, messages.slice(-CHAT_MAX_MESSAGES));
     return () => clearTimeout(t);
   }, [messages, trip.id, trip.ownerId]);
   useEffect(() => {
     return () => {
-      if (messagesRef.current.length > 0) saveChat(trip.id, messagesRef.current);
+      if (messagesRef.current.length > 0) void saveChat(trip.id, messagesRef.current);
     };
   }, [trip.id]);
 

@@ -1,4 +1,4 @@
-import { getLocalTrip, saveLocalTrip } from "./clientStore";
+import { peekTrip, saveTrip } from "./tripStore";
 import type { Trip, TripParty, TripQuery } from "./types";
 
 // The three questions the trip header asks: when, what you're into, and who's
@@ -89,10 +89,10 @@ export function saveFacets(
   facets: TripFacets
 ): void {
   if (isLocal) {
-    const trip = getLocalTrip(tripId);
+    const trip = peekTrip(tripId);
     if (trip) {
       trip.query = withFacets(trip, facets);
-      saveLocalTrip(trip);
+      void saveTrip(trip);
     }
     return;
   }

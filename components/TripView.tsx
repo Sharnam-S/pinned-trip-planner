@@ -13,14 +13,8 @@ import {
   TripVideo,
 } from "@/lib/types";
 import { CATEGORY_EMOJI, formatTimestamp, youtubeLink } from "@/lib/categories";
-import {
-  getLocalTrip,
-  publishTrip,
-  readOwnedIds,
-  saveLocalTrip,
-  subscribeLocalTrips,
-} from "@/lib/clientStore";
-import { getSession } from "@/lib/useSession";
+import { publishTrip, readOwnedIds } from "@/lib/clientStore";
+import { loadTrip, peekTrip, saveTrip, subscribeTrips } from "@/lib/tripStore";
 import { addVideosToTrip, ensureRunning, isRunning } from "@/lib/runner";
 import { parseVideoId } from "@/lib/links";
 import { googlePhotoProxy, spotCoverUrl, spotPhotoUrl } from "@/lib/photoUrl";
@@ -178,7 +172,7 @@ function useSpotPhotos(spot: Spot, tripId: string, local: boolean) {
         const extras = data.urls.filter((u) => !seen.has(u));
         setAllUrls([...baseUrls, ...extras]);
         if (local) {
-          const trip = getLocalTrip(tripId);
+          const trip = peekTrip(tripId);
           const s = trip?.spots.find((x) => x.id === spot.id);
           if (trip && s) {
             const have = new Set((s.photos ?? []).map((p) => p.url));
@@ -189,7 +183,7 @@ function useSpotPhotos(spot: Spot, tripId: string, local: boolean) {
                 .map((u) => ({ url: u, source: "google" as const })),
             ];
             s.morePhotoNames = undefined;
-            saveLocalTrip(trip);
+            void saveTrip(trip);
           }
         }
       })
@@ -831,30 +825,31 @@ export default function TripView({
     setTrip(data);
   }, [tripId]);
 
-  // Bumped when a cross-device fetch adopts the trip into localStorage, so
-  // this effect re-runs and takes the local branch.
-  const [adoptTick, setAdoptTick] = useState(0);
-
   useEffect(() => {
-    const local = getLocalTrip(tripId);
-    if (local) {
-      setIsLocal(true);
-      setTrip(local);
-      // resume an interrupted build (page refresh mid-processing)
-      if (local.status === "processing" && !isRunning(tripId)) {
-        ensureRunning(tripId);
-      }
-      return subscribeLocalTrips(() => {
-        const t = getLocalTrip(tripId);
-        if (t) setTrip(t);
-      });
-    }
-    setIsLocal(false);
-    // Not in this browser. If the fetch turns out to be the signed-in user's
-    // own trip (opened on a new device), adopt it as the live local copy —
-    // editing, build resume, and account sync then work exactly as at home.
     let cancelled = false;
+    let unsubscribe: (() => void) | undefined;
+
     (async () => {
+      // Mine? The store knows where to look — the account when signed in, this
+      // browser when not. Either way it comes back as the editable copy.
+      const mine = await loadTrip(tripId);
+      if (cancelled) return;
+      if (mine) {
+        setIsLocal(true);
+        setTrip(mine);
+        // resume an interrupted build (page refresh mid-processing)
+        if (mine.status === "processing" && !isRunning(tripId)) {
+          ensureRunning(tripId);
+        }
+        unsubscribe = subscribeTrips(() => {
+          const t = peekTrip(tripId);
+          if (t) setTrip(t);
+        });
+        return;
+      }
+      setIsLocal(false);
+      // Not mine: a sample or someone's published copy — read-only, and a
+      // visitor's plan for it lives in localStorage overlays.
       const res = await fetch(`/api/trips/${tripId}`).catch(() => null);
       if (cancelled) return;
       if (!res || res.status === 404) {
@@ -863,21 +858,14 @@ export default function TripView({
       }
       const data: Trip = await res.json();
       if (cancelled) return;
-      const session = await getSession();
-      if (cancelled) return;
-      if (data.ownerId && session.user && data.ownerId === session.user.id) {
-        delete data.upgrading;
-        if (saveLocalTrip(data)) {
-          setAdoptTick((t) => t + 1);
-          return;
-        }
-      }
       setTrip(data);
     })();
+
     return () => {
       cancelled = true;
+      unsubscribe?.();
     };
-  }, [tripId, adoptTick]);
+  }, [tripId]);
 
   // Read the header's answers when the trip lands, and re-read them if the
   // stored query changes underneath us (account sync, another tab). Adjusted
