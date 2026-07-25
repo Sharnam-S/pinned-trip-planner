@@ -6,7 +6,7 @@ importantly — the learnings from 9+ rounds of live-testing iteration.
 Update it when you change behavior or learn something that cost time.
 
 Status: **shipped, iterating on live feedback** · Owner: Sharnam ·
-Last updated: 2026-07-23 (accounts/multi-user — §2b)
+Last updated: 2026-07-25 (server-first storage — §2c)
 
 ---
 
@@ -69,26 +69,67 @@ means; the artifact is the product.
 
 ## 2. Architecture (and the one fact that shapes everything)
 
-**localStorage is the working copy of every trip; the browser orchestrates
-everything.** (Since 2026-07-23 there are also accounts — see §2b — but they
-sync *copies* of the localStorage state; nothing about the planner's
-client-first design changed.) Everything follows from this:
+**The browser orchestrates everything; where the trip is *stored* depends on
+whether you're signed in.** Signed in, the account's Postgres row is the source
+of truth and the browser keeps a working copy in memory that writes through
+(`lib/tripStore.ts`). Signed out, localStorage is the source of truth, exactly
+as it always was. What did NOT change is the client-first *compute* model —
+everything below still holds:
 
 - **The chat route is stateless.** The client sends trip context (spot
   digest + current itinerary + must-sees) with every request.
 - **Both tools execute client-side** (no `execute` on the server):
-  `update_itinerary` validates + writes localStorage; `get_travel_times`
+  `update_itinerary` validates + saves through `tripStore`; `get_travel_times`
   computes haversine from spot coords the browser already has. The map
   re-renders the moment a tool call lands mid-stream — the "whiteboard"
   effect is free.
-- **All planner state is per-browser localStorage**, one key family:
-  - `pinned.trip.<id>` — the trip itself (pre-existing)
-  - `pinned.itin.<id>` — itinerary overlay for *sample/shared* trips
-    (local trips carry `trip.itinerary` directly)
-  - `pinned.mustsee.<id>` — user-starred must-see spot ids
-  - `pinned.chat.<id>` — conversation history (last 80 messages)
-  - `pinned.pushed.<id>` / `pinned.pending-trip` — account-sync change
-    hashes and the through-SSO form stash (§2b)
+- **Storage goes through `lib/tripStore.ts`** — `peekTrip` / `loadTrip` /
+  `saveTrip` / `deleteTrip`, one façade over two backends (§2c). Nothing else
+  touches `lib/clientStore.ts` (the localStorage backend) directly.
+- **What's still per-browser localStorage**, whichever mode you're in:
+  - `pinned.trip.<id>` + `pinned.trip-ids` — signed-OUT trips only
+  - `pinned.chat.<id>` — conversation history, signed-out only (signed in it's
+    a `chats` row)
+  - `pinned.itin.<id>` / `pinned.mustsee.<id>` / `pinned.facets.<id>` — a
+    visitor's overlays on a *sample/shared* trip they don't own (your own trip
+    carries `trip.itinerary` / `trip.query` directly). Small and per-trip.
+  - `pinned.owned-ids` / `pinned.pending-trip` — published-by-this-browser ids
+    and the through-SSO form stash
+
+### 2c. Server-first storage for signed-in users (2026-07-25)
+
+Accounts (§2b) shipped as *sync*: localStorage stayed the working copy and
+copies rode up to Postgres. That had a hard ceiling — **~5M characters per
+origin** (measured), against ~3.4KB per spot and a chat history that stores
+whole itineraries per tool call. A handful of built trips filled it, and then
+**every save failed** ("your browser storage is full"), including each step of a
+build, while the same trips sat safely in Neon. Reported from prod with a
+20-video trip.
+
+- **`lib/tripStore.ts` is the only storage API.** Mode is decided once per load
+  from `/api/me`: `server` (signed in) or `local`. Signed in, `saveTrip` writes
+  through to `PUT /api/trips/:id` and **nothing trip-shaped is written to
+  localStorage at all**.
+- **Callers didn't change shape.** Still read → mutate → save. `saveTrip`
+  updates the in-memory working copy and notifies subscribers *synchronously*
+  (the map re-renders the instant a tool lands), and returns a promise that
+  resolves when the write is durable. The runner awaits it at every checkpoint
+  so a build that can't persist stops instead of spending extraction calls on
+  results it will drop.
+- **Coalesced write-behind, one request per trip at a time.** A save landing
+  mid-flight re-sends the newest copy when the current PUT finishes. Measured: a
+  6-video build = 9 PUTs, never more than 1 concurrent.
+- **`lib/sync.ts` became migration, not sync.** It lifts leftover local trips
+  (adopting unowned ones) plus their chats into the account and then *reclaims*
+  the space — PUT, 200, then delete the local keys, in that order, because
+  losing a trip is far worse than a full quota. It skips a trip mid-build to
+  avoid racing the runner, and it's a no-op once nothing is left.
+- **Signed out is unchanged**: localStorage, no API writes, same quota message.
+- **Trade-off accepted:** every save is now a network round trip for signed-in
+  users, so offline editing is gone (it was never really there — a
+  `saveLocalTrip` that succeeded offline still couldn't build without the
+  compute endpoints). A failed PUT retries once, then surfaces
+  `tripSaveError()`; the build stops rather than silently dropping work.
 
 ### 2b. Accounts & multi-user (2026-07-23)
 
@@ -112,18 +153,15 @@ client-first architecture above. The design:
   none = auth disabled, the app behaves exactly as before accounts
   (`/api/me` → `{enabled:false}` and the client keeps the legacy flow —
   safe rollout before env vars exist).
-- **Sync, not migration** (`lib/sync.ts` + `components/SyncAgent.tsx` in
-  the root layout): localStorage stays the fast working copy; every local
-  change debounce-pushes owned trips (PUT `/api/trips/[id]`) and chats
-  (PUT `/api/trips/[id]/messages`). Local trips with no `ownerId` are
-  **adopted** by the signed-in account on first sweep (pre-account trips
-  migrate silently); trips owned by a *different* account on a shared
-  computer are never pushed. Change detection = djb2 hash remembered in
-  `pinned.pushed.<id>`.
-- **Cross-device open = adoption in reverse** (`TripView`): a trip URL not
-  in this browser fetches from the API; if it comes back with my
-  `ownerId`, it's saved into localStorage and flips to the local pipeline
-  (editing, build resume, sync all work as at home).
+- **Sync, not migration** — *superseded by §2c (2026-07-25)*: writes now go
+  straight to the account and `lib/sync.ts` only migrates what localStorage
+  still holds, then frees it. Local trips with no `ownerId` are still
+  **adopted** on first sweep; trips owned by a *different* account on a shared
+  computer are still never pushed.
+- **Cross-device open** (`TripView`): one `loadTrip` — the account's copy comes
+  back editable, so there's no adopt-into-localStorage-and-re-render dance any
+  more. A trip that isn't yours falls through to the sample/published copy,
+  read-only with localStorage overlays.
 - **Privacy model:** DB trips are served only to their owner — anyone else
   falls through to samples/Blob and gets 404. The Blob community library
   is **explicit opt-in**: the `ShareTrip` button top-right of the trip
@@ -529,7 +567,9 @@ and any plan-changing turn rewrites the post-breakpoint tail at 1.25×
 | `lib/types.ts` | `Itinerary`/`ItineraryDay`/`ItineraryStop` on `Trip` (stored shapes — optional fields for back-compat); `Trip.ownerId` |
 | `lib/auth.ts` + `app/api/auth/*` + `app/api/me*` | Google SSO, session cookie, dev-user fallback (§2b) |
 | `lib/db.ts` | Postgres (Neon prod / PGlite dev): users, trips, chats + ownership-enforcing queries (§2b) |
-| `lib/sync.ts` + `components/SyncAgent.tsx` | Debounced localStorage→account push, adoption of pre-account trips, chat sync (§2b) |
+| `lib/tripStore.ts` | **The storage API** (§2c): mode probe, in-memory working copy, coalesced write-through to `PUT /api/trips/:id` (signed in) or localStorage (signed out), save-error reporting |
+| `lib/clientStore.ts` | The localStorage backend — signed-out source of truth; reached only through `tripStore` |
+| `lib/sync.ts` + `components/SyncAgent.tsx` | One-way **migration** of leftover local trips + chats into the account, then reclaims the localStorage space (§2c); adoption of pre-account trips |
 | `lib/useSession.ts` + `components/AccountMenu.tsx` | Client session cache (one `/api/me` per load), avatar menu |
 | `app/globals.css` | Everything under `/* Planner agent */` (~end of file) |
 

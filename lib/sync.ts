@@ -1,16 +1,24 @@
 "use client";
 
 /**
- * Background sync: localStorage stays the fast, offline-friendly working copy;
- * this module pushes owned trips (and their chats) to the account so they
- * survive the browser and follow the user across devices.
+ * Migration, not ongoing sync. Signed in, `tripStore` writes straight to the
+ * account, so nothing new lands in localStorage; what's left there is history —
+ * trips built before this change, or built while signed out. This module lifts
+ * those into the account and then RECLAIMS the space.
+ *
+ * The reclaim is the point: localStorage holds ~5M characters, a built trip is
+ * hundreds of KB, and a browser that filled up fails every save (including a
+ * build's) even though the same trips are already safe in Postgres. Deleting a
+ * local copy is only safe after the server has acknowledged it, so that's the
+ * order — PUT, 200, then remove.
  *
  * Adoption rule: a local trip with no ownerId was created before sign-in (or
- * pre-accounts) — the first sync while signed in claims it for this account.
+ * pre-accounts) — the first sweep while signed in claims it for this account.
  * A trip owned by a DIFFERENT account (shared computer) is left alone and
  * never pushed.
  */
-import { listLocalTrips, saveLocalTrip } from "./clientStore";
+import { deleteLocalTrip, listLocalTrips } from "./clientStore";
+import { isRunning } from "./runner";
 import { getSession } from "./useSession";
 import { Trip } from "./types";
 
@@ -19,19 +27,12 @@ const PUSH_DEBOUNCE_MS = 2500;
 // Cheap change detection so a page load doesn't re-push unchanged trips:
 // djb2 over the serialized trip, remembered per id in localStorage.
 const PUSHED_PREFIX = "pinned.pushed.";
+const CHAT_PREFIX = "pinned.chat.";
 
 function hash(s: string): string {
   let h = 5381;
   for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
   return String(h >>> 0) + ":" + s.length;
-}
-
-function lastPushed(id: string): string | null {
-  try {
-    return localStorage.getItem(PUSHED_PREFIX + id);
-  } catch {
-    return null;
-  }
 }
 
 function rememberPushed(id: string, h: string) {
@@ -44,26 +45,70 @@ function rememberPushed(id: string, h: string) {
 
 const timers = new Map<string, ReturnType<typeof setTimeout>>();
 
-async function pushTrip(trip: Trip): Promise<void> {
+/** Push a leftover local trip, then drop the local copy (and its chat) once the
+ *  server owns it. Returns true when the space was reclaimed. */
+async function migrateTrip(trip: Trip): Promise<boolean> {
   const body = JSON.stringify(trip);
   const h = hash(body);
-  if (lastPushed(trip.id) === h) return;
   try {
     const res = await fetch(`/api/trips/${trip.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body,
     });
-    if (res.ok) rememberPushed(trip.id, h);
-    // 403 (someone else's id) or transient failures: just don't remember —
-    // owned trips retry on the next change/load, foreign ones keep 403ing
-    // harmlessly at the debounce rate.
+    // 403 (someone else's id) or transient failures: keep the local copy and
+    // retry on the next sweep — losing a trip is far worse than a full quota.
+    if (!res.ok) return false;
+    rememberPushed(trip.id, h);
+    await migrateChat(trip.id);
+    reclaim(trip.id);
+    return true;
   } catch {
-    // offline — the next local change retries
+    // offline — the next sweep retries
+    return false;
   }
 }
 
-/** Sweep all local trips: adopt unowned ones, debounce-push what changed. */
+/** Send this browser's saved conversation up, unless the account already has
+ *  one (the server copy is the same messages, pushed earlier). */
+async function migrateChat(tripId: string): Promise<void> {
+  let local: string | null = null;
+  try {
+    local = localStorage.getItem(CHAT_PREFIX + tripId);
+  } catch {
+    return;
+  }
+  if (!local) return;
+  try {
+    const existing = await fetch(`/api/trips/${tripId}/messages`);
+    const data = existing.ok
+      ? ((await existing.json()) as { messages?: unknown[] | null })
+      : null;
+    if (Array.isArray(data?.messages) && data.messages.length > 0) return;
+    await fetch(`/api/trips/${tripId}/messages`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: JSON.parse(local) }),
+    });
+  } catch {
+    // leave the local copy; it'll be tried again
+  }
+}
+
+/** Everything this browser was keeping for a trip that now lives in the
+ *  account. Chat is the second-biggest consumer after the trip itself. */
+function reclaim(tripId: string): void {
+  try {
+    localStorage.removeItem(CHAT_PREFIX + tripId);
+    localStorage.removeItem(PUSHED_PREFIX + tripId);
+  } catch {
+    // nothing to do — the space just stays used
+  }
+  deleteLocalTrip(tripId);
+}
+
+/** Sweep whatever localStorage still holds: adopt unowned trips, push them to
+ *  the account, free the space. Idempotent, and a no-op once nothing is left. */
 export async function syncLocalTrips(): Promise<void> {
   const session = await getSession();
   const me = session.user;
@@ -71,17 +116,17 @@ export async function syncLocalTrips(): Promise<void> {
 
   for (const trip of listLocalTrips()) {
     if (trip.ownerId && trip.ownerId !== me.id) continue; // someone else's
-    if (!trip.ownerId) {
-      trip.ownerId = me.id;
-      saveLocalTrip(trip); // re-fires the change event; hash check keeps it quiet
-    }
+    if (!trip.ownerId) trip.ownerId = me.id;
+    // A build in progress is mid-write from the runner; migrating underneath it
+    // would race. It'll be picked up on the next sweep, once it's done.
+    if (trip.status === "processing" || isRunning(trip.id)) continue;
     const existing = timers.get(trip.id);
     if (existing) clearTimeout(existing);
     timers.set(
       trip.id,
       setTimeout(() => {
         timers.delete(trip.id);
-        void pushTrip(trip);
+        void migrateTrip(trip);
       }, PUSH_DEBOUNCE_MS)
     );
   }

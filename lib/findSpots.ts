@@ -6,7 +6,7 @@
  * data: it reuses /api/discover + /api/process-video and merges into
  * localStorage, so the map re-renders via the trip subscription (no callback).
  */
-import { getLocalTrip, saveLocalTrip } from "./clientStore";
+import { peekTrip, saveTrip } from "./tripStore";
 import { applyVideoResult, pendingVideo, VideoResult } from "./merge";
 
 /** A day's worth is plenty — keeps it fast (~20-30s) and quota-cheap. */
@@ -39,7 +39,7 @@ export async function findSpots(
   query: { destination: string; interests?: string },
   onProgress: (msg: string) => void
 ): Promise<{ added: number; spots: FoundSpot[] }> {
-  const trip0 = getLocalTrip(tripId);
+  const trip0 = peekTrip(tripId);
   if (!trip0) return { added: 0, spots: [] };
 
   onProgress(`Searching ${query.destination}…`);
@@ -59,14 +59,14 @@ export async function findSpots(
   // the picked videos so their spot mentions link to real sources.
   const before = new Set(trip0.spots.map((s) => s.id));
   const knownSpotNames = trip0.spots.map((s) => s.name);
-  const withVideos = getLocalTrip(tripId);
+  const withVideos = peekTrip(tripId);
   if (!withVideos) return { added: 0, spots: [] };
   for (const v of picks) {
     if (!withVideos.videos.some((x) => x.id === v.id)) {
       withVideos.videos.push(pendingVideo(v.id, v.title, v.channelName));
     }
   }
-  saveLocalTrip(withVideos);
+  await saveTrip(withVideos);
 
   onProgress(`Reading ${picks.length} videos…`);
   let done = 0;
@@ -93,10 +93,10 @@ export async function findSpots(
     )
   );
 
-  const trip = getLocalTrip(tripId);
+  const trip = peekTrip(tripId);
   if (!trip) return { added: 0, spots: [] };
   for (const r of results) if (r) applyVideoResult(trip, r);
-  saveLocalTrip(trip);
+  await saveTrip(trip);
 
   const newSpots = trip.spots.filter((s) => !before.has(s.id));
   return {

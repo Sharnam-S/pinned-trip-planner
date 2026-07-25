@@ -1,12 +1,14 @@
 /**
  * Browser-side trip builder. The server is stateless compute (search, Claude
  * extraction, geocoding); this module orchestrates the calls and saves every
- * step into localStorage, so the UI can subscribe and render progress live.
+ * step through `tripStore` — the account when signed in, localStorage when not
+ * — so the UI can subscribe and render progress live.
  *
  * Runs are per-tab: closing the tab pauses a build, and the trip page resumes
  * it on the next visit (pending videos are picked up where they left off).
  */
-import { getLocalTrip, publishTrip, saveLocalTrip } from "./clientStore";
+import { publishTrip } from "./clientStore";
+import { peekTrip, saveTrip, tripSaveError } from "./tripStore";
 import { getSession } from "./useSession";
 import { applyVideoResult, pendingVideo, VideoResult } from "./merge";
 import { Trip } from "./types";
@@ -39,16 +41,20 @@ async function post<T>(url: string, body: unknown): Promise<T> {
   return data as T;
 }
 
-function save(trip: Trip) {
-  if (!saveLocalTrip(trip)) {
+/** Awaited at every step: a build that can't persist should stop, not keep
+ *  spending extraction calls on results it will drop. The message comes from
+ *  the store, which knows whether it was a full localStorage or a failed PUT. */
+async function save(trip: Trip) {
+  const ok = await saveTrip(trip);
+  if (!ok) {
     throw new Error(
-      "Your browser storage is full — delete an old trip and try again."
+      tripSaveError() ?? "Couldn't save this trip — try again in a moment."
     );
   }
 }
 
 async function run(tripId: string) {
-  let trip = getLocalTrip(tripId);
+  let trip = peekTrip(tripId);
   if (!trip) return;
 
   try {
@@ -60,14 +66,14 @@ async function run(tripId: string) {
     const orphaned = trip.videos.filter((v) => v.status === "processing");
     if (orphaned.length > 0) {
       for (const v of orphaned) v.status = "pending";
-      save(trip);
+      await save(trip);
     }
 
     // Search-mode trip that hasn't found its videos yet
     if (trip.query && trip.videos.length === 0) {
       trip.status = "processing";
       trip.progress = "Planning YouTube searches…";
-      save(trip);
+      await save(trip);
 
       const plan = await post<{
         resolvedDestination: string;
@@ -80,20 +86,20 @@ async function run(tripId: string) {
         tripName: trip.name,
       });
 
-      trip = getLocalTrip(tripId);
+      trip = peekTrip(tripId);
       if (!trip) return;
       trip.query!.resolvedDestination = plan.resolvedDestination;
       trip.name = plan.resolvedDestination;
       trip.videos = plan.videos.map((v) => pendingVideo(v.id, v.title, v.channelName));
       trip.bench = plan.bench;
       trip.progress = `Picked ${trip.videos.length} videos — reading transcripts…`;
-      save(trip);
+      await save(trip);
     }
 
     // Process pending videos, swapping caption-less picks from the bench
     for (let round = 0; round < 4; round++) {
       await processPending(tripId);
-      const t = getLocalTrip(tripId);
+      const t = peekTrip(tripId);
       if (!t) return;
       const errored = t.videos.filter((v) => v.status === "error");
       if (errored.length === 0 || !t.bench || t.bench.length === 0) break;
@@ -102,10 +108,10 @@ async function run(tripId: string) {
       t.videos = t.videos.filter((v) => v.status !== "error");
       t.videos.push(...subs.map((id) => pendingVideo(id)));
       t.progress = `${errored.length} video${errored.length === 1 ? " has" : "s have"} no captions — swapping in replacement${subs.length === 1 ? "" : "s"}…`;
-      save(t);
+      await save(t);
     }
 
-    const finished = getLocalTrip(tripId);
+    const finished = peekTrip(tripId);
     if (!finished) return;
     const allFailed =
       finished.videos.length > 0 &&
@@ -114,7 +120,7 @@ async function run(tripId: string) {
     finished.progress = allFailed
       ? "All videos failed to process."
       : `Done — ${finished.spots.length} spots on the map.`;
-    save(finished);
+    await save(finished);
 
     // With accounts, trips are private to their creator (the account syncs
     // them across devices) and the community library only gets trips the user
@@ -128,11 +134,11 @@ async function run(tripId: string) {
       });
     }
   } catch (err) {
-    const t = getLocalTrip(tripId);
+    const t = peekTrip(tripId);
     if (!t) return;
     t.status = "error";
     t.progress = err instanceof Error ? err.message : String(err);
-    saveLocalTrip(t);
+    void saveTrip(t);
   }
 }
 
@@ -145,7 +151,7 @@ async function run(tripId: string) {
 const CONCURRENCY = 4;
 
 async function processPending(tripId: string) {
-  const start = getLocalTrip(tripId);
+  const start = peekTrip(tripId);
   if (!start) return;
 
   const pendingIds = start.videos
@@ -164,7 +170,7 @@ async function processPending(tripId: string) {
     pendingIds.length === 1
       ? "Reading transcript — extracting spots with Claude…"
       : `Reading ${pendingIds.length} transcripts in parallel — extracting spots with Claude…`;
-  save(start);
+  await save(start);
 
   const queue = [...pendingIds];
   let done = 0;
@@ -180,7 +186,7 @@ async function processPending(tripId: string) {
   );
 }
 
-/** Reads and folds in a single video. Each getLocalTrip→save is synchronous
+/** Reads and folds in a single video. Each peekTrip→save is atomic within
  *  (no await between), so concurrent workers never clobber each other's writes. */
 async function processOne(
   tripId: string,
@@ -188,7 +194,7 @@ async function processOne(
   total: number,
   markDone: () => number
 ) {
-  let trip = getLocalTrip(tripId);
+  let trip = peekTrip(tripId);
   if (!trip) return;
 
   try {
@@ -202,26 +208,26 @@ async function processOne(
       tripId: trip.id,
       tripName: trip.name,
     });
-    trip = getLocalTrip(tripId);
+    trip = peekTrip(tripId);
     if (!trip) return;
     const added = applyVideoResult(trip, result);
     const n = markDone();
     trip.progress = `Read ${n}/${total} — "${result.video.title}" added ${added} new spot${added === 1 ? "" : "s"}.`;
-    save(trip);
+    await save(trip);
   } catch (err) {
-    trip = getLocalTrip(tripId);
+    trip = peekTrip(tripId);
     if (!trip) return;
     markDone();
     const v = trip.videos.find((x) => x.id === videoId)!;
     v.status = "error";
     v.error = err instanceof Error ? err.message : String(err);
-    save(trip);
+    await save(trip);
   }
 }
 
 /** Adds pasted video links to an existing local trip and processes them. */
 export function addVideosToTrip(tripId: string, videoIds: { id: string; url: string }[]) {
-  const trip = getLocalTrip(tripId);
+  const trip = peekTrip(tripId);
   if (!trip) return;
   for (const v of videoIds) {
     if (trip.videos.some((x) => x.id === v.id)) continue;
@@ -229,6 +235,6 @@ export function addVideosToTrip(tripId: string, videoIds: { id: string; url: str
   }
   trip.status = "processing";
   trip.progress = "Processing new videos…";
-  saveLocalTrip(trip);
+  void saveTrip(trip);
   ensureRunning(tripId);
 }

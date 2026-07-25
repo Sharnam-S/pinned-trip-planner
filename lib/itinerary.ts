@@ -6,7 +6,7 @@
  */
 import { z } from "zod";
 import { Itinerary, ItinerarySlot, Spot, Trip } from "./types";
-import { getLocalTrip, saveLocalTrip } from "./clientStore";
+import { peekTrip, saveTrip } from "./tripStore";
 
 /** The model reaches for time-of-day words beyond the canonical three
  *  ("midday", "night", "lunch"). Map the common synonyms onto the real slots
@@ -239,8 +239,8 @@ export function unassignedSpotIds(itinerary: Itinerary, spots: Spot[]): string[]
 }
 
 // --- Persistence (client-side only) ---
-// Local trips carry the itinerary on the Trip object (round-trips through
-// saveLocalTrip). Sample/shared trips are server-owned and read-only, so a
+// Your own trips carry the itinerary on the Trip object (round-trips through
+// tripStore). Sample/shared trips are someone else's and read-only, so a
 // visitor's plan lives in a localStorage overlay keyed by trip id.
 
 const OVERLAY_PREFIX = "pinned.itin.";
@@ -262,10 +262,10 @@ export function saveItinerary(
   itinerary: Itinerary
 ): void {
   if (isLocal) {
-    const trip = getLocalTrip(tripId);
+    const trip = peekTrip(tripId);
     if (trip) {
       trip.itinerary = itinerary;
-      saveLocalTrip(trip);
+      void saveTrip(trip);
     }
     return;
   }

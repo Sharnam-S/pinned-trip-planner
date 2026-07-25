@@ -5,15 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Trip } from "@/lib/types";
 import {
-  deleteLocalTrip,
   listLocalTrips,
   newTripId,
   readOwnedIds,
-  saveLocalTrip,
   subscribeLocalTrips,
   unpublishTrip,
 } from "@/lib/clientStore";
 import { newSearchTrip } from "@/lib/merge";
+import { deleteTrip, saveTrip } from "@/lib/tripStore";
 import { ensureRunning } from "@/lib/runner";
 import { SessionUser, signIn, signOut, useSession } from "@/lib/useSession";
 import type { TripSummary } from "@/lib/db";
@@ -58,7 +57,8 @@ function takePending(): TripFormValues | null {
   }
 }
 
-/** Creates the local trip, kicks off the build, returns the new id. */
+/** Creates the trip (account or localStorage), kicks off the build, returns the
+ *  new id. */
 function startTrip(values: TripFormValues, ownerId?: string): string | null {
   const id = newTripId();
   const trip = newSearchTrip(id, {
@@ -68,7 +68,7 @@ function startTrip(values: TripFormValues, ownerId?: string): string | null {
     interests: values.interests.trim() || undefined,
   });
   if (ownerId) trip.ownerId = ownerId;
-  if (!saveLocalTrip(trip)) return null;
+  void saveTrip(trip);
   ensureRunning(id);
   return id;
 }
@@ -310,10 +310,9 @@ function Landing({
   );
 
   function removeTrip(id: string) {
-    deleteLocalTrip(id); // no-op if it isn't a local trip
+    void deleteTrip(id); // account row and/or local copy, whichever exists
     if (user) {
       setServerTrips((ts) => ts.filter((t) => t.id !== id));
-      fetch(`/api/trips/${id}`, { method: "DELETE" }).catch(() => {});
       try {
         localStorage.removeItem(`pinned.pushed.${id}`);
       } catch {}
