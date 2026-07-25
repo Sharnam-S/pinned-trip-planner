@@ -101,6 +101,7 @@ function tripHeader(ctx: PlannerContext): string {
       ? `Dates: ${ctx.startDate ?? "?"} to ${ctx.endDate ?? "?"}`
       : "Dates: not set",
     ctx.interests ? `Stated interests: ${ctx.interests}` : null,
+    ctx.party ? `Who's going: ${ctx.party}` : null,
     "",
     "Spots (id | name | category | mentions | description | tips | nearest neighbors):",
     spotDigest(ctx.spots),

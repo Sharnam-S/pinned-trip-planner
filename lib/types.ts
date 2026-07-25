@@ -74,6 +74,10 @@ export interface Destination {
 export type TripStatus = "processing" | "ready" | "error";
 
 /** Inputs for search-mode trips: we find the videos on the user's behalf. */
+/** Who the trip is for. Shapes pace, food choices, and what the planner
+ *  suggests — a solo surfer and a family of four don't want the same day. */
+export type TripParty = "solo" | "couple" | "friends" | "family" | "group";
+
 export interface TripQuery {
   /** Raw user input, e.g. "tbilisi" */
   destination: string;
@@ -84,6 +88,7 @@ export interface TripQuery {
   endDate?: string;
   /** Free text, e.g. "skiing, wine" */
   interests?: string;
+  party?: TripParty;
 }
 
 export type ItinerarySlot = "morning" | "afternoon" | "evening";

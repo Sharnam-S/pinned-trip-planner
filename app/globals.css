@@ -21,20 +21,15 @@
   --radius-chip: 999px;
   --font-body: var(--font-sans), -apple-system, BlinkMacSystemFont,
     "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  /* SF Pro, no webfont: -apple-system resolves to it on macOS/iOS (Text below
+     20px, Display above), which is where the trip page is designed to be read.
+     Used by the trip panels — see the trip-panel design system. */
+  --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    "SF Pro", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
 
-  /* Type scale — 4 steps, one voice. The spot detail card previously mixed
-     8 ad-hoc sizes (21/14/13.5/13/12.5/12/11/10) with drifting line-heights
-     and letter-spacing across tiers that mean the same thing. These tokens
-     collapse it: title, reading body, supporting text, and overline label.
-     Pair each size with its line-height token; color hierarchy stays
-     two-tone (--text / --text-soft), never more. */
-  --fs-title: 21px;
-  --fs-body: 14px;
-  --fs-support: 12.5px;
-  --fs-label: 11px;
-  --lh-body: 1.6;
-  --lh-support: 1.5;
-  --ls-label: 0.06em;
+  /* The type scale (--fs-* / --lh-* / --ls-*) is not global: it belongs to the
+     trip panels and is defined there, so the scale can't drift out of the
+     surface it was designed for. See "Trip-panel design system". */
 }
 
 * {
@@ -81,7 +76,7 @@ button {
   border-radius: 14px;
   padding: 14px 16px;
   font: inherit;
-  font-size: 14px;
+  font-size: var(--fs-body);
   color: var(--text);
   resize: vertical;
   outline: none;
@@ -614,7 +609,10 @@ button {
   cursor: default;
 }
 
-.dp-cell:not(.empty):not(:disabled):hover {
+/* `:not(.selected)` isn't decoration: without it this rule (4 class-level
+   selectors) outranks .dp-cell.selected:hover (3), so hovering the day you
+   picked washed it from solid blue back to the pale hover fill. */
+.dp-cell:not(.empty):not(:disabled):not(.selected):hover {
   background: #eef5fd;
   color: var(--blue-primary);
 }
@@ -629,6 +627,13 @@ button {
   color: #fff;
   font-weight: 600;
   box-shadow: 0 2px 6px rgba(47, 111, 237, 0.35);
+}
+
+/* Days between a range's two ends (trip-header date range only). */
+.dp-cell.in-range {
+  background: #eef5fd;
+  color: var(--blue-primary);
+  border-radius: 6px;
 }
 
 .dp-cell.selected:hover {
@@ -683,6 +688,119 @@ button {
   color: #cdd7e0;
   cursor: default;
   background: none;
+}
+
+/* ---- Phone: the calendar is a bottom sheet, not an anchored popover ----
+   The trigger is only half a row wide inside the "When" field, so an anchored
+   popover squeezed the 7-column grid to ~110px and got clipped by the landing
+   card. The sheet is portaled to <body>, so no ancestor can clip it. */
+
+.dp-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(12, 22, 32, 0.42);
+  animation: dp-fade 0.18s ease both;
+}
+
+.dp-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 201;
+  background: #fff;
+  border-radius: 22px 22px 0 0;
+  box-shadow: 0 -6px 40px rgba(20, 50, 70, 0.26);
+  padding: 8px 18px calc(14px + env(safe-area-inset-bottom));
+  cursor: default;
+  animation: dp-slide-up 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Keeps the grid from stretching into unreadably wide cells on big phones. */
+.dp-sheet-inner {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.dp-grab {
+  display: block;
+  width: 38px;
+  height: 4px;
+  margin: 0 auto 12px;
+  border-radius: 999px;
+  background: rgba(20, 50, 70, 0.16);
+}
+
+.dp-sheet .dp-month {
+  font-size: 17px;
+}
+
+/* Touch targets: 44px tall nav/footer controls, and cells sized by the grid. */
+.dp-sheet .dp-nav button {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+}
+
+.dp-sheet .dp-weekdays span {
+  font-size: 11px;
+  padding: 6px 0;
+}
+
+.dp-sheet .dp-grid {
+  gap: 3px;
+}
+
+.dp-sheet .dp-cell {
+  font-size: 16px;
+  border-radius: 12px;
+}
+
+/* Phones have no hover — light up on press instead. */
+.dp-sheet .dp-cell:not(.empty):not(:disabled):active {
+  background: #eef5fd;
+  color: var(--blue-primary);
+}
+
+.dp-sheet .dp-cell.selected:active {
+  background: #245cd6;
+  color: #fff;
+}
+
+.dp-sheet .dp-foot {
+  margin-top: 14px;
+  padding-top: 14px;
+}
+
+.dp-sheet .dp-foot button {
+  font-size: 15px;
+  padding: 9px 14px;
+}
+
+@keyframes dp-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dp-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dp-backdrop,
+  .dp-sheet {
+    animation: none;
+  }
 }
 
 .hero-error {
@@ -1119,104 +1237,415 @@ button {
   overflow: hidden;
 }
 
-/* Centered pill: place segment | videos-selector segment.
-   The slot reserves the closed pill's footprint in the header grid; the card
-   itself is absolutely positioned over it so it can expand downward (into a
-   full videos panel) without pushing the header around. */
-.trip-pill-slot {
-  position: relative;
-  justify-self: center;
-  height: 50px;
-  z-index: 1500;
-}
+/* ---- Trip-panel design system ----
+   The trip header and the three panels below it — agent window, itinerary,
+   and pins — speak one voice: SF Pro in regular and medium only,
+   -0.15px tracking, four type steps (24 / 14 / 13 / 12), and a three-step
+   grey ramp for hierarchy. Anything that needs a fifth size or a semibold is
+   the design being wrong, not the scale.
 
-.trip-pill {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  width: max-content;
-  max-width: min(560px, 60vw);
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 25px;
-  box-shadow: var(--shadow-soft);
-  overflow: hidden;
-  /* Lets `width` interpolate from max-content where supported (Chromium);
-     elsewhere the width steps but the height still animates */
-  interpolate-size: allow-keywords;
-  transition: width 0.4s cubic-bezier(0.32, 0.72, 0.25, 1),
-    box-shadow 0.35s ease;
-}
+   It's expressed as scoped tokens on the three panel containers rather than
+   per-rule values: custom properties, font-family, and letter-spacing all
+   inherit, so every descendant rule written as var(--fs-support) conforms
+   without a duplicate override, and the map layer + landing page keep their
+   own voice. The two icon steps live here too so an icon size is never a
+   loose number in JSX.
 
-.trip-pill.open {
-  width: 430px;
-  max-width: min(560px, 92vw);
-  box-shadow: var(--shadow-lift);
-}
-
-.pill-row {
-  display: flex;
-  align-items: center;
-  height: 48px;
-  flex-shrink: 0;
-}
-
-.pill-seg {
-  display: flex;
-  align-items: center;
-  align-self: stretch;
-  gap: 9px;
-  padding: 0 18px;
-  background: none;
-  border: none;
-  font-size: 14px;
-  font-weight: 600;
+   Reserved exception: inputs inside .sheet stay at 16px (iOS Safari zooms the
+   page into anything smaller on focus — see the phone-restyle section). */
+.trip-header,
+.left-side,
+.right-side,
+.sheet {
+  --fs-title: 24px;
+  --fs-body: 14px;
+  --fs-support: 13px;
+  --fs-label: 12px;
+  --fs-icon-nav: 14px;
+  --fs-icon-card: 20px;
+  --lh-body: 1.6;
+  --lh-support: 1.5;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --ls-ui: -0.15px;
+  /* Small-caps labels track with everything else — no per-tier tracking. */
+  --ls-label: var(--ls-ui);
+  --text: #292929;
+  --text-soft: #5d5d5d;
+  --text-mute: #9e9e9e;
+  --ink: #292929;
+  font-family: var(--font-ui);
+  font-weight: var(--fw-regular);
+  letter-spacing: var(--ls-ui);
   color: var(--text);
-  min-width: 0;
 }
 
-.pill-icon {
-  font-size: 13px;
+/* Headings opt out of the global 800/-0.03em display voice: inside a panel a
+   heading is medium at its scale step, like everything else. Tracking has to
+   be restated because an element-level rule beats an inherited value. */
+.trip-header :is(h1, h2, h3),
+.left-side :is(h1, h2, h3),
+.right-side :is(h1, h2, h3),
+.sheet :is(h1, h2, h3) {
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-ui);
+}
+
+/* Form controls don't inherit tracking — the UA stylesheet sets it to normal on
+   them, and an element-level UA rule outranks an inherited value. Without this
+   every tab, chip, and button in the panels sits at 0 while the prose around it
+   tracks at -0.15px. (`button { font: inherit }` above doesn't cover it: the
+   font shorthand has no letter-spacing component.) */
+.trip-header :is(button, input, textarea, select),
+.left-side :is(button, input, textarea, select),
+.right-side :is(button, input, textarea, select),
+.sheet :is(button, input, textarea, select) {
+  letter-spacing: var(--ls-ui);
+}
+
+/* ---- Trip header ----
+   One bar across the top of the trip: the place, the three answers the planner
+   needs (when / what you're into / who's going), and sharing. Each answer is a
+   pill that reads as answered (#292929) or still open (#9E9E9E) and opens its
+   own editor. Above the map's Leaflet panes, hence the z-index. */
+.trip-header {
   flex-shrink: 0;
+  position: relative;
+  z-index: 1500;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  height: 60px;
+  padding: 0 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
 }
 
-.pill-text {
+.trip-header-name {
+  margin: 0;
+  font-size: var(--fs-title);
+  font-weight: var(--fw-medium);
+  color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.pill-place {
-  max-width: 260px;
+.trip-facets {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-self: center;
 }
 
-.pill-sep {
-  width: 1px;
-  align-self: stretch;
-  margin: 8px 0;
-  background: var(--line);
-  flex-shrink: 0;
+.trip-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
-.pill-videos {
+.facet {
+  position: relative;
+}
+
+.facet-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-chip);
+  background: var(--surface);
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
+  /* Unanswered reads as the quietest grey; answering promotes it to primary. */
+  color: var(--text-mute);
   cursor: pointer;
-  color: var(--text-soft);
-  transition: background 0.12s;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 }
 
-.pill-videos:hover {
+.facet-pill.set {
+  color: var(--text);
+}
+
+.facet-pill:hover {
+  background: var(--surface-alt);
+  border-color: #dcdcdc;
+}
+
+.facet-pill.open {
+  border-color: var(--text);
+  background: var(--surface);
+}
+
+.facet-icon {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--text-mute);
+}
+
+.facet-pill.set .facet-icon {
+  color: var(--text-soft);
+}
+
+.facet-value {
+  max-width: 190px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.facet-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: max-content;
+  min-width: 236px;
+  max-width: 340px;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid rgba(20, 50, 70, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 2px 6px rgba(20, 50, 70, 0.08), 0 18px 44px rgba(20, 50, 70, 0.2);
+  cursor: default;
+  animation: facet-in 0.16s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Carries the centering translate — an animation's transform replaces the
+   base one, so it can't live in .facet-pop alone. */
+@keyframes facet-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -4px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.facet-pop-label {
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  color: var(--text-soft);
+}
+
+.facet-pop-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.facet-pop-foot button {
+  border: none;
+  background: none;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.facet-clear {
+  color: var(--text-soft);
+}
+
+.facet-clear:hover {
+  background: var(--surface-alt);
+  color: var(--text);
+}
+
+.facet-done {
+  color: var(--blue-primary);
+}
+
+.facet-done:hover {
+  background: #eef5fd;
+}
+
+/* Dates: two end segments over one shared month grid. The armed end is the one
+   the next click fills. */
+.facet-range {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.facet-end {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  padding: 7px 11px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.facet-end:hover {
+  border-color: #dcdcdc;
+}
+
+.facet-end.armed {
+  border-color: var(--text);
+}
+
+.facet-end-label {
+  font-size: var(--fs-label);
+  color: var(--text-mute);
+}
+
+.facet-end-value {
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
+  color: var(--text);
+}
+
+.facet-end-value.empty {
+  font-weight: var(--fw-regular);
+  color: var(--text-mute);
+}
+
+/* The grid is the picker's, so its type follows the panel system in here. */
+.trip-header .dp-month {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-ui);
+}
+
+.trip-header .dp-weekdays span {
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-ui);
+  color: var(--text-mute);
+}
+
+/* :where() so this restyles the resting cell without outranking the state
+   rules — .selected, .in-range, and :disabled keep their own colors. */
+.trip-header :where(.dp-cell) {
+  font-size: var(--fs-support);
+  color: var(--text);
+}
+
+.trip-header .dp-cell:disabled {
+  color: var(--text-mute);
+}
+
+.trip-header .dp-cell.selected,
+.trip-header .dp-cell.today {
+  font-weight: var(--fw-medium);
+}
+
+.trip-header .dp-foot button {
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
+}
+
+/* Interests: free text, plus one-tap ideas that append to it. */
+.facet-input {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  font: inherit;
+  font-size: var(--fs-body);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.facet-input:focus {
+  border-color: var(--text);
+}
+
+.facet-input::placeholder {
+  color: var(--text-mute);
+}
+
+.facet-ideas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.facet-idea {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: var(--radius-chip);
+  padding: 5px 11px;
+  font-size: var(--fs-support);
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+
+.facet-idea:hover {
+  border-color: #dcdcdc;
+  color: var(--text);
+}
+
+.facet-idea.on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+/* Who's going: one tap commits and closes, so no footer. */
+.facet-options {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.facet-option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: none;
+  background: none;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: var(--fs-support);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.facet-option:hover {
   background: var(--surface-alt);
 }
 
-/* No grey fill while expanded — the open panel + chevron carry the state */
-.pill-videos.open,
-.pill-videos.open:hover {
-  background: none;
+.facet-option.on {
+  background: var(--surface-alt);
+  font-weight: var(--fw-medium);
 }
 
+/* Share sits in the header's right slot — same pill geometry as the facets. */
+.trip-header .share-btn {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: var(--radius-chip);
+  border-color: var(--line);
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
+  color: var(--text);
+}
+
+/* The source-videos control at the top of the planner rail: stacked thumbs +
+   count + chevron, expanding into the full video list below it. */
 .pill-thumbs {
   display: flex;
   flex-shrink: 0;
@@ -1260,13 +1689,6 @@ button {
     opacity 0.22s ease;
 }
 
-.trip-pill.open .videos-panel {
-  grid-template-rows: 1fr;
-  opacity: 1;
-  transition: grid-template-rows 0.4s cubic-bezier(0.32, 0.72, 0.25, 1),
-    opacity 0.3s ease 0.08s;
-}
-
 .videos-panel-clip {
   overflow: hidden;
   min-height: 0;
@@ -1279,10 +1701,6 @@ button {
   text-align: left;
   transform: translateY(-8px);
   transition: transform 0.4s cubic-bezier(0.32, 0.72, 0.25, 1);
-}
-
-.trip-pill.open .videos-panel-body {
-  transform: translateY(0);
 }
 
 .videos-panel .video-strip {
@@ -1525,7 +1943,7 @@ button {
   background: var(--surface);
   border-radius: 14px;
   padding: 8px 10px;
-  font-size: 13px;
+  font-size: var(--fs-support);
   box-shadow: var(--shadow-soft);
 }
 
@@ -1558,7 +1976,7 @@ button {
 }
 
 .video-chip .vtitle {
-  font-weight: 600;
+  font-weight: var(--fw-medium);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1622,8 +2040,8 @@ button {
   border: 1px solid var(--line);
   border-radius: var(--radius-chip);
   padding: 7px 13px;
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
   color: var(--text);
   cursor: pointer;
   transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease,
@@ -1650,8 +2068,8 @@ button {
   padding: 0 4px;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.28);
-  font-size: 11px;
-  font-weight: 700;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
   font-variant-numeric: tabular-nums;
 }
 .pf-chevron {
@@ -1690,8 +2108,8 @@ button {
   border: 1px solid var(--line);
   border-radius: var(--radius-chip);
   padding: 6px 12px;
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
   color: var(--text);
   cursor: pointer;
   white-space: nowrap;
@@ -1712,10 +2130,10 @@ button {
   box-shadow: 0 2px 8px rgba(16, 17, 26, 0.22);
 }
 .pf-emoji {
-  font-size: 12px;
+  font-size: var(--fs-label);
 }
 .pf-n {
-  font-weight: 500;
+  font-weight: var(--fw-medium);
   opacity: 0.55;
   font-variant-numeric: tabular-nums;
 }
@@ -1790,6 +2208,8 @@ button {
   transform: scale(1.04);
 }
 
+/* The category emoji standing in for a missing photo. Off the type scale on
+   purpose — it's the image, not text. */
 .tile-photo-fallback {
   width: 100%;
   height: 100%;
@@ -1857,12 +2277,10 @@ button {
 }
 
 /* ---- Full trip-page skeleton (shown while the trip loads) ---- */
-/* Header placeholders mirror the real pill / filter strip so nothing jumps */
-.sk-pill-place {
-  width: 150px;
-  height: 15px;
-  margin: 9px 16px;
-  border-radius: 999px;
+/* Placeholders mirror the real header + rails so nothing jumps on load */
+.sk-facet {
+  height: 34px;
+  border-radius: var(--radius-chip);
 }
 
 .sk-pill-videos {
@@ -1976,9 +2394,8 @@ button {
 }
 
 .spot-tile .tile-name {
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: -0.01em;
+  font-weight: var(--fw-medium);
+  font-size: var(--fs-body);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1986,13 +2403,13 @@ button {
 
 .spot-tile .tile-sub {
   color: var(--text-soft);
-  font-size: 13px;
+  font-size: var(--fs-support);
   margin-top: 2px;
 }
 
 .spot-tile .tile-desc {
   color: var(--text-soft);
-  font-size: 13px;
+  font-size: var(--fs-support);
   line-height: 1.45;
   margin-top: 6px;
   display: -webkit-box;
@@ -2012,7 +2429,7 @@ button {
   padding: 40px 24px;
   text-align: center;
   color: var(--text-soft);
-  font-size: 14px;
+  font-size: var(--fs-body);
 }
 
 .map-side {
@@ -2291,7 +2708,7 @@ button {
   align-items: center;
   gap: 6px;
   font-size: var(--fs-label);
-  font-weight: 600;
+  font-weight: var(--fw-medium);
   color: white;
   background: rgba(0, 0, 0, 0.5);
   padding: 4px 10px;
@@ -2321,7 +2738,7 @@ button {
   border: 1px solid rgba(16, 17, 26, 0.1);
   border-radius: var(--radius-chip);
   font-size: var(--fs-support);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   color: var(--text);
   background: var(--surface);
   box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04);
@@ -2350,7 +2767,7 @@ button {
 
 .know-label {
   font-size: var(--fs-label);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   text-transform: uppercase;
   letter-spacing: var(--ls-label);
   color: var(--text-soft);
@@ -2379,8 +2796,7 @@ button {
 .spot-card h2 {
   margin: 0;
   font-size: var(--fs-title);
-  font-weight: 750;
-  letter-spacing: -0.02em;
+  font-weight: var(--fw-medium);
   line-height: 1.25;
 }
 
@@ -2397,7 +2813,7 @@ button {
   padding-top: 16px;
   border-top: 1px solid var(--line);
   font-size: var(--fs-label);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   letter-spacing: var(--ls-label);
   text-transform: uppercase;
   color: var(--text-soft);
@@ -2432,7 +2848,7 @@ button {
 }
 
 .creator-row .cname {
-  font-weight: 650;
+  font-weight: var(--fw-medium);
   font-size: var(--fs-body);
 }
 
@@ -2454,7 +2870,7 @@ button {
   background: var(--text);
   color: white;
   font-size: var(--fs-label);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   padding: 5px 10px;
   border-radius: var(--radius-chip);
   white-space: nowrap;
@@ -2936,8 +3352,8 @@ button {
   border: 1px solid var(--line);
   border-radius: 14px;
   background: var(--surface);
-  font-size: 13.5px;
-  font-weight: 600;
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
   color: var(--text);
   cursor: pointer;
   transition: border-color 0.15s ease;
@@ -2966,14 +3382,14 @@ button {
   background: var(--bg);
 }
 
-/* Drag handle sitting in the gap between the planner rail and the map. It
-   straddles the 14px gap (negative margins) so the panels keep their spacing
-   while giving a comfortable grab target. */
+/* Drag handle on the seam between the planner rail and the map. The panels now
+   tile edge to edge, so it takes no layout width of its own: 12px wide with
+   -6px either side nets to zero and straddles the 1px border. */
 .rail-resizer {
   flex: 0 0 auto;
   align-self: stretch;
   width: 12px;
-  margin: 0 -13px;
+  margin: 0 -6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3034,7 +3450,7 @@ button {
 }
 
 .planner-intro p {
-  font-size: 13.5px;
+  font-size: var(--fs-body);
   line-height: 1.5;
   color: var(--text-soft);
   margin: 4px 2px 10px;
@@ -3050,7 +3466,7 @@ button {
   padding: 7px 12px;
   background: var(--surface);
   cursor: pointer;
-  font-size: 13px;
+  font-size: var(--fs-support);
   color: var(--text);
   transition: border-color 0.15s ease;
 }
@@ -3127,17 +3543,16 @@ button {
   }
 }
 .nudge-title {
-  font-size: 19px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-size: var(--fs-title);
+  font-weight: var(--fw-medium);
   color: var(--text);
   margin-bottom: 8px;
 }
 .nudge-title em {
-  font-weight: 800;
+  font-weight: var(--fw-medium);
 }
 .nudge-sub {
-  font-size: 13px;
+  font-size: var(--fs-support);
   line-height: 1.55;
   color: var(--text-soft);
   max-width: 290px;
@@ -3152,9 +3567,8 @@ button {
   border-radius: 999px;
   background: var(--blue-primary);
   color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
   box-shadow: 0 1px 2px rgba(20, 50, 70, 0.2), 0 10px 24px rgba(47, 111, 237, 0.3);
   transition: background 0.15s, transform 0.12s ease;
 }
@@ -3168,7 +3582,7 @@ button {
   background: none;
   padding: 5px 8px;
   border-radius: 8px;
-  font-size: 12.5px;
+  font-size: var(--fs-support);
   color: var(--text-soft);
   transition: color 0.15s;
 }
@@ -3195,7 +3609,7 @@ button {
   border-radius: 18px 18px 6px 18px;
   padding: 10px 15px;
   max-width: 86%;
-  font-size: 13.5px;
+  font-size: var(--fs-body);
   line-height: 1.5;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -3204,12 +3618,12 @@ button {
 .pm-assistant .pm-text {
   color: var(--text);
   max-width: 100%;
-  font-size: 14px;
+  font-size: var(--fs-body);
   line-height: 1.65;
   overflow-wrap: anywhere;
 }
 .pm-assistant .pm-text strong {
-  font-weight: 650;
+  font-weight: var(--fw-medium);
 }
 
 /* Block rhythm for the light markdown the model writes — paragraphs and lists
@@ -3240,7 +3654,7 @@ button {
   align-items: center;
   gap: 7px;
   font-size: var(--fs-support);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
   color: var(--text-soft);
   background: var(--surface-alt);
   border: 1px solid var(--line);
@@ -3281,8 +3695,8 @@ button {
   border-radius: 50%;
   background: var(--green);
   color: #fff;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
   line-height: 20px;
   text-align: center;
 }
@@ -3291,7 +3705,7 @@ button {
 }
 .pm-event-title {
   font-size: var(--fs-support);
-  font-weight: 650;
+  font-weight: var(--fw-medium);
   color: var(--text);
   line-height: 1.35;
 }
@@ -3317,16 +3731,15 @@ button {
   margin: 6px 0;
 }
 .pm-qa-progress {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
   text-transform: uppercase;
   color: var(--text-soft);
   margin-bottom: 8px;
 }
 .pm-qa-prompt {
-  font-size: 14.5px;
-  font-weight: 650;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
   color: var(--text);
   line-height: 1.35;
   margin-bottom: 12px;
@@ -3343,7 +3756,7 @@ button {
   padding: 8px 14px;
   background: var(--surface);
   cursor: pointer;
-  font-size: 13px;
+  font-size: var(--fs-support);
   color: var(--text);
   transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
@@ -3361,7 +3774,7 @@ button {
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 9px 12px;
-  font-size: 13px;
+  font-size: var(--fs-support);
   color: var(--text);
   background: var(--surface);
   margin-bottom: 10px;
@@ -3383,7 +3796,7 @@ button {
   border: 1px solid var(--line);
   background: var(--surface);
   color: var(--text);
-  font-size: 16px;
+  font-size: var(--fs-icon-nav);
   line-height: 1;
   cursor: pointer;
   display: inline-flex;
@@ -3413,8 +3826,8 @@ button {
   padding: 9px 18px;
   background: var(--ink);
   color: #fff;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
   cursor: pointer;
   transition: opacity 0.15s ease;
 }
@@ -3440,13 +3853,13 @@ button {
   border-top: none;
 }
 .pm-qa-q {
-  font-size: 12px;
+  font-size: var(--fs-label);
   color: var(--text-soft);
 }
 .pm-qa-a {
-  font-size: 13.5px;
+  font-size: var(--fs-support);
   color: var(--text);
-  font-weight: 550;
+  font-weight: var(--fw-medium);
 }
 
 .pm-typing {
@@ -3474,7 +3887,7 @@ button {
 /* Reasoning summaries: live while the model thinks, collapsible after —
    a quiet hairline aside, not another box */
 .pm-reasoning {
-  font-size: 12.5px;
+  font-size: var(--fs-support);
   line-height: 1.55;
   color: var(--text-soft);
   border-left: 2px solid var(--line);
@@ -3482,7 +3895,7 @@ button {
   max-width: 94%;
 }
 .pm-reasoning-label {
-  font-weight: 600;
+  font-weight: var(--fw-medium);
   cursor: pointer;
   list-style: none;
 }
@@ -3503,7 +3916,7 @@ button {
 
 /* Staged status line under the typing dots — what the agent is doing */
 .pm-status {
-  font-size: 12.5px;
+  font-size: var(--fs-support);
   color: var(--text-soft);
   padding: 2px 4px 0;
 }
@@ -3517,7 +3930,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  font-size: 13px;
+  font-size: var(--fs-support);
   line-height: 1.45;
   color: #8a2f2f;
   background: #fdf0f0;
@@ -3532,8 +3945,8 @@ button {
   color: #8a2f2f;
   border-radius: var(--radius-chip);
   padding: 6px 13px;
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
   cursor: pointer;
 }
 .pm-retry:hover {
@@ -3553,7 +3966,7 @@ button {
   border: 1px solid rgba(16, 17, 26, 0.08);
   border-radius: 22px;
   padding: 12px 17px;
-  font-size: 13.5px;
+  font-size: var(--fs-body);
   line-height: 1.5;
   font-family: inherit;
   color: var(--text);
@@ -3577,7 +3990,7 @@ button {
   border: none;
   background: var(--ink);
   color: #fff;
-  font-size: 16px;
+  font-size: var(--fs-icon-card);
   cursor: pointer;
   box-shadow: var(--shadow-soft);
   transition: opacity 0.15s ease, transform 0.15s ease;
@@ -3781,7 +4194,7 @@ button {
   align-items: center;
   gap: 8px;
   font-size: var(--fs-label);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   text-transform: uppercase;
   letter-spacing: var(--ls-label);
   color: var(--text-soft);
@@ -3811,7 +4224,7 @@ button {
 .plan-why-note .tip-tag {
   margin-right: 7px;
   font-size: var(--fs-label);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   letter-spacing: var(--ls-label);
   text-transform: uppercase;
 }
@@ -3836,7 +4249,7 @@ button {
   border-radius: var(--radius-chip);
   padding: 6px 12px;
   font-size: var(--fs-support);
-  font-weight: 650;
+  font-weight: var(--fw-medium);
   color: var(--text);
   cursor: pointer;
   white-space: nowrap;
@@ -3871,8 +4284,8 @@ button {
   padding: 10px 16px;
   border-top: 1px solid rgba(255, 198, 10, 0.28);
   background: linear-gradient(180deg, #fffaef 0%, #fff4d6 100%);
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
   color: #6b5200;
 }
 .planner-mustsee-bar button {
@@ -3881,8 +4294,8 @@ button {
   color: #6b5200;
   border-radius: var(--radius-chip);
   padding: 6px 13px;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
   cursor: pointer;
   box-shadow: 0 1px 2px rgba(107, 82, 0, 0.08);
   transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
@@ -3913,11 +4326,14 @@ button {
 .th-id {
   min-width: 0;
 }
+/* Body step, not the title step: this row is the trip's identity line sharing
+   width with the videos pill, so at 24px a name like "East Coast, Sri Lanka"
+   ellipsises away its country. The title step is spent on panel content —
+   the itinerary header, a spot's name, a zero-state headline. */
 .th-name {
   margin: 0;
-  font-size: 19px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
@@ -3925,7 +4341,7 @@ button {
 }
 .th-meta {
   margin-top: 3px;
-  font-size: 12.5px;
+  font-size: var(--fs-label);
   color: var(--text-soft);
   white-space: nowrap;
   overflow: hidden;
@@ -3949,8 +4365,8 @@ button {
   border-color: var(--ink);
 }
 .th-videos-n {
-  font-size: 12.5px;
-  font-weight: 700;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
   color: var(--text);
 }
 /* Reuse the pill's expand animation, driven by .trip-head.open */
@@ -3965,6 +4381,13 @@ button {
   padding: 12px 2px 4px;
   max-height: 38vh;
 }
+/* Why you can't add videos to a sample trip. */
+.videos-note {
+  padding: 8px 4px 2px;
+  font-size: var(--fs-support);
+  line-height: var(--lh-support);
+  color: var(--text-soft);
+}
 
 /* Right rail: compact 2-col grid of in-view spots. Horizontal + top inset come
    from .pins-view; only the scroll-clearance bottom padding lives here. */
@@ -3974,10 +4397,10 @@ button {
   padding: 0 0 48px;
 }
 .right-side .spot-tile .tile-name {
-  font-size: 13px;
+  font-size: var(--fs-support);
 }
 .right-side .spot-tile .tile-sub {
-  font-size: 11.5px;
+  font-size: var(--fs-label);
 }
 .right-side .empty-area {
   padding: 48px 24px;
@@ -3993,7 +4416,7 @@ button {
 .spot-meta {
   margin: 4px 0 12px;
   font-size: var(--fs-label);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   letter-spacing: var(--ls-label);
   text-transform: uppercase;
   color: var(--text-soft);
@@ -4079,9 +4502,8 @@ button {
   color: var(--text-soft);
   border-radius: 8px;
   padding: 6px 14px;
-  font-size: 12.5px;
-  font-weight: 650;
-  letter-spacing: -0.005em;
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
   white-space: nowrap;
   cursor: pointer;
   transition: color 0.2s ease;
@@ -4108,15 +4530,14 @@ button {
 }
 .ov-head h3 {
   margin: 0;
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: var(--fs-title);
+  font-weight: var(--fw-medium);
   color: var(--text);
 }
 .ov-places {
-  font-size: 12px;
+  font-size: var(--fs-label);
   color: var(--text-soft);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
 }
 .ov-item {
   display: flex;
@@ -4135,8 +4556,8 @@ button {
   border-radius: 50%;
   background: var(--ink);
   color: #fff;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4192,8 +4613,8 @@ button {
 }
 .ov-day-badge {
   display: inline-block;
-  font-size: 11.5px;
-  font-weight: 600;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
   color: var(--text);
   background: var(--surface);
   border: 1px solid #eef0f2;
@@ -4204,9 +4625,8 @@ button {
 }
 .ov-title {
   margin-top: 10px;
-  font-size: 14.5px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
   color: var(--text);
   line-height: 1.35;
   display: -webkit-box;
@@ -4216,9 +4636,9 @@ button {
 }
 .ov-desc {
   margin-top: 4px;
-  font-size: 12.5px;
+  font-size: var(--fs-support);
   line-height: 1.5;
-  color: #9aa1a7;
+  color: var(--text-mute);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4234,8 +4654,8 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 11.5px;
-  font-weight: 600;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
   color: var(--text);
   background: #f2f3f5;
   border: none;
@@ -4276,13 +4696,13 @@ button {
   display: flex;
   align-items: baseline;
   gap: 8px;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
   color: var(--text-soft);
   padding: 10px 0 8px;
 }
 .ov-span-sep {
-  color: #c3c8cd;
+  color: var(--text-mute);
 }
 .ov-stop:not(:last-child) {
   border-bottom: 1px solid #f4f5f6;
@@ -4306,35 +4726,35 @@ button {
 .ov-stop-time {
   width: 46px;
   flex-shrink: 0;
-  font-size: 11.5px;
-  font-weight: 700;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
   font-variant-numeric: tabular-nums;
   color: var(--text);
 }
 .ov-stop-name {
   flex: 1;
   min-width: 0;
-  font-size: 13.5px;
-  font-weight: 600;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
   color: var(--text);
   line-height: 1.4;
 }
 .ov-stop-dur {
   flex-shrink: 0;
-  font-size: 11.5px;
-  font-weight: 500;
-  color: #9aa1a7;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  color: var(--text-mute);
 }
 .ov-stop-note {
-  font-size: 12px;
+  font-size: var(--fs-support);
   line-height: 1.5;
-  color: #9aa1a7;
+  color: var(--text-mute);
   padding: 0 0 10px 56px;
 }
 .ov-stop-gap {
-  font-size: 11px;
-  font-weight: 500;
-  color: #b6bcc1;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  color: var(--text-mute);
   padding: 2px 0 10px 56px;
 }
 
@@ -4347,20 +4767,20 @@ button {
   padding: 72px 32px;
 }
 .ov-empty-icon {
-  font-size: 36px;
+  font-size: var(--fs-title);
   margin-bottom: 14px;
 }
 .ov-empty h3 {
   margin: 0 0 8px;
-  font-size: 16px;
-  font-weight: 700;
+  font-size: var(--fs-title);
+  font-weight: var(--fw-medium);
   color: var(--text);
 }
 .ov-empty p {
   margin: 0 0 20px;
-  font-size: 13px;
+  font-size: var(--fs-support);
   line-height: 1.65;
-  color: #9aa1a7;
+  color: var(--text-soft);
   max-width: 280px;
 }
 .ov-empty-cta {
@@ -4369,8 +4789,8 @@ button {
   color: #fff;
   border-radius: 999px;
   padding: 12px 22px;
-  font-size: 13.5px;
-  font-weight: 600;
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
   cursor: pointer;
   box-shadow: 0 8px 20px rgba(16, 17, 26, 0.18);
   transition: transform 0.15s ease;
@@ -4379,22 +4799,16 @@ button {
   transform: scale(1.04);
 }
 
-/* ===== Mood-board canvas: white panels floating on a soft gray page ===== */
+/* ===== One surface, three panels =====
+   The panels used to float as rounded cards on a grey page. Now they tile the
+   viewport edge to edge under the trip header: no page background to see, no
+   radii, no shadows — a 1px seam is the only thing between them, so the map
+   gets every pixel that used to be gutter. */
 .trip-body {
-  background: #edeff2;
-  padding: 14px;
-  gap: 14px;
+  background: var(--surface);
 }
 .left-side {
-  border-right: none;
-  border-radius: 20px;
-  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04), 0 8px 24px rgba(16, 17, 26, 0.05);
   overflow: hidden;
-}
-.right-side {
-  border-left: none;
-  border-radius: 20px;
-  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04), 0 8px 24px rgba(16, 17, 26, 0.05);
 }
 .map-side {
   padding: 0;
@@ -4402,8 +4816,8 @@ button {
 }
 .map-frame {
   border: none;
-  border-radius: 20px;
-  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04), 0 8px 24px rgba(16, 17, 26, 0.05);
+  border-radius: 0;
+  box-shadow: none;
 }
 
 /* Soft glass pill language for the planner's chips too — matches the
@@ -4412,7 +4826,7 @@ button {
   background: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(16, 17, 26, 0.07);
   padding: 9px 15px;
-  font-weight: 500;
+  font-weight: var(--fw-medium);
   box-shadow: 0 1px 2px rgba(16, 17, 26, 0.04);
   transition: background 0.15s ease, border-color 0.15s ease,
     box-shadow 0.15s ease, transform 0.15s ease;
@@ -4439,16 +4853,16 @@ button {
    (below the title) and, verbatim, inside the map's day-brief overlay. */
 .ov-rationale {
   margin: 2px 0 6px;
-  font-size: 12.5px;
+  font-size: var(--fs-support);
   line-height: 1.6;
-  color: #6b7280;
+  color: var(--text-soft);
 }
 /* On the collapsed overview card it sits above the chips as a teaser. */
 .ov-rationale-teaser {
   margin: 12px 0 0;
 }
 .ov-untimed {
-  font-size: 12px;
+  font-size: var(--fs-support);
   line-height: 1.5;
   color: #6b5200;
   background: var(--yellow-soft);
@@ -4488,7 +4902,7 @@ button {
   border-radius: 50%;
   background: rgba(20, 22, 30, 0.5);
   color: #fff;
-  font-size: 11px;
+  font-size: var(--fs-label);
   cursor: pointer;
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
@@ -4926,9 +5340,8 @@ button {
   background: transparent;
   padding: 7px 13px;
   border-radius: 8px;
-  font-size: 13.5px;
-  font-weight: 600;
-  letter-spacing: -0.005em;
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
   color: var(--text-soft);
   cursor: pointer;
   transition: background 0.18s ease, color 0.18s ease;
@@ -4936,7 +5349,7 @@ button {
 .sheet-tab.on {
   background: var(--surface-alt);
   color: var(--text);
-  font-weight: 700;
+  font-weight: var(--fw-medium);
 }
 
 /* ---- Sheet content ---- */
@@ -5014,12 +5427,9 @@ button {
 .sheet .trip-head {
   padding: 10px 16px;
 }
-.sheet .th-name {
-  font-size: 16px;
-}
 .sheet .th-meta {
   margin-top: 1px;
-  font-size: 11.5px;
+  font-size: var(--fs-label);
 }
 .sheet .th-videos {
   border: none;
@@ -5051,17 +5461,17 @@ button {
   height: 124px;
 }
 .sheet .nudge-title {
-  font-size: 17px;
+  font-size: var(--fs-title);
   margin-bottom: 5px;
 }
 .sheet .nudge-sub {
-  font-size: 12.5px;
+  font-size: var(--fs-support);
   margin-bottom: 12px;
 }
 .sheet .nudge-cta {
   width: auto;
   padding: 10px 22px;
-  font-size: 13px;
+  font-size: var(--fs-support);
 }
 
 /* Pins: a 2-up photo grid (Airbnb wishlist density) instead of one huge
@@ -5081,10 +5491,10 @@ button {
   margin-top: 7px;
 }
 .sheet .spot-tile .tile-name {
-  font-size: 13px;
+  font-size: var(--fs-support);
 }
 .sheet .spot-tile .tile-sub {
-  font-size: 11.5px;
+  font-size: var(--fs-label);
 }
 .sheet .pins-filters {
   margin-bottom: 12px;
@@ -5093,7 +5503,7 @@ button {
   border: none;
   background: var(--surface-alt);
   padding: 7px 12px;
-  font-size: 12px;
+  font-size: var(--fs-label);
 }
 
 /* Spot detail: full-bleed photo (no inset card-in-card), flat info blocks
@@ -5110,12 +5520,6 @@ button {
 }
 .sheet .spot-card .card-body {
   padding: 14px 16px 32px;
-}
-.sheet .spot-card h2 {
-  font-size: 18px;
-}
-.sheet .spot-card .desc {
-  font-size: 13.5px;
 }
 /* Title-row actions (shared markup): desktop shows the Must-see text pill
    and hides the icon-only maps link; the mobile sheet flips both (below). */
@@ -5183,9 +5587,6 @@ button {
 .sheet .ov-head {
   margin-bottom: 12px;
 }
-.sheet .ov-head h3 {
-  font-size: 15px;
-}
 .sheet .ov-card,
 .sheet .ov-card:hover,
 .sheet .ov-card.open {
@@ -5222,15 +5623,13 @@ button {
   box-shadow: none;
   padding: 0;
   border-radius: 0;
-  font-size: 10.5px;
-  font-weight: 700;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
   color: var(--text-soft);
 }
 .sheet .ov-title {
   margin-top: 5px;
-  font-size: 15px;
 }
 /* T1 (owner pick): no rail on the phone — the DAY labels sequence the
    cards, and the freed gutter goes back to the cards themselves. */
@@ -5250,7 +5649,6 @@ button {
 }
 .sheet .ov-rationale-teaser {
   margin-top: 6px;
-  font-size: 12px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -5294,15 +5692,14 @@ button {
   transform: rotate(-2deg);
 }
 .sheet .nudge-title {
-  font-size: 20px;
-  letter-spacing: -0.025em;
+  font-size: var(--fs-title);
   line-height: 1.25;
 }
 .sheet .nudge-cta {
   order: 2;
   width: auto;
   padding: 10px 20px;
-  font-size: 13px;
+  font-size: var(--fs-support);
 }
 .sheet .nudge-alt {
   order: 3;
@@ -5317,9 +5714,8 @@ button {
 }
 .ci-title {
   margin: 2px 0 0;
-  font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.025em;
+  font-size: var(--fs-title);
+  font-weight: var(--fw-medium);
   line-height: 1.25;
   color: var(--text);
 }
@@ -5349,7 +5745,7 @@ button {
   gap: 10px;
 }
 .ci-q {
-  font-size: 14px;
+  font-size: var(--fs-body);
   line-height: 1.6;
   color: var(--text);
 }
@@ -5360,7 +5756,7 @@ button {
   color: #fff;
   border-radius: 18px 18px 6px 18px;
   padding: 10px 15px;
-  font-size: 13.5px;
+  font-size: var(--fs-support);
   line-height: 1.5;
 }
 .ci-chips {
@@ -5380,20 +5776,20 @@ button {
   padding: 8px 14px;
   background: var(--ink);
   color: #fff;
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
   cursor: pointer;
 }
 .ci-skip {
   border: none;
   background: none;
   padding: 8px 10px;
-  font-size: 12.5px;
+  font-size: var(--fs-support);
   color: var(--text-soft);
   cursor: pointer;
 }
 .ci-hint {
-  font-size: 12px;
+  font-size: var(--fs-label);
   color: var(--text-soft);
 }
 
