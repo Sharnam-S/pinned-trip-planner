@@ -4802,3 +4802,1097 @@ button {
 .share-pop-copy:hover {
   background: #245cd6;
 }
+
+/* ========== Mobile trip page: fullscreen map + bottom sheet ==========
+   Below 900px (matches MOBILE_QUERY in TripView) the 3-rail layout gives
+   way to Airbnb-style: the map IS the page, and the agent / itinerary /
+   pins live in a draggable bottom sheet. */
+
+@media (max-width: 900px) {
+  /* The loading skeleton (and any pre-hydration frame) still renders the
+     desktop rails — collapse them so it reads as a map-only page while the
+     mobile layout mounts. */
+  .trip-page:not(.mobile) .left-side,
+  .trip-page:not(.mobile) .right-side,
+  .trip-page:not(.mobile) .rail-resizer {
+    display: none;
+  }
+}
+
+.trip-page.mobile {
+  position: relative;
+  height: 100dvh;
+}
+.trip-page.mobile .m-map {
+  position: absolute;
+  inset: 0;
+}
+.trip-page.mobile .map-frame {
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
+}
+/* Pinch-zoom replaces the corner buttons on touch screens. */
+.trip-page.mobile .leaflet-control-zoom {
+  display: none;
+}
+/* Map search, owner-picked P2 from .context/search-options.html: a round
+   back button anchoring a solid white pill — no more glass strip glued to
+   the top edge. Both sit clear of the notch. */
+.m-back {
+  display: none; /* mobile-only */
+}
+.trip-page.mobile .m-back {
+  position: absolute;
+  top: calc(14px + env(safe-area-inset-top));
+  left: 14px;
+  z-index: 1000;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.06), 0 6px 18px rgba(16, 17, 26, 0.14);
+}
+.trip-page.mobile .map-search {
+  top: calc(14px + env(safe-area-inset-top));
+  left: 68px;
+  width: calc(100% - 82px);
+}
+.trip-page.mobile .ms-box {
+  background: var(--surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  height: 44px;
+  padding: 0 16px;
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.06), 0 6px 18px rgba(16, 17, 26, 0.14);
+}
+
+/* ---- The sheet itself ---- */
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1200; /* above every Leaflet pane/control (≤1000) */
+  height: 50dvh; /* first paint only — BottomSheet drives px after mount */
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 12px rgba(16, 17, 26, 0.08), 0 -12px 40px rgba(16, 17, 26, 0.18);
+  transition: height 0.34s cubic-bezier(0.32, 0.72, 0.25, 1);
+}
+.sheet.dragging {
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sheet {
+    transition: none;
+  }
+}
+
+/* Drag zone: grip + tab strip. touch-action: none so pointermove keeps
+   firing on touch instead of turning into a scroll gesture. */
+.sheet-drag {
+  flex-shrink: 0;
+  touch-action: none;
+  cursor: grab;
+  padding: 8px 14px 10px;
+  /* A mouse drag must not select the tab labels along the way. */
+  user-select: none;
+  -webkit-user-select: none;
+}
+.sheet-grip {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(16, 17, 26, 0.18);
+  margin: 0 auto 10px;
+}
+
+/* Tab strip: quiet text tabs, no container — the active one gets a soft
+   gray wash on an 8px rounded rectangle (owner-picked from the
+   .context/tab-options.html sampler, option D2). */
+.sheet-tabs {
+  display: flex;
+  gap: 6px;
+}
+.sheet-tab {
+  border: none;
+  background: transparent;
+  padding: 7px 13px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.sheet-tab.on {
+  background: var(--surface-alt);
+  color: var(--text);
+  font-weight: 700;
+}
+
+/* ---- Sheet content ---- */
+.sheet-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.sheet-panel {
+  flex: 1;
+  min-height: 0;
+}
+/* Itinerary + pins panels scroll as a whole (their content carries its own
+   padding); contain overscroll so reaching the end doesn't rubber-band the
+   page or trigger pull-to-refresh. */
+.sheet-panel.scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+/* The agent panel is a column (trip head on top, chat filling the rest) —
+   the chat manages its own internal scroll, same as in the left rail. */
+.sheet-panel.agent {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sheet-panel.agent .planner-panel {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  flex: 1;
+  min-height: 0;
+  border-right: none;
+}
+.sheet-panel.agent .planner-inputrow {
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+}
+/* Hidden panels stay mounted (the chat's in-flight stream and scroll state
+   live there) but leave the layout. Must sit after the .agent display:flex
+   rule — same specificity, so source order decides. */
+.sheet-panel[hidden] {
+  display: none;
+}
+
+/* Share sits above the pins grid on mobile (desktop puts it in the rail
+   tabs row, which doesn't exist here). */
+.sheet-share {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 16px 0;
+}
+.sheet-share .share-pop {
+  right: 0;
+}
+
+/* ---- Phone-native restyling of the panels inside the sheet ----
+   The sheet reuses the desktop components for behavior, but phone gets its
+   own visual treatment: tighter type, flat surfaces instead of floating
+   bordered cards, full-bleed photos (references: Airbnb itinerary, Pangea /
+   Zesty place sheets on Mobbin). Everything here is scoped to .sheet /
+   .trip-page.mobile so desktop is untouched. */
+
+/* iOS Safari zooms the page into any focused input under 16px — the one
+   size on phones that is NOT a style choice. */
+.sheet textarea,
+.sheet input[type="text"],
+.trip-page.mobile .ms-input {
+  font-size: 16px;
+}
+
+/* Trip head (agent tab): one quiet row, not a desktop rail header. */
+.sheet .trip-head {
+  padding: 10px 16px;
+}
+.sheet .th-name {
+  font-size: 16px;
+}
+.sheet .th-meta {
+  margin-top: 1px;
+  font-size: 11.5px;
+}
+.sheet .th-videos {
+  border: none;
+  background: var(--surface-alt);
+  box-shadow: none;
+  padding: 4px 9px;
+}
+
+/* Chat: tighter rhythm; the create-a-trip nudge shrinks from hero to note. */
+.sheet .planner-scroll {
+  padding: 14px 16px 10px;
+  gap: 14px;
+}
+.sheet .planner-nudge {
+  padding: 10px 4px 2px;
+}
+.sheet .nudge-stack {
+  height: 128px;
+  margin-bottom: 12px;
+}
+.sheet .nudge-card {
+  width: 88px;
+  height: 112px;
+  border-radius: 12px;
+  border-width: 4px;
+}
+.sheet .nudge-card.front {
+  width: 98px;
+  height: 124px;
+}
+.sheet .nudge-title {
+  font-size: 17px;
+  margin-bottom: 5px;
+}
+.sheet .nudge-sub {
+  font-size: 12.5px;
+  margin-bottom: 12px;
+}
+.sheet .nudge-cta {
+  width: auto;
+  padding: 10px 22px;
+  font-size: 13px;
+}
+
+/* Pins: a 2-up photo grid (Airbnb wishlist density) instead of one huge
+   desktop tile per row, and the filter toggle drops its border. */
+.sheet .pins-view {
+  padding: 12px 16px 28px;
+}
+.sheet .spot-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 12px;
+}
+.sheet .spot-tile .tile-photo {
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+}
+.sheet .spot-tile .tile-meta {
+  margin-top: 7px;
+}
+.sheet .spot-tile .tile-name {
+  font-size: 13px;
+}
+.sheet .spot-tile .tile-sub {
+  font-size: 11.5px;
+}
+.sheet .pins-filters {
+  margin-bottom: 12px;
+}
+.sheet .pf-toggle {
+  border: none;
+  background: var(--surface-alt);
+  padding: 7px 12px;
+  font-size: 12px;
+}
+
+/* Spot detail: full-bleed photo (no inset card-in-card), flat info blocks
+   on a soft gray instead of bordered floating cards, full-width action. */
+.sheet .spot-card .card-photo {
+  margin: 12px 16px 0;
+  height: 200px;
+  border-radius: 18px;
+  box-shadow: none;
+}
+.sheet .spot-card .close {
+  top: 22px;
+  right: 26px;
+}
+.sheet .spot-card .card-body {
+  padding: 14px 16px 32px;
+}
+.sheet .spot-card h2 {
+  font-size: 18px;
+}
+.sheet .spot-card .desc {
+  font-size: 13.5px;
+}
+/* Title-row actions (shared markup): desktop shows the Must-see text pill
+   and hides the icon-only maps link; the mobile sheet flips both (below). */
+.title-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.gmaps-icon {
+  display: none;
+}
+/* Spot actions, owner-picked from the .context/spot-actions.html sampler:
+   S5 star (icon-only rounded square; on = ink block with yellow star) and
+   M5 maps as a matching square in the title row — the body pill goes away. */
+.sheet .gmaps-btn {
+  display: none;
+}
+.sheet .gmaps-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--surface-alt);
+  color: var(--text);
+}
+.sheet .must-star {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: var(--surface-alt);
+  box-shadow: none;
+}
+.sheet .must-star .must-star-label {
+  display: none;
+}
+.sheet .must-star svg {
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+.sheet .must-star.on {
+  background: var(--surface-alt);
+  border: none;
+}
+.sheet .must-star.on svg {
+  color: var(--yellow);
+  transform: scale(1.18);
+}
+.sheet .know-section,
+.sheet .plan-why {
+  border: none;
+  box-shadow: none;
+  background: var(--surface-alt);
+  border-radius: 14px;
+}
+
+/* Itinerary: the boxed day cards flatten into an Airbnb-style timeline —
+   photo, badge, title on the page itself; the hairline between stops stays. */
+.sheet .overview {
+  padding: 12px 16px 40px;
+}
+.sheet .ov-head {
+  margin-bottom: 12px;
+}
+.sheet .ov-head h3 {
+  font-size: 15px;
+}
+.sheet .ov-card,
+.sheet .ov-card:hover,
+.sheet .ov-card.open {
+  background: var(--surface);
+  border-radius: 18px;
+  box-shadow: 0 1px 2px rgba(16, 17, 26, 0.05), 0 6px 18px rgba(16, 17, 26, 0.06);
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+/* Day row: text on the left, a small rounded photo tucked on the right —
+   a compact card, not a big cover banner. */
+.sheet .ov-card-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+}
+.sheet .ov-cover {
+  order: 2;
+  width: 92px;
+  height: 92px;
+  flex-shrink: 0;
+  border-radius: 12px;
+}
+.sheet .ov-card-text {
+  order: 1;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+}
+.sheet .ov-day-badge {
+  border: none;
+  background: none;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-soft);
+}
+.sheet .ov-title {
+  margin-top: 5px;
+  font-size: 15px;
+}
+/* T1 (owner pick): no rail on the phone — the DAY labels sequence the
+   cards, and the freed gutter goes back to the cards themselves. */
+.sheet .ov-marker {
+  display: none;
+}
+/* The category chips add clutter the phone card doesn't need. */
+.sheet .ov-chips {
+  display: none;
+}
+.sheet .ov-stops {
+  padding: 8px 14px 14px;
+}
+.sheet .ov-stops::before {
+  left: 14px;
+  right: 14px;
+}
+.sheet .ov-rationale-teaser {
+  margin-top: 6px;
+  font-size: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ---- Agent zero states, owner-picked Z2 + Z2-b from
+   .context/agent-options.html. Message styling itself stays as-is (C1). ---- */
+
+/* Sample-trip nudge: the centered fan hero becomes an editorial block —
+   left-aligned headline, leaning photo strip, CTA under it. */
+.sheet .planner-nudge {
+  align-items: flex-start;
+  text-align: left;
+  padding: 6px 2px 2px;
+}
+.sheet .nudge-stack {
+  order: 1; /* headline + sub (DOM order 0) read first */
+  height: auto;
+  display: flex;
+  margin: 2px 0 14px;
+}
+.sheet .nudge-card {
+  position: static;
+  width: 58px;
+  height: 74px;
+  border-width: 3px;
+  border-radius: 10px;
+  margin-right: -10px;
+  animation: none;
+}
+.sheet .nudge-card.left {
+  transform: rotate(-4deg);
+}
+.sheet .nudge-card.right {
+  transform: rotate(3deg);
+}
+.sheet .nudge-card.front {
+  width: 58px;
+  height: 74px;
+  transform: rotate(-2deg);
+}
+.sheet .nudge-title {
+  font-size: 20px;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+.sheet .nudge-cta {
+  order: 2;
+  width: auto;
+  padding: 10px 20px;
+  font-size: 13px;
+}
+.sheet .nudge-alt {
+  order: 3;
+}
+
+/* Conversational intake (Z2-b): greeting + one scripted question at a time;
+   answers render as ink bubbles like real user messages. */
+.ci {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ci-title {
+  margin: 2px 0 0;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+  color: var(--text);
+}
+.ci-strip {
+  display: flex;
+  padding: 6px 0 2px;
+}
+.ci-strip img {
+  width: 58px;
+  height: 74px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 3px solid #fff;
+  box-shadow: 0 6px 16px rgba(20, 50, 70, 0.16);
+  margin-right: -10px;
+  background: var(--surface-alt);
+}
+.ci-strip img:nth-child(odd) {
+  transform: rotate(-4deg);
+}
+.ci-strip img:nth-child(even) {
+  transform: rotate(3deg);
+}
+.ci-turn {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ci-q {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+}
+.ci-a {
+  align-self: flex-end;
+  max-width: 86%;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 18px 18px 6px 18px;
+  padding: 10px 15px;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+.ci-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+.suggestion-chip.on {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.ci-done {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 14px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ci-skip {
+  border: none;
+  background: none;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  color: var(--text-soft);
+  cursor: pointer;
+}
+.ci-hint {
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
+/* Must-see star on the pins-grid tiles (mobile only) — same rounded-square
+   language as the spot card's S5 star; toggles without opening the spot. */
+.tile-star {
+  display: none;
+}
+.sheet .tile-star {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  display: grid;
+  place-items: center;
+  color: var(--text-soft);
+  box-shadow: 0 1px 3px rgba(16, 17, 26, 0.15);
+}
+.sheet .tile-star svg {
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+.sheet .tile-star.on svg {
+  color: var(--yellow);
+  transform: scale(1.15);
+}
+.sheet .tile-star.on svg path {
+  fill: currentColor;
+}
+
+/* ================= Mobile landing (components/MobileLanding.tsx) =================
+   The phone landing: glass hero over the brand sky, trip form as one card,
+   saved trips behind the top-right control. Deliberately restrained — hairline
+   borders, one accent, no ornament. Desktop keeps its own landing. */
+
+.m-landing {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  color: var(--blue-ink);
+  background: linear-gradient(
+    180deg,
+    #e8f4fa 0%,
+    #cde7f4 20%,
+    #b3dcf0 46%,
+    #d8ebf5 72%,
+    #f7fbfd 90%,
+    #ffffff 100%
+  );
+}
+/* the desktop landing's film grain, slightly quieter */
+.m-landing::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.7;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+.m-landing > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* One glass recipe for every panel on this page. */
+.ml-base .ml-signin,
+.ml-base .ml-trips-btn,
+.ml-base .ml-box,
+.m-landing .profile-chip,
+.ml-close,
+.ml-new {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.34));
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 1px 2px rgba(27, 43, 58, 0.05),
+    0 10px 30px rgba(27, 43, 58, 0.1);
+}
+
+/* ---- Base layer ---- */
+.ml-base {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: calc(18px + env(safe-area-inset-top)) 22px calc(22px + env(safe-area-inset-bottom));
+  transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.35s ease;
+}
+.m-landing.trips-open .ml-base {
+  opacity: 0;
+  transform: scale(0.985);
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+.ml-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+}
+.ml-signin {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--blue-ink);
+  cursor: pointer;
+}
+/* Signed in: page.tsx's ProfileButton, re-dressed in glass. */
+.m-landing .profile-chip {
+  border-radius: 50%;
+  padding: 3px;
+}
+.m-landing .profile-pop {
+  right: 0;
+  left: auto;
+}
+.ml-trips-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border-radius: 999px;
+  padding: 6px 13px 6px 7px;
+  cursor: pointer;
+  font: inherit;
+  color: var(--blue-ink);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.ml-trips-btn:active {
+  transform: scale(0.97);
+}
+.ml-covers {
+  display: flex;
+}
+.ml-covers img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  margin-right: -9px;
+  background: var(--surface-alt);
+}
+.ml-covers img:last-child {
+  margin-right: 0;
+}
+.ml-trips-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.ml-trips-n {
+  color: #5b6b7a;
+  font-weight: 500;
+  margin-left: 1px;
+}
+
+/* ---- Hero ---- */
+.ml-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: clamp(28px, 7dvh, 64px);
+}
+.ml-brand {
+  margin-bottom: clamp(20px, 4dvh, 34px);
+}
+.ml-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(20, 50, 70, 0.08);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #33475a;
+  box-shadow: 0 1px 2px rgba(20, 50, 70, 0.05);
+}
+.ml-stat-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--blue-primary);
+}
+.ml-stat strong {
+  font-weight: 700;
+  color: var(--blue-ink);
+}
+.ml-stat-sep {
+  width: 1px;
+  height: 12px;
+  background: rgba(20, 50, 70, 0.18);
+}
+.ml-hero h1 {
+  margin-top: 20px;
+  font-size: clamp(27px, 7.6vw, 31px);
+  font-weight: 750;
+  letter-spacing: -0.035em;
+  line-height: 1.14;
+  color: #16232f;
+  max-width: 320px;
+}
+.ml-yt {
+  color: #c8352c;
+}
+.ml-sub {
+  margin-top: 12px;
+  max-width: 300px;
+  font-size: 13.5px;
+  font-weight: 450;
+  line-height: 1.6;
+  color: #55606e;
+}
+
+/* ---- Trip form ---- */
+.ml-box {
+  margin-top: clamp(22px, 4.5dvh, 38px);
+  border-radius: 22px;
+  padding: 4px 0 10px;
+}
+.ml-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 20px;
+  height: 57px;
+}
+.ml-row + .ml-row {
+  border-top: 1px solid rgba(20, 50, 70, 0.08);
+}
+.ml-k {
+  width: 74px;
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #16232f;
+}
+.ml-row input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  font: inherit;
+  font-size: 16px; /* iOS: <16px zooms the page on focus */
+  font-weight: 450;
+  color: #16232f;
+}
+.ml-row input::placeholder {
+  color: #8695a4;
+}
+/* DatePickers inside the When row: quiet text triggers, no chrome. */
+.ml-dates {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ml-dates .dp {
+  flex: 1;
+  min-width: 0;
+}
+.ml-dates .dp-label {
+  display: none;
+}
+.ml-dates .dp-trigger {
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 6px 0;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 450;
+  color: #16232f;
+  text-align: left;
+  cursor: pointer;
+}
+.ml-dates .dp-trigger.placeholder {
+  color: #8695a4;
+}
+.ml-dates-sep {
+  color: #b3bec9;
+  flex-shrink: 0;
+}
+.ml-error {
+  margin: 8px 20px 0;
+  font-size: 12.5px;
+  color: var(--red);
+}
+.ml-cta {
+  display: block;
+  width: calc(100% - 20px);
+  margin: 10px auto 0;
+  border: none;
+  border-radius: 15px;
+  padding: 15px;
+  background: linear-gradient(180deg, #262a31, #141416 60%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 8px 22px rgba(16, 17, 26, 0.28);
+  color: #fff;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.ml-cta:active {
+  transform: scale(0.99);
+}
+.ml-cta:disabled {
+  opacity: 0.65;
+}
+.ml-fine {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 11.5px;
+  font-weight: 450;
+  color: #7b8b9a;
+}
+
+/* ---- Saved trips layer ---- */
+.ml-trips {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  padding: calc(18px + env(safe-area-inset-top)) 22px calc(22px + env(safe-area-inset-bottom));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.m-landing.trips-open .ml-trips {
+  opacity: 1;
+  pointer-events: auto;
+}
+.ml-trips-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.ml-trips-head h2 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: #16232f;
+}
+.ml-trips-meta {
+  margin-top: 3px;
+  font-size: 12.5px;
+  font-weight: 450;
+  color: #5b6b7a;
+}
+.ml-close {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #16232f;
+  cursor: pointer;
+}
+.ml-cards {
+  margin-top: 16px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 12px;
+  align-content: start;
+  padding-bottom: 8px;
+}
+/* Airbnb-grid card: rounded square photo, name + meta on the page itself. */
+.ml-card {
+  text-decoration: none;
+  color: inherit;
+  min-width: 0;
+}
+.ml-card-photo {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface-alt);
+  box-shadow: 0 1px 2px rgba(27, 43, 58, 0.08), 0 8px 20px rgba(27, 43, 58, 0.1);
+}
+.ml-card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.ml-card-blank {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #dbe7f0, #c5d8e6);
+}
+/* Status rides the photo, like Airbnb's "Guest favourite" pill. */
+.ml-card-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 999px;
+  padding: 5px 11px;
+  font-size: 11px;
+  font-weight: 650;
+  color: #16232f;
+  box-shadow: 0 1px 4px rgba(27, 43, 58, 0.18);
+}
+.ml-card-name {
+  display: block;
+  margin-top: 9px;
+  font-size: 13.5px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: #16232f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ml-card-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  font-weight: 450;
+  color: #5b6b7a;
+}
+.ml-building {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #e8a13c;
+  animation: ml-pulse 1.4s ease-in-out infinite;
+}
+@keyframes ml-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+.ml-new {
+  grid-column: 1 / -1;
+  border-radius: 16px;
+  padding: 14px;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--blue-ink);
+  cursor: pointer;
+}
+/* Cards flow in as the base recedes — smooth deceleration, no bounce. */
+.ml-card,
+.ml-new {
+  opacity: 0;
+  transform: translateY(22px);
+}
+.m-landing.trips-open .ml-card,
+.m-landing.trips-open .ml-new {
+  animation: ml-flow 0.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+@keyframes ml-flow {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ml-base,
+  .ml-trips {
+    transition: none;
+  }
+  .m-landing.trips-open .ml-card,
+  .m-landing.trips-open .ml-new {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .ml-building {
+    animation: none;
+  }
+}
