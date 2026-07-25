@@ -205,13 +205,15 @@ user-trust lessons that produced it:
    never prose-only), preceded by one short sentence so the stream shows
    progress before a long tool call.
 3b. **Shape before pins (initial build only)** — the first plan is proposed
-   as a rough prose skeleton (area/base + vibe + routing logic per day, no
-   spot ids or times, no tool call), then the user confirms/adjusts the shape,
-   then `update_itinerary` commits the pins. Course-correcting a rough shape is
+   as a **summary document** (§4.6: title, how the days split, then a section
+   per day with area/base + vibe + routing logic, and a `[pins: …]` line naming
+   the day's anchor spots for its photo strip — no times, no stop-by-stop
+   lists, no tool call), then the user confirms/adjusts the shape, then
+   `update_itinerary` commits the pins. Course-correcting a rough shape is
    cheap; reworking a screen of placed pins is overwhelming. "Just plan it"
-   skips it; later edits go straight through the tool. The prose skeleton is
-   the ONE exception to rule 3's "never prose-only" — it precedes the commit,
-   it doesn't replace it.
+   skips it; later edits go straight through the tool. The summary is the ONE
+   exception to rule 3's "never prose-only" — it precedes the commit, it
+   doesn't replace it.
 4. **Times required** (arrival + duration per stop, accounting for
    travel/meals/opening hours); **rationale required** per day; **why
    required** per stop answering: worth it why / this day why / this
@@ -278,6 +280,35 @@ layers fixed it: request `thinking: {type:"adaptive", display:
 italic block → collapsible); persona rule "one sentence before every
 tool call"; staged status cues + elapsed counter in the UI. Note:
 thinking is billed identically whether displayed or not.
+
+### 4.6 The opening summary is a document, and the agent picks its pictures (2026-07-25)
+Seven days of shape is long, and as one prose blob it read like homework. The
+shape message is now a **document**: bold title, a bullet per chunk of the trip,
+then per day a `## Day N — theme` heading, a photo strip, `### Morning/Evening`
+sub-headings, and `---` between days. Reference was a ChatGPT itinerary reply;
+the format is in the persona under "THE SUMMARY DOCUMENT FORMAT".
+
+The photos come from a directive the **model** writes: `[pins: <id>, <id>, <id>]`
+under each day heading, 3–5 spots that "show the day". Two decisions worth
+keeping:
+- **The agent chooses, not a text matcher.** Inferring spots by scanning the
+  prose for names looked tempting but picks whatever is *mentioned*, not what's
+  *representative* — and it can't tell a fortress from a supermarket. The model
+  already knows the ids (it plans with them) and it knows which spot carries the
+  day, so it names them. The renderer resolves ids first and spot *names* as a
+  fallback, because a model that writes a name instead of a uuid should still
+  get its picture (§4.1: prose is steering, so build for the sloppy case).
+- **Unresolvable = render nothing.** A directive naming ids we don't have
+  produces no strip and, critically, never leaks the raw `[pins: …]` text into
+  the conversation.
+
+Only the first three pins get a picture; extras become a `+N` badge on the last
+tile, so a 5-spot day and a 3-spot day are the same shape. Each tile selects its
+spot — same selection as a map pin or grid tile — which makes the summary
+navigation, not decoration. `FormattedText` grew headings (two levels: the day
+at the title step, its parts at body/medium — all a ~400px rail can carry) and
+`---` rules to support it. Cost: the summary is ~3× the old skeleton's output
+tokens; worth it for the moment the plan first lands.
 
 ## 5. Learnings — infrastructure & cost
 
@@ -492,7 +523,7 @@ and any plan-changing turn rewrites the post-breakpoint tail at 1.25×
 | `app/api/trips/[id]/chat/route.ts` | Chat route: persona, context assembly, caching breakpoints, tool schemas (no execute), PostHog capture |
 | `lib/itinerary.ts` | Zod schemas (tool input, incl. `ask_questions`/`find_spots`), validation/normalization, localStorage helpers (itinerary overlay, must-sees), haversine + travel estimates, spot digest builder, day colors, `PlannerContext` |
 | `lib/findSpots.ts` | `find_spots` tool's client orchestration — a scoped mini-`runner.ts`: reuses `/api/discover` + `/api/process-video` + `applyVideoResult` to add new pins for an area/interest mid-chat (4 videos, parallel fetch / apply-at-end, dedup vs existing). Map re-renders via the trip subscription — no callback |
-| `components/PlannerChat.tsx` | Chat UI: useChat wiring, client tool execution, history persistence (save/sanitize/window), reasoning + tool part rendering, must-see bar, auto-growing input, first-trip nudge; `QuestionFlow` tap-through form powering the instant intake card and the `ask_questions` tool (renders when no itinerary yet; `ask_questions` collects answers → `addToolOutput`) |
+| `components/PlannerChat.tsx` | Chat UI: useChat wiring, client tool execution, history persistence (save/sanitize/window), reasoning + tool part rendering, must-see bar, auto-growing input, first-trip nudge; `FormattedText` light-markdown renderer (paragraphs, lists, two heading levels, `---` rules, `[pins: …]` → `PinStrip` photo row, §4.6); `ConversationalIntake` opening intake on every viewport; `QuestionFlow` tap-through form for the `ask_questions` tool |
 | `components/TripView.tsx` | Page shell: 3-panel layout, itinerary/must-see state, day chips, `DayBrief` (timeline + rationale), `SpotCard` ("In your plan" + star) |
 | `components/TripMap.tsx` | Leaflet map: pill markers (star badges), plan overlay (numbered day pins, polylines, stay pin), day-fit behavior |
 | `lib/types.ts` | `Itinerary`/`ItineraryDay`/`ItineraryStop` on `Trip` (stored shapes — optional fields for back-compat); `Trip.ownerId` |

@@ -15,7 +15,7 @@ import {
   lastAssistantMessageIsCompleteWithToolCalls,
   type UIMessage,
 } from "ai";
-import { Itinerary, Trip } from "@/lib/types";
+import { Itinerary, Spot, Trip } from "@/lib/types";
 import { listLocalTrips, readOwnedIds } from "@/lib/clientStore";
 import { fetchServerChat, pushChatDebounced } from "@/lib/sync";
 import { spotCoverUrl } from "@/lib/photoUrl";
@@ -410,15 +410,93 @@ function inline(text: string): ReactNode[] {
 
 const BULLET_RE = /^\s*[-*•]\s+(.*)$/;
 const NUMBERED_RE = /^\s*\d+[.)]\s+(.*)$/;
+const HEADING_RE = /^\s*(#{1,4})\s+(.*?)\s*#*$/;
+const RULE_RE = /^\s*([-*_])\1{2,}\s*$/;
+// The agent names a day's anchor spots and the client turns them into a photo
+// strip: `[pins: <id>, <id>]`. Ids are canonical, but a model that writes the
+// spot's name instead still gets its picture — see resolvePins.
+const PINS_RE = /^\s*\[pins?:\s*([^\]]+)\]\s*$/i;
+// The same line half-streamed. Without this the raw directive flashes as text
+// for the frames between "[pins: 6543…" and its closing bracket.
+const PINS_PARTIAL_RE = /^\s*\[pins?:[^\]]*$/i;
+
+/** Spots for a pins directive, in the order named. Ids first (that's what the
+ *  context hands the model), names as a forgiving fallback; anything that
+ *  matches nothing is dropped rather than rendered as a hole. */
+function resolvePins(list: string, spots: Spot[]): Spot[] {
+  const byId = new Map(spots.map((s) => [s.id, s]));
+  const byName = new Map(spots.map((s) => [s.name.trim().toLowerCase(), s]));
+  const out: Spot[] = [];
+  for (const raw of list.split(",")) {
+    const key = raw.trim();
+    if (!key) continue;
+    const spot = byId.get(key) ?? byName.get(key.toLowerCase());
+    if (spot && !out.includes(spot)) out.push(spot);
+  }
+  return out;
+}
+
+/** A day's photo strip: the first three of the day's spots, each a way into the
+ *  spot itself. A fourth-and-beyond count rides on the last tile so the strip
+ *  says how much the day holds without growing. */
+function PinStrip({
+  spots,
+  onSelectSpot,
+}: {
+  spots: Spot[];
+  onSelectSpot?: (id: string) => void;
+}) {
+  const shown = spots.slice(0, 3);
+  const more = spots.length - shown.length;
+  const photos = shown.map((s) => ({ spot: s, url: spotCoverUrl(s) }));
+  if (photos.every((p) => !p.url)) return null;
+  return (
+    <div className="pin-strip">
+      {photos.map(({ spot, url }, i) =>
+        url ? (
+          <button
+            type="button"
+            key={spot.id}
+            className="pin-shot"
+            title={spot.name}
+            aria-label={`Open ${spot.name}`}
+            onClick={() => onSelectSpot?.(spot.id)}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={url}
+              alt=""
+              onError={(e) => {
+                e.currentTarget.closest("button")?.remove();
+              }}
+            />
+            {more > 0 && i === photos.length - 1 && (
+              <span className="pin-more">+{more}</span>
+            )}
+          </button>
+        ) : null
+      )}
+    </div>
+  );
+}
 
 /**
  * Renders the model's light markdown as real blocks so replies read like a
- * chat, not one wall of text: blank lines separate paragraphs, and runs of
- * "- "/"1. " lines become <ul>/<ol>. The vertical rhythm is what gives the
- * panel its breathing space — a full markdown library isn't worth the weight
- * for the handful of constructs the persona actually writes.
+ * chat, not one wall of text: blank lines separate paragraphs, runs of
+ * "- "/"1. " lines become <ul>/<ol>, "## " headings and "---" rules give the
+ * opening plan summary its document structure, and a `[pins: …]` line becomes
+ * the day's photo strip. A full markdown library isn't worth the weight for the
+ * handful of constructs the persona actually writes.
  */
-function FormattedText({ text }: { text: string }) {
+function FormattedText({
+  text,
+  spots = [],
+  onSelectSpot,
+}: {
+  text: string;
+  spots?: Spot[];
+  onSelectSpot?: (id: string) => void;
+}) {
   const lines = text.replace(/\r\n/g, "\n").split("\n");
   const blocks: ReactNode[] = [];
   let para: string[] = [];
@@ -457,6 +535,45 @@ function FormattedText({ text }: { text: string }) {
     if (!line.trim()) {
       flushPara();
       flushList();
+      continue;
+    }
+    const heading = line.match(HEADING_RE);
+    if (heading) {
+      flushPara();
+      flushList();
+      // Two levels are all a 400px column can carry: the day (title step) and
+      // its parts (body, medium).
+      const level = heading[1].length <= 2 ? 1 : 2;
+      blocks.push(
+        <div key={blocks.length} className={`pm-h pm-h${level}`}>
+          {inline(heading[2])}
+        </div>
+      );
+      continue;
+    }
+    if (RULE_RE.test(line)) {
+      flushPara();
+      flushList();
+      blocks.push(<hr key={blocks.length} className="pm-rule" />);
+      continue;
+    }
+    if (PINS_PARTIAL_RE.test(line)) {
+      flushPara();
+      flushList();
+      continue;
+    }
+    const pins = line.match(PINS_RE);
+    if (pins) {
+      flushPara();
+      flushList();
+      const picked = resolvePins(pins[1], spots);
+      // A directive naming nothing we have renders as nothing — never as the
+      // raw text, which would leak the syntax into the conversation.
+      if (picked.length > 0) {
+        blocks.push(
+          <PinStrip key={blocks.length} spots={picked} onSelectSpot={onSelectSpot} />
+        );
+      }
       continue;
     }
     const bullet = line.match(BULLET_RE);
@@ -508,12 +625,15 @@ export default function PlannerChat({
   itinerary,
   mustSeeIds,
   onItineraryChange,
+  onSelectSpot,
 }: {
   trip: Trip;
   isLocal: boolean;
   itinerary: Itinerary | null;
   mustSeeIds: string[];
   onItineraryChange: (itin: Itinerary) => void;
+  /** Opens a spot from the summary's photo strips. */
+  onSelectSpot?: (id: string) => void;
 }) {
   const initialMessages = useMemo(() => loadChat(trip.id), [trip.id]);
   const [input, setInput] = useState("");
@@ -906,7 +1026,11 @@ export default function PlannerChat({
               if (part.type === "text") {
                 return (
                   <div key={i} className="pm-text">
-                    <FormattedText text={part.text} />
+                    <FormattedText
+                      text={part.text}
+                      spots={trip.spots}
+                      onSelectSpot={onSelectSpot}
+                    />
                   </div>
                 );
               }

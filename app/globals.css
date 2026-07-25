@@ -3834,6 +3834,83 @@ button {
 .pm-text li:last-child {
   margin-bottom: 0;
 }
+
+/* ---- The opening plan summary, as a document ----
+   The first plan reads long: seven days of shape. Headings, rules, and a photo
+   strip per day turn that wall into something skimmable — a day you can find
+   at a glance instead of a paragraph you have to parse. Two heading levels is
+   all a 400px column can carry: the day at the title step, its parts at body
+   weight. */
+.pm-h {
+  color: var(--text);
+  letter-spacing: var(--ls-ui);
+}
+.pm-h1 {
+  margin: 0.2em 0 0.55em;
+  font-size: var(--fs-title);
+  font-weight: var(--fw-medium);
+  line-height: 1.25;
+}
+.pm-h2 {
+  margin: 0.9em 0 0.4em;
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
+}
+.pm-h:first-child {
+  margin-top: 0;
+}
+.pm-rule {
+  margin: 1.1em 0;
+  border: none;
+  border-top: 1px solid var(--line);
+}
+
+/* The day's anchor spots. Each tile is a way into the spot — same selection as
+   a map pin or a grid tile — so the summary is navigation, not decoration. */
+.pin-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 0 0 0.8em;
+}
+.pin-shot {
+  position: relative;
+  padding: 0;
+  border: none;
+  background: var(--surface-alt);
+  border-radius: 10px;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.pin-shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.pin-shot:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(16, 17, 26, 0.16);
+}
+/* How many more spots the day holds, on the last tile — the strip stays three
+   wide however long the day is. */
+.pin-more {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  display: grid;
+  place-items: center;
+  min-width: 26px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--radius-chip);
+  background: rgba(16, 17, 26, 0.72);
+  color: #fff;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+}
 /* Transient progress chips (sketching, checking travel times) — quiet and
    neutral, on-palette. Not success: they're in-flight status, so no green. */
 .pm-tool {
