@@ -41,13 +41,26 @@ let mode: Mode | null = null;
 let probe: Promise<Mode> | null = null;
 
 /** Resolved once per page load. Callers that can't await it (click handlers)
- *  don't have to: writes queue behind it. */
+ *  don't have to: writes never block on it (see `writeThrough`). */
 export function tripStoreMode(): Promise<Mode> {
   if (mode) return Promise.resolve(mode);
   probe ??= getSession()
     .then((s) => (mode = s.enabled && s.user ? "server" : "local"))
     .catch(() => (mode = "local"));
   return probe;
+}
+
+/** Where a write for THIS trip goes, decided without awaiting anything. The
+ *  session probe is a network call, and a network call can hang: when it did,
+ *  every save queued behind it forever and a build sat there with all its
+ *  videos spinning and not one request sent. An ownerId is a good enough answer
+ *  on its own — the trip already belongs to an account — and an ownerless trip
+ *  belongs in localStorage anyway, which is where it goes if we can't tell yet.
+ *  Either way the probe keeps resolving in the background for later writes. */
+function writeTarget(trip: Trip): Mode {
+  if (mode) return mode;
+  void tripStoreMode();
+  return trip.ownerId ? "server" : "local";
 }
 
 // --- Errors ---
@@ -74,11 +87,29 @@ export function tripSaveError(): string | null {
 
 // --- Reads ---
 
-/** The trip as this tab currently understands it. Synchronous: the working
- *  copy, falling back to localStorage for signed-out users and for a trip this
- *  tab created before `loadTrip` ran. */
+/** The LIVE trip, for code that mutates it: read, change, `saveTrip`. Build
+ *  workers run four at a time and rely on sharing this one object — each folds
+ *  its video into the same arrays, so cloning here would drop merges. */
 export function peekTrip(id: string): Trip | null {
   return working.get(id) ?? getLocalTrip(id);
+}
+
+/** The trip as an immutable copy, for React state.
+ *
+ *  Not a nicety. Callers mutate the live object in place (the build sets
+ *  `videos[i].status`, the agent pushes onto `spots`), so handing that object to
+ *  `setTrip` means the value React is already holding changes underneath it:
+ *  the update looks like nothing changed, React skips the render, and the screen
+ *  freezes while the work continues behind it. That is what left a build showing
+ *  twenty spinning videos and "0 of 20" until it finished and swapped to the map.
+ *  Copying just the top level doesn't help — the arrays the screen reads are the
+ *  ones being mutated.
+ *
+ *  Invisible before trips moved to the account: every read was a fresh
+ *  `JSON.parse` of localStorage, so each render got its own copy for free. */
+export function snapshotTrip(id: string): Trip | null {
+  const live = peekTrip(id);
+  return live ? structuredClone(live) : null;
 }
 
 /** Fetch a trip into the working copy. Server mode asks the account first and
@@ -94,19 +125,19 @@ export async function loadTrip(id: string): Promise<Trip | null> {
   const cached = working.get(id);
   if (cached) {
     if (at === "server") void revalidate(id);
-    return cached;
+    return structuredClone(cached);
   }
   if (at === "server") {
     const fresh = await fetchTrip(id);
     if (fresh && fresh !== "unchanged") {
       working.set(id, fresh);
       notifyTripsChanged();
-      return fresh;
+      return structuredClone(fresh);
     }
   }
   const local = getLocalTrip(id);
   if (local) working.set(id, local);
-  return local;
+  return local ? structuredClone(local) : null;
 }
 
 /** The route's ETag per trip, so a re-read of an unchanged trip costs a header
@@ -161,7 +192,7 @@ const dirty = new Set<string>();
 const inFlight = new Map<string, Promise<boolean>>();
 
 async function writeThrough(trip: Trip): Promise<boolean> {
-  const at = await tripStoreMode();
+  const at = writeTarget(trip);
   if (at === "local") {
     const ok = saveLocalTrip(trip);
     reportError(
@@ -176,6 +207,10 @@ async function writeThrough(trip: Trip): Promise<boolean> {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(trip),
+        // Bounded on purpose: an unanswered request is indistinguishable from a
+        // slow one, and the build is waiting on this to decide whether to carry
+        // on. A timeout is a retryable failure; a hang is a dead build.
+        signal: AbortSignal.timeout(30_000),
       });
       if (res.ok) {
         etags.delete(trip.id); // the account's copy just changed
@@ -195,19 +230,23 @@ async function writeThrough(trip: Trip): Promise<boolean> {
 
 /** Coalesced write-behind: one request per trip at a time, and a save that
  *  lands mid-flight re-sends the newest copy when it finishes. Callers get a
- *  promise that covers their own write. */
+ *  promise that covers their own write.
+ *
+ *  Retiring the drain and finding it clean happen in ONE synchronous block on
+ *  purpose. With the `dirty` check and `inFlight.delete` in separate ticks, a
+ *  save landing between them would be handed this promise — already past its
+ *  last check — and reported as durable without ever being written. */
 async function drain(id: string): Promise<boolean> {
   let ok = true;
-  try {
-    while (dirty.delete(id)) {
-      const trip = working.get(id);
-      if (!trip) break;
-      ok = (await writeThrough(trip)) && ok;
+  for (;;) {
+    const pending = dirty.delete(id);
+    const trip = pending ? working.get(id) : undefined;
+    if (!trip) {
+      inFlight.delete(id);
+      return ok;
     }
-  } finally {
-    inFlight.delete(id);
+    ok = (await writeThrough(trip)) && ok;
   }
-  return ok;
 }
 
 /** Store a trip. The working copy and subscribers update synchronously; the

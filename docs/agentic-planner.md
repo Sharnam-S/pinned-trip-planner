@@ -125,6 +125,16 @@ build, while the same trips sat safely in Neon. Reported from prod with a
   losing a trip is far worse than a full quota. It skips a trip mid-build to
   avoid racing the runner, and it's a no-op once nothing is left.
 - **Signed out is unchanged**: localStorage, no API writes, same quota message.
+- **Two kinds of read** (§5.8): `peekTrip` returns the LIVE object for code that
+  mutates it (the build's four workers share one object on purpose);
+  `snapshotTrip` returns an immutable copy for React state, because handing the
+  mutated object to `setState` means the update is invisible and the screen
+  freezes. `loadTrip` returns snapshots for the same reason.
+- **Nothing on the write path awaits the session probe** (§5.8): `/api/me` is a
+  network call and network calls hang; when it did, every save queued behind it.
+  An ownerId is enough to know a trip belongs to an account, and the PUT itself
+  is bounded by a 30s timeout — a timeout is a retryable failure, a hang is a
+  dead build.
 - **Reads are cached-first, then revalidated** (2026-07-25b). `loadTrip` returns
   the in-memory copy immediately and refreshes behind the render, so returning to
   a trip in the same session paints in ~40ms instead of re-downloading the whole
@@ -577,6 +587,41 @@ and any plan-changing turn rewrites the post-breakpoint tail at 1.25×
   (2026-01/02) — API key (later BYOK) is the only compliant path.
 - `claude-sonnet-5` is the right model tier here; deeper thinking is a
   feature for this use case, `effort` is the knob if cost ever bites.
+
+### 5.8 React state must not be the object you mutate (2026-07-25c)
+Reported: a 20-video build sat on "0 of 20" with every video spinning, and the
+trip turned out to be fully built — reload and the map was there. Not the
+network, not the build: **the loader never re-rendered.**
+
+`TripView` kept the store's live trip in state, and everything that writes a trip
+mutates it in place (the runner sets `videos[i].status`, the agent pushes onto
+`spots`). So `setTrip(peekTrip(id))` handed React the object it was already
+holding: `Object.is` equal, update skipped, screen frozen — while the same
+mutations sailed into Postgres. It only *looked* intermittent because any
+unrelated re-render would suddenly reveal the mutated state.
+
+Invisible before §2c because every read was a fresh `JSON.parse` of localStorage,
+so each render got its own copy for free. The store now separates the two kinds
+of read: **`peekTrip` is the live object** (build workers run four at a time and
+rely on sharing it — cloning there would drop merges) and **`snapshotTrip` is an
+immutable copy for React**. A shallow copy is not enough: the arrays the screen
+reads are the ones being mutated.
+
+Verified before/after with the render log: without it, 6/6 videos folded and 8
+store notifications produced 4 renders, all reading "0 done"; with it, renders
+climb 0 → 1 → 2 → 4 → 5 → 6.
+
+Two harness traps this cost time on, both worth remembering:
+- **Assert on renders, not on sampled DOM.** The first three versions of the test
+  polled the DOM and "passed" while the screen was frozen, because the build
+  finished between samples. `console.log` in the component and assert on the
+  sequence.
+- **Playwright serializes route handlers per page.** `await` inside one queues
+  every other matching request behind it, so a "parallel" build under test runs
+  serially and a stall in the harness reads as a stall in the product.
+- And the screen under test disappears on its own: the build screen is gated on
+  `spots.length === 0`, so fakes that return spots replace it within a frame.
+  Fakes that return none keep it on screen.
 
 ### 5.7 Measure the wire, not the promise (2026-07-25)
 Verifying the ETag work, `page.on("response")` reported **200** for requests the

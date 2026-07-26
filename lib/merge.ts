@@ -42,7 +42,11 @@ export function pendingVideo(id: string, title = "", channelName = ""): TripVide
     title,
     channelName,
     channelAvatar: "",
-    thumbnail: "",
+    // Derived from the id, not left blank until the video is read: a build shows
+    // its whole curated lineup for minutes, and an empty string meant twenty
+    // grey rectangles that looked like broken images. /api/process-video
+    // replaces this with the maxres art once it has read the video.
+    thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
     status: "pending" as const,
   };
 }
