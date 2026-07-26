@@ -195,19 +195,23 @@ async function writeThrough(trip: Trip): Promise<boolean> {
 
 /** Coalesced write-behind: one request per trip at a time, and a save that
  *  lands mid-flight re-sends the newest copy when it finishes. Callers get a
- *  promise that covers their own write. */
+ *  promise that covers their own write.
+ *
+ *  Retiring the drain and finding it clean happen in ONE synchronous block on
+ *  purpose. With the `dirty` check and `inFlight.delete` in separate ticks, a
+ *  save landing between them would be handed this promise — already past its
+ *  last check — and reported as durable without ever being written. */
 async function drain(id: string): Promise<boolean> {
   let ok = true;
-  try {
-    while (dirty.delete(id)) {
-      const trip = working.get(id);
-      if (!trip) break;
-      ok = (await writeThrough(trip)) && ok;
+  for (;;) {
+    const pending = dirty.delete(id);
+    const trip = pending ? working.get(id) : undefined;
+    if (!trip) {
+      inFlight.delete(id);
+      return ok;
     }
-  } finally {
-    inFlight.delete(id);
+    ok = (await writeThrough(trip)) && ok;
   }
-  return ok;
 }
 
 /** Store a trip. The working copy and subscribers update synchronously; the
