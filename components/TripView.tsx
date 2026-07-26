@@ -698,9 +698,17 @@ export default function TripView({
   tripId: string;
   embed?: boolean;
 }) {
-  const [trip, setTrip] = useState<Trip | null>(null);
+  // Seeded synchronously from the store: a trip this tab just created (the
+  // landing page's Build button) is already in memory, so the first render can
+  // be the real thing. Starting at null meant one paint of the loading skeleton
+  // before the build screen — a flash of the wrong screen on every build.
+  const [trip, setTrip] = useState<Trip | null>(() => snapshotTrip(tripId));
   // null = still checking localStorage; then the trip is local or a sample
-  const [isLocal, setIsLocal] = useState<boolean | null>(null);
+  // Anything already in the store is this user's own trip (samples are fetched,
+  // never stored), so seeding `trip` seeds this too.
+  const [isLocal, setIsLocal] = useState<boolean | null>(() =>
+    peekTrip(tripId) ? true : null
+  );
   const [notFound, setNotFound] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [bounds, setBounds] = useState<MapBounds | null>(null);
