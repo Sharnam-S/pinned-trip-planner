@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { Trip, TripVideo } from "@/lib/types";
 import { Logo } from "./Logo";
 
@@ -116,12 +117,53 @@ function BuildVideoCard({ v }: { v: TripVideo }) {
   );
 }
 
+/** Seconds the current step has been running, counted by ticks rather than
+ *  clock arithmetic: reading a clock (or a ref) during render is impure, and
+ *  writing state from an effect body is the cascade React warns about — so the
+ *  only write lives in the interval callback, which is neither. The step key
+ *  rides along in state, so a change reads as 0 on the very next render instead
+ *  of waiting for a tick. Browsers throttle timers in hidden tabs, so this can
+ *  lag while the tab is in the background; for "is this step still alive?" that
+ *  is fine. */
+function useStepSeconds(stepKey: string): number {
+  const [tick, setTick] = useState({ key: stepKey, seconds: 0 });
+  const keyRef = useRef(stepKey);
+  useEffect(() => {
+    keyRef.current = stepKey;
+  }, [stepKey]);
+  useEffect(() => {
+    const t = setInterval(() => {
+      setTick((prev) =>
+        prev.key === keyRef.current
+          ? { key: prev.key, seconds: prev.seconds + 1 }
+          : { key: keyRef.current, seconds: 0 }
+      );
+    }, 1000);
+    return () => clearInterval(t);
+  }, []);
+  return tick.key === stepKey ? tick.seconds : 0;
+}
+
+/** "18s" under a minute, "2m 04s" past it — a ten-minute build shouldn't read
+ *  as "612s". */
+function formatSeconds(total: number): string {
+  if (total < 60) return `${total}s`;
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}m ${String(s).padStart(2, "0")}s`;
+}
+
 export default function BuildingScreen({ trip }: { trip: Trip }) {
   const failed = trip.status === "error";
   // Stage 1 until the discover call lands videos; stage 2 while we read them.
   // Stage 3 never activates here — the first pinned spot replaces this whole
   // screen with the live map, which is exactly the reveal we want.
   const curating = trip.videos.length === 0;
+  // Seconds on the CURRENT step. A long step and a dead one look identical
+  // otherwise — the same reason the chat shows an elapsed counter while the
+  // agent thinks. Restarts when the step changes, so it reads as "this step is
+  // taking a while", not "the build has been running a while".
+  const onStep = useStepSeconds(curating ? "curating" : "reading");
   const total = trip.videos.length;
   const settled = trip.videos.filter(
     (v) => v.status === "done" || v.status === "error"
@@ -199,7 +241,14 @@ export default function BuildingScreen({ trip }: { trip: Trip }) {
                     </div>
                     <div className="bstep-desc">{s.desc}</div>
                     {s.state === "active" && trip.progress && (
-                      <div className="bstep-live">{trip.progress}</div>
+                      <div className="bstep-live">
+                        {trip.progress}
+                        {/* Held back a few seconds so a quick step doesn't
+                            flash a counter nobody needed. */}
+                        {onStep >= 5 && (
+                          <span className="bstep-elapsed">{formatSeconds(onStep)}</span>
+                        )}
+                      </div>
                     )}
                     {i === 1 && s.state === "active" && total > 0 && (
                       <div className="bstep-meter">

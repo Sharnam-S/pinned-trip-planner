@@ -121,12 +121,17 @@ export function snapshotTrip(id: string): Trip | null {
  *  behind the render: reopening a trip in the same tab used to re-download the
  *  whole document (~240KB) before anything appeared. */
 export async function loadTrip(id: string): Promise<Trip | null> {
-  const at = await tripStoreMode();
+  // Answer from memory before awaiting anything. The session probe is a network
+  // call, and a trip we already hold doesn't need it — waiting made opening a
+  // just-built trip show the loading skeleton first.
   const cached = working.get(id);
   if (cached) {
-    if (at === "server") void revalidate(id);
+    void tripStoreMode().then((at) => {
+      if (at === "server") void revalidate(id);
+    });
     return structuredClone(cached);
   }
+  const at = await tripStoreMode();
   if (at === "server") {
     const fresh = await fetchTrip(id);
     if (fresh && fresh !== "unchanged") {

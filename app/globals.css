@@ -3299,6 +3299,18 @@ button {
   padding: 6px 10px;
 }
 
+/* How long this step has been running. Quieter than the message it follows —
+   it's reassurance that something is still happening, not a headline. Tabular
+   figures so the text doesn't jitter as the seconds tick. */
+.bstep-elapsed {
+  margin-left: 7px;
+  padding-left: 7px;
+  border-left: 1px solid rgba(36, 86, 189, 0.22);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  opacity: 0.72;
+}
+
 /* White dot + radiating ring inside the active step's blue circle */
 .bstep-pulse {
   position: relative;
