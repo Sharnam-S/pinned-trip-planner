@@ -31,6 +31,10 @@ async function post<T>(url: string, body: unknown): Promise<T> {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
+    // The route's own ceiling is maxDuration=300s. Past that the request is
+    // never coming back, and a spinner that spins forever is worse than a
+    // video marked failed and swapped for one from the bench.
+    signal: AbortSignal.timeout(300_000),
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {

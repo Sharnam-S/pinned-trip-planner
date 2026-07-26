@@ -29,16 +29,22 @@ const listeners = new Set<(s: SessionState) => void>();
 
 function fetchSession(): Promise<SessionState> {
   if (!inflight) {
-    inflight = fetch("/api/me")
+    // Bounded and retryable: this promise is cached, so an unanswered /api/me
+    // used to be cached forever, and everything awaiting it waited forever.
+    inflight = fetch("/api/me", { signal: AbortSignal.timeout(8000) })
       .then((r) => r.json())
       .then((data) => ({
         loading: false,
         enabled: Boolean(data.enabled),
         user: (data.user as SessionUser) ?? null,
       }))
-      .catch(() => ({ loading: false, enabled: false, user: null }))
+      .catch(() => {
+        // Don't cache a failure — the next caller gets a fresh attempt.
+        inflight = null;
+        return { loading: false, enabled: false, user: null } as SessionState;
+      })
       .then((state: SessionState) => {
-        cached = state;
+        if (state.enabled || state.user) cached = state;
         listeners.forEach((l) => l(state));
         return state;
       });

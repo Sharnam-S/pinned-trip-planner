@@ -14,7 +14,13 @@ import {
 } from "@/lib/types";
 import { CATEGORY_EMOJI, formatTimestamp, youtubeLink } from "@/lib/categories";
 import { publishTrip, readOwnedIds } from "@/lib/clientStore";
-import { loadTrip, peekTrip, saveTrip, subscribeTrips } from "@/lib/tripStore";
+import {
+  loadTrip,
+  peekTrip,
+  saveTrip,
+  snapshotTrip,
+  subscribeTrips,
+} from "@/lib/tripStore";
 import { addVideosToTrip, ensureRunning, isRunning } from "@/lib/runner";
 import { parseVideoId } from "@/lib/links";
 import {
@@ -846,8 +852,10 @@ export default function TripView({
         if (mine.status === "processing" && !isRunning(tripId)) {
           ensureRunning(tripId);
         }
+        // A snapshot, not the live object: the build mutates that one in place,
+        // and React can't see a change in a value it already holds.
         unsubscribe = subscribeTrips(() => {
-          const t = peekTrip(tripId);
+          const t = snapshotTrip(tripId);
           if (t) setTrip(t);
         });
         return;
