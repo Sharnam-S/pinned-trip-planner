@@ -13,6 +13,7 @@ import {
 } from "@/lib/clientStore";
 import { newSearchTrip } from "@/lib/merge";
 import { deleteTrip, saveTrip } from "@/lib/tripStore";
+import { tripLabel } from "@/lib/tripName";
 import { ensureRunning } from "@/lib/runner";
 import { SessionUser, signIn, signOut, useSession } from "@/lib/useSession";
 import type { TripSummary } from "@/lib/db";
@@ -88,7 +89,7 @@ interface RailTrip {
 function railFromTrip(t: Trip): RailTrip {
   return {
     id: t.id,
-    name: t.name,
+    name: tripLabel(t),
     status: t.status,
     spotCount: t.spots.length,
     videoCount: t.videos.length,
