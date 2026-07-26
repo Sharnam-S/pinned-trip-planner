@@ -1356,6 +1356,55 @@ button {
   text-overflow: ellipsis;
 }
 
+/* Double-click renames. No chrome until you're over it — the title is read far
+   more often than it's edited — then a soft plate says "this is a field". */
+.trip-name-text.editable {
+  cursor: text;
+  border-radius: 6px;
+  /* Inset padding: the plate breathes around the text without nudging the
+     title off its baseline or away from the flag. */
+  margin: -2px -6px;
+  padding: 2px 6px;
+  transition: background 120ms ease;
+}
+
+.trip-name-text.editable:hover,
+.trip-name-text.editable:focus-visible {
+  background: var(--surface-alt);
+}
+
+/* Sits exactly where the text was: same font, same box, so the swap on
+   double-click doesn't move a pixel. Width comes from the sizer below. */
+.trip-name-input {
+  min-width: 60px;
+  max-width: 100%;
+  margin: -2px -7px;
+  padding: 2px 6px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  font: inherit;
+  color: inherit;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+/* Same focus language as the facet editors' text input. */
+.trip-name-input:focus {
+  border-color: var(--text);
+}
+
+/* Measures the draft so the input can size to its content. Out of flow and
+   out of the a11y tree — it exists only to be measured. */
+.trip-name-sizer {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: pre;
+  /* The input's horizontal padding, so the measured width fits the text. */
+  padding: 0 14px;
+}
+
 .trip-facets {
   position: relative;
   display: flex;

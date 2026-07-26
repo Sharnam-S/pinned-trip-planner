@@ -10,6 +10,8 @@ export function asValidTrip(input: unknown): Trip | null {
   const t = input as Record<string, unknown>;
   if (typeof t.id !== "string" || !/^[\w-]{6,64}$/.test(t.id)) return null;
   if (typeof t.name !== "string" || t.name.length > 200) return null;
+  if (t.label !== undefined && (typeof t.label !== "string" || t.label.length > 200))
+    return null;
   if (!Array.isArray(t.spots) || !Array.isArray(t.videos)) return null;
   if (t.spots.length > 500 || t.videos.length > 100) return null;
   for (const s of t.spots) {

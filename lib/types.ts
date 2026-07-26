@@ -148,6 +148,10 @@ export interface Trip {
    *  trips, samples, and copies published to the community library. */
   ownerId?: string;
   name: string;
+  /** A title the user typed over the top of `name` ("First 3 days in Sri
+   *  Lanka"). Purely a label: `name` stays the resolved destination, so the
+   *  map, the flag and the planner's context are untouched by a rename. */
+  label?: string;
   destination: Destination | null;
   createdAt: string;
   status: TripStatus;

@@ -19,6 +19,7 @@ import {
   partyLabel,
   type TripFacets,
 } from "@/lib/tripFacets";
+import TripName from "./TripName";
 import { ICON_NAV } from "@/lib/ui";
 import type { TripParty } from "@/lib/types";
 
@@ -289,6 +290,7 @@ export default function TripHeader({
   flag,
   facets,
   onChange,
+  onRename,
   action,
 }: {
   name: string;
@@ -296,6 +298,9 @@ export default function TripHeader({
   flag?: string | null;
   facets: TripFacets;
   onChange: (patch: Partial<TripFacets>) => void;
+  /** Absent while the trip is still loading — the title is read-only until we
+   *  know where a rename would be stored. */
+  onRename?: (name: string) => void;
   /** Share control — the header's rightmost slot. */
   action?: ReactNode;
 }) {
@@ -409,15 +414,12 @@ export default function TripHeader({
 
   return (
     <header className="trip-header">
-      <h1 className="trip-header-name">
-        {/* Decorative: the country is already in the name beside it. */}
-        {flag && (
-          <span className="trip-flag" aria-hidden="true">
-            {flag}
-          </span>
-        )}
-        <span className="trip-name-text">{name}</span>
-      </h1>
+      <TripName
+        name={name}
+        flag={flag}
+        onRename={onRename}
+        className="trip-header-name"
+      />
 
       <div className="trip-facets" ref={rowRef}>
         {FACETS.map((f) => (

@@ -38,6 +38,7 @@ import {
   saveFacets,
   type TripFacets,
 } from "@/lib/tripFacets";
+import { loadTripLabel, saveTripLabel } from "@/lib/tripName";
 import { tripFlag } from "@/lib/flags";
 import { ICON_CARD, ICON_NAV } from "@/lib/ui";
 import { useIsMobile } from "@/lib/useIsMobile";
@@ -45,6 +46,7 @@ import BuildingScreen from "./BuildingScreen";
 import BottomSheet, { SheetSnap } from "./BottomSheet";
 import PlannerChat from "./PlannerChat";
 import TripHeader from "./TripHeader";
+import TripName from "./TripName";
 import type { MapBounds, PlanRender } from "./TripMap";
 
 const TripMap = dynamic(() => import("./TripMap"), { ssr: false });
@@ -395,6 +397,7 @@ function TilePhotos({ spot, tripId, local }: { spot: Spot; tripId: string; local
 // `identity` is what tells the two apart.
 function TripHead({
   trip,
+  name,
   meta,
   identity,
   flag,
@@ -408,8 +411,11 @@ function TripHead({
   pinnedId,
   onHoverVideo,
   onClickVideo,
+  onRename,
 }: {
   trip: Trip;
+  /** Display title — the user's rename when they've given one (lib/tripName). */
+  name: string;
   meta: string;
   identity: boolean;
   flag: string | null;
@@ -423,6 +429,7 @@ function TripHead({
   pinnedId: string | null;
   onHoverVideo: (id: string | null) => void;
   onClickVideo: (id: string) => void;
+  onRename?: (name: string) => void;
 }) {
   const count = trip.videos.length;
   return (
@@ -433,14 +440,12 @@ function TripHead({
       <div className="th-row">
         {identity && (
           <div className="th-id">
-            <h1 className="th-name">
-              {flag && (
-                <span className="trip-flag" aria-hidden="true">
-                  {flag}
-                </span>
-              )}
-              <span className="trip-name-text">{trip.name}</span>
-            </h1>
+            <TripName
+              name={name}
+              flag={flag}
+              onRename={onRename}
+              className="th-name"
+            />
             <div className="th-meta">{meta}</div>
           </div>
         )}
@@ -883,6 +888,18 @@ export default function TripView({
     setFacets(loadFacets(trip));
   }
 
+  // Same trick for the title. Renaming a sample trip writes a localStorage
+  // overlay rather than the trip, so the shown name can't just be read off
+  // `trip` — but it must still follow `trip` when the runner resolves the
+  // destination mid-build, or when the account syncs a rename from another tab.
+  const nameSource = trip ? `${trip.id}:${trip.label ?? ""}:${trip.name}` : null;
+  const [nameFrom, setNameFrom] = useState<string | null>(null);
+  const [tripName, setTripName] = useState("");
+  if (trip && nameSource !== nameFrom) {
+    setNameFrom(nameSource);
+    setTripName(loadTripLabel(trip));
+  }
+
   // Local trips carry the plan on the Trip object; sample trips keep a
   // per-browser overlay. Freshest of the two wins.
   const itinerary =
@@ -1207,6 +1224,14 @@ export default function TripView({
     saveFacets(tripId, isLocal === true, next);
   };
 
+  // Renaming only ever touches the label (lib/tripName.ts) — the destination,
+  // the map and the flag are the planner's, not the title's. Clearing the
+  // field hands the title back to the destination name.
+  const renameTrip = (name: string) => {
+    saveTripLabel(tripId, isLocal === true, name);
+    setTripName(name.trim() || trip.name);
+  };
+
   // Selecting a spot from anywhere (map pin, grid tile, day brief, overview
   // stop) shows its detail — which lives on the pins tab.
   const selectSpot = (id: string | null) => {
@@ -1263,9 +1288,11 @@ export default function TripView({
   const tripHeadEl = !embed ? (
     <TripHead
       trip={trip}
+      name={tripName}
       // Desktop puts identity in the trip header instead (see below).
       identity={isMobile}
       flag={tripFlag(trip)}
+      onRename={isLocal === null ? undefined : renameTrip}
       meta={[
         `${catFiltered.length} spots`,
         formatTripDates(plannerTrip),
@@ -1742,10 +1769,11 @@ export default function TripView({
           planner needs, and sharing. The landing preview (embed) drops it. */}
       {!embed && (
         <TripHeader
-          name={trip.name}
+          name={tripName}
           flag={tripFlag(trip)}
           facets={facets}
           onChange={updateFacets}
+          onRename={isLocal === null ? undefined : renameTrip}
           action={canShare ? <ShareTrip trip={trip} /> : null}
         />
       )}

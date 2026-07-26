@@ -134,7 +134,9 @@ export async function listTripSummaries(ownerId: string): Promise<TripSummary[]>
   const db = await getDb();
   const rows = await db.query(
     `SELECT t.id,
-            t.data->>'name'            AS name,
+            -- A renamed trip carries a user-typed label over the destination
+            -- name it was built under (lib/tripName.ts).
+            COALESCE(NULLIF(btrim(t.data->>'label'), ''), t.data->>'name') AS name,
             t.data->>'status'          AS status,
             t.data->>'createdAt'       AS created_at,
             t.updated_at               AS updated_at,
