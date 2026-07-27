@@ -154,13 +154,30 @@ the product could only hold one at a time.
 - The spot card gains an **"Also in"** row: half the value of parallel plans is
   seeing that a place survives the choice — or that it's the thing one option is
   *for*.
-- **Cost note (§5.2):** every option rides in the volatile context block in
-  full, every turn. It has to — the tool is a whole-option replace, so the model
-  can only edit an option it can see, and a summarized copy would make it rewrite
-  untouched days from memory. `MAX_PLANS` is what bounds this; four full plans is
-  roughly 6K uncached input tokens a turn. If PostHog ever says that's the top
-  line, the fix is to summarize the *inactive* options and add a tool that loads
-  one in full — not to shrink the active one.
+- **Cost note (§5.2) — the pins are NOT re-billed; the history is.** Measured on
+  the 71-spot Sri Lanka trip: the spot digest is 28.4KB and sits **before** cache
+  breakpoint 1, together with the persona (14.0KB) and the tool schemas. Options
+  live in the volatile block *after* it, so adding a plan cannot invalidate the
+  pins — that prefix keeps reading at ~0.1× for the trip's life. What options
+  cost is the volatile tail: 9.7KB for one plan, 32.4KB for three (~+6.3K
+  uncached tokens a turn, est.). Every option rides along in full because the
+  tool is a whole-option replace — the model can only edit an option it can see,
+  and a summarized copy would make it rewrite untouched days from memory.
+  `MAX_PLANS` is the bound.
+- **The bigger line is ordering, not size.** The volatile block sits *in front of*
+  the conversation history, so any change to it — a plan write, and now also
+  **switching which option is shown** (the `CURRENTLY SHOWN` marker is part of the
+  block) — invalidates breakpoint 2 and re-writes the whole windowed history at
+  1.25×. By mid-session that history is far larger than the options themselves, so
+  it dominates. This is the §5.2 "move itinerary state out of the system tail"
+  micro-opt, now worth more than it was. It is **deferred on purpose**: the fix
+  needs the volatile block to come *after* the history, and a `role: "system"`
+  message inside `messages[]` is Opus-4.8-only — on `claude-sonnet-5` it would
+  have to become a trailing user turn (`<system-reminder>`), which changes how the
+  model weights trip state on a trust-critical agent. Check `llm-total-costs` in
+  PostHog before touching it (§5.5). If the options block itself ever turns out to
+  be the top line, the separate fix is to summarize the *inactive* options and add
+  a tool that loads one in full — not to shrink the active one.
 
 ### 2c. Server-first storage for signed-in users (2026-07-25)
 
