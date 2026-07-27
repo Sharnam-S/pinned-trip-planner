@@ -30,10 +30,15 @@ import {
   spotPhotoUrl,
 } from "@/lib/photoUrl";
 import {
+  MAX_PLANS,
+  activePlan,
   dayColor,
+  discardPlan,
   haversineKm,
-  loadItinerary,
+  loadActivePlanId,
   loadMustSees,
+  loadPlans,
+  saveActivePlanId,
   saveMustSees,
   travelEstimate,
 } from "@/lib/itinerary";
@@ -56,6 +61,12 @@ import TripName from "./TripName";
 import type { MapBounds, PlanRender } from "./TripMap";
 
 const TripMap = dynamic(() => import("./TripMap"), { ssr: false });
+
+/** The most recent edit anywhere in a list of options — how the React override
+ *  and the stored copy are compared for freshness. */
+function newestPlanAt(plans: Itinerary[]): string {
+  return plans.reduce((m, p) => (p.updatedAt > m ? p.updatedAt : m), "");
+}
 
 /** A place returned by the map geocoder (OSM), not one of our scraped spots. */
 interface GeoPlace {
@@ -728,11 +739,20 @@ export default function TripView({
   const [addError, setAddError] = useState("");
   // Category filter: empty = show all. Applies to both the grid and the map.
   const [activeCats, setActiveCats] = useState<SpotCategory[]>([]);
-  // Planner agent: chat panel + the itinerary it maintains + map day filter.
-  // The itinerary is derived from storage each render (localStorage is the
-  // source of truth); the override covers the moment the agent saves, before
-  // any store subscription fires (sample trips have none).
-  const [itineraryOverride, setItineraryOverride] = useState<Itinerary | null>(null);
+  // Planner agent: chat panel + the plan OPTIONS it maintains + map day filter.
+  // A trip holds several parallel itineraries ("east coast only" vs "east,
+  // south, then the airport"); the rail shows one at a time and the map draws
+  // that one. Options are derived from storage each render; the override
+  // covers the moment the agent saves, before any store subscription fires
+  // (sample trips have none — it's the only thing that re-renders them).
+  const [plansOverride, setPlansOverride] = useState<Itinerary[] | null>(null);
+  // Which option is on screen. Per-device (localStorage), not trip data — see
+  // loadActivePlanId.
+  const [activePlanId, setActivePlanId] = useState<string | null>(() =>
+    loadActivePlanId(tripId)
+  );
+  // The side-by-side view: all options stacked so the traveler can pick one.
+  const [comparing, setComparing] = useState(false);
   const [activeDay, setActiveDay] = useState<PlanRender["activeDay"]>("all");
   // Map search: type a place and the map flies to it (Google-Maps style). The
   // category filter now lives in the right rail alongside the pins.
@@ -777,6 +797,8 @@ export default function TripView({
   // the loaded trip, so they can't be read until it lands.
   const [facets, setFacets] = useState<TripFacets>({});
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Lets the "+ option" tab start a sentence in the chat composer.
+  const composeRef = useRef<((text: string) => void) | null>(null);
 
   // Mobile layout: the map is the page background and everything else lives
   // in a snap-point bottom sheet with its own tab strip (Agent / Itinerary /
@@ -916,14 +938,35 @@ export default function TripView({
     setTripName(loadTripLabel(trip));
   }
 
-  // Local trips carry the plan on the Trip object; sample trips keep a
-  // per-browser overlay. Freshest of the two wins.
-  const itinerary =
-    trip && isLocal !== null
-      ? [itineraryOverride, loadItinerary(trip, isLocal)]
-          .filter((x): x is Itinerary => x !== null)
-          .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0] ?? null
-      : null;
+  // Navigating trip → trip reuses this component, and both bits of option
+  // state are trip-scoped: an override left over from the previous trip could
+  // out-date (and so shadow) the new trip's real plans, and the selection
+  // would point at an id that isn't there. Reset during render — the same
+  // adjust-on-change pattern as the facets and the title above.
+  const [plansTripId, setPlansTripId] = useState(tripId);
+  if (plansTripId !== tripId) {
+    setPlansTripId(tripId);
+    setPlansOverride(null);
+    setActivePlanId(loadActivePlanId(tripId));
+    setComparing(false);
+  }
+
+  // Local trips carry the options on the Trip object; sample trips keep a
+  // per-browser overlay. Freshest of the two wins — same rule as before, read
+  // off the newest option in each list (a discard shrinks the list without
+  // touching any updatedAt, so ties go to the override).
+  const storedPlans = useMemo(
+    () => (trip && isLocal !== null ? loadPlans(trip, isLocal) : []),
+    [trip, isLocal]
+  );
+  const plans =
+    plansOverride && newestPlanAt(plansOverride) >= newestPlanAt(storedPlans)
+      ? plansOverride
+      : storedPlans;
+
+  // The option on screen. `activePlan` falls back to the first, so a selection
+  // pointing at a discarded option can't blank the rail.
+  const itinerary = activePlan(plans, activePlanId);
 
   // A plan exists once the agent has built at least one day. Before that the
   // right rail is pins-only (no segmented control); once it lands, the
@@ -1222,6 +1265,17 @@ export default function TripView({
     return null;
   })();
 
+  // The other options this spot appears in. Half the value of parallel plans
+  // is seeing that a place survives the choice — or that it's the thing one
+  // option is FOR — so the card says which options hold it either way.
+  const selectedOtherPlans = selectedSpot
+    ? plans.filter(
+        (p) =>
+          p.id !== itinerary?.id &&
+          p.days.some((d) => d.stops.some((s) => s.spotId === selectedSpot.id))
+      )
+    : [];
+
   const toggleMustSee = (id: string) => {
     setMustSeeIds((prev) => {
       const next = prev.includes(id)
@@ -1285,6 +1339,53 @@ export default function TripView({
     });
   };
 
+  // ---- Plan options ----
+
+  /** Bring one option to the front: the rail, the map overlay and the spot
+   *  cards all read it. Day filters are per-option state (day 3 of the east
+   *  coast plan is a different day 3), so they reset with the switch.
+   *
+   *  Deliberately does NOT move the rail. The strip sits over the pins grid
+   *  too — the map draws the active option on both tabs, and a control that
+   *  disappears while its effect stays visible reads as the plan changing by
+   *  itself. Switching options mid-spot-browse shouldn't eject you either. */
+  const showPlan = (planId: string | null) => {
+    setActivePlanId(planId);
+    saveActivePlanId(tripId, planId);
+    setComparing(false);
+    setExpandedDay(null);
+    setActiveDay("all");
+  };
+
+  /** Switch AND open the itinerary — for the callers that mean "go look at
+   *  this plan": the chat's plan cards, and Compare's Show button. */
+  const openPlan = (planId: string | null) => {
+    showPlan(planId);
+    setRightTab("overview");
+    setSheetTab("overview");
+  };
+
+  /** A tool wrote the option list — adopt it and show what it wrote. */
+  const applyPlans = (next: Itinerary[], focusId: string | null) => {
+    setPlansOverride(next);
+    if (focusId !== activePlanId) openPlan(focusId);
+  };
+
+  const removePlan = (planId: string) => {
+    const { plans: next } = discardPlan(trip, isLocal === true, planId);
+    setPlansOverride(next);
+    // Land on a neighbour rather than an empty rail when the open option goes.
+    if (planId === itinerary?.id) showPlan(next[0]?.id ?? null);
+  };
+
+  /** The "+" tab. Options are the agent's to build (they need whys, times and
+   *  rationale), so this hands the ask to the chat with the cursor in it
+   *  rather than firing a silent model call the traveler never phrased. */
+  const askForOption = () => {
+    setSheetTab("agent");
+    composeRef.current?.("Build me another option: ");
+  };
+
   // Clicking anywhere outside the panels clears the pinned video highlight
   // and closes the videos dropdown / search results.
   const clearTransients = () => {
@@ -1335,9 +1436,12 @@ export default function TripView({
     <PlannerChat
       trip={plannerTrip}
       isLocal={isLocal === true}
-      itinerary={itinerary}
+      plans={plans}
+      activePlanId={itinerary?.id ?? null}
       mustSeeIds={mustSeeIds}
-      onItineraryChange={setItineraryOverride}
+      onPlansChange={applyPlans}
+      onShowPlan={openPlan}
+      composeRef={composeRef}
       onSelectSpot={selectSpot}
     />
   ) : null;
@@ -1533,21 +1637,46 @@ export default function TripView({
           </div>
   );
 
+  // The option switcher governs the map as well as the rail, so it sits in the
+  // sticky tab header rather than scrolling away with the timeline.
+  const planTabsEl =
+    hasItinerary && plans.length > 0 ? (
+      <PlanTabs
+        plans={plans}
+        activeId={itinerary?.id ?? null}
+        canEdit={!embed}
+        onShow={showPlan}
+        onAdd={askForOption}
+        onRemove={removePlan}
+      />
+    ) : null;
+
   const overviewEl = hasItinerary ? (
-    <TripOverview
-      itinerary={itinerary}
-      spotById={spotById}
-      expandedDay={expandedDay}
-      onToggleDay={toggleOverviewDay}
-      onSelectSpot={selectSpot}
-      onStartPlanning={() => {
-        // Chat lives in the left rail (desktop) or the Agent tab (mobile).
-        setSheetTab("agent");
-        document
-          .querySelector<HTMLTextAreaElement>(".planner-inputrow textarea")
-          ?.focus();
-      }}
-    />
+    comparing && plans.length > 1 ? (
+      <PlanCompare
+        plans={plans}
+        activeId={itinerary?.id ?? null}
+        spotById={spotById}
+        onShow={openPlan}
+        onDone={() => setComparing(false)}
+      />
+    ) : (
+      <TripOverview
+        itinerary={itinerary}
+        spotById={spotById}
+        expandedDay={expandedDay}
+        onToggleDay={toggleOverviewDay}
+        onSelectSpot={selectSpot}
+        onCompare={plans.length > 1 ? () => setComparing(true) : undefined}
+        onStartPlanning={() => {
+          // Chat lives in the left rail (desktop) or the Agent tab (mobile).
+          setSheetTab("agent");
+          document
+            .querySelector<HTMLTextAreaElement>(".planner-inputrow textarea")
+            ?.focus();
+        }}
+      />
+    )
   ) : null;
 
   const spotCardEl = selectedSpot ? (
@@ -1562,6 +1691,16 @@ export default function TripView({
       planColor={
         selectedPlanInfo ? dayColor(selectedPlanInfo.dayIndex) : undefined
       }
+      // Only worth a line once there's more than one option to be in.
+      otherPlans={
+        plans.length > 1
+          ? selectedOtherPlans.map((p) => ({
+              id: p.id ?? "",
+              title: p.title ?? "Plan",
+            }))
+          : []
+      }
+      onShowPlan={showPlan}
       onClose={closeSpot}
     />
   ) : null;
@@ -1759,10 +1898,17 @@ export default function TripView({
               className="sheet-panel scroll"
               hidden={activeTab !== "overview"}
             >
+              {planTabsEl}
               {overviewEl}
             </div>
           )}
+          {/* The strip repeats over the pins panel for the same reason it
+              does on desktop: the map is drawing the active option here too.
+              Two instances, one visible — the sheet header can't hold it (it
+              is the drag surface, and a sideways-scrolling strip inside a
+              drag target fights the gesture). */}
           <div className="sheet-panel scroll" hidden={activeTab !== "pins"}>
+            {planTabsEl}
             {canShare && !selectedSpot && (
               <div className="sheet-share">
                 <ShareTrip trip={trip} />
@@ -1853,6 +1999,7 @@ export default function TripView({
                   Pins
                 </button>
               </div>
+              {planTabsEl}
             </div>
           )}
 
@@ -1861,6 +2008,182 @@ export default function TripView({
             : spotCardEl ?? pinsViewEl}
         </aside>
       </div>
+    </div>
+  );
+}
+
+/** The option switcher: one tab per parallel itinerary, plus Compare and a way
+ *  to ask for another. Sits above the timeline because the option governs
+ *  everything below it — and the map. */
+function PlanTabs({
+  plans,
+  activeId,
+  canEdit,
+  onShow,
+  onAdd,
+  onRemove,
+}: {
+  plans: Itinerary[];
+  activeId: string | null;
+  /** Sample trips are read-only; a visitor can switch options but not edit. */
+  canEdit: boolean;
+  onShow: (id: string) => void;
+  onAdd: () => void;
+  onRemove: (id: string) => void;
+}) {
+  // Deleting an option the agent spent 40s on deserves a beat. The tab turns
+  // into its own confirm rather than opening a dialog over the rail.
+  const [confirmId, setConfirmId] = useState<string | null>(null);
+
+  return (
+    <div className="plan-tabs">
+      <div className="plan-tabs-strip" role="tablist" aria-label="Plan options">
+        {plans.map((p, i) => {
+          const id = p.id ?? String(i);
+          if (confirmId === id) {
+            return (
+              <div className="plan-tab confirming" key={id}>
+                <span className="plan-tab-title">Delete?</span>
+                <button
+                  className="plan-confirm yes"
+                  onClick={() => {
+                    setConfirmId(null);
+                    onRemove(id);
+                  }}
+                >
+                  Yes
+                </button>
+                <button
+                  className="plan-confirm no"
+                  onClick={() => setConfirmId(null)}
+                >
+                  No
+                </button>
+              </div>
+            );
+          }
+          const on = id === activeId;
+          return (
+            <div className={`plan-tab-wrap ${on ? "on" : ""}`} key={id}>
+              <button
+                role="tab"
+                aria-selected={on}
+                className={`plan-tab ${on ? "on" : ""}`}
+                onClick={() => onShow(id)}
+                title={p.title}
+              >
+                <span className="plan-tab-n">{i + 1}</span>
+                <span className="plan-tab-title">{p.title}</span>
+                <span className="plan-tab-days">{p.days.length}d</span>
+              </button>
+              {canEdit && plans.length > 1 && (
+                <button
+                  className="plan-tab-x"
+                  aria-label={`Delete ${p.title}`}
+                  onClick={() => setConfirmId(id)}
+                >
+                  <IconClose />
+                </button>
+              )}
+            </div>
+          );
+        })}
+        {canEdit && plans.length < MAX_PLANS && (
+          <button
+            className="plan-tab add"
+            onClick={onAdd}
+            title="Ask the planner for another option"
+          >
+            +
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** Every option at once — the screen for the decision the tabs can't make.
+ *  Stacked, not columned: at rail width a column per option turns the day
+ *  themes into two words each, which is exactly the detail you're comparing. */
+function PlanCompare({
+  plans,
+  activeId,
+  spotById,
+  onShow,
+  onDone,
+}: {
+  plans: Itinerary[];
+  activeId: string | null;
+  spotById: Map<string, Spot>;
+  onShow: (id: string) => void;
+  onDone: () => void;
+}) {
+  const spotIdsPer = plans.map(
+    (p) => new Set(p.days.flatMap((d) => d.stops.map((s) => s.spotId)))
+  );
+
+  return (
+    <div className="plan-compare-view">
+      <div className="ov-head">
+        <h3>Compare options</h3>
+        <button className="plan-compare on" onClick={onDone}>
+          Done
+        </button>
+      </div>
+      {plans.map((p, i) => {
+        const mine = spotIdsPer[i];
+        // What you'd only get by choosing this one — the actual trade.
+        const only = [...mine].filter((id) =>
+          spotIdsPer.every((other, j) => j === i || !other.has(id))
+        );
+        const stops = p.days.reduce((n, d) => n + d.stops.length, 0);
+        const shown = (p.id ?? String(i)) === activeId;
+        return (
+          <div className={`cmp-card ${shown ? "on" : ""}`} key={p.id ?? i}>
+            <div className="cmp-head">
+              <span className="cmp-n">{i + 1}</span>
+              <div className="cmp-titles">
+                <div className="cmp-title">{p.title}</div>
+                <div className="cmp-meta">
+                  {p.days.length} day{p.days.length === 1 ? "" : "s"} · {stops}{" "}
+                  stop{stops === 1 ? "" : "s"}
+                  {p.pace ? ` · ${p.pace}` : ""}
+                </div>
+              </div>
+            </div>
+            <ol className="cmp-days">
+              {p.days.map((d, di) => (
+                <li key={di}>
+                  <span className="cmp-day-n" style={{ background: dayColor(di) }}>
+                    {di + 1}
+                  </span>
+                  <span className="cmp-day-theme">{d.theme ?? d.label}</span>
+                </li>
+              ))}
+            </ol>
+            {only.length > 0 && (
+              <div className="cmp-only">
+                <span className="cmp-only-label">Only here</span>
+                <span className="cmp-only-list">
+                  {only
+                    .map((id) => spotById.get(id)?.name)
+                    .filter(Boolean)
+                    .slice(0, 6)
+                    .join(", ")}
+                  {only.length > 6 ? ` +${only.length - 6}` : ""}
+                </span>
+              </div>
+            )}
+            <button
+              className="cmp-show"
+              onClick={() => onShow(p.id ?? String(i))}
+              disabled={shown}
+            >
+              {shown ? "Showing on the map" : "Show this plan"}
+            </button>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -1875,6 +2198,7 @@ function TripOverview({
   onToggleDay,
   onSelectSpot,
   onStartPlanning,
+  onCompare,
 }: {
   itinerary: Itinerary | null;
   spotById: Map<string, Spot>;
@@ -1882,6 +2206,8 @@ function TripOverview({
   onToggleDay: (i: number) => void;
   onSelectSpot: (id: string) => void;
   onStartPlanning: () => void;
+  /** Only set when there's more than one option to compare. */
+  onCompare?: () => void;
 }) {
   if (!itinerary || itinerary.days.length === 0) {
     return (
@@ -1906,11 +2232,20 @@ function TripOverview({
 
   return (
     <div className="overview">
+      {/* No plan title here — the option strip directly above already names
+          the one on screen, filled ink. */}
       <div className="ov-head">
         <h3>Itinerary</h3>
-        <span className="ov-places">
-          🗺 {plannedCount} place{plannedCount === 1 ? "" : "s"}
-        </span>
+        <div className="ov-head-actions">
+          <span className="ov-places">
+            🗺 {plannedCount} place{plannedCount === 1 ? "" : "s"}
+          </span>
+          {onCompare && (
+            <button className="plan-compare" onClick={onCompare}>
+              Compare
+            </button>
+          )}
+        </div>
       </div>
       <div className="ov-timeline">
         {itinerary.days.map((day, i) => {
@@ -2105,6 +2440,8 @@ function SpotCard({
   onToggleMustSee,
   planInfo,
   planColor,
+  otherPlans = [],
+  onShowPlan,
   onClose,
 }: {
   spot: Spot;
@@ -2114,6 +2451,10 @@ function SpotCard({
   onToggleMustSee: () => void;
   planInfo?: { day: ItineraryDay; dayIndex: number; stop: ItineraryStop } | null;
   planColor?: string;
+  /** Other plan options that also include this spot. Empty when the trip has
+   *  only one option. */
+  otherPlans?: { id: string; title: string }[];
+  onShowPlan?: (planId: string) => void;
   onClose: () => void;
 }) {
   const { urls, i, total, step, swipe } = useSpotPhotos(spot, tripId, local);
@@ -2211,6 +2552,21 @@ function SpotCard({
             .filter(Boolean)
             .join(" · ")}
         </div>
+
+        {otherPlans.length > 0 && (
+          <div className="spot-plans">
+            <span className="spot-plans-label">Also in</span>
+            {otherPlans.map((p) => (
+              <button
+                key={p.id}
+                className="spot-plan-chip"
+                onClick={() => onShowPlan?.(p.id)}
+              >
+                {p.title}
+              </button>
+            ))}
+          </div>
+        )}
 
         <p className="desc">
           {spot.description}

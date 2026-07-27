@@ -133,8 +133,19 @@ export interface ItineraryStay {
 export type ItineraryPace = "packed" | "balanced" | "relaxed";
 
 /** The planner agent's artifact: a day-by-day plan over the trip's spots.
- *  Edited via the update_itinerary tool; rendered by the map and cards. */
+ *  Edited via the update_itinerary tool; rendered by the map and cards.
+ *
+ *  A trip holds several of these side by side — "east coast only" vs "east,
+ *  south, then the airport" — so the traveler can compare shapes before
+ *  committing. See `Trip.itineraries`. */
 export interface Itinerary {
+  /** Stable id for this option, minted by the agent (a slug like
+   *  "east-coast") or by the UI. Optional only for plans written before
+   *  options existed; `normalizePlans` fills it in on read. */
+  id?: string;
+  /** Short, distinct name naming the tradeoff ("East coast only"). Same
+   *  back-compat story as `id`. */
+  title?: string;
   days: ItineraryDay[];
   stay?: ItineraryStay;
   pace?: ItineraryPace;
@@ -163,9 +174,15 @@ export interface Trip {
   upgrading?: boolean;
   /** Search-mode inputs (absent on paste-your-own-links trips). */
   query?: TripQuery;
-  /** Day-by-day plan built by the planner agent (local trips only — sample
-   *  trips keep a visitor's plan in a localStorage overlay instead). */
+  /** LEGACY: the single day-by-day plan, before a trip could hold several
+   *  options. Still written by nothing, still read by `normalizePlans`, which
+   *  folds it into `itineraries` the first time anything touches the trip. */
   itinerary?: Itinerary;
+  /** The planner's parallel plan options, in creation order (local trips only
+   *  — sample trips keep a visitor's plans in a localStorage overlay instead).
+   *  One trip, several candidate shapes; the traveler picks the one to
+   *  finalize. Capped at MAX_PLANS. */
+  itineraries?: Itinerary[];
   /** Ranked substitute video ids, used when a picked video has no captions. */
   bench?: string[];
 }

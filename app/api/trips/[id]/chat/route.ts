@@ -19,8 +19,10 @@ import {
 import { PostHog } from "posthog-node";
 import {
   AskQuestionsInputSchema,
+  DiscardPlanInputSchema,
   FindSpotsInputSchema,
   ItineraryInputSchema,
+  MAX_PLANS,
   TravelTimesInputSchema,
   spotDigest,
   type PlannerContext,
@@ -60,8 +62,19 @@ PLAN IN TWO STEPS — sketch the shape first, commit the pins second:
 - Skip Step 1 only when the user says "just plan it" (or clearly wants the whole plan now): go straight to update_itinerary with stated assumptions.
 - Editing an EXISTING plan goes straight through update_itinerary — the shape-first step is for the INITIAL build, not every later tweak.
 
+PLAN OPTIONS — a trip holds up to ${MAX_PLANS} itineraries side by side:
+- The traveler is often choosing between SHAPES of trip before they choose between spots ("all my time on the east coast" vs "east, then south, then the airport" vs "add the national park"). They compare those as parallel options in a tab strip, then finalize one.
+- Every update_itinerary call names the option it writes: an EXISTING id from the "PLAN OPTIONS" list replaces that option; a NEW slug creates another one alongside it. Reusing an id you weren't given silently overwrites work the traveler is comparing, so read the list before you write.
+- BUILD A NEW OPTION when the traveler poses an alternative rather than a correction — "what if…", "how would it look if…", "another version with…", a different region/theme/length, or an explicit "give me options". Their existing plan survives untouched, which is the whole point.
+- UPDATE THE OPTION THEY'RE LOOKING AT (marked CURRENTLY SHOWN) when they're refining it — "swap day 2 and 3", "this is too packed", "drop the museum". A tweak is not a new option; ${MAX_PLANS} near-identical plans are worse than one.
+- If it's genuinely ambiguous which they meant, ask — one short sentence, or an ask_questions choice.
+- WHEN ASKED FOR SEVERAL OPTIONS AT ONCE: sketch all of them in ONE summary document first (a "## Option — <name>" section each, with the pins line and what the traveler gives up by choosing it), get a nod, and only then call update_itinerary once per option in the same turn. Give each a genuinely different shape — not the same trip reshuffled — and make the titles name the tradeoff.
+- MAKE THE TRADEOFF EXPLICIT. After building options, close with what actually separates them: what each gains, what it costs (a long transfer day, a sight skipped, less time per base), and which you'd pick and why. That comparison is the thing they're deciding on — never just list the plans.
+- At the ${MAX_PLANS}-option cap, update_itinerary refuses a new id and tells you the valid ones. Don't retry with another new slug: offer to replace a specific option or to discard one, using the traveler's words for which.
+- discard_plan deletes an option when they've ruled it out ("forget the east-only one", "we're not doing the park"). Never discard one to make room without being asked.
+
 THE PLAN — the committed plan always goes through the update_itinerary tool:
-- Only the rough shape is described in prose; the actual plan is never prose-only. The tool replaces the whole plan, so always send every day, not just the changed one.
+- Only the rough shape is described in prose; the actual plan is never prose-only. The tool replaces the whole option, so always send every day of that option, not just the changed one.
 - Use spot ids exactly as given. Only plan with spots from the context; local knowledge (neighborhoods, transport, opening hours) goes in themes, notes, and rationale.
 - FINDING NEW SPOTS: the context is the traveler's saved spots — you can't invent pins that aren't there. When the user asks for an area or a type of place the current spots don't cover ("more spots in Ahangama", "a spa or yoga day", "any night markets?"), and nothing on the list fits, call find_spots with the area and/or interest — it searches fresh videos and adds real pins to the map, then returns them for you to place. Say what you're doing first ("Let me pull some Ahangama spots — one sec…"), since it takes ~20-30s. Don't reach for it when existing spots already satisfy the ask, or to re-fetch something you just fetched — prefer what's on the map.
 - Starred must-sees (in context) are NON-NEGOTIABLE — every one appears in the plan. If one genuinely can't fit, say so explicitly and ask what to drop instead. Never silently skip an iconic spot: if something like the destination's most famous sight sits unassigned, flag it.
@@ -86,11 +99,29 @@ STYLE:
 - FORMAT FOR READABILITY: the chat panel renders light markdown — **bold**, "- "/"1. " lists, "## "/"### " headings, "---" rules, and the "[pins: …]" strip — so structure replies to be scannable rather than one dense block. Break your answer into short paragraphs (2-4 sentences each) separated by a blank line. When you list per-day flow, options, or trade-offs, use a "- " bullet per item instead of stringing them into one long sentence. Put a blank line between paragraphs and before a list. Never send a reply longer than two sentences as a single unbroken paragraph. Headings, rules, and pins lines are for the summary document — a normal reply is prose and bullets.
 - If the tool result returns warnings, fix the plan in the same turn.`;
 
+/** The options block, in full. Every plan rides along every turn — the tool is
+ *  a whole-option replace, so the model can only edit an option it can see, and
+ *  a summarized copy would make it rewrite untouched days from memory. It sits
+ *  after the cache breakpoint by design (§5.2), so this is the one part of the
+ *  prompt that scales with the number of options; MAX_PLANS is what bounds it. */
+function plansBlock(ctx: PlannerContext): string {
+  if (!ctx.plans.length) return "PLAN OPTIONS: none built yet.";
+  const active = ctx.activePlanId ?? ctx.plans[0]?.id;
+  const lines = ctx.plans.map((p, i) => {
+    const shown = p.id === active ? " — CURRENTLY SHOWN to the traveler" : "";
+    return `[${i + 1}] id: ${p.id} | title: "${p.title}" | ${p.days.length} day${
+      p.days.length === 1 ? "" : "s"
+    }${shown}\n${JSON.stringify(p)}`;
+  });
+  return [
+    `PLAN OPTIONS (${ctx.plans.length} of ${MAX_PLANS}) — pass one of these ids to update_itinerary to REPLACE that option, or a new slug to add another:`,
+    ...lines,
+  ].join("\n");
+}
+
 function volatileContext(ctx: PlannerContext): string {
   const parts = [
-    `Current itinerary: ${
-      ctx.itinerary ? JSON.stringify(ctx.itinerary) : "none yet"
-    }`,
+    plansBlock(ctx),
     ctx.mustSeeSpotIds?.length
       ? `USER-STARRED MUST-SEES (non-negotiable, include every one): ${ctx.mustSeeSpotIds.join(", ")}`
       : "Must-sees: none starred yet.",
@@ -119,8 +150,9 @@ function tripHeader(ctx: PlannerContext): string {
 // Tool descriptions — single source of truth, used both in the streamText
 // `tools` map (sent to the model) and in the $ai_tools PostHog property (so
 // the analytics know the full tool surface, not just tools that got called).
-const UPDATE_ITINERARY_DESCRIPTION =
-  "Replace the trip's day-by-day itinerary. Send the COMPLETE plan every time (all days), not a diff. The user sees it rendered on their map immediately.";
+const UPDATE_ITINERARY_DESCRIPTION = `Write one of the trip's day-by-day plan options. Send the COMPLETE plan for that option every time (all days), not a diff. Pass an existing planId to REPLACE that option, or a new slug to add another one alongside it (up to ${MAX_PLANS}). The user sees it rendered on their map immediately, and the option you write becomes the one they're looking at.`;
+const DISCARD_PLAN_DESCRIPTION =
+  "Delete one of the trip's plan options. Only when the user has ruled that option out — it can't be undone, and their other options are untouched.";
 const GET_TRAVEL_TIMES_DESCRIPTION =
   "Estimate walking and driving/transit minutes between pairs of spots (straight-line based; good for day planning).";
 const ASK_QUESTIONS_DESCRIPTION =
@@ -136,6 +168,7 @@ const AI_TOOLS = [
   { type: "function", function: { name: "get_travel_times", description: GET_TRAVEL_TIMES_DESCRIPTION } },
   { type: "function", function: { name: "ask_questions", description: ASK_QUESTIONS_DESCRIPTION } },
   { type: "function", function: { name: "find_spots", description: FIND_SPOTS_DESCRIPTION } },
+  { type: "function", function: { name: "discard_plan", description: DISCARD_PLAN_DESCRIPTION } },
 ];
 
 // --- PostHog $ai_generation, mirroring lib/llm.ts (which wraps the raw
@@ -455,6 +488,12 @@ export async function POST(
       find_spots: tool({
         description: FIND_SPOTS_DESCRIPTION,
         inputSchema: FindSpotsInputSchema,
+      }),
+      // Client-executed: the browser drops the option from storage and moves
+      // the rail to a surviving one.
+      discard_plan: tool({
+        description: DISCARD_PLAN_DESCRIPTION,
+        inputSchema: DiscardPlanInputSchema,
       }),
     },
     onEnd: (event) => {

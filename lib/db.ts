@@ -142,7 +142,13 @@ export async function listTripSummaries(ownerId: string): Promise<TripSummary[]>
             t.updated_at               AS updated_at,
             COALESCE(jsonb_array_length(t.data->'spots'), 0) AS spot_count,
             COALESCE(jsonb_array_length(t.data->'videos'), 0) AS video_count,
-            COALESCE(jsonb_array_length(t.data->'itinerary'->'days'), 0) AS planned_days,
+            -- A trip holds several plan options; the first is the primary one.
+            -- 'itinerary' is the pre-options shape, still on untouched trips.
+            COALESCE(
+              jsonb_array_length(t.data->'itineraries'->0->'days'),
+              jsonb_array_length(t.data->'itinerary'->'days'),
+              0
+            ) AS planned_days,
             t.data->'query'->>'startDate' AS start_date,
             t.data->'query'->>'endDate'   AS end_date,
             (SELECT s

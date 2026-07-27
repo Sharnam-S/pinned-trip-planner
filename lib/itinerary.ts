@@ -36,6 +36,20 @@ export function normalizeSlot(raw?: string): ItinerarySlot | undefined {
 // --- Tool input schemas (what the model sends) ---
 
 export const ItineraryInputSchema = z.object({
+  // Required, not optional: a trip holds several options side by side, so
+  // "which one am I writing" is never a safe default. §4.1 — the schema is
+  // where a guarantee lives; the description is where the create-vs-replace
+  // rule lives.
+  planId: z
+    .string()
+    .describe(
+      'Which option this plan is. To CHANGE an option that already exists, pass its exact id from the "PLAN OPTIONS" list in the context. To create a NEW option alongside the existing ones, invent a short kebab-case slug describing it ("east-coast", "with-national-park"). Never reuse another option\'s id for a different plan.'
+    ),
+  title: z
+    .string()
+    .describe(
+      'Short name for this option, max 4 words, naming what makes it DIFFERENT from the others — the tradeoff the traveler is choosing between. Good: "East coast only", "East, south & airport", "With Yala park". Bad: "Sri Lanka trip", "Option 2", "Best plan".'
+    ),
   days: z
     .array(
       z.object({
@@ -160,8 +174,24 @@ export const FindSpotsInputSchema = z.object({
 
 export type FindSpotsInput = z.infer<typeof FindSpotsInputSchema>;
 
+export const DiscardPlanInputSchema = z.object({
+  planId: z
+    .string()
+    .describe(
+      'The exact id of the option to delete, from the "PLAN OPTIONS" list in the context.'
+    ),
+});
+
+export type DiscardPlanInput = z.infer<typeof DiscardPlanInputSchema>;
+
 const MAX_DAYS = 14;
 const MAX_STOPS_PER_DAY = 10;
+
+/** How many parallel options a trip can hold. Four is the point where a
+ *  switcher still reads as a set of choices rather than a list to manage —
+ *  and where the volatile context block (every plan in full, every turn)
+ *  stays affordable. */
+export const MAX_PLANS = 4;
 
 /** Normalize a model-sent itinerary against the trip's real spots: drop
  *  unknown ids and duplicates (first occurrence wins), cap sizes. Warnings go
@@ -220,6 +250,8 @@ export function validateItinerary(
 
   return {
     itinerary: {
+      id: slugPlanId(input.planId),
+      title: input.title?.trim() || "Untitled plan",
       days,
       stay: input.stay,
       pace: input.pace,
@@ -228,6 +260,20 @@ export function validateItinerary(
     },
     warnings,
   };
+}
+
+/** Plan ids are model-authored and end up in a localStorage key and a React
+ *  key, so tame them: lowercase, kebab, bounded. An id that sanitizes to
+ *  nothing gets a stable random one — a new option, which is the safe reading
+ *  of "the model sent something we can't match". */
+function slugPlanId(raw: string): string {
+  const slug = raw
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 40);
+  return slug || `plan-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 /** Spot ids not referenced by any day — the "Unassigned" bucket. */
@@ -239,41 +285,156 @@ export function unassignedSpotIds(itinerary: Itinerary, spots: Spot[]): string[]
 }
 
 // --- Persistence (client-side only) ---
-// Your own trips carry the itinerary on the Trip object (round-trips through
+// Your own trips carry the plans on the Trip object (round-trips through
 // tripStore). Sample/shared trips are someone else's and read-only, so a
-// visitor's plan lives in a localStorage overlay keyed by trip id.
+// visitor's plans live in a localStorage overlay keyed by trip id.
 
+/** Legacy overlay: ONE Itinerary, from before a trip could hold options. */
 const OVERLAY_PREFIX = "pinned.itin.";
+/** Current overlay: the option list. */
+const PLANS_PREFIX = "pinned.itins.";
 
-export function loadItinerary(trip: Trip, isLocal: boolean): Itinerary | null {
-  if (isLocal) return trip.itinerary ?? null;
-  if (typeof window === "undefined" || !window.localStorage) return null;
+/** Give every option the identity the UI and the agent index it by. Only
+ *  plans written before options existed arrive without one. */
+function withIdentity(plan: Itinerary, i: number): Itinerary {
+  if (plan.id && plan.title) return plan;
+  return {
+    ...plan,
+    id: plan.id || `plan-${i + 1}`,
+    title: plan.title || (i === 0 ? "Plan 1" : `Plan ${i + 1}`),
+  };
+}
+
+/** The option list from whatever shape the trip arrived in: `itineraries`
+ *  (current) or the pre-options single `itinerary` (legacy, folded in as the
+ *  first option). Junk entries are dropped rather than allowed to blank the
+ *  rail. */
+export function normalizePlans(
+  raw: Itinerary[] | undefined | null,
+  legacy?: Itinerary
+): Itinerary[] {
+  const list = raw?.length ? raw : legacy ? [legacy] : [];
+  return list
+    .filter((p): p is Itinerary => Boolean(p) && Array.isArray(p.days))
+    .slice(0, MAX_PLANS)
+    .map(withIdentity);
+}
+
+export function loadPlans(trip: Trip, isLocal: boolean): Itinerary[] {
+  if (isLocal) return normalizePlans(trip.itineraries, trip.itinerary);
+  if (typeof window === "undefined" || !window.localStorage) return [];
   try {
-    const raw = localStorage.getItem(OVERLAY_PREFIX + trip.id);
-    return raw ? (JSON.parse(raw) as Itinerary) : null;
+    const raw = localStorage.getItem(PLANS_PREFIX + trip.id);
+    if (raw) return normalizePlans(JSON.parse(raw) as Itinerary[]);
+    const legacy = localStorage.getItem(OVERLAY_PREFIX + trip.id);
+    return legacy ? normalizePlans(null, JSON.parse(legacy) as Itinerary) : [];
   } catch {
-    return null;
+    return [];
   }
 }
 
-export function saveItinerary(
+export function savePlans(
   tripId: string,
   isLocal: boolean,
-  itinerary: Itinerary
+  plans: Itinerary[]
 ): void {
   if (isLocal) {
     const trip = peekTrip(tripId);
     if (trip) {
-      trip.itinerary = itinerary;
+      trip.itineraries = plans;
+      // Migrate, don't mirror: two fields holding a plan is two answers to
+      // "what's the itinerary". `normalizePlans` still reads the old one for
+      // trips that haven't been touched since.
+      delete trip.itinerary;
       void saveTrip(trip);
     }
     return;
   }
   try {
-    localStorage.setItem(OVERLAY_PREFIX + tripId, JSON.stringify(itinerary));
+    localStorage.setItem(PLANS_PREFIX + tripId, JSON.stringify(plans));
+    localStorage.removeItem(OVERLAY_PREFIX + tripId);
   } catch {
     // quota exceeded — the in-memory copy still renders for this session
   }
+}
+
+/** Insert or replace ONE option and persist the whole list.
+ *
+ *  Reads the current list back from storage rather than taking it as an
+ *  argument, because the model can land two `update_itinerary` calls in a
+ *  single turn ("build me both shapes") and React state won't have caught up
+ *  between them — the second write would drop the first. */
+export function upsertPlan(
+  trip: Trip,
+  isLocal: boolean,
+  plan: Itinerary
+): { plans: Itinerary[]; created: boolean; rejected?: string } {
+  const live = isLocal ? (peekTrip(trip.id) ?? trip) : trip;
+  const plans = loadPlans(live, isLocal);
+  const at = plans.findIndex((p) => p.id === plan.id);
+  if (at === -1 && plans.length >= MAX_PLANS) {
+    // Refuse rather than guess. Silently replacing an option the traveler is
+    // comparing is the one unrecoverable outcome here; the model gets the
+    // valid ids back and can retry in the same turn.
+    return {
+      plans,
+      created: false,
+      rejected: `This trip already has the maximum of ${MAX_PLANS} options, so "${plan.id}" wasn't created. Either reuse one of these ids to replace an option — ${plans
+        .map((p) => `${p.id} ("${p.title}")`)
+        .join(", ")} — or discard one first with discard_plan.`,
+    };
+  }
+  const next = at === -1 ? [...plans, plan] : plans.map((p, i) => (i === at ? plan : p));
+  savePlans(trip.id, isLocal, next);
+  return { plans: next, created: at === -1 };
+}
+
+export function discardPlan(
+  trip: Trip,
+  isLocal: boolean,
+  planId: string
+): { plans: Itinerary[]; removed: Itinerary | null } {
+  const live = isLocal ? (peekTrip(trip.id) ?? trip) : trip;
+  const plans = loadPlans(live, isLocal);
+  const removed = plans.find((p) => p.id === planId) ?? null;
+  if (!removed) return { plans, removed: null };
+  const next = plans.filter((p) => p.id !== planId);
+  savePlans(trip.id, isLocal, next);
+  return { plans: next, removed };
+}
+
+// Which option is on screen is VIEW state, not trip data: putting it on the
+// Trip would mean a network PUT on every tab click for signed-in users (§2c),
+// and "the one I was last looking at" is honestly per-device. So it lives in
+// localStorage in every mode, next to the other per-browser overlays.
+const ACTIVE_PLAN_PREFIX = "pinned.plan.";
+
+export function loadActivePlanId(tripId: string): string | null {
+  if (typeof window === "undefined" || !window.localStorage) return null;
+  try {
+    return localStorage.getItem(ACTIVE_PLAN_PREFIX + tripId);
+  } catch {
+    return null;
+  }
+}
+
+export function saveActivePlanId(tripId: string, planId: string | null): void {
+  try {
+    if (planId) localStorage.setItem(ACTIVE_PLAN_PREFIX + tripId, planId);
+    else localStorage.removeItem(ACTIVE_PLAN_PREFIX + tripId);
+  } catch {
+    // quota exceeded — the selection still holds for this session
+  }
+}
+
+/** The option the traveler is looking at. Falls back to the first one, so a
+ *  stale selection (an option the agent discarded) never blanks the rail. */
+export function activePlan(
+  plans: Itinerary[],
+  activeId: string | null
+): Itinerary | null {
+  if (plans.length === 0) return null;
+  return plans.find((p) => p.id === activeId) ?? plans[0];
 }
 
 // --- Must-see spots (user-starred; the agent must include them) ---
@@ -352,14 +513,19 @@ export interface PlannerContext {
   /** Who's going ("couple", "family", …) — set from the trip header. */
   party?: string;
   spots: CompactSpot[];
-  itinerary: Itinerary | null;
+  /** Every plan option, oldest first — the agent builds and edits these side
+   *  by side. Empty until it has planned anything. */
+  plans: Itinerary[];
+  /** Which option the traveler currently has open in the rail. */
+  activePlanId?: string;
   /** Spot ids the user starred as non-negotiable must-sees. */
   mustSeeSpotIds?: string[];
 }
 
 export function buildPlannerContext(
   trip: Trip,
-  itinerary: Itinerary | null,
+  plans: Itinerary[],
+  activePlanId: string | null,
   mustSeeSpotIds: string[] = []
 ): PlannerContext {
   return {
@@ -380,7 +546,8 @@ export function buildPlannerContext(
       mentions: s.mentions.length,
       tips: s.thingsToKnow?.slice(0, 3).map((t) => t.slice(0, 120)),
     })),
-    itinerary,
+    plans,
+    activePlanId: activePlanId ?? undefined,
   };
 }
 
