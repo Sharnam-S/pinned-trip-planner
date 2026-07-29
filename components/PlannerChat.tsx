@@ -22,13 +22,17 @@ import { tripStoreMode } from "@/lib/tripStore";
 import { spotCoverUrl } from "@/lib/photoUrl";
 import {
   AskQuestionsInput,
+  DiscardPlanInput,
   FindSpotsInput,
   ItineraryInput,
+  MAX_PLANS,
   TravelTimesInput,
+  activePlan,
   buildPlannerContext,
+  discardPlan,
   haversineKm,
-  saveItinerary,
   travelEstimate,
+  upsertPlan,
   validateItinerary,
 } from "@/lib/itinerary";
 import { findSpots } from "@/lib/findSpots";
@@ -294,6 +298,9 @@ function ConversationalIntake({
 
 const SUGGESTIONS = [
   "Plan my days for me",
+  // Options are the least discoverable thing the agent can do, and the chip is
+  // cheaper than explaining them.
+  "Build me a different option to compare",
   "Where should I stay?",
   "We're on a budget — keep it affordable",
 ];
@@ -331,7 +338,11 @@ function ThinkingStatus() {
 
 interface PlannerCtx {
   trip: Trip;
-  itinerary: Itinerary | null;
+  /** Every plan option, oldest first — the agent writes them side by side. */
+  plans: Itinerary[];
+  /** The option the rail is showing; the agent edits this one unless told
+   *  otherwise. */
+  activePlanId: string | null;
   mustSeeIds: string[];
   // One PostHog trace = one sitting. Minted per component mount, so a page
   // reload starts a fresh trace; group across sittings by tripId (one chat
@@ -619,7 +630,8 @@ function makeTransport(tripId: string, ctxRef: { current: PlannerCtx }) {
         messages: windowMessages(messages),
         context: buildPlannerContext(
           ctxRef.current.trip,
-          ctxRef.current.itinerary,
+          ctxRef.current.plans,
+          ctxRef.current.activePlanId,
           ctxRef.current.mustSeeIds
         ),
         traceId: ctxRef.current.traceId,
@@ -633,16 +645,29 @@ function makeTransport(tripId: string, ctxRef: { current: PlannerCtx }) {
 export default function PlannerChat({
   trip,
   isLocal,
-  itinerary,
+  plans,
+  activePlanId,
   mustSeeIds,
-  onItineraryChange,
+  onPlansChange,
+  onShowPlan,
+  composeRef,
   onSelectSpot,
 }: {
   trip: Trip;
   isLocal: boolean;
-  itinerary: Itinerary | null;
+  /** The trip's parallel plan options, oldest first. */
+  plans: Itinerary[];
+  /** The option the rail is showing (the one the agent edits by default). */
+  activePlanId: string | null;
   mustSeeIds: string[];
-  onItineraryChange: (itin: Itinerary) => void;
+  /** A tool wrote the option list. `focusId` is the option to bring to the
+   *  front — the one just written, or a survivor after a discard. */
+  onPlansChange: (plans: Itinerary[], focusId: string | null) => void;
+  /** Brings an option to the front from a "plan written" card in the thread. */
+  onShowPlan?: (planId: string) => void;
+  /** Filled with a "put this in the composer" callback, so the rail's
+   *  "+ option" tab can start the sentence for the traveler. */
+  composeRef?: React.MutableRefObject<((text: string) => void) | null>;
   /** Opens a spot from the summary's photo strips. */
   onSelectSpot?: (id: string) => void;
 }) {
@@ -710,25 +735,36 @@ export default function PlannerChat({
   // The transport is created once; the ctx ref keeps the request body current.
   const ctxRef = useRef<PlannerCtx>({
     trip,
-    itinerary,
+    plans,
+    activePlanId,
     mustSeeIds,
     traceId: crypto.randomUUID(),
   });
   useEffect(() => {
     ctxRef.current.trip = trip;
-    ctxRef.current.itinerary = itinerary;
+    ctxRef.current.plans = plans;
+    ctxRef.current.activePlanId = activePlanId;
     ctxRef.current.mustSeeIds = mustSeeIds;
-  }, [trip, itinerary, mustSeeIds]);
+  }, [trip, plans, activePlanId, mustSeeIds]);
+
+  // The option on screen — what "the plan" means to both the traveler and the
+  // agent at this moment.
+  const shownPlan = useMemo(
+    () => activePlan(plans, activePlanId),
+    [plans, activePlanId]
+  );
 
   // Starred must-sees that the agent hasn't placed in the plan yet. The bar
   // nudges the user to fit these in, so it should hide once they're all
   // planned — even though the spots stay starred in the location pane.
+  // Measured against the option on screen: a spot that's in some other option
+  // still isn't in the one they're looking at.
   const unplannedMustSeeIds = useMemo(() => {
     const planned = new Set(
-      (itinerary?.days ?? []).flatMap((d) => d.stops.map((s) => s.spotId))
+      (shownPlan?.days ?? []).flatMap((d) => d.stops.map((s) => s.spotId))
     );
     return mustSeeIds.filter((id) => !planned.has(id));
-  }, [itinerary, mustSeeIds]);
+  }, [shownPlan, mustSeeIds]);
 
   // Instant intake — a few universal questions rendered client-side (no model
   // round-trip). Answers compile into the first message; the agent then
@@ -777,8 +813,23 @@ export default function PlannerChat({
           toolCall.input as ItineraryInput,
           currentTrip.spots
         );
-        saveItinerary(currentTrip.id, isLocal, next);
-        onItineraryChange(next);
+        // upsertPlan re-reads the stored list rather than trusting the props:
+        // "build me both shapes" lands two of these calls in one turn, and
+        // React hasn't re-rendered in between.
+        const { plans: nextPlans, created, rejected } = upsertPlan(
+          currentTrip,
+          isLocal,
+          next
+        );
+        if (rejected) {
+          addToolOutput({
+            tool: "update_itinerary",
+            toolCallId: toolCall.toolCallId,
+            output: { ok: false, error: rejected },
+          });
+          return;
+        }
+        onPlansChange(nextPlans, next.id ?? null);
         const planned = next.days.reduce((n, d) => n + d.stops.length, 0);
         addToolOutput({
           tool: "update_itinerary",
@@ -786,9 +837,41 @@ export default function PlannerChat({
           output: {
             ok: true,
             warnings,
+            planId: next.id,
+            planTitle: next.title,
+            // Which of the two things just happened, so the model's reply can
+            // say "added a second option" instead of guessing.
+            action: created ? "created a new option" : "replaced that option",
+            optionCount: nextPlans.length,
+            optionsRemaining: MAX_PLANS - nextPlans.length,
             plannedStops: planned,
             unassignedCount: currentTrip.spots.length - planned,
           },
+        });
+      } else if (toolCall.toolName === "discard_plan") {
+        const currentTrip = ctxRef.current.trip;
+        const { planId } = toolCall.input as DiscardPlanInput;
+        const { plans: nextPlans, removed } = discardPlan(
+          currentTrip,
+          isLocal,
+          planId
+        );
+        if (removed) onPlansChange(nextPlans, nextPlans[0]?.id ?? null);
+        addToolOutput({
+          tool: "discard_plan",
+          toolCallId: toolCall.toolCallId,
+          output: removed
+            ? {
+                ok: true,
+                discarded: removed.title,
+                remaining: nextPlans.map((p) => ({ id: p.id, title: p.title })),
+              }
+            : {
+                ok: false,
+                error: `No option with id "${planId}". Current options: ${
+                  nextPlans.map((p) => p.id).join(", ") || "none"
+                }.`,
+              },
         });
       } else if (toolCall.toolName === "get_travel_times") {
         const spots = new Map(ctxRef.current.trip.spots.map((s) => [s.id, s]));
@@ -997,6 +1080,30 @@ export default function PlannerChat({
     el.style.height = `${Math.min(el.scrollHeight, 132)}px`;
   }
 
+  // The rail's "+ option" tab drops a half-written ask into the composer
+  // rather than firing a message the traveler never phrased — building an
+  // option is a real model turn, so they get to say what it should be.
+  // Same idiom as intakeAnswerRef: a callback handed up through a ref, which
+  // beats reaching into a controlled textarea's value from outside React.
+  useEffect(() => {
+    if (!composeRef) return;
+    composeRef.current = (text: string) => {
+      setInput(text);
+      const el = inputRef.current;
+      if (el) {
+        el.focus();
+        autosize(el);
+        // Caret at the end, so they type straight into the sentence.
+        requestAnimationFrame(() =>
+          el.setSelectionRange(text.length, text.length)
+        );
+      }
+    };
+    return () => {
+      composeRef.current = null;
+    };
+  }, [composeRef]);
+
   // Composer submit. While the opening intake is running, typed
   // text answers the current scripted question instead of messaging the LLM
   // (routing lives here — NOT in send(), which submitIntake itself calls to
@@ -1053,7 +1160,7 @@ export default function PlannerChat({
                 or test-drive me on this sample →
               </button>
             </div>
-          ) : !itinerary ? (
+          ) : plans.length === 0 ? (
             <ConversationalIntake
               title={`Let’s plan your days in ${shortDest}`}
               photos={stripPhotos}
@@ -1119,22 +1226,60 @@ export default function PlannerChat({
                   );
                 }
                 if (part.state === "output-available") {
+                  const out = part.output as
+                    | { ok?: boolean; error?: string; action?: string }
+                    | undefined;
+                  // The cap was hit and nothing was written — say so plainly
+                  // rather than claiming a plan landed.
+                  if (out?.ok === false) {
+                    return (
+                      <div key={i} className="pm-tool error">
+                        {out.error ?? "Couldn’t save that option."}
+                      </div>
+                    );
+                  }
                   const input = part.input as ItineraryInput;
                   const days = input?.days ?? [];
                   const stops = days.reduce((n, d) => n + (d.stops?.length ?? 0), 0);
-                  return (
-                    <div key={i} className="pm-event">
+                  // A turn can write several options; each card is the way
+                  // back to the one it wrote. Gone (discarded later) = plain
+                  // card, not a button that does nothing.
+                  const optionIndex = plans.findIndex((p) => p.id === input?.planId);
+                  const live = optionIndex !== -1;
+                  const meta = `${days.length} day${
+                    days.length === 1 ? "" : "s"
+                  } · ${stops} stop${stops === 1 ? "" : "s"}${
+                    live ? " · show it on the map" : ""
+                  }`;
+                  const body = (
+                    <>
                       <span className="pm-event-icon" aria-hidden="true">
                         ✓
                       </span>
                       <div className="pm-event-body">
-                        <div className="pm-event-title">Plan updated</div>
-                        <div className="pm-event-meta">
-                          {days.length} day{days.length === 1 ? "" : "s"} ·{" "}
-                          {stops} stop{stops === 1 ? "" : "s"} · see the day
-                          filters on the map
+                        <div className="pm-event-title">
+                          {input?.title ?? "Plan updated"}
+                          {live && (
+                            <span className="pm-event-badge">
+                              Option {optionIndex + 1}
+                            </span>
+                          )}
                         </div>
+                        <div className="pm-event-meta">{meta}</div>
                       </div>
+                    </>
+                  );
+                  return live && onShowPlan ? (
+                    <button
+                      key={i}
+                      className="pm-event pm-event-btn"
+                      onClick={() => onShowPlan(input.planId)}
+                    >
+                      {body}
+                    </button>
+                  ) : (
+                    <div key={i} className="pm-event">
+                      {body}
                     </div>
                   );
                 }
@@ -1146,6 +1291,25 @@ export default function PlannerChat({
                   );
                 }
                 return null;
+              }
+              if (part.type === "tool-discard_plan") {
+                if (part.state !== "output-available") {
+                  return (
+                    <div key={i} className="pm-tool working">
+                      🗑️ Dropping that option…
+                    </div>
+                  );
+                }
+                const out = part.output as
+                  | { ok?: boolean; discarded?: string; error?: string }
+                  | undefined;
+                return (
+                  <div key={i} className={`pm-tool ${out?.ok ? "done" : "error"}`}>
+                    {out?.ok
+                      ? `🗑️ Dropped “${out.discarded}”`
+                      : (out?.error ?? "Couldn’t drop that option.")}
+                  </div>
+                );
               }
               if (part.type === "tool-get_travel_times") {
                 return part.state === "output-available" ? (

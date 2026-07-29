@@ -6,7 +6,7 @@ importantly — the learnings from 9+ rounds of live-testing iteration.
 Update it when you change behavior or learn something that cost time.
 
 Status: **shipped, iterating on live feedback** · Owner: Sharnam ·
-Last updated: 2026-07-25 (server-first storage — §2c)
+Last updated: 2026-07-27 (parallel plan options — §2d)
 
 ---
 
@@ -67,6 +67,11 @@ agent edits it via one tool (`update_itinerary`, full replace); the map,
 day briefs, and spot cards all render that same object. The chat is a
 means; the artifact is the product.
 
+(2026-07-27: a trip now holds **up to 4 of those objects at once** — parallel
+plan options the traveler compares before committing. Everything above still
+describes "the itinerary": exactly one option is active, and the map, day
+briefs and cards render that one. See §2d.)
+
 ## 2. Architecture (and the one fact that shapes everything)
 
 **The browser orchestrates everything; where the trip is *stored* depends on
@@ -95,6 +100,84 @@ everything below still holds:
     carries `trip.itinerary` / `trip.query` directly). Small and per-trip.
   - `pinned.owned-ids` / `pinned.pending-trip` — published-by-this-browser ids
     and the through-SSO form stash
+
+### 2d. Parallel plan options (2026-07-27)
+
+Reported from a real Sri Lanka trip: *"sometimes I just want the east coast;
+sometimes east, south, then the airport; sometimes I want the national park in
+too. I want 3-4 options and to figure out which one to finalize."* The decision
+that was missing wasn't between spots — it was between **shapes of trip**, and
+the product could only hold one at a time.
+
+- **`Trip.itineraries: Itinerary[]`**, each with an `id` (a model-authored slug
+  like `east-coast`) and a `title` naming the tradeoff. Capped at
+  `MAX_PLANS = 4`. The pre-options `Trip.itinerary` is **migrated, not
+  mirrored**: `normalizePlans` folds it in as the first option on read, and
+  the first `savePlans` deletes it — two fields holding a plan is two answers
+  to "what's the itinerary".
+- **`lib/itinerary.ts` owns the list**: `loadPlans` / `savePlans` /
+  `upsertPlan` / `discardPlan` / `activePlan`, over the same two backends as
+  before (the Trip object when it's yours, a `pinned.itins.<id>` localStorage
+  overlay when it's a sample). `activePlan` falls back to the first option, so
+  a selection pointing at a discarded plan can never blank the rail.
+- **`upsertPlan` re-reads storage instead of taking the list as an argument.**
+  "Build me both shapes" lands **two `update_itinerary` calls in one turn**, and
+  React hasn't re-rendered between them — passing the props-held list would have
+  made the second write drop the first. Same class of bug as §5.8: don't
+  compute from a snapshot you're about to invalidate.
+- **Which option is on screen is view state, not trip data** —
+  `pinned.plan.<id>` in localStorage, in every mode. On the Trip it would mean a
+  network PUT per tab click for signed-in users (§2c), and "the one I was last
+  looking at" is honestly per-device.
+- **`update_itinerary` gained required `planId` + `title`.** An existing id
+  replaces that option; a new slug creates one. Required, not optional, for the
+  §4.1 reason: with several plans in play, "which one am I writing" has no safe
+  default. At the cap, an unknown id is **refused** — never silently mapped onto
+  an existing option — and the tool result hands back the valid ids so the model
+  can retry in the same turn. Ids are slugified client-side (they end up in a
+  localStorage key and a React key).
+- **`discard_plan`** is the fifth tool: "forget the east-only one" shouldn't
+  require reaching for the mouse. The UI has a two-step × on each tab as well.
+- **UI: a wrapping option strip in the sticky rail header**, one tab per option
+  (`①  East coast only  3d`), active filled ink. Deliberately **wraps rather
+  than scrolls sideways** — the whole point of options is holding them in
+  parallel, and one parked off-screen is one you won't weigh. It shows over the
+  **Pins tab too**, because the map draws the active option there as well and a
+  control that vanishes while its effect stays visible reads as the plan
+  changing by itself. Switching from the pins grid doesn't eject you to the
+  itinerary; the chat's plan cards and Compare's Show button do (they mean "go
+  look at this one").
+- **Compare** stacks all options — day themes plus an "Only here" line computed
+  as the set difference against every other option, which is the actual trade.
+  Stacked, not columned: at ~420px of rail, a column per option shrinks the day
+  themes to two words each, i.e. exactly the detail being compared.
+- The spot card gains an **"Also in"** row: half the value of parallel plans is
+  seeing that a place survives the choice — or that it's the thing one option is
+  *for*.
+- **Cost note (§5.2) — the pins are NOT re-billed; the history is.** Measured on
+  the 71-spot Sri Lanka trip: the spot digest is 28.4KB and sits **before** cache
+  breakpoint 1, together with the persona (14.0KB) and the tool schemas. Options
+  live in the volatile block *after* it, so adding a plan cannot invalidate the
+  pins — that prefix keeps reading at ~0.1× for the trip's life. What options
+  cost is the volatile tail: 9.7KB for one plan, 32.4KB for three (~+6.3K
+  uncached tokens a turn, est.). Every option rides along in full because the
+  tool is a whole-option replace — the model can only edit an option it can see,
+  and a summarized copy would make it rewrite untouched days from memory.
+  `MAX_PLANS` is the bound.
+- **The bigger line is ordering, not size.** The volatile block sits *in front of*
+  the conversation history, so any change to it — a plan write, and now also
+  **switching which option is shown** (the `CURRENTLY SHOWN` marker is part of the
+  block) — invalidates breakpoint 2 and re-writes the whole windowed history at
+  1.25×. By mid-session that history is far larger than the options themselves, so
+  it dominates. This is the §5.2 "move itinerary state out of the system tail"
+  micro-opt, now worth more than it was. It is **deferred on purpose**: the fix
+  needs the volatile block to come *after* the history, and a `role: "system"`
+  message inside `messages[]` is Opus-4.8-only — on `claude-sonnet-5` it would
+  have to become a trailing user turn (`<system-reminder>`), which changes how the
+  model weights trip state on a trust-critical agent. Check `llm-total-costs` in
+  PostHog before touching it (§5.5). If the options block itself ever turns out to
+  be the top line, the separate fix is to summarize the *inactive* options and add
+  a tool that loads one in full — not to shrink the active one.
 
 ### 2c. Server-first storage for signed-in users (2026-07-25)
 
@@ -241,11 +324,13 @@ client-first architecture above. The design:
 ### Data model (`lib/types.ts`, zod in `lib/itinerary.ts`)
 
 ```
-Trip ── itinerary?: Itinerary
+Trip ── itineraries?: Itinerary[]    up to MAX_PLANS parallel options (§2d)
+          id*, title*                 "east-coast", "East coast only"
           days: ItineraryDay[]      label, date?, theme*, rationale*, stops
             stops: ItineraryStop[]  spotId→Spot.id, time*, durationMin*,
                                     why*, note?, slot?
           stay?  (name, lat?, lng?, note?)   pace?  budget?  updatedAt
+     ── itinerary?: Itinerary        LEGACY single plan, migrated on read
 ```
 
 Fields marked `*` are **required in the tool input schema** but optional
@@ -303,6 +388,14 @@ user-trust lessons that produced it:
 9. **Truncation-aware** — durable prefs must be folded into the plan
    immediately (the context block, not old chat turns, is the source of
    truth).
+10. **Options are for alternatives, edits are for corrections** (§2d) — a
+   "what if…" / a different region, theme or length gets a NEW option
+   (their current plan survives untouched, which is the point); "swap day 2
+   and 3" edits the one they're looking at. Asked for several at once: sketch
+   them all in one summary document first, then one `update_itinerary` per
+   option in the same turn — and **close with the tradeoff**, what each gains
+   and costs and which you'd pick. Listing the plans without comparing them
+   leaves the user with the decision they came in with.
 
 ## 4. Learnings — agent behavior
 
@@ -669,12 +762,12 @@ conditional request are actually exercised.
 | File | Role |
 |---|---|
 | `app/api/trips/[id]/chat/route.ts` | Chat route: persona, context assembly, caching breakpoints, tool schemas (no execute), PostHog capture |
-| `lib/itinerary.ts` | Zod schemas (tool input, incl. `ask_questions`/`find_spots`), validation/normalization, localStorage helpers (itinerary overlay, must-sees), haversine + travel estimates, spot digest builder, day colors, `PlannerContext` |
+| `lib/itinerary.ts` | Zod schemas (tool input, incl. `ask_questions`/`find_spots`/`discard_plan`), validation/normalization, the **plan-option list API** (`loadPlans`/`savePlans`/`upsertPlan`/`discardPlan`/`activePlan`/`normalizePlans`, §2d) + must-see and active-option overlays, haversine + travel estimates, spot digest builder, day colors, `PlannerContext` |
 | `lib/findSpots.ts` | `find_spots` tool's client orchestration — a scoped mini-`runner.ts`: reuses `/api/discover` + `/api/process-video` + `applyVideoResult` to add new pins for an area/interest mid-chat (4 videos, parallel fetch / apply-at-end, dedup vs existing). Map re-renders via the trip subscription — no callback |
 | `components/PlannerChat.tsx` | Chat UI: useChat wiring, client tool execution, history persistence (save/sanitize/window), reasoning + tool part rendering, must-see bar, auto-growing input, first-trip nudge; `FormattedText` light-markdown renderer (paragraphs, lists, two heading levels, `---` rules, `[pins: …]` → `PinStrip` photo row, §4.6); `ConversationalIntake` opening intake on every viewport; `QuestionFlow` tap-through form for the `ask_questions` tool |
-| `components/TripView.tsx` | Page shell: 3-panel layout, itinerary/must-see state, day chips, `DayBrief` (timeline + rationale), `SpotCard` ("In your plan" + star) |
+| `components/TripView.tsx` | Page shell: 3-panel layout, plan-option/must-see state, day chips, `PlanTabs` (option switcher) + `PlanCompare` (side-by-side, §2d), `DayBrief` (timeline + rationale), `SpotCard` ("In your plan" + "Also in" + star) |
 | `components/TripMap.tsx` | Leaflet map: pill markers (star badges), plan overlay (numbered day pins, polylines, stay pin), day-fit behavior |
-| `lib/types.ts` | `Itinerary`/`ItineraryDay`/`ItineraryStop` on `Trip` (stored shapes — optional fields for back-compat); `Trip.ownerId` |
+| `lib/types.ts` | `Itinerary`/`ItineraryDay`/`ItineraryStop` on `Trip` (stored shapes — optional fields for back-compat); `Trip.itineraries` (options) + the legacy `Trip.itinerary`; `Trip.ownerId` |
 | `lib/auth.ts` + `app/api/auth/*` + `app/api/me*` | Google SSO, session cookie, dev-user fallback (§2b) |
 | `lib/db.ts` | Postgres (Neon prod / PGlite dev): users, trips, chats + ownership-enforcing queries (§2b) |
 | `lib/tripStore.ts` | **The storage API** (§2c): mode probe, in-memory working copy, coalesced write-through to `PUT /api/trips/:id` (signed in) or localStorage (signed out), save-error reporting |
@@ -707,7 +800,11 @@ conditional request are actually exercised.
   `createAnthropic({apiKey})`; localStorage-only, never stored server-side.
 - **Proposal/accept diffs, drag-to-reorder + locks, opening hours from
   Places, stay-area recommendation mode with candidate pins.**
-  (Cross-device sync shipped 2026-07-23 with accounts — §2b.)
+  (Cross-device sync shipped 2026-07-23 with accounts — §2b; parallel plan
+  options shipped 2026-07-27 — §2d.)
+- **Options deferred within §2d:** merging two options ("take day 3 from the
+  park plan"), a "finalize" state that archives the losers, and per-option
+  chat threads (one trip is still one conversation — §5.4).
 - **Rejected:** LangChain/LangGraph (see §2), LLM summarization of chat
   (§5.3), Vercel AI Gateway (fragmenting billing/analytics), Claude
   subscription harnessing (ToS, §5.6).

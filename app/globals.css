@@ -4046,6 +4046,30 @@ button {
   color: var(--text-soft);
   line-height: 1.45;
 }
+/* A turn can write several plan options; each card is the way back to the one
+   it wrote, so the card itself becomes the control. */
+.pm-event-btn {
+  text-align: left;
+  font: inherit;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+.pm-event-btn:hover {
+  background: var(--surface);
+  border-color: #d8d8dd;
+}
+.pm-event-badge {
+  margin-left: 7px;
+  border-radius: var(--radius-chip);
+  padding: 1px 7px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: var(--fw-medium);
+  vertical-align: 1px;
+  white-space: nowrap;
+}
 @keyframes pm-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.55; }
@@ -4783,14 +4807,22 @@ button {
 }
 
 /* ===== Right rail tabs: Pins | Trip overview ===== */
+/* Two stacked rows, both sticky as one block: the view segment, and (on the
+   itinerary view) the plan-option strip. The option governs the map too, so it
+   must not scroll away with the timeline under it. */
 .rail-tabs {
   position: sticky;
   top: 0;
   z-index: 10;
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
   padding: 14px 16px 12px;
   background: var(--surface);
+}
+.rail-seg {
+  align-self: flex-start;
 }
 /* Segmented control: a compact, left-aligned inset track with a single
    sliding thumb that animates between the two options. */
@@ -4840,6 +4872,313 @@ button {
 }
 .rail-tab.on {
   color: var(--ink);
+}
+
+/* ===== Plan options: parallel itineraries for one trip =====
+   The traveler compares shapes of trip ("east coast only" vs "east, south,
+   then the airport") before they compare spots. One tab per option, the active
+   one filled ink. */
+.plan-tabs {
+  min-width: 0;
+}
+/* Wraps rather than scrolling sideways. The whole point of options is holding
+   them side by side; one parked off-screen is one you won't weigh. Four is the
+   cap, so this is at most two rows. */
+.plan-tabs-strip {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+  /* Room for the delete affordance to lift out of the row. */
+  padding: 2px;
+  margin: -2px;
+}
+.plan-tab-wrap {
+  position: relative;
+  flex: 0 0 auto;
+}
+.plan-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  border: none;
+  border-radius: var(--radius-chip);
+  padding: 5px 11px 5px 5px;
+  background: var(--surface-alt);
+  color: var(--text-soft);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  white-space: nowrap;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
+}
+.plan-tab:hover {
+  background: #ebebef;
+  color: var(--text);
+}
+.plan-tab.on,
+.plan-tab.on:hover {
+  background: var(--ink);
+  color: #fff;
+}
+.plan-tab-n {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+}
+.plan-tab.on .plan-tab-n {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+.plan-tab-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.plan-tab-days {
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
+}
+/* The delete affordance rides the tab's top-right corner and only appears on
+   hover/focus — an option is expensive to rebuild, so it shouldn't be one
+   stray tap away at rest. */
+.plan-tab-x {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 50%;
+  /* A ring so the badge reads against both the ink-filled active tab and the
+     gray inactive one. */
+  box-shadow: 0 0 0 2px var(--surface);
+  background: var(--ink);
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.8);
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+/* The shared IconClose is nav-sized (14px) and would fill the badge edge to
+   edge — inside an 18px circle it needs to be a glyph, not a graphic. */
+.plan-tab-x svg {
+  width: 8px;
+  height: 8px;
+}
+.plan-tab-wrap:hover .plan-tab-x,
+.plan-tab-x:focus-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+.plan-tab.confirming {
+  flex: 0 0 auto;
+  gap: 4px;
+  padding: 5px 6px 5px 11px;
+  background: var(--surface-alt);
+  color: var(--text);
+}
+.plan-confirm {
+  border: none;
+  border-radius: var(--radius-chip);
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+}
+.plan-confirm.yes {
+  background: var(--red);
+  color: #fff;
+}
+.plan-confirm.no {
+  background: var(--surface);
+  color: var(--text-soft);
+}
+.plan-tab.add {
+  flex: 0 0 auto;
+  justify-content: center;
+  width: 28px;
+  max-width: none;
+  padding: 5px 0;
+  font-size: 15px;
+  line-height: 1;
+}
+/* Compare lives in the view's own header, not the option strip — in the strip
+   it competed with the tabs for a rail that's only ~420px wide, and clipped
+   the last option behind itself. */
+.ov-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.plan-compare {
+  flex: 0 0 auto;
+  border: none;
+  border-radius: var(--radius-chip);
+  padding: 6px 11px;
+  background: transparent;
+  color: var(--text-soft);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  white-space: nowrap;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
+}
+.plan-compare:hover {
+  background: var(--surface-alt);
+  color: var(--text);
+}
+.plan-compare.on {
+  background: var(--ink);
+  color: #fff;
+}
+
+/* Compare: every option stacked, so the day themes stay readable at rail
+   width. Columns would shrink the one thing being compared. */
+.plan-compare-view {
+  padding: 18px 16px 48px;
+}
+.cmp-card {
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.cmp-card.on {
+  box-shadow:
+    0 0 0 1.5px var(--ink),
+    var(--shadow-soft);
+}
+.cmp-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.cmp-n {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+}
+.cmp-titles {
+  min-width: 0;
+}
+.cmp-title {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-medium);
+  color: var(--text);
+}
+.cmp-meta {
+  margin-top: 1px;
+  font-size: var(--fs-label);
+  color: var(--text-soft);
+}
+.cmp-days {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cmp-days li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-support);
+  color: var(--text);
+}
+.cmp-day-n {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+}
+.cmp-day-theme {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cmp-only {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-size: var(--fs-label);
+  line-height: var(--lh-support);
+}
+.cmp-only-label {
+  display: block;
+  color: var(--text-mute);
+}
+.cmp-only-list {
+  color: var(--text);
+}
+.cmp-show {
+  width: 100%;
+  margin-top: 12px;
+  border: none;
+  border-radius: 10px;
+  padding: 8px;
+  background: var(--ink);
+  color: #fff;
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
+}
+.cmp-show:disabled {
+  background: var(--surface-alt);
+  color: var(--text-mute);
+  cursor: default;
+}
+
+/* Spot card: which other options also hold this spot — the "does it survive
+   the choice" question, answered where the spot is inspected. */
+.spot-plans {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.spot-plans-label {
+  font-size: var(--fs-label);
+  color: var(--text-mute);
+}
+.spot-plan-chip {
+  border: none;
+  border-radius: var(--radius-chip);
+  padding: 4px 10px;
+  background: var(--surface-alt);
+  color: var(--text-soft);
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+}
+.spot-plan-chip:hover {
+  background: #ebebef;
+  color: var(--text);
 }
 
 
@@ -5911,8 +6250,31 @@ button {
 .sheet .overview {
   padding: 12px 16px 40px;
 }
+.sheet .plan-compare-view {
+  padding: 12px 16px 40px;
+}
 .sheet .ov-head {
   margin-bottom: 12px;
+}
+/* The option strip pins to the top of the itinerary panel — same reason as
+   desktop: it governs the map, so it can't scroll away. Delete-on-hover has no
+   meaning on a phone, so the × is always shown on the active option. */
+.sheet .plan-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  padding: 10px 16px;
+  background: var(--surface);
+}
+.sheet .plan-tab {
+  padding: 7px 13px 7px 6px;
+}
+.sheet .plan-tab-wrap.on .plan-tab-x {
+  opacity: 1;
+  transform: scale(1);
+}
+.sheet .plan-tab-wrap:not(.on) .plan-tab-x {
+  display: none;
 }
 .sheet .ov-card,
 .sheet .ov-card:hover,
