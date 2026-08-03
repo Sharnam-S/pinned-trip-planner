@@ -1,0 +1,306 @@
+[
+  {
+    "name": "srilanka-long-trip",
+    "note": "The shape the agent handles worst: a long trip on a 71-spot map. Both observed failures to commit happened here.",
+    "sampleId": "7703a30b18a0",
+    "query": {
+      "destination": "Sri Lanka",
+      "startDate": "2026-09-05",
+      "endDate": "2026-09-14",
+      "interests": "surfing, wildlife, food"
+    },
+    "intake": [
+      {
+        "match": [
+          "who"
+        ],
+        "chips": [
+          "Couple"
+        ]
+      },
+      {
+        "match": [
+          "packed",
+          "pace"
+        ],
+        "chips": [
+          "Balanced"
+        ]
+      },
+      {
+        "match": [
+          "must include",
+          "must"
+        ],
+        "text": "a safari and at least two surf days"
+      },
+      {
+        "match": [
+          "budget"
+        ],
+        "chips": [
+          "Mid-range"
+        ]
+      }
+    ],
+    "expectPace": [
+      2.5,
+      5.5
+    ],
+    "messages": [
+      {
+        "text": "Ten days, we land and leave from Colombo. Please shape it so we're not backtracking across the island.",
+        "timeout": 480
+      },
+      {
+        "text": "Swap day 2 and day 3.",
+        "timeout": 420
+      }
+    ]
+  },
+  {
+    "name": "tbilisi-weekend",
+    "note": "Short trip, tight geography. Cheapest scenario — use it for a quick check.",
+    "sampleId": "373aac077066",
+    "query": {
+      "destination": "Tbilisi, Georgia",
+      "startDate": "2026-08-14",
+      "endDate": "2026-08-16",
+      "interests": "wine, sulphur baths, old town"
+    },
+    "intake": [
+      {
+        "match": [
+          "who"
+        ],
+        "chips": [
+          "Couple"
+        ]
+      },
+      {
+        "match": [
+          "packed",
+          "pace"
+        ],
+        "chips": [
+          "Relaxed"
+        ]
+      },
+      {
+        "match": [
+          "must include",
+          "must"
+        ],
+        "text": "the sulphur baths"
+      },
+      {
+        "match": [
+          "budget"
+        ],
+        "chips": [
+          "Mid-range"
+        ]
+      }
+    ],
+    "expectPace": [
+      2,
+      4.5
+    ],
+    "mustSeeNames": [
+      "Abanotubani"
+    ],
+    "messages": [
+      {
+        "text": "Long weekend, Friday to Sunday. Keep it walkable and put the baths where they'll feel best.",
+        "timeout": 420
+      },
+      {
+        "text": "Make day 2 lighter — we don't want to be out all day.",
+        "timeout": 360
+      }
+    ]
+  },
+  {
+    "name": "hokkaido-just-plan-it",
+    "note": "The fast path: after the intake shape, 'just plan it' must commit immediately rather than re-proposing.",
+    "sampleId": "8af9344deacf",
+    "query": {
+      "destination": "Hokkaido, Japan",
+      "startDate": "2026-12-18",
+      "endDate": "2026-12-23",
+      "interests": "snow, onsen, seafood"
+    },
+    "intake": [
+      {
+        "match": [
+          "who"
+        ],
+        "chips": [
+          "Friends"
+        ]
+      },
+      {
+        "match": [
+          "packed",
+          "pace"
+        ],
+        "chips": [
+          "Packed"
+        ]
+      },
+      {
+        "match": [
+          "must include",
+          "must"
+        ],
+        "text": "skip"
+      },
+      {
+        "match": [
+          "budget"
+        ],
+        "chips": [
+          "Splurge"
+        ]
+      }
+    ],
+    "expectPace": [
+      4,
+      7
+    ],
+    "messages": [
+      {
+        "text": "Just plan it. Six days, we like snow and eating.",
+        "timeout": 480
+      },
+      {
+        "text": "Day 4 is way too much. Cut it down and give us a proper afternoon off.",
+        "timeout": 360
+      }
+    ],
+    "maxMessagesToCommit": 1,
+    "maxShapeDocuments": 1
+  },
+  {
+    "name": "kohtao-options",
+    "note": "Parallel options. This journey used to end with zero plans and a broken chat: the agent asked which option to build and the answer arrived by typing. Budget is 2 messages, not 1 — the traveler explicitly asks to see the shapes before anything is built.",
+    "sampleId": "34ca1c5a8931",
+    "query": {
+      "destination": "Koh Tao, Thailand",
+      "startDate": "2026-11-10",
+      "endDate": "2026-11-15",
+      "interests": "snorkelling, viewpoints, sunsets"
+    },
+    "intake": [
+      {
+        "match": [
+          "who"
+        ],
+        "chips": [
+          "Couple"
+        ]
+      },
+      {
+        "match": [
+          "packed",
+          "pace"
+        ],
+        "chips": [
+          "Balanced"
+        ]
+      },
+      {
+        "match": [
+          "must include",
+          "must"
+        ],
+        "chips": [
+          "Koh Nang Yuan"
+        ]
+      },
+      {
+        "match": [
+          "budget"
+        ],
+        "chips": [
+          "Splurge"
+        ]
+      }
+    ],
+    "expectPace": [
+      2.5,
+      5.5
+    ],
+    "messages": [
+      {
+        "text": "Give me two genuinely different versions of this: a lazy beach one and an active island-hopping one.",
+        "timeout": 600
+      },
+      {
+        "text": "All of them, go ahead.",
+        "timeout": 480
+      }
+    ],
+    "maxMessagesToCommit": 2,
+    "maxShapeDocuments": 2
+  },
+  {
+    "name": "eastcoast-family",
+    "note": "Relaxed pace with a hard constraint (toddler naps). Checks the pace dial is connected and the constraint survives into the plan.",
+    "sampleId": "321b79dff723",
+    "query": {
+      "destination": "East Coast, Sri Lanka",
+      "startDate": "2026-08-21",
+      "endDate": "2026-08-25",
+      "interests": "beaches, snorkelling, easy days with a toddler"
+    },
+    "intake": [
+      {
+        "match": [
+          "who"
+        ],
+        "chips": [
+          "Family"
+        ]
+      },
+      {
+        "match": [
+          "packed",
+          "pace"
+        ],
+        "chips": [
+          "Relaxed"
+        ]
+      },
+      {
+        "match": [
+          "must include",
+          "must"
+        ],
+        "text": "nothing fixed, but it has to work with a 2 year old"
+      },
+      {
+        "match": [
+          "budget"
+        ],
+        "chips": [
+          "Mid-range"
+        ]
+      }
+    ],
+    "expectPace": [
+      1.5,
+      4
+    ],
+    "messages": [
+      {
+        "text": "Five days with a 2 year old. Naps are 12 to 3 every day and we can't do anything strenuous. Plan around that.",
+        "timeout": 480
+      },
+      {
+        "text": "Move the snorkelling earlier on day 2.",
+        "timeout": 360
+      }
+    ]
+  }
+]

@@ -5,6 +5,17 @@ import { observedMessage, TripTag, tripProperties } from "./llm";
 
 const ExtractedSpotSchema = z.object({
   name: z.string().describe("Canonical place name, e.g. 'Tegallalang Rice Terrace'"),
+  // Required, and it must come BEFORE the category so the model commits to a
+  // reason rather than rationalising a pick. Category drift was measurable on
+  // the shipped sample trips: Galle Fort, Black Fort, Narikala Fortress and
+  // Chronicles of Georgia all filed as "other"; a folk museum as "other";
+  // beach clubs as "stay". The category filter chips are only as good as this
+  // field, and it shows on the itinerary card as "Other · Food".
+  category_reason: z
+    .string()
+    .describe(
+      "One short clause naming what this place physically IS, which decides the category — 'a 17th-century fortification' → landmark, 'a beach bar with day beds' → nightlife, 'a guesthouse we slept at' → stay. If you can't finish this sentence, you don't understand the place well enough to include it."
+    ),
   category: z.enum([
     "food",
     "nightlife",
@@ -62,8 +73,10 @@ export type Extraction = z.infer<typeof ExtractionSchema>;
 export type ExtractedSpot = z.infer<typeof ExtractedSpotSchema>;
 
 // Override with EXTRACT_MODEL in .env.local (e.g. claude-haiku-4-5) to trade
-// extraction quality for cost.
-const DEFAULT_MODEL = process.env.EXTRACT_MODEL ?? "claude-sonnet-4-6";
+// extraction quality for cost. `||`, not `??`: .env files set absent keys to the
+// EMPTY STRING, which `??` happily passes through — and an empty model id makes
+// every extraction 400 while the UI blames the video for having no captions.
+const DEFAULT_MODEL = process.env.EXTRACT_MODEL || "claude-sonnet-4-6";
 
 export async function extractSpots(
   video: VideoData,
@@ -107,7 +120,10 @@ Rules:
   - town: towns, villages, or neighborhoods worth basing in or wandering.
   - other: anything real and visitable that fits none of the above.
 - Classify by what a place physically is, not by a religion-specific reading (a historic fortress is a "landmark", not an "activity").
-- Skip generic mentions (e.g. "the airport", "our hotel" with no name), sponsors, and places outside the trip destination.
+- "other" IS A LAST RESORT. If more than one spot in ten lands in "other", you have mis-categorised — re-read the guide above. A fort, a fortress, a city wall, a monument, a historic square and a cathedral are ALL "landmark". A folk museum is "museum".
+- "stay" MEANS SOMEWHERE YOU SLEEP. A beach club, day club, rooftop bar or restaurant attached to a hotel is not a "stay" — categorise it by what you actually do there (nightlife, food, beach).
+- NEVER PIN THESE, however often they're mentioned: convenience stores and chains (7-Eleven, Family Mart, Starbucks), petrol stations, ATMs and banks, airports and bus stations, unnamed accommodation ("the Airbnb we stayed at", "our hotel"), and anything the creator only passed through. A traveler cannot act on them and they crowd out real recommendations.
+- Skip generic mentions, sponsors, and places outside the trip destination. If a video about one city spends time somewhere hours away, that place is not part of this trip.
 - Transcripts are auto-generated and garble proper nouns. Use your knowledge of the destination to recover the real place name (e.g. "tega lalang" -> "Tegallalang Rice Terrace"). If you cannot confidently identify a real place, skip it.
 - timestamp_sec must come from the [seconds] markers in the transcript where the place is first properly discussed.
 - lat/lng: give your best-guess coordinates from knowledge. For obscure places, approximate within the correct area.

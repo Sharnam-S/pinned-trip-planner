@@ -282,7 +282,7 @@
     {
       "id": "cdf97892-2449-44bf-a35f-92155069d7b0",
       "name": "Kai Beach Club",
-      "category": "stay",
+      "category": "nightlife",
       "description": "A big beach club in Weligama opposite Nomads with a DJ all day, massive pool, and direct beach access. They organize surf lessons and have three restaurants. Great for spending the whole day relaxing with cocktails and food on bean bags.",
       "lat": 5.9734566,
       "lng": 80.4384513,
@@ -319,7 +319,7 @@
     {
       "id": "3ba730e6-f665-4cd4-b86a-53b47999dc3e",
       "name": "Petty Petty",
-      "category": "stay",
+      "category": "nightlife",
       "description": "A beach club in Mirissa with a pool right on the beach, good cocktails, and a nice vibe with music. They have activities at night and are great for day visits.",
       "lat": 5.9426757,
       "lng": 80.4644036,
@@ -364,7 +364,7 @@
     {
       "id": "d1662b67-d4c5-4ad3-9c83-8f1ad0f127f6",
       "name": "Tennis Beach Club",
-      "category": "stay",
+      "category": "nightlife",
       "description": "A really chill beach club in Ahangama with bean bags to sit and watch the beach and ocean. They have tasty cocktails and serve toast/puppets with toppings. Good for spending a full day relaxing.",
       "lat": 5.9734566,
       "lng": 80.4384513,
@@ -1213,7 +1213,7 @@
     {
       "id": "2900175d-5b77-4b5f-bff6-204877eea162",
       "name": "Fins",
-      "category": "food",
+      "category": "nightlife",
       "description": "A nightlife venue serving delicious drinks like piña coladas, with talented performers and good music vibes. They also serve food and have rooms available. Known for hosting ladies' nights.",
       "lat": 6.839169999999999,
       "lng": 81.8342658,
@@ -1401,7 +1401,7 @@
     {
       "id": "026068d8-f010-476a-a219-0e973f7c42f1",
       "name": "Elephant Rock",
-      "category": "viewpoint",
+      "category": "beach",
       "description": "A fun surf spot great for morning and evening surfing, suitable for beginners and intermediates with sandy bottom and 2 to 4-foot waves. Climbing the rock for its view is popular even among non-surfers, and the sunset view of the ocean, lagoon, and sun is impeccable.",
       "lat": 6.8098767,
       "lng": 81.82427589999999,
@@ -1438,7 +1438,7 @@
     {
       "id": "ac249547-7855-4129-a934-380e5f84d007",
       "name": "Lighthouse Point",
-      "category": "viewpoint",
+      "category": "beach",
       "description": "The most northerly surf spot located just outside the small village and lagoon of Arugam Bay by the crumbled remains of an Old World War II Lighthouse. Better suited for experienced surfers with a boulder sand bottom and waves that get faster throughout the season.",
       "lat": 7.0243828,
       "lng": 81.8770095,
@@ -1475,7 +1475,7 @@
     {
       "id": "a8ab9cfa-1b5c-48b1-89e4-36dcce7677ca",
       "name": "Pottuvil Point",
-      "category": "viewpoint",
+      "category": "beach",
       "description": "An intermediate surf spot just a short distance from the famous Whiskey Point (which hasn't been working since 2019). Features a mellow takeoff and shorter rides, but can be inconsistent. Best when big swell hits the east coast and rarely crowded with only 5 to 10 people.",
       "lat": 6.8901011,
       "lng": 81.8429276,
@@ -1515,7 +1515,7 @@
     {
       "id": "3df0358b-51cd-45d0-a2aa-955b0eaf76db",
       "name": "Peanut Farm",
-      "category": "activity",
+      "category": "beach",
       "description": "A fun and popular surf spot 20 minutes outside of Arugam Bay with two peaks - one safe for beginners and one for advanced surfers. The advanced peak ranges from 3 to 8 feet and can sometimes barrel. Has cafes, restaurants, and sun beds for a full day of hanging out.",
       "lat": 6.7964208,
       "lng": 81.8214115,
@@ -1552,7 +1552,7 @@
     {
       "id": "58b0a712-695c-4b6e-8428-42947544a774",
       "name": "Baby Point",
-      "category": "viewpoint",
+      "category": "beach",
       "description": "One of the most popular surf points in Arugam Bay with smaller waves suitable for beginners and intermediates. Located within the Arugam Bay cove and was one of the first spots to be developed.",
       "lat": 6.839782199999999,
       "lng": 81.8360709,
@@ -1589,7 +1589,7 @@
     {
       "id": "a500bc56-9e26-46df-8104-bb46dbfadc8c",
       "name": "Main Point",
-      "category": "viewpoint",
+      "category": "beach",
       "description": "Another really popular surf point in Arugam Bay within the cove with bigger waves. Better suited for pro surfers or intermediate surfers. One of the first spots to be developed before branching out to other areas.",
       "lat": 6.8397997,
       "lng": 81.833994,
@@ -1658,7 +1658,7 @@
     {
       "id": "13dfe0ec-fe4e-45ca-ae3d-6234250b2fa0",
       "name": "Crocodile Rock",
-      "category": "viewpoint",
+      "category": "nature",
       "description": "A large sloping rock on Kakalia beach that gets its name from resembling a crocodile from above and from real-life crocodiles lurking in the water that sometimes sunbathe on the rock. Sandwiched between beach, lagoon, lush jungles, and a wildlife hotspot that should be explored very cautiously.",
       "lat": 6.8196154,
       "lng": 81.8233288,
@@ -1702,7 +1702,7 @@
     {
       "id": "c3b0e4e2-8e87-4fab-80c1-b2c7f47eca9a",
       "name": "Funky Debar",
-      "category": "food",
+      "category": "nightlife",
       "description": "A popular spot hosting the big party of the night starting around 11:00 PM that goes until sunrise. Located in Arugam Bay and hosts parties from Thursday to Saturday in varying locations.",
       "lat": 6.8425296,
       "lng": 81.8322213,
@@ -1779,7 +1779,7 @@
     {
       "id": "0d5988b7-7896-46c5-9560-f1dcdb73eb2d",
       "name": "Adam's Peak",
-      "category": "viewpoint",
+      "category": "nature",
       "description": "A mountain in the Hill Country that offers hikes with scenic views. The creator recommends exploring this as a non-surfing activity when visiting Sri Lanka.",
       "lat": 6.8096429999999994,
       "lng": 80.4993882,
@@ -2078,7 +2078,7 @@
     {
       "id": "778ed8c8-3022-45bf-8660-afa891cfd475",
       "name": "Martin Wikramasinghe Folk Museum",
-      "category": "other",
+      "category": "museum",
       "description": "A museum depicting rural life of Sri Lanka, built by the trust of prominent writer Martin Wikramasinghe who was from the Koggala region.",
       "lat": 5.989936999999999,
       "lng": 80.328019,
@@ -2152,7 +2152,7 @@
     {
       "id": "50ecd0a9-976e-4eb8-8556-089cd4ad4b1a",
       "name": "Galle Fort",
-      "category": "other",
+      "category": "landmark",
       "description": "A large colonial town in south Sri Lanka with walking tours available. The fort shows Portuguese, Dutch, and British colonial influences including the historic Black Fort.",
       "lat": 6.0304592,
       "lng": 80.2150207,
@@ -2189,7 +2189,7 @@
     {
       "id": "a7971b41-4709-43ea-9e29-87bcffba169e",
       "name": "Black Fort",
-      "category": "other",
+      "category": "landmark",
       "description": "A Portuguese fort in Galle with spectacular views. One of the main remaining Portuguese colonial structures in the area.",
       "lat": 6.0287973,
       "lng": 80.219343,
@@ -2374,7 +2374,7 @@
     {
       "id": "1c26b350-8c15-468c-87b9-c791b06a9e2d",
       "name": "Dondra Lighthouse",
-      "category": "viewpoint",
+      "category": "landmark",
       "description": "The lowest point in Sri Lanka, accessible via a scenic drive from Weligama (about 1 hour away). A notable landmark with climbing opportunities.",
       "lat": 5.921255899999999,
       "lng": 80.59407499999999,
@@ -2485,7 +2485,7 @@
     {
       "id": "cc43b187-7ea9-4018-95aa-307d5e644aa9",
       "name": "La Pla",
-      "category": "food",
+      "category": "nightlife",
       "description": "A beach club in Hiriketiya with direct beach access, pool, and drinks. Minimum order of 3500 Sri Lankan rupees per person for table access, but offers a relaxed vibe right by the beach.",
       "lat": 5.959790000000001,
       "lng": 80.409903,

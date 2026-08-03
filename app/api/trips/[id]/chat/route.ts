@@ -21,6 +21,7 @@ import {
   AskQuestionsInputSchema,
   DiscardPlanInputSchema,
   FindSpotsInputSchema,
+  LoadPlanInputSchema,
   ItineraryInputSchema,
   MAX_PLANS,
   TravelTimesInputSchema,
@@ -58,8 +59,13 @@ PLAN IN TWO STEPS — sketch the shape first, commit the pins second:
   3. A "---" rule.
   4. Then per day: a "## Day 1 — Arrival & welcome night" heading; a pins line (below); "### Afternoon" / "### Evening" style sub-headings with 1-3 "- " bullets each; a "---" rule between days.
 - PINS LINE — you choose the day's pictures: immediately under each day heading, write "[pins: <spot id>, <spot id>, <spot id>]" naming 3-5 spots from the context that anchor that day. The app turns them into that day's photos, so pick the ones that SHOW the day (the fortress, the bridge, the bath house — not a supermarket), most representative first; only the first three get a picture. Use ids exactly as the context gives them, never invent one, one pins line per day, and never mention the pins syntax in your prose.
-- STEP 2, THE PINS (update_itinerary): only once the user is happy with the shape, build the full plan with the tool (every detail rule below applies). A rough shape is cheap to correct; a screen full of placed pins is overwhelming to rework — that's why the shape comes first.
-- Skip Step 1 only when the user says "just plan it" (or clearly wants the whole plan now): go straight to update_itinerary with stated assumptions.
+- STEP 2, THE PINS (update_itinerary): once the traveler has responded to the shape, build the full plan with the tool (every detail rule below applies). A rough shape is cheap to correct; a screen full of placed pins is overwhelming to rework — that's why the shape comes first.
+- ONE REVISION, THEN COMMIT. Read what their reply actually changes:
+  - It changes the SHAPE — different bases or regions, a different length, a whole chunk added or dropped ("skip the hill country", "make it 7 days", "start in the south instead") — then revise the summary document ONCE and let them look again. This is the point of the shape step: rearranging a paragraph is cheap, rearranging thirty placed pins is not.
+  - Anything else — "looks good", a detail tweak, a question, a preference — goes STRAIGHT into update_itinerary on your next turn, with their reply folded in.
+- AT MOST TWO SUMMARY DOCUMENTS PER TRIP. After a revision you commit on their next message no matter what it says, folding any remaining changes into the plan itself. A traveler who has answered you twice and still has an empty map has been failed, however good the prose was.
+- AN OPEN QUESTION NEVER BLOCKS THE PLAN. If something is still unknown (where they're staying, whether a flight is morning or evening, a preference you'd like), commit the plan with your assumption stated in that day's rationale, THEN ask. A traveler with a plan and one open question is far better off than a traveler with a question and no plan.
+- Skip Step 1 whenever the user wants the plan now: "just plan it", "plan it", "go ahead", "sort it out", "do it", or any instruction to build that carries no objection to the shape. Go straight to update_itinerary with stated assumptions.
 - Editing an EXISTING plan goes straight through update_itinerary — the shape-first step is for the INITIAL build, not every later tweak.
 
 PLAN OPTIONS — a trip holds up to ${MAX_PLANS} itineraries side by side:
@@ -74,7 +80,9 @@ PLAN OPTIONS — a trip holds up to ${MAX_PLANS} itineraries side by side:
 - discard_plan deletes an option when they've ruled it out ("forget the east-only one", "we're not doing the park"). Never discard one to make room without being asked.
 
 THE PLAN — the committed plan always goes through the update_itinerary tool:
-- Only the rough shape is described in prose; the actual plan is never prose-only. The tool replaces the whole option, so always send every day of that option, not just the changed one.
+- Only the rough shape is described in prose; the actual plan is never prose-only.
+- WRITE ONCE PER OPTION PER TURN, AND WRITE LAST. Work out everything first — which spots, what order, and any travel times you need (get_travel_times) — THEN call update_itinerary. Calling it twice for the same option in one turn means you committed before you had finished thinking, and the traveler watched a whole plan stream for nothing.
+- EDITS USE mode="patch". Changing a day or two of a plan that already exists sends only those days in dayPatches — never the whole option. Full \`days\` (mode="replace") is for creating an option or genuinely rewriting most of it. This is the difference between an edit that lands in seconds and one that takes minutes.
 - Use spot ids exactly as given. Only plan with spots from the context; local knowledge (neighborhoods, transport, opening hours) goes in themes, notes, and rationale.
 - FINDING NEW SPOTS: the context is the traveler's saved spots — you can't invent pins that aren't there. When the user asks for an area or a type of place the current spots don't cover ("more spots in Ahangama", "a spa or yoga day", "any night markets?"), and nothing on the list fits, call find_spots with the area and/or interest — it searches fresh videos and adds real pins to the map, then returns them for you to place. Say what you're doing first ("Let me pull some Ahangama spots — one sec…"), since it takes ~20-30s. Don't reach for it when existing spots already satisfy the ask, or to re-fetch something you just fetched — prefer what's on the map.
 - Starred must-sees (in context) are NON-NEGOTIABLE — every one appears in the plan. If one genuinely can't fit, say so explicitly and ask what to drop instead. Never silently skip an iconic spot: if something like the destination's most famous sight sits unassigned, flag it.
@@ -96,6 +104,7 @@ CONTEXT NOTE: long conversations are truncated to recent turns to control cost. 
 STYLE:
 - ALWAYS write one short sentence BEFORE calling update_itinerary (e.g. "Sketching a 5-day plan around the old town — one moment.") so the user sees progress while the plan streams. Never open a reply with a silent tool call.
 - After a tool call, keep the prose short: one or two sentences per day on the flow, plus your open question if any. The plan, times, and rationale render on the user's map.
+- END WITH A QUESTION ONLY WHEN THE ANSWER WOULD CHANGE THE PLAN. A closing question is a request for work from the traveler — earn it. Most turns should end with the plan and what you did, not "shall I…?". Never ask permission to do something you have already been asked to do.
 - FORMAT FOR READABILITY: the chat panel renders light markdown — **bold**, "- "/"1. " lists, "## "/"### " headings, "---" rules, and the "[pins: …]" strip — so structure replies to be scannable rather than one dense block. Break your answer into short paragraphs (2-4 sentences each) separated by a blank line. When you list per-day flow, options, or trade-offs, use a "- " bullet per item instead of stringing them into one long sentence. Put a blank line between paragraphs and before a list. Never send a reply longer than two sentences as a single unbroken paragraph. Headings, rules, and pins lines are for the summary document — a normal reply is prose and bullets.
 - If the tool result returns warnings, fix the plan in the same turn.`;
 
@@ -108,10 +117,21 @@ function plansBlock(ctx: PlannerContext): string {
   if (!ctx.plans.length) return "PLAN OPTIONS: none built yet.";
   const active = ctx.activePlanId ?? ctx.plans[0]?.id;
   const lines = ctx.plans.map((p, i) => {
-    const shown = p.id === active ? " — CURRENTLY SHOWN to the traveler" : "";
-    return `[${i + 1}] id: ${p.id} | title: "${p.title}" | ${p.days.length} day${
+    const isActive = p.id === active;
+    const head = `[${i + 1}] id: ${p.id} | title: "${p.title}" | ${p.days.length} day${
       p.days.length === 1 ? "" : "s"
-    }${shown}\n${JSON.stringify(p)}`;
+    }${isActive ? " — CURRENTLY SHOWN to the traveler" : ""}`;
+    // Only the option being looked at rides along in full. Measured over a
+    // review session: cache WRITES were 43% of chat spend (660K tokens at
+    // 1.25x) because this block sits before the conversation history, so every
+    // plan change re-writes everything after it — and at three or four options
+    // most of that weight is plans nobody is editing. The summary keeps what a
+    // comparison needs (the shape of each day); load_plan brings back the rest.
+    if (isActive) return `${head}\n${JSON.stringify(p)}`;
+    const themes = p.days
+      .map((d, n) => `  ${d.label || `Day ${n + 1}`}: ${d.theme ?? "—"} (${(d.stops ?? []).length} stops)`)
+      .join("\n");
+    return `${head}\n  [summarized — call load_plan("${p.id}") for its full detail]\n${themes}`;
   });
   return [
     `PLAN OPTIONS (${ctx.plans.length} of ${MAX_PLANS}) — pass one of these ids to update_itinerary to REPLACE that option, or a new slug to add another:`,
@@ -119,13 +139,24 @@ function plansBlock(ctx: PlannerContext): string {
   ].join("\n");
 }
 
-function volatileContext(ctx: PlannerContext): string {
+/** Last-resort push when the shape-first rule has run away with itself. Prose
+ *  rules alone did not hold: live testing found sessions where the agent
+ *  described a full day-by-day trip two and three times over, called
+ *  get_travel_times every turn, and never once called update_itinerary — the
+ *  traveler ended a four-message conversation with an empty map. The client
+ *  detects that state (see needsCommitNudge in PlannerChat) and this is what it
+ *  turns into. It sits in the volatile block so it disappears the moment a plan
+ *  exists. */
+const COMMIT_NUDGE = `COMMIT NOW: you have already written the summary document twice — the one revision the shape-first step allows — and there is still NO itinerary on the traveler's map. Call update_itinerary in THIS turn. Use your stated assumptions for anything still unknown, put those assumptions in the day rationales, and ask any remaining question AFTER the tool call. Do not describe the plan in prose a third time.`;
+
+function volatileContext(ctx: PlannerContext, commitNow = false): string {
   const parts = [
     plansBlock(ctx),
     ctx.mustSeeSpotIds?.length
       ? `USER-STARRED MUST-SEES (non-negotiable, include every one): ${ctx.mustSeeSpotIds.join(", ")}`
       : "Must-sees: none starred yet.",
     `Today's date: ${new Date().toISOString().slice(0, 10)}`,
+    ...(commitNow ? [COMMIT_NUDGE] : []),
   ];
   return parts.join("\n");
 }
@@ -150,11 +181,19 @@ function tripHeader(ctx: PlannerContext): string {
 // Tool descriptions — single source of truth, used both in the streamText
 // `tools` map (sent to the model) and in the $ai_tools PostHog property (so
 // the analytics know the full tool surface, not just tools that got called).
-const UPDATE_ITINERARY_DESCRIPTION = `Write one of the trip's day-by-day plan options. Send the COMPLETE plan for that option every time (all days), not a diff. Pass an existing planId to REPLACE that option, or a new slug to add another one alongside it (up to ${MAX_PLANS}). The user sees it rendered on their map immediately, and the option you write becomes the one they're looking at.`;
+const UPDATE_ITINERARY_DESCRIPTION = `Write one of the trip's day-by-day plan options. Pass an existing planId to change that option, or a new slug to add another one alongside it (up to ${MAX_PLANS}). The user sees it rendered on their map immediately, and the option you write becomes the one they're looking at.
+
+Two modes, and picking the right one matters to the traveler:
+- mode="replace" (default) — creating a new option, or rewriting most of an existing one. Send EVERY day in \`days\`; it replaces the option entirely.
+- mode="patch" — editing an existing option. Send ONLY the days that change in \`dayPatches\` ([{index, day}], index 0 = day 1). Everything you don't send is left exactly as it is, including the title, stay, pace and budget.
+
+Use patch for anything short of a rewrite: "swap day 2 and 3", "make day 4 lighter", "move the sunset stop", "add a lunch on day 6". Rewriting ten days to change one makes the traveler watch a full plan stream again for no reason.`;
 const DISCARD_PLAN_DESCRIPTION =
   "Delete one of the trip's plan options. Only when the user has ruled that option out — it can't be undone, and their other options are untouched.";
+const LOAD_PLAN_DESCRIPTION =
+  "Fetch a summarized plan option in full (every stop, time and why). Only the option the traveler is currently looking at rides along in the context; the others arrive as day themes. Call this when you need an inactive option's detail — to edit it, or to compare stop by stop.";
 const GET_TRAVEL_TIMES_DESCRIPTION =
-  "Estimate walking and driving/transit minutes between pairs of spots (straight-line based; good for day planning).";
+  'Walking and driving minutes between pairs of spots. Each result says which it is: source="road" is a real road time from a routing service — plan around it as fact, do not substitute your own estimate. source="estimate" is distance-based; if it looks wrong for the terrain, say so in the plan rather than silently overriding it. Ask for the pairs a day actually contains, before you write the plan.';
 const ASK_QUESTIONS_DESCRIPTION =
   "Ask the user a few quick multiple-choice questions to gather what you need (who's going, pace, budget, a specific preference). Renders as a fast tap-through form, one question at a time — use this instead of asking in prose whenever the user is choosing between options. Their answers come back as the tool result.";
 const FIND_SPOTS_DESCRIPTION =
@@ -169,6 +208,7 @@ const AI_TOOLS = [
   { type: "function", function: { name: "ask_questions", description: ASK_QUESTIONS_DESCRIPTION } },
   { type: "function", function: { name: "find_spots", description: FIND_SPOTS_DESCRIPTION } },
   { type: "function", function: { name: "discard_plan", description: DISCARD_PLAN_DESCRIPTION } },
+  { type: "function", function: { name: "load_plan", description: LOAD_PLAN_DESCRIPTION } },
 ];
 
 // --- PostHog $ai_generation, mirroring lib/llm.ts (which wraps the raw
@@ -176,7 +216,8 @@ const AI_TOOLS = [
 
 const posthog = process.env.POSTHOG_API_KEY
   ? new PostHog(process.env.POSTHOG_API_KEY, {
-      host: process.env.POSTHOG_HOST ?? "https://us.i.posthog.com",
+      // `||`, not `??` — see lib/llm.ts: an unset .env key is "", not undefined.
+      host: process.env.POSTHOG_HOST || "https://us.i.posthog.com",
       flushAt: 1,
       flushInterval: 0,
     })
@@ -392,19 +433,25 @@ export async function POST(
       { status: 503 }
     );
   }
-  if (!rateLimit(req, "planner-chat", 300)) return rateLimited();
-
   const { id: tripId } = await params;
-  // Who's chatting — attributes this turn's telemetry to the account.
+  // Who's chatting — attributes this turn's telemetry to the account, and gives
+  // them their own rate-limit allowance instead of one shared per IP.
   const sessionUser = await getSessionUser();
+  if (!rateLimit(req, "planner-chat", 300, sessionUser?.id)) {
+    return rateLimited();
+  }
   const {
     messages,
     context,
     traceId: clientTraceId,
+    commitNow,
   }: {
     messages: UIMessage[];
     context: PlannerContext;
     traceId?: string;
+    /** The client saw two shape documents and no committed plan — see
+     *  COMMIT_NUDGE. */
+    commitNow?: boolean;
   } = await req.json();
 
   if (!context?.spots?.length) {
@@ -432,6 +479,18 @@ export async function POST(
     };
   }
 
+  const volatile = volatileContext(context, commitNow === true);
+
+  // The volatile block (plan options, stars, today's date) sits BETWEEN the
+  // cached prefix and the conversation, so every plan change invalidates the
+  // whole history behind it — measured at 43% of chat spend in cache writes.
+  // Moving it AFTER the history fixes the economics, but it also changes how
+  // the model weights trip state, on an agent whose whole value is being
+  // trustworthy about that state. So it's a flag, default OFF: turn it on,
+  // run scripts/fixtures, and compare plan quality before believing the saving.
+  // (E3's summarisation of inactive options is the safe half, and is always on.)
+  const trailingVolatile = process.env.PLANNER_TRAILING_CONTEXT === "1";
+
   const modelMessages: ModelMessage[] = [
     { role: "system", content: PERSONA },
     {
@@ -441,8 +500,16 @@ export async function POST(
       // sessions only pay full price once. Volatile content goes after.
       providerOptions: { anthropic: { cacheControl: { type: "ephemeral" } } },
     },
-    { role: "system", content: volatileContext(context) },
+    ...(trailingVolatile ? [] : [{ role: "system" as const, content: volatile }]),
     ...history,
+    ...(trailingVolatile
+      ? [
+          {
+            role: "system" as const,
+            content: `<trip-state>\n${volatile}\n</trip-state>`,
+          },
+        ]
+      : []),
   ];
 
   // Telemetry must outlive the response. A serverless function can freeze the
@@ -494,6 +561,11 @@ export async function POST(
       discard_plan: tool({
         description: DISCARD_PLAN_DESCRIPTION,
         inputSchema: DiscardPlanInputSchema,
+      }),
+      // Client-executed: reads the option out of the browser's own storage.
+      load_plan: tool({
+        description: LOAD_PLAN_DESCRIPTION,
+        inputSchema: LoadPlanInputSchema,
       }),
     },
     onEnd: (event) => {

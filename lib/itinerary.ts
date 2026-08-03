@@ -35,6 +35,65 @@ export function normalizeSlot(raw?: string): ItinerarySlot | undefined {
 
 // --- Tool input schemas (what the model sends) ---
 
+/** One day of a plan. Extracted so the whole-plan path and the patch path share
+ *  exactly the same content contract — the required fields inside are the ones
+ *  §4.1 proved only hold when the SCHEMA demands them, and a patched day must be
+ *  held to the identical bar as a written one. */
+const DayInputSchema = z.object({
+  label: z.string().describe('Short label, e.g. "Day 1"'),
+  date: z
+    .string()
+    .optional()
+    .describe("yyyy-mm-dd if travel dates are known"),
+  theme: z
+    .string()
+    .describe(
+      'The day\'s EXPERIENTIAL theme — what kind of day it is, not where. Good: "Harbor icons & a sunset bridge walk", "Slow morning, street-food afternoon". Bad: spot names joined with "+". Never list locations here; the map already shows them.'
+    ),
+  rationale: z
+    .string()
+    .describe(
+      "1-2 sentences selling the day's logic: why these spots belong together, why this order, what the day feels like (geography, opening hours, energy curve). Shown to the user on the map — write for them, not for a log."
+    ),
+  stops: z
+    .array(
+      z.object({
+        spotId: z
+          .string()
+          .describe("A spot id from the trip context, exactly as given"),
+        // Kept lenient on purpose: this is an optional, low-stakes
+        // grouping hint, and the model reaches for synonyms ("midday",
+        // "night"). A strict enum would reject the ENTIRE plan over one
+        // stray value, so accept any string and normalize downstream in
+        // validateItinerary rather than hard-failing the tool call.
+        slot: z
+          .string()
+          .optional()
+          .describe(
+            'Rough time-of-day bucket — one of "morning", "afternoon", "evening".'
+          ),
+        // Required: an itinerary without times doesn't answer "when do
+        // I start and when am I done" — the whole point of the plan.
+        time: z
+          .string()
+          .describe('Planned arrival, 24h "HH:MM", e.g. "09:30"'),
+        durationMin: z
+          .number()
+          .describe("Minutes to spend at this stop (estimate honestly)"),
+        why: z
+          .string()
+          .describe(
+            "1-2 sentences answering all three: (1) why this spot is worth the user's time (what makes it special — lean on the creators' takes), (2) why THIS day, (3) why THIS time of day — for a time-sensitive spot (sunset light, calm morning water, midday shade/heat, tide/swell, pre-crowd) this MUST name that reason, not a generic \"afternoon works\". Shown on the spot's card. Not a practical tip — tips go in note."
+          ),
+        note: z
+          .string()
+          .optional()
+          .describe("Practical tip for this stop, one sentence"),
+      })
+    )
+    .describe("Stops in visit order"),
+});
+
 export const ItineraryInputSchema = z.object({
   // Required, not optional: a trip holds several options side by side, so
   // "which one am I writing" is never a safe default. §4.1 — the schema is
@@ -45,69 +104,43 @@ export const ItineraryInputSchema = z.object({
     .describe(
       'Which option this plan is. To CHANGE an option that already exists, pass its exact id from the "PLAN OPTIONS" list in the context. To create a NEW option alongside the existing ones, invent a short kebab-case slug describing it ("east-coast", "with-national-park"). Never reuse another option\'s id for a different plan.'
     ),
+  // A whole-option rewrite to move two stops is the single most expensive habit
+  // this agent has: measured turns spent >5 minutes and three full rewrites of a
+  // 40-stop plan on one edit, past the route's own 300s ceiling. "patch" makes
+  // the cheap thing possible; the description makes it the obvious choice.
+  mode: z
+    .enum(["replace", "patch"])
+    .optional()
+    .describe(
+      'How to write this option. "patch" = you are EDITING days of a plan that already exists: send only the days that change, in dayPatches. "replace" = you are creating a new option, or rewriting most of an existing one: send every day in days. Default if omitted: replace. Editing one or two days of an existing plan MUST use patch — rewriting ten days to change one wastes the traveler\'s time watching it stream.'
+    ),
   title: z
     .string()
+    .optional()
     .describe(
-      'Short name for this option, max 4 words, naming what makes it DIFFERENT from the others — the tradeoff the traveler is choosing between. Good: "East coast only", "East, south & airport", "With Yala park". Bad: "Sri Lanka trip", "Option 2", "Best plan".'
+      'Short name for this option, max 4 words, naming what makes it DIFFERENT from the others — the tradeoff the traveler is choosing between. Good: "East coast only", "East, south & airport", "With Yala park". Bad: "Sri Lanka trip", "Option 2", "Best plan". REQUIRED when creating or replacing; omit when patching to keep the existing title.'
     ),
   days: z
+    .array(DayInputSchema)
+    .optional()
+    .describe(
+      "Every day of the option, in order. Required for mode=replace (and when creating a new option) — this replaces the option entirely."
+    ),
+  dayPatches: z
     .array(
       z.object({
-        label: z.string().describe('Short label, e.g. "Day 1"'),
-        date: z
-          .string()
-          .optional()
-          .describe("yyyy-mm-dd if travel dates are known"),
-        theme: z
-          .string()
+        index: z
+          .number()
           .describe(
-            'The day\'s EXPERIENTIAL theme — what kind of day it is, not where. Good: "Harbor icons & a sunset bridge walk", "Slow morning, street-food afternoon". Bad: spot names joined with "+". Never list locations here; the map already shows them.'
+            "0-based position of the day being changed — day 1 of the plan is index 0. Every other day is left exactly as it is."
           ),
-        rationale: z
-          .string()
-          .describe(
-            "1-2 sentences selling the day's logic: why these spots belong together, why this order, what the day feels like (geography, opening hours, energy curve). Shown to the user on the map — write for them, not for a log."
-          ),
-        stops: z
-          .array(
-            z.object({
-              spotId: z
-                .string()
-                .describe("A spot id from the trip context, exactly as given"),
-              // Kept lenient on purpose: this is an optional, low-stakes
-              // grouping hint, and the model reaches for synonyms ("midday",
-              // "night"). A strict enum would reject the ENTIRE plan over one
-              // stray value, so accept any string and normalize downstream in
-              // validateItinerary rather than hard-failing the tool call.
-              slot: z
-                .string()
-                .optional()
-                .describe(
-                  'Rough time-of-day bucket — one of "morning", "afternoon", "evening".'
-                ),
-              // Required: an itinerary without times doesn't answer "when do
-              // I start and when am I done" — the whole point of the plan.
-              time: z
-                .string()
-                .describe('Planned arrival, 24h "HH:MM", e.g. "09:30"'),
-              durationMin: z
-                .number()
-                .describe("Minutes to spend at this stop (estimate honestly)"),
-              why: z
-                .string()
-                .describe(
-                  "1-2 sentences answering all three: (1) why this spot is worth the user's time (what makes it special — lean on the creators' takes), (2) why THIS day, (3) why THIS time of day — for a time-sensitive spot (sunset light, calm morning water, midday shade/heat, tide/swell, pre-crowd) this MUST name that reason, not a generic \"afternoon works\". Shown on the spot's card. Not a practical tip — tips go in note."
-                ),
-              note: z
-                .string()
-                .optional()
-                .describe("Practical tip for this stop, one sentence"),
-            })
-          )
-          .describe("Stops in visit order"),
+        day: DayInputSchema,
       })
     )
-    .describe("The full plan — this replaces the previous itinerary entirely"),
+    .optional()
+    .describe(
+      "Only for mode=patch: the days that change, each with its position. Send nothing else — untouched days keep their current stops, times, themes and rationale."
+    ),
   stay: z
     .object({
       name: z.string(),
@@ -184,6 +217,16 @@ export const DiscardPlanInputSchema = z.object({
 
 export type DiscardPlanInput = z.infer<typeof DiscardPlanInputSchema>;
 
+export const LoadPlanInputSchema = z.object({
+  planId: z
+    .string()
+    .describe(
+      'The exact id of the summarized option you need in full, from the "PLAN OPTIONS" list.'
+    ),
+});
+
+export type LoadPlanInput = z.infer<typeof LoadPlanInputSchema>;
+
 const MAX_DAYS = 14;
 const MAX_STOPS_PER_DAY = 10;
 
@@ -196,19 +239,112 @@ export const MAX_PLANS = 4;
 /** Normalize a model-sent itinerary against the trip's real spots: drop
  *  unknown ids and duplicates (first occurrence wins), cap sizes. Warnings go
  *  back to the model in the tool result so it can self-correct. */
+type DayInput = z.infer<typeof DayInputSchema>;
+
+/**
+ * Turn a tool call into the full list of days it means, whether it arrived as a
+ * whole plan or as patches onto one. Returns an `error` string instead of
+ * throwing so the caller can hand it straight back as the tool result — the
+ * model then fixes it in the same turn, which is how every other refusal in this
+ * file behaves (see upsertPlan's MAX_PLANS message).
+ */
+function resolveDays(
+  input: ItineraryInput,
+  existing: Itinerary | undefined
+): { days: DayInput[]; warnings: string[]; error?: string } {
+  const patching = input.mode === "patch";
+  if (!patching) {
+    if (!input.days?.length) {
+      return {
+        days: [],
+        warnings: [],
+        error:
+          'No days received. For mode="replace" (the default) send the complete plan in `days`; to change a few days of an existing option send mode="patch" with `dayPatches`.',
+      };
+    }
+    return { days: input.days, warnings: [] };
+  }
+
+  if (!existing) {
+    return {
+      days: [],
+      warnings: [],
+      error: `Can't patch "${input.planId}" — no option with that id exists yet. Send the whole plan with mode="replace" to create it.`,
+    };
+  }
+  if (!input.dayPatches?.length) {
+    return {
+      days: [],
+      warnings: [],
+      error:
+        'mode="patch" needs `dayPatches` — a list of { index, day } for the days that change.',
+    };
+  }
+
+  const warnings: string[] = [];
+  // Start from what's stored, not from props: two tool calls can land in one
+  // turn before React re-renders (§2d), so the base must be re-read state.
+  const days: DayInput[] = existing.days.map((d) => ({
+    label: d.label ?? "",
+    date: d.date,
+    theme: d.theme ?? "",
+    rationale: d.rationale ?? "",
+    stops: (d.stops ?? []).map((s) => ({
+      spotId: s.spotId,
+      slot: s.slot,
+      time: s.time ?? "",
+      durationMin: s.durationMin ?? 0,
+      why: s.why ?? "",
+      note: s.note,
+    })),
+  }));
+
+  for (const patch of input.dayPatches) {
+    if (patch.index < 0 || patch.index >= days.length) {
+      // Appending is a legitimate intent ("add a day 8"), so allow the next
+      // index up; anything beyond that is a mistake worth naming.
+      if (patch.index === days.length) {
+        days.push(patch.day);
+        continue;
+      }
+      warnings.push(
+        `Ignored a patch for day index ${patch.index} — "${input.planId}" has ${days.length} days (valid indexes 0-${days.length - 1}, or ${days.length} to append).`
+      );
+      continue;
+    }
+    days[patch.index] = patch.day;
+  }
+  return { days, warnings };
+}
+
 export function validateItinerary(
   input: ItineraryInput,
-  spots: Spot[]
-): { itinerary: Itinerary; warnings: string[] } {
+  spots: Spot[],
+  existing?: Itinerary
+): { itinerary: Itinerary; warnings: string[]; error?: string } {
   const known = new Set(spots.map((s) => s.id));
   const seen = new Set<string>();
-  const warnings: string[] = [];
 
-  if (input.days.length > MAX_DAYS) {
+  const resolved = resolveDays(input, existing);
+  if (resolved.error) {
+    return {
+      itinerary: existing ?? {
+        id: slugPlanId(input.planId),
+        title: input.title?.trim() || "Untitled plan",
+        days: [],
+        updatedAt: new Date().toISOString(),
+      },
+      warnings: [],
+      error: resolved.error,
+    };
+  }
+  const warnings = [...resolved.warnings];
+
+  if (resolved.days.length > MAX_DAYS) {
     warnings.push(`Plan capped at ${MAX_DAYS} days.`);
   }
 
-  const days = input.days.slice(0, MAX_DAYS).map((day, i) => {
+  const days = resolved.days.slice(0, MAX_DAYS).map((day, i) => {
     const stops = [];
     for (const stop of day.stops) {
       if (!known.has(stop.spotId)) {
@@ -251,15 +387,134 @@ export function validateItinerary(
   return {
     itinerary: {
       id: slugPlanId(input.planId),
-      title: input.title?.trim() || "Untitled plan",
+      // A patch keeps everything it didn't mention — title, stay, pace and
+      // budget included. Re-sending them just to preserve them is exactly the
+      // waste patch mode exists to remove.
+      title: input.title?.trim() || existing?.title || "Untitled plan",
       days,
-      stay: input.stay,
-      pace: input.pace,
-      budget: input.budget,
+      stay: input.stay ?? existing?.stay,
+      pace: input.pace ?? existing?.pace,
+      budget: input.budget ?? existing?.budget,
       updatedAt: new Date().toISOString(),
     },
     warnings,
   };
+}
+
+/**
+ * The whole write, atomically: re-read stored plans, resolve a patch or a
+ * replace against the option as it actually is, validate, and save. One function
+ * because the read and the write must not be separated — two update_itinerary
+ * calls can land in a single turn before React re-renders, and a base taken from
+ * props would make the second silently drop the first (§2d, §5.8).
+ */
+export function applyPlanUpdate(
+  trip: Trip,
+  isLocal: boolean,
+  input: ItineraryInput,
+  spots: Spot[]
+): {
+  plans: Itinerary[];
+  itinerary: Itinerary;
+  created: boolean;
+  warnings: string[];
+  /** Set when the call couldn't be applied at all — hand it back as the tool
+   *  result so the model can correct itself in the same turn. */
+  rejected?: string;
+  /** How the write was expressed, for telemetry and for the nudge below. */
+  mode: "replace" | "patch";
+} {
+  const live = isLocal ? (peekTrip(trip.id) ?? trip) : trip;
+  const stored = loadPlans(live, isLocal);
+  const id = slugPlanId(input.planId);
+  const existing = stored.find((p) => p.id === id);
+  const mode = input.mode === "patch" ? "patch" : "replace";
+
+  const { itinerary, warnings, error } = validateItinerary(input, spots, existing);
+  if (error) {
+    return {
+      plans: stored,
+      itinerary,
+      created: false,
+      warnings,
+      rejected: error,
+      mode,
+    };
+  }
+
+  const { plans, created, rejected } = upsertPlan(trip, isLocal, itinerary);
+  if (rejected) {
+    return { plans, itinerary, created: false, warnings, rejected, mode };
+  }
+
+  // Feedback beats prohibition: a full rewrite that changed almost nothing is
+  // the expensive habit, so name it in the tool result where the model will
+  // actually read it, rather than adding another rule it can quietly skip.
+  if (mode === "replace" && existing && existing.days.length >= 4) {
+    const changed = countChangedDays(existing, itinerary);
+    if (changed > 0 && changed <= 2) {
+      warnings.push(
+        `You rewrote all ${itinerary.days.length} days to change ${changed}. Next time use mode="patch" with dayPatches — it's faster for the traveler and leaves the other days untouched.`
+      );
+    }
+  }
+
+  // A "new option" that's really the old one again is worse than no option: it
+  // costs a full plan write, it fills a slot out of MAX_PLANS, and it hands the
+  // traveler a comparison with nothing to compare. Observed: a second Sri Lanka
+  // option shared 31 of 35 stops with the first, because the alternative they
+  // asked for ("skip the hill country") was already true of the plan they had.
+  const twin = nearestTwin(itinerary, plans);
+  if (twin) {
+    warnings.push(
+      `This is ${Math.round(twin.overlap * 100)}% the same trip as "${twin.plan.title}" (${twin.shared} of ${twin.total} stops identical). Options are only useful if they're genuinely different shapes — either differentiate this one, or tell the traveler their existing plan already covers what they asked for and discard it.`
+    );
+  }
+
+  return { plans, itinerary, created, warnings, mode };
+}
+
+/** The most similar OTHER option, if it's similar enough to be a problem.
+ *  Overlap coefficient (shared / smaller set), so a 6-stop option nested inside
+ *  a 30-stop one still reads as a duplicate. */
+function nearestTwin(
+  plan: Itinerary,
+  all: Itinerary[]
+): { plan: Itinerary; overlap: number; shared: number; total: number } | null {
+  const ids = (p: Itinerary) =>
+    new Set(p.days.flatMap((d) => (d.stops ?? []).map((s) => s.spotId)));
+  const mine = ids(plan);
+  if (mine.size < 4) return null;
+  let worst: { plan: Itinerary; overlap: number; shared: number; total: number } | null =
+    null;
+  for (const other of all) {
+    if (other.id === plan.id) continue;
+    const theirs = ids(other);
+    if (theirs.size < 4) continue;
+    const shared = [...mine].filter((id) => theirs.has(id)).length;
+    const overlap = shared / Math.min(mine.size, theirs.size);
+    if (overlap > 0.7 && (!worst || overlap > worst.overlap)) {
+      worst = { plan: other, overlap, shared, total: Math.min(mine.size, theirs.size) };
+    }
+  }
+  return worst;
+}
+
+/** How many days actually differ, by content rather than identity. */
+function countChangedDays(before: Itinerary, after: Itinerary): number {
+  const key = (d: Itinerary["days"][number]) =>
+    JSON.stringify([
+      d.theme,
+      d.rationale,
+      (d.stops ?? []).map((s) => [s.spotId, s.time, s.durationMin, s.why]),
+    ]);
+  const prev = before.days.map(key);
+  const next = after.days.map(key);
+  let changed = Math.abs(prev.length - next.length);
+  for (let i = 0; i < Math.min(prev.length, next.length); i++) {
+    if (prev[i] !== next[i]) changed++;
+  }
+  return changed;
 }
 
 /** Plan ids are model-authored and end up in a localStorage key and a React
@@ -480,14 +735,31 @@ export function haversineKm(
   return 2 * R * Math.asin(Math.sqrt(s));
 }
 
-/** Straight-line estimate → rough door-to-door minutes. City routes aren't
- *  straight lines, so pad distance by 1.3; walking 4.5km/h, driving/transit
- *  ~18km/h city average incl. waiting. Good enough for day planning. */
+/**
+ * Straight-line estimate → rough door-to-door minutes.
+ *
+ * The old version used one city speed (18 km/h) for every distance, which is
+ * right for crossing a city and badly wrong for the drives that actually shape a
+ * trip: it turned a 2h15 highway run from Udawalawe to Weligama into something
+ * closer to four hours. The agent noticed, said so in its own reasoning — "those
+ * straight-line estimates run high for these coastal/highway routes" — and then
+ * planned around its own guess instead. A tool the agent overrules is the worst
+ * of both worlds: it costs a round trip and buys nothing.
+ *
+ * So speed now scales with distance, the way real journeys do — short hops are
+ * city traffic, long ones are mostly highway — and the detour factor shrinks as
+ * roads straighten out. Still an estimate; `/api/routes` replaces it with real
+ * road times when a Google key is configured.
+ */
 export function travelEstimate(km: number): { walkMin: number; driveMin: number } {
-  const routeKm = km * 1.3;
+  // Detour factor: dense street grids wander, highways don't.
+  const detour = km < 5 ? 1.35 : km < 30 ? 1.25 : 1.15;
+  const routeKm = km * detour;
+  // Effective door-to-door speed including stops, junctions and parking.
+  const kmh = km < 3 ? 16 : km < 10 ? 24 : km < 40 ? 42 : 55;
   return {
-    walkMin: Math.round((routeKm / 4.5) * 60),
-    driveMin: Math.max(5, Math.round((routeKm / 18) * 60)),
+    walkMin: Math.round((km * 1.35 / 4.5) * 60),
+    driveMin: Math.max(5, Math.round((routeKm / kmh) * 60)),
   };
 }
 
@@ -536,16 +808,21 @@ export function buildPlannerContext(
     interests: trip.query?.interests,
     party: trip.query?.party,
     mustSeeSpotIds: mustSeeSpotIds.length > 0 ? mustSeeSpotIds : undefined,
-    spots: trip.spots.map((s) => ({
-      id: s.id,
-      name: s.name,
-      category: s.category,
-      desc: s.description.slice(0, 160),
-      lat: s.lat,
-      lng: s.lng,
-      mentions: s.mentions.length,
-      tips: s.thingsToKnow?.slice(0, 3).map((t) => t.slice(0, 120)),
-    })),
+    // Out-of-bounds spots are held back from the agent as well as the map: a
+    // planner that can see Svaneti on a Tbilisi weekend will eventually put it
+    // in a day, and the traveler finds out it's nine hours away.
+    spots: trip.spots
+      .filter((s) => !s.outOfBounds || mustSeeSpotIds.includes(s.id))
+      .map((s) => ({
+        id: s.id,
+        name: s.name,
+        category: s.category,
+        desc: s.description.slice(0, 160),
+        lat: s.lat,
+        lng: s.lng,
+        mentions: s.mentions.length,
+        tips: s.thingsToKnow?.slice(0, 3).map((t) => t.slice(0, 120)),
+      })),
     plans,
     activePlanId: activePlanId ?? undefined,
   };

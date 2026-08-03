@@ -79,11 +79,20 @@ interface GeoPlace {
   bounds: [[number, number], [number, number]] | null;
 }
 
+/** "a, b and c" — reads as a sentence rather than a comma-separated dump. */
+function listPhrase(items: string[]): string {
+  if (items.length <= 1) return items[0] ?? "";
+  return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
+}
+
 const STATUS_ICON: Record<TripVideo["status"], string> = {
   pending: "⏳",
   processing: "⚙️",
   done: "✅",
   error: "⚠️",
+  // Not this video's fault — YouTube wouldn't serve it to us. Reads as "waiting"
+  // rather than "broken", because a retry usually gets it.
+  throttled: "⏸️",
 };
 
 function VideoStrip({
@@ -772,6 +781,9 @@ export default function TripView({
   // The pins-rail category filters collapse to a single button by default and
   // fan open on click — the full chip grid was too heavy to sit open always.
   const [pinFiltersOpen, setPinFiltersOpen] = useState(false);
+  /** Opt-in for spots outside the destination's bounds (D3). Per view, not
+   *  persisted — it's a "let me look" gesture, not a preference. */
+  const [showOutOfRange, setShowOutOfRange] = useState(false);
   // A one-shot fly-to command for the map. Bumping `key` re-triggers the fly
   // even to the same coords (search the same place twice → it re-centers).
   const [flyTo, setFlyTo] = useState<{
@@ -1019,10 +1031,17 @@ export default function TripView({
   // (pan → moveend → setBounds → re-render → new array → pan → …).
   const catFiltered = useMemo(() => {
     if (!trip) return [];
-    if (activeCats.length === 0) return trip.spots;
+    // Quarantined spots (outside the destination — see Trip.bounds) are hidden
+    // from the map and the grid until the traveler opts in. They stay ON the
+    // trip: a creator really did recommend them, and "we deleted your spots" is
+    // a worse answer than "these are far away".
+    const inScope = showOutOfRange
+      ? trip.spots
+      : trip.spots.filter((s) => !s.outOfBounds);
+    if (activeCats.length === 0) return inScope;
     const activeSet = new Set(activeCats);
-    return trip.spots.filter((s) => activeSet.has(s.category));
-  }, [trip, activeCats]);
+    return inScope.filter((s) => activeSet.has(s.category));
+  }, [trip, activeCats, showOutOfRange]);
 
   // A Nominatim viewbox around this trip's spots so geocoder results are
   // biased to the destination (searching "beach" in a Sri Lanka trip shouldn't
@@ -1138,7 +1157,22 @@ export default function TripView({
 
   // Full-page building state until we have a destination + at least one spot.
   if (!trip.destination || (trip.status === "processing" && trip.spots.length === 0)) {
-    return <BuildingScreen trip={trip} />;
+    return (
+      <BuildingScreen
+        trip={trip}
+        onRetry={() => {
+          // Videos left `throttled` were re-queued as pending by the runner, so
+          // this picks up where the build stopped rather than starting over.
+          const t = peekTrip(tripId);
+          if (t) {
+            t.status = "processing";
+            t.progress = "Picking up where we left off…";
+            void saveTrip(t);
+          }
+          ensureRunning(tripId);
+        }}
+      />
+    );
   }
 
   // Categories present in this trip, most common first, with counts.
@@ -1369,6 +1403,10 @@ export default function TripView({
   const applyPlans = (next: Itinerary[], focusId: string | null) => {
     setPlansOverride(next);
     if (focusId !== activePlanId) openPlan(focusId);
+    // D6 — on a phone the sheet has usually grown to fill the screen while a
+    // long reply streamed, so the moment the plan actually lands on the map is
+    // the moment the map is hidden. Drop to half and give them the payoff.
+    if (isMobile) setSheetSnap("half");
   };
 
   const removePlan = (planId: string) => {
@@ -1668,6 +1706,12 @@ export default function TripView({
         onToggleDay={toggleOverviewDay}
         onSelectSpot={selectSpot}
         onCompare={plans.length > 1 ? () => setComparing(true) : undefined}
+        onSwapIn={(spot) => {
+          setSheetTab("agent");
+          composeRef.current?.(
+            `Fit ${spot.name} into the plan — tell me what you moved to make room.`
+          );
+        }}
         onStartPlanning={() => {
           // Chat lives in the left rail (desktop) or the Agent tab (mobile).
           setSheetTab("agent");
@@ -1705,8 +1749,82 @@ export default function TripView({
     />
   ) : null;
 
+  // C3/D5 — a partial map is indistinguishable from a complete one. 71 pins
+  // looks like thorough coverage even when it's a single coastline of a whole
+  // country, so name what's missing and make it one tap to fix.
+  const uncoveredAreas = (() => {
+    if (!trip.subAreas?.length || trip.spots.length === 0) return [];
+    // A sub-area counts as covered if any spot's name or description mentions
+    // it. Crude on purpose: the alternative is another model call to answer a
+    // question the traveler can settle by looking.
+    const haystack = trip.spots
+      .map((s) => `${s.name} ${s.description}`.toLowerCase())
+      .join(" | ");
+    return trip.subAreas.filter((area) => {
+      const head = area.split(/[&,(]/)[0].trim().toLowerCase();
+      return head.length > 2 && !haystack.includes(head);
+    });
+  })();
+
+  const coverageEl =
+    uncoveredAreas.length > 0 && isLocal ? (
+      <div className="rail-note">
+        <div className="rail-note-body">
+          <strong>Your map doesn&rsquo;t cover everything.</strong> Nothing yet
+          for {listPhrase(uncoveredAreas)}.
+        </div>
+        <div className="rail-note-actions">
+          {uncoveredAreas.slice(0, 3).map((area) => (
+            <button
+              key={area}
+              className="rail-note-btn"
+              onClick={() =>
+                composeRef.current?.(`Find me some spots in ${area}.`)
+              }
+            >
+              + {area}
+            </button>
+          ))}
+        </div>
+      </div>
+    ) : null;
+
+  // D3 — the quarantine, made visible. These are real recommendations that
+  // happen to be outside the destination; hiding them silently would be worse
+  // than the problem, so say how far and offer to bring them in.
+  const outOfRangeSpots = trip.spots.filter((s) => s.outOfBounds);
+  const outOfRangeEl =
+    outOfRangeSpots.length > 0 && !showOutOfRange ? (
+      <div className="rail-note">
+        <div className="rail-note-body">
+          <strong>
+            {outOfRangeSpots.length} spot
+            {outOfRangeSpots.length === 1 ? "" : "s"} outside{" "}
+            {trip.destination?.name ?? "this trip"}.
+          </strong>{" "}
+          {outOfRangeSpots
+            .slice(0, 3)
+            .map((s) => s.name)
+            .join(", ")}
+          {outOfRangeSpots.length > 3 ? " and others" : ""} — the creators
+          mentioned them, but they&rsquo;re a long way from everything else, so
+          they&rsquo;re off the map and out of the plan.
+        </div>
+        <div className="rail-note-actions">
+          <button
+            className="rail-note-btn"
+            onClick={() => setShowOutOfRange(true)}
+          >
+            Show them anyway
+          </button>
+        </div>
+      </div>
+    ) : null;
+
   const pinsViewEl = (
             <div className="pins-view">
+              {coverageEl}
+              {outOfRangeEl}
               {/* Category filters — collapsed to a single button by default,
                   fanning open into the full multi-select chip grid on click.
                   Empty selection = show everything. */}
@@ -2199,6 +2317,7 @@ function TripOverview({
   onSelectSpot,
   onStartPlanning,
   onCompare,
+  onSwapIn,
 }: {
   itinerary: Itinerary | null;
   spotById: Map<string, Spot>;
@@ -2208,6 +2327,9 @@ function TripOverview({
   onStartPlanning: () => void;
   /** Only set when there's more than one option to compare. */
   onCompare?: () => void;
+  /** Drops "fit this spot in" into the composer (D4). Absent on read-only
+   *  sample trips, where there's no planner to ask. */
+  onSwapIn?: (spot: Spot) => void;
 }) {
   if (!itinerary || itinerary.days.length === 0) {
     return (
@@ -2326,6 +2448,91 @@ function TripOverview({
           );
         })}
       </div>
+      <DidntMakeTheCut
+        itinerary={itinerary}
+        spotById={spotById}
+        onSelectSpot={onSelectSpot}
+        onSwapIn={onSwapIn}
+      />
+    </div>
+  );
+}
+
+/**
+ * D4 — the other half of the map, given a job.
+ *
+ * Measured across every trip in the product review, 51-72% of the spots we
+ * spend ten minutes and twenty extractions building are never used by the plan.
+ * That's defensible per-trip (a 3-day plan can't use 28 spots) but it quietly
+ * undercuts the pitch: we sell "every YouTube guide, mapped" and then use half
+ * of it. Listing the leftovers with a reason and a one-tap way in turns dead
+ * inventory into the thing that actually differentiates a 71-pin map — that it
+ * holds more than one trip.
+ *
+ * Ordered by creator consensus, because that's the product's own quality signal
+ * and the strongest argument for "you might want this one".
+ */
+function DidntMakeTheCut({
+  itinerary,
+  spotById,
+  onSelectSpot,
+  onSwapIn,
+}: {
+  itinerary: Itinerary;
+  spotById: Map<string, Spot>;
+  onSelectSpot: (id: string) => void;
+  onSwapIn?: (spot: Spot) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const planned = new Set(
+    itinerary.days.flatMap((d) => d.stops.map((s) => s.spotId))
+  );
+  const left = [...spotById.values()]
+    .filter((s) => !planned.has(s.id) && !s.outOfBounds)
+    .sort((a, b) => b.mentions.length - a.mentions.length);
+  if (left.length === 0) return null;
+
+  const shown = open ? left : left.slice(0, 4);
+  return (
+    <div className="ov-leftovers">
+      <button className="ov-leftovers-head" onClick={() => setOpen((o) => !o)}>
+        <span>
+          Didn&rsquo;t make the cut · {left.length} spot
+          {left.length === 1 ? "" : "s"}
+        </span>
+        <span className="ov-leftovers-caret">{open ? "▴" : "▾"}</span>
+      </button>
+      <div className="ov-leftovers-list">
+        {shown.map((spot) => (
+          <div className="ov-leftover" key={spot.id}>
+            <button
+              className="ov-leftover-main"
+              onClick={() => onSelectSpot(spot.id)}
+            >
+              <span className="ov-leftover-name">{spot.name}</span>
+              <span className="ov-leftover-meta">
+                {spot.mentions.length > 1
+                  ? `${spot.mentions.length} creators recommend it`
+                  : spot.category}
+              </span>
+            </button>
+            {onSwapIn && (
+              <button
+                className="ov-leftover-add"
+                onClick={() => onSwapIn(spot)}
+                aria-label={`Ask the planner to fit ${spot.name} in`}
+              >
+                + Fit it in
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      {!open && left.length > shown.length && (
+        <button className="ov-leftovers-more" onClick={() => setOpen(true)}>
+          Show {left.length - shown.length} more
+        </button>
+      )}
     </div>
   );
 }

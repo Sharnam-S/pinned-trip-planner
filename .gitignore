@@ -46,3 +46,6 @@ next-env.d.ts
 
 # local dev database (PGlite)
 /.data/
+
+# Fixture-suite artifacts (screenshots + trip snapshots from scripts/fixtures)
+scripts/fixtures/.out/

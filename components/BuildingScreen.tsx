@@ -109,8 +109,12 @@ function BuildVideoCard({ v }: { v: TripVideo }) {
           </svg>
         ) : v.status === "error" ? (
           "!"
+        ) : v.status === "processing" ? (
+          <span className="bvideo-spin" aria-label="reading now" />
         ) : (
-          <span className="bvideo-spin" aria-label="processing" />
+          // Queued is not the same as being read, and showing twenty spinners
+          // for four workers is why a paused build looked like a working one.
+          <span className="bvideo-queued" aria-label="queued" />
         )}
       </span>
     </div>
@@ -153,8 +157,20 @@ function formatSeconds(total: number): string {
   return `${m}m ${String(s).padStart(2, "0")}s`;
 }
 
-export default function BuildingScreen({ trip }: { trip: Trip }) {
+export default function BuildingScreen({
+  trip,
+  onRetry,
+}: {
+  trip: Trip;
+  /** Re-runs the build in place. Most build failures are transient (YouTube
+   *  throttling us, a network blip), and this screen used to offer nothing but
+   *  "back to trips" — sending people to start over, straight into the same
+   *  wall, with their ten-minute wait thrown away. */
+  onRetry?: () => void;
+}) {
   const failed = trip.status === "error";
+  const [retrying, setRetrying] = useState(false);
+  const readable = trip.videos.filter((v) => v.status === "done").length;
   // Stage 1 until the discover call lands videos; stage 2 while we read them.
   // Stage 3 never activates here — the first pinned spot replaces this whole
   // screen with the live map, which is exactly the reveal we want.
@@ -207,11 +223,29 @@ export default function BuildingScreen({ trip }: { trip: Trip }) {
       <div className="building-center">
         {failed ? (
           <>
-            <h1 className="building-title">Couldn&rsquo;t build this trip</h1>
+            <h1 className="building-title">
+              {readable > 0
+                ? "We didn't finish this map"
+                : "Couldn't build this trip"}
+            </h1>
             <p className="building-sub">{trip.progress}</p>
-            <a className="nav-pill" href="/">
-              ← Back to trips
-            </a>
+            <div className="building-actions">
+              {onRetry && (
+                <button
+                  className="nav-pill primary"
+                  disabled={retrying}
+                  onClick={() => {
+                    setRetrying(true);
+                    onRetry();
+                  }}
+                >
+                  {retrying ? "Trying again…" : "↻ Try again"}
+                </button>
+              )}
+              <a className="nav-pill" href="/">
+                ← Back to trips
+              </a>
+            </div>
           </>
         ) : (
           <>

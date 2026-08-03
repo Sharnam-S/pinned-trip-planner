@@ -144,7 +144,7 @@
     {
       "id": "e9327957-a959-47ff-ac66-8561b5080c6c",
       "name": "Mother of Georgia (Kartlis Deda)",
-      "category": "viewpoint",
+      "category": "landmark",
       "description": "The iconic statue of the Mother of Georgia standing on Sololaki Hill, listed by the creator as one of the key tourist attractions to see in Old Tbilisi.",
       "lat": 41.6881503,
       "lng": 44.8045239,
@@ -188,7 +188,7 @@
     {
       "id": "69614afc-c5e6-487a-80f3-0b7be52c6f16",
       "name": "Narikala Fortress",
-      "category": "other",
+      "category": "landmark",
       "description": "An ancient fortress overlooking Old Tbilisi, highlighted by the creator as one of the must-see tourist attractions in the city.",
       "lat": 41.6880478,
       "lng": 44.808764,
@@ -242,7 +242,7 @@
     {
       "id": "f8299f29-51fc-4b4b-be56-30b526eb5583",
       "name": "Abanotubani Sulfur Baths",
-      "category": "activity",
+      "category": "wellness",
       "description": "Tbilisi's famous traditional sulfur bathhouses located in the Old Town district. The creator explicitly recommends trying them as a signature local experience.",
       "lat": 41.6876347,
       "lng": 44.8106766,
@@ -350,7 +350,7 @@
     {
       "id": "dc3cbe06-7e1b-4291-885e-3c1d81cd4ab7",
       "name": "Fabrika",
-      "category": "stay",
+      "category": "nightlife",
       "description": "A former Soviet sewing factory converted into a vibrant multi-use cultural space featuring restaurants, a hostel, and a coworking area. The creator recommends it especially for solo travelers looking for a social environment.",
       "lat": 41.7094157,
       "lng": 44.8028859,
@@ -402,7 +402,7 @@
     {
       "id": "d4987381-9e41-48d8-9871-c5205fb121ba",
       "name": "Kakheti Wine Region",
-      "category": "nature",
+      "category": "activity",
       "description": "Georgia's famous wine region, accessible as a short trip from Tbilisi. The creator recommends going for wine tasting and notes that the scenery is also very beautiful.",
       "lat": 41.7263148,
       "lng": 45.421655699999995,
@@ -600,7 +600,7 @@
     {
       "id": "421fb2f7-c668-4e63-8a25-766211f4ad32",
       "name": "Rezo Gabriadze Clock Tower",
-      "category": "other",
+      "category": "landmark",
       "description": "A whimsical puppet-inspired clock tower in Old Tbilisi designed by Georgian artist Rezo Gabriadze, built from stones and bricks of old abandoned buildings and thousands of ceramic tiles. There are two daily mechanical puppet performances on the tower at noon and 7PM.",
       "lat": 41.695783,
       "lng": 44.806546,
@@ -672,7 +672,7 @@
     {
       "id": "b7c78000-2d4d-4ecf-a269-0f1cd112100e",
       "name": "Rike Park",
-      "category": "activity",
+      "category": "nature",
       "description": "A riverside park on the left bank of the Mtkvari River where you can catch the cable car up to the Mother of Georgia statue on Sololaki Hill. The creator notes you can pay contactless but recommends getting a transportation card to avoid a 0.5 Lari surcharge.",
       "lat": 41.693114,
       "lng": 44.810232,
@@ -708,7 +708,7 @@
     {
       "id": "34504ab2-b0c6-43a8-87b6-2907e20ea451",
       "name": "Betlemi Street Stairs",
-      "category": "viewpoint",
+      "category": "landmark",
       "description": "A beautiful historic staircase and alleyway in Old Tbilisi that was once the main pathway up Sololaki Hill before the cable car was built. The creator specifically recommends taking the cable car up and walking back down through this pretty route.",
       "lat": 41.689389899999995,
       "lng": 44.8041069,
@@ -744,7 +744,7 @@
     {
       "id": "f48ffe48-ae4e-4ba1-a7e2-0789dd63ef97",
       "name": "Dry Bridge Flea Market",
-      "category": "shopping",
+      "category": "market",
       "description": "An open-air antique and flea market spread across a park and the surrounding streets, filled with retro Soviet-era products, collectibles, and curiosities. Open daily but busiest on weekends; the creator found it very pleasant to wander on a quiet weekday.",
       "lat": 41.7009962,
       "lng": 44.8031177,
@@ -780,7 +780,7 @@
     {
       "id": "2120e67d-c816-464a-9f94-4035c40a709b",
       "name": "Dedaena Park",
-      "category": "other",
+      "category": "nature",
       "description": "A leafy urban park adjacent to the Dry Bridge Flea Market whose name means 'mother tongue' in Georgian. It features a monument commemorating Georgia's successful 1978 movement to preserve their national language and alphabet from Soviet removal.",
       "lat": 41.7007992,
       "lng": 44.8042083,
@@ -860,7 +860,7 @@
     {
       "id": "b0c4b654-d49d-414b-aa36-b95cec9d118a",
       "name": "Chronicles of Georgia",
-      "category": "other",
+      "category": "landmark",
       "description": "A colossal hilltop monument near the Tbilisi Sea consisting of towering stone pillars carved with scenes from Georgian history, religion, and warfare. The creator calls it 'absolutely insane' in scale and compares it to Stonehenge, saying it feels like walking through an otherworldly structure — well worth the bus ride out.",
       "lat": 41.770616499999996,
       "lng": 44.810419499999995,
@@ -1084,7 +1084,7 @@
     {
       "id": "4ae117cf-9937-4d19-bb46-29362a86b86e",
       "name": "Freedom Square",
-      "category": "other",
+      "category": "landmark",
       "description": "Tbilisi's main central square lined with upscale shops and buzzing with energy. The creator noted it was the first place in the city where they felt a proper big-city atmosphere.",
       "lat": 41.6930929,
       "lng": 44.801904,
@@ -1110,7 +1110,7 @@
     {
       "id": "b76331c4-9e45-4992-b9f8-aa5829a8d2a9",
       "name": "Gudashvili Square",
-      "category": "other",
+      "category": "landmark",
       "description": "A beautifully restored historic square in the old town with tastefully colorful buildings and a relaxed vibe. The creator praised Tbilisi's thoughtful approach to restoring old neighborhoods and called it a nice chill little square.",
       "lat": 41.6910763,
       "lng": 44.803671400000006,

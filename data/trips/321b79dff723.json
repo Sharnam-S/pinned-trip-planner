@@ -66,7 +66,7 @@
     {
       "id": "de8375ea-630e-424b-ba67-5452705ecff0",
       "name": "Elephant Rock",
-      "category": "viewpoint",
+      "category": "beach",
       "description": "A scenic surf spot popular for morning and evening sessions with sandy bottom and 2-4 foot waves suitable for beginners and intermediates. The rock itself is worth climbing for stunning views of the ocean, lagoon, and sunset.",
       "lat": 6.8098767,
       "lng": 81.82427589999999,
@@ -106,7 +106,7 @@
     {
       "id": "56899411-d83a-4906-911c-8af3967bb2e7",
       "name": "Lighthouse Point",
-      "category": "activity",
+      "category": "beach",
       "description": "The most northerly surf spot located by the crumbled remains of an Old World War II Lighthouse near the small village and lagoon of Kari. Better suited for experienced surfers with bolder sand bottom and waves that get faster throughout the season.",
       "lat": 7.0243828,
       "lng": 81.8770095,
@@ -145,7 +145,7 @@
     {
       "id": "ddcec4ec-ea82-4960-b056-def9b038aff3",
       "name": "Pottuvil Point",
-      "category": "activity",
+      "category": "beach",
       "description": "A nice intermediate surf spot with a mellow takeoff and shorter rides located near the former Whiskey Point. It can be inconsistent but rarely crowded with only 5-10 people even when working, and is best when big swell hits the east coast.",
       "lat": 6.8901011,
       "lng": 81.8429276,
@@ -194,7 +194,7 @@
     {
       "id": "520c7d2d-2883-4235-9a57-db3378c954f0",
       "name": "Peanut Farm",
-      "category": "activity",
+      "category": "beach",
       "description": "A fun and popular surf spot about 20 minutes outside Arugam Bay with two peaks - one safe for beginners and one for advanced surfers. The advanced break is more powerful, ranging from 3-8 feet and can barrel. Features cafes, restaurants and sun beds.",
       "lat": 6.7964208,
       "lng": 81.8214115,
@@ -234,7 +234,7 @@
     {
       "id": "cd579bb7-8f8d-4626-8e4c-fd5a23b3b744",
       "name": "Baby Point",
-      "category": "activity",
+      "category": "beach",
       "description": "One of the most popular surf points in Arugam Bay town center with smaller waves, making it easier for beginners and intermediates. Within the main cove and was one of the first spots developed in the area.",
       "lat": 6.8403154,
       "lng": 81.8366164,
@@ -266,7 +266,7 @@
     {
       "id": "76216e6e-a742-49fa-83bd-c682949b3b6c",
       "name": "Main Point",
-      "category": "activity",
+      "category": "beach",
       "description": "A really popular surf point within Arugam Bay cove better suited for pro and intermediate surfers with bigger waves. One of the first two spots developed in the area before branching out to other locations.",
       "lat": 6.8428378,
       "lng": 81.8313847,
@@ -838,7 +838,7 @@
     {
       "id": "b355f984-3674-4ff1-830e-afe9965cd7ef",
       "name": "Yoga Classes (Arugam Bay)",
-      "category": "activity",
+      "category": "wellness",
       "description": "Yoga classes available in Arugam Bay perfect for yogis, stress relief, or stretching sore muscles from surf lessons. The sound of waves lapping on shore provides a peaceful backdrop for relaxation.",
       "lat": 6.833284,
       "lng": 81.834814,
@@ -875,7 +875,7 @@
     {
       "id": "1cf18d13-9d81-40d7-b2ad-6ad57417d16c",
       "name": "Fins Bar",
-      "category": "food",
+      "category": "nightlife",
       "description": "A bar with delicious drinks and good music featuring talented performers. Serves food and has rooms available, with a fun atmosphere for nightlife events like ladies nights.",
       "lat": 6.839169999999999,
       "lng": 81.8342658,
@@ -916,7 +916,7 @@
     {
       "id": "802a6cb4-d6ee-452a-8f35-b5ab67d83af5",
       "name": "Kaa Cafe",
-      "category": "food",
+      "category": "nightlife",
       "description": "A cafe part of the Kaa guest house known for famous open mic nights. Great place to hang out with friends, grab food and drinks while listening to music and enjoying performances from strangers in the crowd.",
       "lat": 6.8412413,
       "lng": 81.8323219,
@@ -966,7 +966,7 @@
     {
       "id": "c62fe5c9-3e31-407d-b5b6-76bba13f0bd1",
       "name": "Funky Debar",
-      "category": "food",
+      "category": "nightlife",
       "description": "A popular spot hosting the big party that runs from Thursday to Saturday nights starting around 11pm. This is where the main nightlife scene culminates with dancing until sunrise.",
       "lat": 6.8425296,
       "lng": 81.8322213,
@@ -1006,7 +1006,7 @@
     {
       "id": "a6add47f-d91a-4578-8d67-8038d4b61301",
       "name": "Arugam Bay",
-      "category": "activity",
+      "category": "beach",
       "description": "The best right-hand point break in Sri Lanka, breaking for hundreds of meters. It's a mellow, user-friendly wave with sections for turns and occasional barrel sections, but gets very crowded during peak season.",
       "lat": 6.8404077999999995,
       "lng": 81.8368478,
@@ -1087,7 +1087,7 @@
     {
       "id": "30d51c7c-c80f-4a05-a631-1ddd19dfcb19",
       "name": "Rams",
-      "category": "activity",
+      "category": "beach",
       "description": "One of the named breaks in the Midigama area, offering wave options for surfers.",
       "lat": 5.9628953,
       "lng": 80.3940289,
@@ -1124,7 +1124,7 @@
     {
       "id": "3ae8e839-49cf-4465-85d5-b40e7c628b6b",
       "name": "Coconuts",
-      "category": "activity",
+      "category": "beach",
       "description": "An A-frame peak break in Midigama that's a reef/beach hybrid suitable for intermediate surfers, described as really fun.",
       "lat": 5.994262099999999,
       "lng": 80.2961929,
@@ -1161,7 +1161,7 @@
     {
       "id": "38d49d47-7e74-4cb1-8c7e-ab1e940253f7",
       "name": "Weligama",
-      "category": "activity",
+      "category": "beach",
       "description": "One of the best beginner surf spots in the world with a long bay and multiple surf schools. You can hire boards for around five dollars an hour.",
       "lat": 5.9474903999999995,
       "lng": 80.4270885,
@@ -1211,7 +1211,7 @@
     {
       "id": "2fef10f3-b3be-44b3-9e60-dbc3ef824a84",
       "name": "Lazy Left",
-      "category": "activity",
+      "category": "beach",
       "description": "A mellow left-hand wave in the Weligama area that's good for beginners and intermediates, part of a cool little zone of breaks.",
       "lat": 5.9629772999999995,
       "lng": 80.3907096,
@@ -1248,7 +1248,7 @@
     {
       "id": "9685f9af-683b-466e-aa1a-6beca5533e1f",
       "name": "Mirissa",
-      "category": "activity",
+      "category": "beach",
       "description": "A right-hand point break in the Weligama area that's described as a really cool wave for the region.",
       "lat": 5.947722499999999,
       "lng": 80.46114310000002,
@@ -1332,7 +1332,7 @@
     {
       "id": "2e09e3a3-8e8a-4450-9eb9-1997be1e9d09",
       "name": "The Peak",
-      "category": "activity",
+      "category": "beach",
       "description": "The best wave in the Hikkaduwa area, an A-frame peak with good left and right options. It's a powerful reef break.",
       "lat": 6.8651434,
       "lng": 81.06317899999999,
@@ -1371,7 +1371,7 @@
     {
       "id": "863c3ebe-2156-4e1f-b1c5-d46d7c2422d3",
       "name": "North Jetty",
-      "category": "activity",
+      "category": "beach",
       "description": "A long left-hand wave near Hikkaduwa that's described as pretty fun to surf.",
       "lat": 6.1401,
       "lng": 80.1508,
@@ -1455,7 +1455,7 @@
     {
       "id": "85a34de0-756f-42a1-b570-87f9be11384d",
       "name": "Adam's Peak",
-      "category": "viewpoint",
+      "category": "activity",
       "description": "A mountain in the hill country of Sri Lanka that offers a cool climbing experience with better weather and cooler temperatures than the coast.",
       "lat": 6.8096429999999994,
       "lng": 80.4993882,
@@ -1681,7 +1681,7 @@
     {
       "id": "5c31d7cf-a799-4824-a5dd-7bd232c00b4b",
       "name": "Maldives",
-      "category": "other",
+      "category": "town",
       "description": "An island destination only a short flight away from Sri Lanka, mentioned as an option for visitors with extra time on their trip.",
       "lat": 3.8494349999999993,
       "lng": 73.45469659999999,

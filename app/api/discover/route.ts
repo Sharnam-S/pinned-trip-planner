@@ -5,6 +5,7 @@ import { parseTripTag, withLlmUser } from "@/lib/llm";
 import { getSessionUser } from "@/lib/auth";
 import { rateLimit, rateLimited } from "@/lib/ratelimit";
 import { TripQuery } from "@/lib/types";
+import { geocodeBounds } from "@/lib/geocode";
 
 export const runtime = "nodejs";
 // Sonnet planning + YouTube searches + Sonnet curation in one call
@@ -24,7 +25,10 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-  if (!rateLimit(req, "discover", 10)) return rateLimited();
+  // Charge the account, not the IP — see lib/ratelimit.ts. The session probe
+  // moves above the limiter so signed-in callers get their own allowance.
+  const user = await getSessionUser();
+  if (!rateLimit(req, "discover", 20, user?.id)) return rateLimited();
 
   const body = await req.json();
   if (typeof body.destination !== "string" || !body.destination.trim()) {
@@ -50,7 +54,6 @@ export async function POST(req: NextRequest) {
   // withLlmUser attributes every capture inside to the signed-in account.
   const traceId = randomUUID();
   const trip = parseTripTag(body);
-  const user = await getSessionUser();
   return withLlmUser(user, async () => {
     const plan = await planSearchQueries(query, traceId, trip);
   const candidates = await gatherCandidates(plan.queries);
@@ -73,9 +76,16 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // The destination's real extent, resolved once so the trip knows what "here"
+  // means. Best-effort: a geocoder miss must not fail a build, it just means
+  // no spot gets quarantined (see applyVideoResult).
+  const geo = await geocodeBounds(plan.resolvedDestination);
+
   const byId = new Map(candidates.map((c) => [c.id, c]));
   return NextResponse.json({
     resolvedDestination: plan.resolvedDestination,
+    bounds: geo?.bounds ?? null,
+    subAreas: plan.subAreas,
     videos: ranked.slice(0, PICK_COUNT).map((id) => ({
       id,
       title: byId.get(id)?.title ?? "",

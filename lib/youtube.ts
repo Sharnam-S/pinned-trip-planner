@@ -123,6 +123,38 @@ export interface VideoData {
   transcript: { text: string; startSec: number }[];
 }
 
+/**
+ * Why a video couldn't be read. The distinction matters far more than it looks:
+ * "this video has no captions" is a property of the VIDEO (swap in another one),
+ * while a 429 or a bot check is a property of the CONNECTION (wait, then retry
+ * the same one). Collapsing them — which is what this code used to do — makes a
+ * rate-limited build burn its entire twenty-video bench against the same wall
+ * and die as "All videos failed to process", while telling the traveler that
+ * twenty travel vlogs somehow all lack subtitles.
+ */
+export type TranscriptErrorKind =
+  /** Transient, connection-wide: back off and retry the SAME video. */
+  | "rate-limited"
+  | "network"
+  /** Permanent for this video: substitute from the bench. */
+  | "no-captions"
+  | "unavailable";
+
+export class TranscriptError extends Error {
+  constructor(
+    readonly kind: TranscriptErrorKind,
+    message: string
+  ) {
+    super(message);
+    this.name = "TranscriptError";
+  }
+
+  /** Worth retrying the same video in a moment? */
+  get transient(): boolean {
+    return this.kind === "rate-limited" || this.kind === "network";
+  }
+}
+
 // YouTube bot-checks the default WEB client from datacenter IPs (Vercel):
 // getInfo "succeeds" but comes back hollow — no title, no caption tracks.
 // Alternate clients usually pass, so walk the list until one returns
@@ -191,7 +223,10 @@ export async function fetchVideoData(videoId: string): Promise<VideoData> {
   const yt = await getClient();
   const info = await getInfoWithCaptions(yt, videoId);
   if (!info) {
-    throw new Error(
+    // Every client came back empty. That is the connection being refused, not
+    // this video being bad — retrying it later is the right move.
+    throw new TranscriptError(
+      "rate-limited",
       "YouTube refused the request for this video (bot check) — try again in a bit."
     );
   }
@@ -226,6 +261,10 @@ export async function fetchVideoData(videoId: string): Promise<VideoData> {
   // Primary: fetch the caption track directly (json3 timedtext). This is more
   // reliable than InnerTube's get_transcript endpoint, which intermittently 400s.
   let transcript: { text: string; startSec: number }[] = [];
+  // Set when the caption endpoint itself pushed back (429/5xx). The video is
+  // fine; we are being throttled. Kept so the fall-through below reports the
+  // real reason instead of blaming the video's subtitles.
+  let throttled: TranscriptError | null = null;
   const tracks = info.captions?.caption_tracks ?? [];
   if (tracks.length > 0) {
     const track =
@@ -234,6 +273,14 @@ export async function fetchVideoData(videoId: string): Promise<VideoData> {
       const res = await ytFetch(`${track.base_url}&fmt=json3`, {
         signal: AbortSignal.timeout(15000),
       });
+      if (res.status === 429 || res.status >= 500) {
+        throttled = new TranscriptError(
+          res.status === 429 ? "rate-limited" : "network",
+          res.status === 429
+            ? "YouTube is rate-limiting caption downloads right now."
+            : `YouTube returned ${res.status} for this video's captions.`
+        );
+      }
       if (res.ok) {
         const data = (await res.json()) as {
           events?: { tStartMs?: number; segs?: { utf8?: string }[] }[];
@@ -250,7 +297,14 @@ export async function fetchVideoData(videoId: string): Promise<VideoData> {
           }))
           .filter((s) => s.text.length > 0 && s.text !== "[Music]");
       }
-    } catch {
+    } catch (err) {
+      // A timeout or socket error is the connection, not the video.
+      throttled ??= new TranscriptError(
+        "network",
+        `Couldn't reach YouTube's caption endpoint: ${
+          err instanceof Error ? err.message : String(err)
+        }`
+      );
       // fall through to getTranscript()
     }
   }
@@ -271,16 +325,29 @@ export async function fetchVideoData(videoId: string): Promise<VideoData> {
         `[youtube] getTranscript fallback failed for ${videoId}:`,
         err instanceof Error ? err.message : err
       );
-      throw new Error(
-        botChecked
-          ? "YouTube refused the request for this video (bot check) — try again in a bit."
-          : `No transcript available for "${title}". The video needs captions (auto-generated is fine).`
+      // Order matters. A caption endpoint that just returned 429 is the real
+      // reason; a bot-checked husk is the next most likely; only when neither
+      // happened is "this video has no captions" actually true.
+      if (throttled) throw throttled;
+      if (botChecked) {
+        throw new TranscriptError(
+          "rate-limited",
+          "YouTube refused the request for this video (bot check) — try again in a bit."
+        );
+      }
+      throw new TranscriptError(
+        "no-captions",
+        `No transcript available for "${title}". The video needs captions (auto-generated is fine).`
       );
     }
   }
 
   if (transcript.length === 0) {
-    throw new Error(`Transcript for "${title}" came back empty.`);
+    if (throttled) throw throttled;
+    throw new TranscriptError(
+      "no-captions",
+      `Transcript for "${title}" came back empty.`
+    );
   }
 
   return { id: videoId, title, channelName, channelAvatar, thumbnail, transcript };

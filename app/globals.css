@@ -3074,6 +3074,30 @@ button {
   margin-top: 22px;
 }
 
+/* A failed build offers a way forward, not just a way out — "Try again" is the
+   primary action because most build failures are transient. */
+.building-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 22px;
+}
+
+.nav-pill.primary {
+  color: white;
+  background: var(--ink);
+  border-color: transparent;
+}
+
+.nav-pill.primary:hover {
+  background: #0f1b26;
+}
+
+.nav-pill.primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 /* The looping journey scene: dotted arc + plane + pins */
 .flight-scene {
   position: relative;
@@ -3468,6 +3492,15 @@ button {
   border-top-color: var(--blue-primary);
   border-radius: 50%;
   animation: spin 0.9s linear infinite;
+}
+
+/* Waiting its turn, not being read. Twenty spinners for four workers made a
+   paused build look identical to a running one. */
+.bvideo-queued {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(20, 50, 70, 0.16);
 }
 
 .building-hint {
@@ -6892,4 +6925,178 @@ button {
   .ml-building {
     animation: none;
   }
+}
+
+/* ---------- Rail notes: coverage gaps and out-of-range spots (C3/D3/D5) ----
+   A partial map is indistinguishable from a complete one, and a spot silently
+   held back is indistinguishable from one we never found. Both need a sentence
+   and an action, not a badge. Deliberately quiet — they're information, not
+   errors. */
+.rail-note {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  background: white;
+  border-radius: var(--radius-card, 14px);
+  box-shadow: var(--shadow-soft);
+  font-size: 13px;
+  line-height: 1.55;
+  color: #3d5266;
+}
+
+.rail-note-body strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.rail-note-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.rail-note-btn {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  background: #f1f3f6;
+  border: none;
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.rail-note-btn:hover {
+  background: #e6e9ee;
+}
+
+/* ---------- "Didn't make the cut" (D4) -------------------------------------
+   Half of every map goes unused. Listing the leftovers with the reason and a
+   one-tap way in is what makes a 71-pin map worth building. */
+.ov-leftovers {
+  margin-top: 18px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(27, 43, 58, 0.09);
+}
+
+.ov-leftovers-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 2px 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: #5b6b7b;
+}
+
+.ov-leftovers-caret {
+  font-size: 11px;
+  color: #93a3b3;
+}
+
+.ov-leftovers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ov-leftover {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: white;
+  border-radius: 10px;
+}
+
+.ov-leftover-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.ov-leftover-name {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ov-leftover-meta {
+  font-size: 11.5px;
+  color: #8a99a8;
+}
+
+.ov-leftover-add {
+  flex: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  background: #f1f3f6;
+  border: none;
+  border-radius: 999px;
+  padding: 5px 10px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.ov-leftover:hover .ov-leftover-add,
+.ov-leftover-add:focus-visible {
+  opacity: 1;
+}
+
+/* Touch has no hover, so the action can't be hidden behind one. */
+@media (hover: none) {
+  .ov-leftover-add {
+    opacity: 1;
+  }
+}
+
+.ov-leftovers-more {
+  margin-top: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #5b6b7b;
+  background: none;
+  border: none;
+  padding: 4px 2px;
+  cursor: pointer;
+}
+
+/* ---------- Composer while a question card is open (D1) --------------------
+   The composer used to look identical whether or not the agent was waiting on
+   a tap-through card — and typing into it stranded the tool call and killed the
+   conversation. It's routed to the card now; this says so. */
+.planner-inputrow.answering textarea {
+  background: #f7f9fc;
+}
+
+.planner-inputrow.answering::before {
+  content: "Answering the question above";
+  position: absolute;
+  top: -18px;
+  left: 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #8a99a8;
+}
+
+.planner-inputrow {
+  position: relative;
 }

@@ -27,10 +27,26 @@ const PlanSchema = z.object({
     .describe(
       "When travel dates are given: 1-2 sentences on what that time of year is like at this destination — weather, what's open or closed, and what's seasonally special (ski season, monsoon, festivals, Christmas markets). null when no dates were given or the season changes nothing there."
     ),
+  // Diversity of PLACE, not just diversity of creator. Measured on the shipped
+  // sample maps: a trip called "Sri Lanka" had 70 of its 71 spots south of
+  // 7.0°N — no Sigiriya, Kandy, Ella or Yala — because twenty "Sri Lanka travel
+  // guide" videos all cover the same popular circuit and nothing pulled the set
+  // outward. Hokkaido covered 24% of the island. The traveler sees 71 pins and
+  // has no way to know 90% of the country is missing.
+  scale: z
+    .enum(["city", "region", "country"])
+    .describe(
+      "How big the destination is. city = one city and its day trips (Tbilisi, Koh Tao). region = a province or coastline (Hokkaido, the Amalfi coast). country = a whole country (Sri Lanka, Georgia)."
+    ),
+  subAreas: z
+    .array(z.string())
+    .describe(
+      'For scale=region or country: 3-6 distinct areas a good trip there would cover, named the way a traveler would ("Kandy & the cultural triangle", "Ella & the hill country", "the south coast"). They must be genuinely far apart — this is what stops the map collapsing onto one popular strip. Empty array for scale=city.'
+    ),
   queries: z
     .array(z.string())
     .min(3)
-    .max(6)
+    .max(8)
     .describe("YouTube search queries, diverse in angle"),
 });
 
@@ -81,7 +97,8 @@ export async function planSearchQueries(
     max_tokens: 2000,
     system: `You plan YouTube searches for a travel app that extracts recommended spots from video transcripts.
 
-Given a destination (and optionally travel dates and interests), produce 4-6 YouTube search queries that together will surface the best travel videos:
+Given a destination (and optionally travel dates and interests), produce 4-8 YouTube search queries that together will surface the best travel videos:
+- FIRST decide the destination's scale, and for a region or country name the 3-6 sub-areas a good trip covers. Then dedicate AT LEAST ONE QUERY PER SUB-AREA, phrased as a real video title ("Sigiriya and Dambulla travel vlog", "Ella hill country guide"). This is the single most important thing you do: without it every video is about the same famous strip, and the traveler gets a map of one coastline labelled with the name of a country.
 - Always include 2-3 general coverage queries (travel guide, things to do, where to stay/eat).
 - If travel dates are given, first work out what that time of year is like at the destination (hemisphere-aware: June is winter in Patagonia) and record it in seasonContext. What's worth doing often changes completely with the season — Switzerland in June means hiking, lakes, and alpine passes; in December it means skiing and Christmas markets. Dedicate 1-2 queries to that season, phrased like real video titles ("Switzerland in December", "Zermatt winter vlog"), and when the season strongly reshapes the trip, season-flavor a general query too ("Switzerland winter travel guide" rather than "Switzerland travel guide").
 - Treat notable seasonal events inside the travel window (festivals, Christmas markets, cherry blossom, harvest) as implicit interests even when the traveler listed none.
@@ -125,6 +142,20 @@ const CurationSchema = z.object({
     .describe(
       "Ranked YouTube video ids from the candidate list, best first, up to 40. Only ids that appear in the list."
     ),
+  // Required so the model has to think about coverage per pick rather than
+  // asserting it afterwards — the §4.1 pattern applied to geography.
+  coverage: z
+    .array(
+      z.object({
+        subArea: z.string().describe("One of the sub-areas you were given"),
+        videoIds: z
+          .array(z.string())
+          .describe("Which of your first 20 picks cover it (may be empty)"),
+      })
+    )
+    .describe(
+      "For each sub-area, which of the first 20 picks cover it. Empty list = you found nothing for that area; say so honestly rather than padding it with a general guide."
+    ),
 });
 
 /**
@@ -149,6 +180,10 @@ export async function curateVideos(
 
   const context = [
     `Destination: ${plan.resolvedDestination}`,
+    `Destination scale: ${plan.scale}`,
+    plan.subAreas.length
+      ? `Sub-areas this trip must cover (>=2 videos each in your first 20): ${plan.subAreas.join(" | ")}`
+      : null,
     ...queryContextLines(query),
     plan.seasonContext ? `Season at destination: ${plan.seasonContext}` : null,
   ]
@@ -162,7 +197,8 @@ export async function curateVideos(
 
 Ranking criteria:
 - Actual travel content about the destination: guides, vlogs, "things to do", food tours. Reject news, real-estate, expat-life rants, generic country compilations where the destination is one stop among many, and single-event coverage — festival / concert / marathon vlogs and recaps where every spot would land on the same venue — unless the traveler named that event or their travel dates fall inside it.
-- The first 20 must come from as many DIFFERENT channels as possible (ideally 20 distinct channels) — they become the trip; diversity of perspective is the product's core value.
+- GEOGRAPHIC COVERAGE COMES FIRST when sub-areas are listed. Every sub-area must have at least 2 videos in your first 20 before you optimise anything else. A map that covers one famous strip of a whole country is the single worst outcome here — the traveler sees a full-looking map and cannot tell that most of the destination is missing. If a sub-area genuinely has no good candidates, leave its coverage list empty rather than filling it with a general guide that won't mention it.
+- The first 20 must then come from as many DIFFERENT channels as possible (ideally 20 distinct channels) — diversity of perspective is the product's core value, second only to diversity of place.
 - When travel dates are given, match the season: infer the season a video covers from its title and its published month (a vlog published in July was almost certainly filmed in summer). Favor same-season and evergreen videos; demote wrong-season ones — a summer hiking vlog is a poor guide for a December trip, and vice versa. Keep a wrong-season video only when it's clearly the best general guide available. Without dates, lean season-neutral.
 - Cover the traveler's interests when given, but keep general coverage in the first 20 too.
 - Prefer recent over old (places close), substantial over thin (a 15-min detailed guide beats a 4-min montage), and watched over unwatched — but a niche creator with exactly the right content beats a generic popular one.
