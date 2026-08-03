@@ -1760,10 +1760,26 @@ export default function TripView({
     />
   ) : null;
 
+  // The build is over and nothing more is coming: every video has been read or
+  // given up on. `throttled` is deliberately NOT terminal — that build is
+  // paused, not finished, and the retry will add spots.
+  const buildSettled =
+    trip.status !== "processing" &&
+    trip.videos.length > 0 &&
+    trip.videos.every((v) => v.status === "done" || v.status === "error");
+
   // C3/D5 — a partial map is indistinguishable from a complete one. 71 pins
   // looks like thorough coverage even when it's a single coastline of a whole
   // country, so name what's missing and make it one tap to fix.
+  //
+  // Only once the build has SETTLED. Gating on "we have some spots" was wrong
+  // in the most alarming possible way: since B4 reveals the map as it fills,
+  // "Your map doesn't cover everything" appeared after video 1 of 20, listed
+  // every region the remaining nineteen were about to cover, and resolved
+  // itself minutes later. A true statement about a finished map; pure anxiety
+  // about one that is still being built.
   const uncoveredAreas = (() => {
+    if (!buildSettled) return [];
     if (!trip.subAreas?.length || trip.spots.length === 0) return [];
     // A sub-area counts as covered if any spot's name or description mentions
     // it. Crude on purpose: the alternative is another model call to answer a
