@@ -103,12 +103,123 @@ export type Extraction = z.infer<typeof ExtractionSchema>;
 export type ExtractedSpot = z.infer<typeof ExtractedSpotSchema>;
 export type ExtractedNote = z.infer<typeof ExtractedNoteSchema>;
 
+/** Raised when a response can't be salvaged at all. Distinct from
+ *  TranscriptError so the route can tell "the video is unreadable" from "we
+ *  read it and couldn't make sense of the answer". */
+export class ExtractionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ExtractionError";
+  }
+}
+
+/** The same JSON Schema the model is generated against, minus the SDK's
+ *  `parse`. Handing the SDK a zod parser makes it validate the whole response
+ *  all-or-nothing and THROW — which cost us an entire transcript, twenty good
+ *  spots and a bench slot because spot #9 came back with a category outside
+ *  the enum. The schema still steers generation; we just do the checking
+ *  ourselves, per item, below. */
+function schemaOnly<T extends z.ZodType>(schema: T) {
+  const format = zodOutputFormat(schema);
+  // Dropping `parse` is what disarms the SDK: `maybeParseMessage` only
+  // validates when the format carries one.
+  return { type: format.type, schema: format.schema };
+}
+
+const CATEGORIES = new Set<string>(ExtractedSpotSchema.shape.category.options);
+const TOPICS = new Set<string>(BRIEFING_TOPIC_IDS);
+
+/** Only the destination has to be right for the video to be usable at all;
+ *  spots and notes are checked one at a time so a single bad entry can't take
+ *  the rest with it. */
+const EnvelopeSchema = z.object({
+  destination: ExtractionSchema.shape.destination,
+  spots: z.array(z.unknown()).default([]),
+  notes: z.array(z.unknown()).default([]),
+});
+
+/**
+ * Salvaging parse. Returns everything the model got right and reports what it
+ * didn't, rather than treating one malformed field as a dead video.
+ */
+export function parseExtraction(text: string, videoId: string): Extraction {
+  let json: unknown;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    throw new ExtractionError("Claude's answer for this video wasn't valid JSON.");
+  }
+  const envelope = EnvelopeSchema.safeParse(json);
+  if (!envelope.success) {
+    throw new ExtractionError(
+      "Claude's answer for this video didn't have a usable destination."
+    );
+  }
+
+  const spots: ExtractedSpot[] = [];
+  let relabelled = 0;
+  let droppedSpots = 0;
+  for (const raw of envelope.data.spots) {
+    if (!raw || typeof raw !== "object") {
+      droppedSpots++;
+      continue;
+    }
+    const candidate = { ...(raw as Record<string, unknown>) };
+    // An unrecognised category is a LABELLING miss, not a bad spot — the name,
+    // description and coordinates are all still good. Filing it as "other"
+    // keeps a real recommendation on the map; dropping it loses one for the
+    // sake of a chip.
+    if (typeof candidate.category !== "string" || !CATEGORIES.has(candidate.category)) {
+      candidate.category = "other";
+      relabelled++;
+    }
+    const parsed = ExtractedSpotSchema.safeParse(candidate);
+    if (parsed.success) spots.push(parsed.data);
+    else droppedSpots++;
+  }
+
+  // A video that legitimately discusses no places is fine. A video whose spots
+  // ALL failed to parse is structurally broken — fail it so the bench supplies
+  // a replacement rather than silently contributing nothing.
+  if (envelope.data.spots.length > 0 && spots.length === 0) {
+    throw new ExtractionError(
+      "None of the places in Claude's answer for this video were usable."
+    );
+  }
+
+  const notes: ExtractedNote[] = [];
+  let droppedNotes = 0;
+  for (const raw of envelope.data.notes) {
+    if (!raw || typeof raw !== "object") {
+      droppedNotes++;
+      continue;
+    }
+    const candidate = raw as Record<string, unknown>;
+    // Unlike a spot, a note with no valid topic has nowhere to go — the
+    // briefing renders by topic — and notes are plentiful. Drop it.
+    if (typeof candidate.topic !== "string" || !TOPICS.has(candidate.topic)) {
+      droppedNotes++;
+      continue;
+    }
+    const parsed = ExtractedNoteSchema.safeParse(candidate);
+    if (parsed.success) notes.push(parsed.data);
+    else droppedNotes++;
+  }
+
+  if (relabelled || droppedSpots || droppedNotes) {
+    console.warn(
+      `[extract] ${videoId}: salvaged — ${relabelled} spot(s) relabelled "other", ${droppedSpots} spot(s) and ${droppedNotes} note(s) dropped.`
+    );
+  }
+  return { destination: envelope.data.destination, spots, notes };
+}
+
 /** Shared by the main extraction and by the notes-only pass the sample
  *  backfill uses, so the two can't drift into disagreeing about what a note is. */
 const NOTE_RULES = `NOTES — what the creator said about the DESTINATION, not about a place:
 Travel videos spend as much time orienting the viewer as they do listing places, and that half is what a traveler reads first. Capture it here.
 - The split is simple: advice that only makes sense at one place goes in that spot's things_to_know; advice that would still be true if that place didn't exist goes in notes. "Go before 8am, the queue is brutal" is a spot tip. "Nowhere takes card below 20 lari" is a note.
-- Topics:
+- Topics (THESE ARE NOT SPOT CATEGORIES. A note's topic comes from this list; a spot's category comes from the list above. Never put a topic id in a spot's category — "food-drink" is a topic, "food" is a category, and they are not interchangeable):
 ${BRIEFING_TOPICS.map((t) => `  - ${t.id}: ${t.remit}`).join("\n")}
 - TRANSCRIPT ONLY. You know a great deal about this destination already and NONE of it belongs here. If the creator didn't say it, it does not go in. A note whose quote you had to invent is a fabrication, not a summary.
 - quote must be what was actually said, and timestamp_sec must come from the [seconds] markers where it was said. These are shown to the traveler as the receipt and are one click from the video.
@@ -184,7 +295,7 @@ ${NOTE_RULES}`,
       },
     ],
     output_config: {
-      format: zodOutputFormat(ExtractionSchema),
+      format: schemaOnly(ExtractionSchema),
     },
   }, {
     spanName: "extract-spots",
@@ -204,9 +315,9 @@ ${NOTE_RULES}`,
 
   const textBlock = message.content.find((b) => b.type === "text");
   if (!textBlock || textBlock.type !== "text") {
-    throw new Error("Claude returned no text content for extraction.");
+    throw new ExtractionError("Claude returned nothing for this video.");
   }
-  return ExtractionSchema.parse(JSON.parse(textBlock.text));
+  return parseExtraction(textBlock.text, video.id);
 }
 
 const NotesOnlySchema = z.object({ notes: z.array(ExtractedNoteSchema) });
@@ -238,7 +349,7 @@ ${NOTE_RULES}`,
           content: `Video title: ${video.title}\nCreator: ${video.channelName}\n\nTranscript (each line prefixed with [seconds]):\n\n${transcriptToText(video.transcript)}`,
         },
       ],
-      output_config: { format: zodOutputFormat(NotesOnlySchema) },
+      output_config: { format: schemaOnly(NotesOnlySchema) },
     },
     {
       spanName: "extract-notes",
@@ -254,5 +365,13 @@ ${NOTE_RULES}`,
   );
   const textBlock = message.content.find((b) => b.type === "text");
   if (!textBlock || textBlock.type !== "text") return [];
-  return NotesOnlySchema.parse(JSON.parse(textBlock.text)).notes;
+  // Same salvage as the main pass — reuse it by handing it an empty spot list.
+  return parseExtraction(
+    JSON.stringify({
+      destination: { name: "", lat: 0, lng: 0, zoom: 10 },
+      spots: [],
+      notes: (JSON.parse(textBlock.text) as { notes?: unknown }).notes ?? [],
+    }),
+    video.id
+  ).notes;
 }

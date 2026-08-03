@@ -905,11 +905,6 @@ export default function TripView({
         if (mine.status === "processing" && !isRunning(tripId)) {
           ensureRunning(tripId);
         }
-        // The briefing is written after the build declares itself ready, so a
-        // reload in that window loses it and no build will ever run again to
-        // retry. Cheap to ask here: it no-ops unless the briefing is missing
-        // or older than the trip's notes.
-        void ensureBriefing(tripId);
         // A snapshot, not the live object: the build mutates that one in place,
         // and React can't see a change in a value it already holds.
         unsubscribe = subscribeTrips(() => {
@@ -937,6 +932,19 @@ export default function TripView({
       unsubscribe?.();
     };
   }, [tripId]);
+
+  // The runner writes the briefing when a build ends. Nothing retried it if
+  // that never happened — the tab was closed mid-build, the build ended paused
+  // and returned early, or the trip predates the feature entirely and has no
+  // notes to write one from. Re-asking whenever the trip is settled is the
+  // safety net, and it's close to free: `ensureBriefing` re-reads the trip and
+  // returns immediately unless the briefing is genuinely missing or older than
+  // the notes. Depends on the status string, not the trip object, so a build
+  // mutating spots in place doesn't re-fire it.
+  const tripSettled = isLocal === true && trip?.status === "ready";
+  useEffect(() => {
+    if (tripSettled) void ensureBriefing(tripId);
+  }, [tripSettled, tripId]);
 
   // Read the header's answers when the trip lands, and re-read them if the
   // stored query changes underneath us (account sync, another tab). Adjusted

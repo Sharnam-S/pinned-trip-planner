@@ -41,6 +41,10 @@ export const PRODUCT_EVENTS = [
   // whether a collapsed section above the pins earns its place.
   "briefing_written",
   "briefing_opened",
+  // Notes recovered from the video cache for a trip built before briefings
+  // existed. Worth its own event: it's the only signal that the recovery path
+  // is reaching real trips rather than quietly finding nothing.
+  "briefing_backfilled",
   // Planner (components/PlannerChat.tsx)
   "itinerary_committed",
   "planner_tool_error",

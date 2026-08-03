@@ -11,8 +11,8 @@ import { listLocalTrips, publishTrip } from "./clientStore";
 import { loadTrip, peekTrip, saveTrip, tripSaveError } from "./tripStore";
 import { getSession } from "./useSession";
 import { applyVideoResult, pendingVideo, VideoResult } from "./merge";
-import { BRIEFING_VERSION, briefingIsStale } from "./briefing";
-import { Trip, TripBriefing } from "./types";
+import { BRIEFING_VERSION, briefingIsStale, mergeNotes } from "./briefing";
+import { BriefingNote, Trip, TripBriefing } from "./types";
 import { track } from "./track";
 
 const running = new Set<string>();
@@ -186,6 +186,16 @@ async function run(tripId: string) {
       finished.videos.every((v) => v.status === "error");
 
     const seconds = Math.round((Date.now() - buildStartedAt(tripId)) / 1000);
+
+    // Before the branch, not after it: a build that ends PAUSED has still read
+    // most of its videos and collected their notes, and the traveler is left
+    // on a usable map. Sitting behind the throttled early-return meant those
+    // trips never got a briefing at all, and nothing would retry until the
+    // page was opened fresh. Not awaited — the briefing is an extra on a page
+    // that already works, and holding "ready" for it would trade the one
+    // number that matters (time to a usable map) for one that doesn't.
+    void ensureBriefing(tripId);
+
     if (throttled.length > 0) {
       track("build_failed", {
         tripId,
@@ -209,12 +219,6 @@ async function run(tripId: string) {
       await save(finished);
       return;
     }
-
-    // Deliberately not awaited, and deliberately after the status flip: the
-    // briefing is a nice-to-have on a page the traveler can already use, and
-    // holding "ready" for another 20 seconds to fetch it would trade the one
-    // number that matters (time to a usable map) for one that doesn't.
-    void ensureBriefing(tripId);
 
     finished.status = allFailed ? "error" : "ready";
     finished.progress = allFailed
@@ -393,6 +397,51 @@ async function processOne(
  *  without this a slow synthesis would be requested several times over. */
 const briefing = new Set<string>();
 
+/** Trips this tab has already tried to backfill. One attempt is enough: if the
+ *  cache had nothing, it will still have nothing on this page view. */
+const backfilled = new Set<string>();
+
+/**
+ * Recover notes for a trip that has none, from videos already in the cache.
+ *
+ * The briefing shipped after these trips were built, and notes are only
+ * harvested while a transcript is being read — so a trip built yesterday has
+ * no notes and no path to any, and the section it should show would simply
+ * never appear for the rest of that trip's life. Its videos, though, have
+ * almost certainly been re-read since (the cache version bump invalidated
+ * everything), so the notes exist; they just never reached this trip.
+ *
+ * `/api/notes` is cache-only, so this cannot start an extraction. Worst case
+ * it's one request that comes back empty.
+ */
+async function backfillNotes(tripId: string): Promise<void> {
+  if (backfilled.has(tripId)) return;
+  const trip = peekTrip(tripId);
+  if (!trip || trip.notes?.length) return;
+  const ids = trip.videos.filter((v) => v.status === "done").map((v) => v.id);
+  if (ids.length === 0) return;
+
+  backfilled.add(tripId);
+  try {
+    const { notes, hits } = await post<{ notes: BriefingNote[]; hits: number }>(
+      "/api/notes",
+      { videoIds: ids }
+    );
+    const live = peekTrip(tripId);
+    if (!live || !notes.length) return;
+    const added = mergeNotes(live, notes);
+    if (added > 0) {
+      await saveTrip(live);
+      track("briefing_backfilled", { tripId, notes: added, videos: hits });
+    }
+  } catch (err) {
+    console.warn(
+      "[briefing] note backfill skipped:",
+      err instanceof Error ? err.message : err
+    );
+  }
+}
+
 /**
  * Writes the trip's briefing if it's missing or out of date.
  *
@@ -404,8 +453,14 @@ const briefing = new Set<string>();
  */
 export async function ensureBriefing(tripId: string): Promise<void> {
   if (briefing.has(tripId)) return;
-  const trip = peekTrip(tripId);
-  if (!trip || !briefingIsStale(trip)) return;
+  let trip = peekTrip(tripId);
+  if (!trip) return;
+
+  if (!briefingIsStale(trip)) {
+    await backfillNotes(tripId);
+    trip = peekTrip(tripId);
+    if (!trip || !briefingIsStale(trip)) return;
+  }
 
   briefing.add(tripId);
   try {

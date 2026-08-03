@@ -4,6 +4,7 @@ import { getSessionUser } from "@/lib/auth";
 import { processVideo } from "@/lib/pipeline";
 import { rateLimit, rateLimited } from "@/lib/ratelimit";
 import { TranscriptError } from "@/lib/youtube";
+import { ExtractionError } from "@/lib/extract";
 
 export const runtime = "nodejs";
 // transcript fetch + Claude extraction + per-spot geocoding
@@ -39,7 +40,7 @@ export async function POST(req: NextRequest) {
     );
     return NextResponse.json(result);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
+    const raw = err instanceof Error ? err.message : String(err);
     // The status is what tells the runner whether this video is bad or the
     // connection is: 429/503 means retry THIS video shortly, 422 means it's a
     // dud and the bench should supply a replacement. Getting that wrong is how
@@ -48,6 +49,19 @@ export async function POST(req: NextRequest) {
     const kind = err instanceof TranscriptError ? err.kind : null;
     const status =
       kind === "rate-limited" ? 429 : kind === "network" ? 503 : 422;
+
+    // Whatever goes in `error` is rendered next to the video's title on the
+    // build screen, so it has to be a sentence. TranscriptError already writes
+    // those; ExtractionError writes short ones too. ANYTHING ELSE is an
+    // exception message, and one of those — a zod validation dump listing all
+    // fourteen category values — was shown to a traveler in full, wrapped
+    // across fifteen lines and overflowing the card. The detail belongs in the
+    // logs, which is where it now goes.
+    console.warn(`[process-video] ${videoId} failed:`, raw);
+    const message =
+      kind || err instanceof ExtractionError
+        ? raw
+        : "We couldn't read this video.";
     return NextResponse.json(
       { error: message, kind: kind ?? "unknown" },
       {
