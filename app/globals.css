@@ -2171,6 +2171,152 @@ button {
   padding: 16px 16px 0;
 }
 
+/* ---------- "Before you go": the destination briefing ----------------------
+   Everything the videos said that wasn't a place — how you pay, when things
+   shut, what the taxi scam is. It sits above the pins because it's read once,
+   before you start picking, and it's collapsed because the pins are what the
+   traveler came for. The closed state is one quiet row; opening is the only
+   thing that costs the page any height. */
+.briefing {
+  margin-bottom: 16px;
+  background: white;
+  border-radius: var(--radius-card, 14px);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.briefing-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 15px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.briefing-title {
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
+}
+
+/* Says what's inside and where it came from, so the closed row is worth
+   opening: "8 things to know from 19 videos" is the whole pitch. */
+.briefing-sub {
+  font-size: var(--fs-label);
+  color: var(--text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.briefing-chevron {
+  margin-left: auto;
+  flex: none;
+  opacity: 0.6;
+  transition: transform 0.24s cubic-bezier(0.32, 0.72, 0.25, 1);
+}
+.briefing.open .briefing-chevron {
+  transform: rotate(180deg);
+}
+
+/* Same clip-to-nothing pattern as the filter tray. The generous max-height is
+   a ceiling, not a size — twelve topics of prose never reach it. */
+.briefing-body {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.34s cubic-bezier(0.32, 0.72, 0.25, 1),
+    opacity 0.22s ease, padding 0.34s cubic-bezier(0.32, 0.72, 0.25, 1);
+}
+.briefing.open .briefing-body {
+  max-height: 4000px;
+  opacity: 1;
+  padding: 2px 15px 14px;
+}
+
+.briefing-item + .briefing-item {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(27, 43, 58, 0.08);
+}
+
+.briefing-item-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.briefing-emoji {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.briefing-label {
+  margin: 0;
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
+  color: var(--ink);
+}
+
+.briefing-summary {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.62;
+  color: #3d5266;
+}
+
+/* The receipts. Attribution is the whole difference between this and asking a
+   chatbot about the country, so the channels are shown, not hidden behind a
+   "sources" disclosure. */
+.briefing-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 9px;
+}
+
+.briefing-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 190px;
+  padding: 4px 9px 4px 5px;
+  border-radius: 999px;
+  background: #f1f3f6;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  color: var(--text-soft);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+.briefing-source:hover {
+  background: #e6e9ee;
+  color: var(--ink);
+}
+.briefing-source img {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  flex: none;
+  object-fit: cover;
+}
+.briefing-source span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.briefing-foot {
+  margin: 16px 0 0;
+  font-size: var(--fs-label);
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+
 /* Category filters in the pins rail — a collapsed toggle that fans open into
    the chip grid, so the rail stays clean until you reach for filters. */
 .pins-filters {
@@ -6197,6 +6343,32 @@ button {
 }
 .sheet .pins-filters {
   margin-bottom: 12px;
+}
+/* On the sheet the briefing is flat like the rest of it — a shadowed card
+   inside a card reads as a stray dialog on a phone. */
+.sheet .briefing {
+  background: var(--surface-alt);
+  box-shadow: none;
+  margin-bottom: 12px;
+}
+.sheet .briefing-toggle {
+  padding: 11px 13px;
+}
+.sheet .briefing.open .briefing-body {
+  padding: 2px 13px 12px;
+}
+.sheet .briefing-sub {
+  /* The phone rail is ~340px wide: title + count + chevron on one line means
+     the count is the first thing truncated. Give it its own line instead. */
+  flex-basis: 100%;
+  order: 3;
+  margin-top: -2px;
+}
+.sheet .briefing-toggle {
+  flex-wrap: wrap;
+}
+.sheet .briefing-chevron {
+  order: 2;
 }
 .sheet .pf-toggle {
   border: none;

@@ -2,6 +2,11 @@ import { z } from "zod";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { VideoData, transcriptToText } from "./youtube";
 import { observedMessage, TripTag, tripProperties } from "./llm";
+import {
+  BRIEFING_TOPIC_IDS,
+  BRIEFING_TOPICS,
+  MAX_NOTES_PER_VIDEO,
+} from "./briefing";
 
 const ExtractedSpotSchema = z.object({
   name: z.string().describe("Canonical place name, e.g. 'Tegallalang Rice Terrace'"),
@@ -57,6 +62,26 @@ const ExtractedSpotSchema = z.object({
   lng: z.number().describe("Best-guess longitude of this spot from your own knowledge"),
 });
 
+/** A remark about the DESTINATION rather than about a place — the half of every
+ *  travel video that used to be read and thrown away. Same anti-hallucination
+ *  lever as the spot mentions: a note must carry a quote and the second it was
+ *  said at, so it can be audited in one click and can't be quietly sourced from
+ *  the model's own priors about the country. */
+const ExtractedNoteSchema = z.object({
+  topic: z.enum(BRIEFING_TOPIC_IDS),
+  point: z
+    .string()
+    .describe(
+      "One standalone sentence a traveler can act on, in your own words, carrying the SPECIFICS the creator gave — numbers, names, amounts, times. 'Bolt is the default and a cross-town ride runs 5-8 lari' not 'transport is affordable'."
+    ),
+  quote: z
+    .string()
+    .describe("Short verbatim-ish quote of what the creator said (max 1 sentence)"),
+  timestamp_sec: z
+    .number()
+    .describe("Transcript timestamp (in seconds) where this is said"),
+});
+
 const ExtractionSchema = z.object({
   destination: z.object({
     name: z.string().describe("The trip destination this video covers, e.g. 'Bali, Indonesia'"),
@@ -67,10 +92,32 @@ const ExtractionSchema = z.object({
       .describe("Sensible initial map zoom for the destination: 10 for a region/island, 12 for a city"),
   }),
   spots: z.array(ExtractedSpotSchema),
+  notes: z
+    .array(ExtractedNoteSchema)
+    .describe(
+      "Destination-level advice the creator gave that is NOT about one specific place. Empty array when the video is a pure place list — that is a normal and correct answer, and padding it with generic travel wisdom is worse than returning nothing."
+    ),
 });
 
 export type Extraction = z.infer<typeof ExtractionSchema>;
 export type ExtractedSpot = z.infer<typeof ExtractedSpotSchema>;
+export type ExtractedNote = z.infer<typeof ExtractedNoteSchema>;
+
+/** Shared by the main extraction and by the notes-only pass the sample
+ *  backfill uses, so the two can't drift into disagreeing about what a note is. */
+const NOTE_RULES = `NOTES — what the creator said about the DESTINATION, not about a place:
+Travel videos spend as much time orienting the viewer as they do listing places, and that half is what a traveler reads first. Capture it here.
+- The split is simple: advice that only makes sense at one place goes in that spot's things_to_know; advice that would still be true if that place didn't exist goes in notes. "Go before 8am, the queue is brutal" is a spot tip. "Nowhere takes card below 20 lari" is a note.
+- Topics:
+${BRIEFING_TOPICS.map((t) => `  - ${t.id}: ${t.remit}`).join("\n")}
+- TRANSCRIPT ONLY. You know a great deal about this destination already and NONE of it belongs here. If the creator didn't say it, it does not go in. A note whose quote you had to invent is a fabrication, not a summary.
+- quote must be what was actually said, and timestamp_sec must come from the [seconds] markers where it was said. These are shown to the traveler as the receipt and are one click from the video.
+- CARRY THE SPECIFICS. The value of a note is entirely in its numbers and names. "Getting around is easy" is worthless; "Bolt is everywhere and a cross-town ride is 5-8 lari, but drivers rarely speak English" is the note. If a remark has no specific in it, drop it.
+- NEVER WRITE THESE, they are the generic filler that makes a briefing worth skipping: "the culture is rich and vibrant", "the locals are very friendly and welcoming", "there's something for everyone", "be respectful of local customs", "always stay aware of your surroundings", "try the local cuisine". Every one of those is true of everywhere.
+- No place recommendations in notes, ever. A note naming a restaurant, a beach or a hotel belongs in spots.
+- Skip sponsor reads, gear plugs, discount codes, channel promotion and anything about making the video itself.
+- For safety, keep the distinction the creator drew — solo versus with people, day versus night, women travelling alone — rather than averaging it into "it's generally safe".
+- Aim for the ${MAX_NOTES_PER_VIDEO} strongest notes at most. Fewer, specific, quotable notes beat a long padded list, and an empty array is the right answer for a video that only lists places.`;
 
 // Override with EXTRACT_MODEL in .env.local (e.g. claude-haiku-4-5) to trade
 // extraction quality for cost. `||`, not `??`: .env files set absent keys to the
@@ -127,7 +174,9 @@ Rules:
 - Transcripts are auto-generated and garble proper nouns. Use your knowledge of the destination to recover the real place name (e.g. "tega lalang" -> "Tegallalang Rice Terrace"). If you cannot confidently identify a real place, skip it.
 - timestamp_sec must come from the [seconds] markers in the transcript where the place is first properly discussed.
 - lat/lng: give your best-guess coordinates from knowledge. For obscure places, approximate within the correct area.
-- things_to_know: capture practical advice and warnings the creator actually states (e.g. "popular with pickpockets, watch your bag", "go before 8am to beat crowds", "cash only", "knees must be covered"). Do not invent tips from general knowledge — transcript only.`,
+- things_to_know: capture practical advice and warnings the creator actually states (e.g. "popular with pickpockets, watch your bag", "go before 8am to beat crowds", "cash only", "knees must be covered"). Do not invent tips from general knowledge — transcript only.
+
+${NOTE_RULES}`,
     messages: [
       {
         role: "user",
@@ -158,4 +207,52 @@ Rules:
     throw new Error("Claude returned no text content for extraction.");
   }
   return ExtractionSchema.parse(JSON.parse(textBlock.text));
+}
+
+const NotesOnlySchema = z.object({ notes: z.array(ExtractedNoteSchema) });
+
+/**
+ * Notes only, from a transcript whose spots were already extracted.
+ *
+ * Exists for the sample backfill: the five committed sample trips were built
+ * before briefings, so re-running the full extraction on them would re-resolve
+ * 200-odd spots through Google and rewrite maps that are deliberately curated.
+ * This reads the same transcripts under the same rules and returns only the
+ * new half.
+ */
+export async function extractNotes(
+  video: VideoData,
+  model: string = DEFAULT_MODEL,
+  trip?: TripTag
+): Promise<ExtractedNote[]> {
+  const message = await observedMessage(
+    {
+      model,
+      max_tokens: 8000,
+      system: `You read a YouTube travel video transcript and pull out what the creator said about the DESTINATION — the orientation a traveler needs before they start planning, as opposed to the list of places, which has already been captured elsewhere.
+
+${NOTE_RULES}`,
+      messages: [
+        {
+          role: "user",
+          content: `Video title: ${video.title}\nCreator: ${video.channelName}\n\nTranscript (each line prefixed with [seconds]):\n\n${transcriptToText(video.transcript)}`,
+        },
+      ],
+      output_config: { format: zodOutputFormat(NotesOnlySchema) },
+    },
+    {
+      spanName: "extract-notes",
+      traceId: `video-${video.id}`,
+      stream: true,
+      properties: {
+        videoId: video.id,
+        videoTitle: video.title,
+        channel: video.channelName,
+        ...tripProperties(trip),
+      },
+    }
+  );
+  const textBlock = message.content.find((b) => b.type === "text");
+  if (!textBlock || textBlock.type !== "text") return [];
+  return NotesOnlySchema.parse(JSON.parse(textBlock.text)).notes;
 }

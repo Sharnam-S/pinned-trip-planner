@@ -11,7 +11,8 @@ import { listLocalTrips, publishTrip } from "./clientStore";
 import { loadTrip, peekTrip, saveTrip, tripSaveError } from "./tripStore";
 import { getSession } from "./useSession";
 import { applyVideoResult, pendingVideo, VideoResult } from "./merge";
-import { Trip } from "./types";
+import { BRIEFING_VERSION, briefingIsStale } from "./briefing";
+import { Trip, TripBriefing } from "./types";
 import { track } from "./track";
 
 const running = new Set<string>();
@@ -209,6 +210,12 @@ async function run(tripId: string) {
       return;
     }
 
+    // Deliberately not awaited, and deliberately after the status flip: the
+    // briefing is a nice-to-have on a page the traveler can already use, and
+    // holding "ready" for another 20 seconds to fetch it would trade the one
+    // number that matters (time to a usable map) for one that doesn't.
+    void ensureBriefing(tripId);
+
     finished.status = allFailed ? "error" : "ready";
     finished.progress = allFailed
       ? "None of these videos had readable captions. Try again — we'll pick a different set."
@@ -378,6 +385,70 @@ async function processOne(
       await save(trip);
       return;
     }
+  }
+}
+
+/** Trips whose briefing call is in flight, per tab. The trip page calls
+ *  `ensureBriefing` on every render pass where the briefing looks stale, so
+ *  without this a slow synthesis would be requested several times over. */
+const briefing = new Set<string>();
+
+/**
+ * Writes the trip's briefing if it's missing or out of date.
+ *
+ * Safe to call from anywhere, any number of times: it re-reads the trip, does
+ * nothing when the briefing is current or there isn't enough material, and
+ * never throws. Called at the end of a build and again from the trip page —
+ * the second is what covers a reload that lands mid-synthesis, since a build
+ * that has already finished will never run again to retry it.
+ */
+export async function ensureBriefing(tripId: string): Promise<void> {
+  if (briefing.has(tripId)) return;
+  const trip = peekTrip(tripId);
+  if (!trip || !briefingIsStale(trip)) return;
+
+  briefing.add(tripId);
+  try {
+    const { briefing: result } = await post<{ briefing: TripBriefing | null }>(
+      "/api/briefing",
+      {
+        notes: trip.notes,
+        destination:
+          trip.query?.resolvedDestination ?? trip.destination?.name ?? trip.name,
+        tripId: trip.id,
+        tripName: trip.name,
+      }
+    );
+
+    const live = peekTrip(tripId);
+    if (!live) return;
+    if (result) {
+      live.briefing = result;
+    } else {
+      // Nothing worth saying from these notes. Record that we asked, against
+      // the note count we asked with, so the page stops requesting it on every
+      // visit — but a later video that adds notes will ask again.
+      live.briefing = {
+        version: BRIEFING_VERSION,
+        updatedAt: new Date().toISOString(),
+        fromNotes: trip.notes?.length ?? 0,
+        sections: [],
+      };
+    }
+    await saveTrip(live);
+    track("briefing_written", {
+      tripId,
+      sections: result?.sections.length ?? 0,
+      notes: trip.notes?.length ?? 0,
+    });
+  } catch (err) {
+    // A briefing is an extra, not a step. It retries on the next visit.
+    console.warn(
+      "[briefing] skipped:",
+      err instanceof Error ? err.message : err
+    );
+  } finally {
+    briefing.delete(tripId);
   }
 }
 

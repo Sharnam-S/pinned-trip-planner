@@ -21,7 +21,12 @@ import {
   snapshotTrip,
   subscribeTrips,
 } from "@/lib/tripStore";
-import { addVideosToTrip, ensureRunning, isRunning } from "@/lib/runner";
+import {
+  addVideosToTrip,
+  ensureBriefing,
+  ensureRunning,
+  isRunning,
+} from "@/lib/runner";
 import { parseVideoId } from "@/lib/links";
 import {
   extraPhotoCount,
@@ -54,6 +59,7 @@ import { tripFlag } from "@/lib/flags";
 import { ICON_CARD, ICON_NAV } from "@/lib/ui";
 import { useIsMobile } from "@/lib/useIsMobile";
 import BuildingScreen from "./BuildingScreen";
+import TripBriefing from "./TripBriefing";
 import BottomSheet, { SheetSnap } from "./BottomSheet";
 import PlannerChat from "./PlannerChat";
 import TripHeader from "./TripHeader";
@@ -899,6 +905,11 @@ export default function TripView({
         if (mine.status === "processing" && !isRunning(tripId)) {
           ensureRunning(tripId);
         }
+        // The briefing is written after the build declares itself ready, so a
+        // reload in that window loses it and no build will ever run again to
+        // retry. Cheap to ask here: it no-ops unless the briefing is missing
+        // or older than the trip's notes.
+        void ensureBriefing(tripId);
         // A snapshot, not the live object: the build mutates that one in place,
         // and React can't see a change in a value it already holds.
         unsubscribe = subscribeTrips(() => {
@@ -1825,6 +1836,10 @@ export default function TripView({
             <div className="pins-view">
               {coverageEl}
               {outOfRangeEl}
+              {/* Everything the videos said that isn't a place. Above the pins
+                  because it's orientation — you read it once, before you start
+                  picking — and collapsed because they came for the pins. */}
+              <TripBriefing trip={trip} />
               {/* Category filters — collapsed to a single button by default,
                   fanning open into the full multi-select chip grid on click.
                   Empty selection = show everything. */}

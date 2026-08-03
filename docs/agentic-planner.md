@@ -631,6 +631,67 @@ when to stop sketching. Pair every soft rule with a structural check that fires
 when it runs away — and give the model a cheap way to do the right thing
 (`patch`) rather than only a rule forbidding the expensive one.
 
+### 4.10 Half of every transcript was the half we threw away (2026-08-03)
+
+**What was wrong.** A 15-minute travel video is maybe a third place
+recommendations. The rest is orientation — "nowhere takes card under 20 lari",
+"the road to Kazbegi shuts with the snow", "the dogs with ear tags are
+vaccinated", "don't flag a street taxi, they quote tourists triple". We read
+every second of that, used the place-attached slice for a pin's
+`thingsToKnow`, and binned the remainder. Twenty videos of it is the briefing a
+traveler actually reads *before* they start picking pins, and we were the only
+product in a position to assemble it: not from a guidebook, from the specific
+creators this specific map was built from.
+
+**The shape.**
+
+1. **Capture is free.** The transcript is already in context in `extract.ts`;
+   `notes` rides along on the same call. No extra request, no extra latency.
+2. **A note is not a tip.** The split that made the rule teachable: advice that
+   only makes sense at one place is that spot's `thingsToKnow`; advice that
+   would still be true if that place didn't exist is a note.
+3. **Receipts, not vibes.** Every note carries a near-verbatim `quote` and the
+   second it was said at. This is the same anti-hallucination lever as spot
+   mentions — the model knows a great deal about Georgia and none of it is
+   allowed in — and it doubles as the UI: a channel chip opens the video at
+   that timestamp. Attribution is the entire difference between this section
+   and asking a chatbot about the country.
+4. **Synthesis is the one model call.** Twenty videos say "bring cash" twenty
+   times. Rendering the raw pile reads as padding and teaches the traveler to
+   never open the section again. Merging near-duplicates *while keeping the
+   numbers* is the one job a model is unambiguously good at.
+
+**What made the output good, and it wasn't the topic list.** Two instructions
+did nearly all the work. *Omit thin topics* — a topic with one throwaway remark
+is not a section, and four real sections beat twelve padded ones. And a literal
+banned-phrase list ("rich culture", "friendly locals", "something for
+everyone", "be respectful of local customs"), because every one of those is
+true of everywhere and the model reaches for them by default. Verified against a
+note set seeded with two deliberate pieces of filler: both were dropped, and the
+`lifestyle` and `known-for` sections simply didn't appear. The safety rule
+earned its place too — creators routinely distinguish solo from with-people and
+day from night, and "it's generally safe" is what you get if you don't forbid
+the averaging.
+
+**Timing decisions.** The briefing is written *after* the build flips to
+`ready` and is never awaited, because time-to-a-usable-map is the number that
+matters and a nice-to-have must not spend it. That leaves a hole — a reload in
+that window loses it and no build will run again — so the trip page also calls
+`ensureBriefing`, which no-ops unless the stored briefing is older than the
+trip's notes. Same reasoning as `resumeInterruptedBuilds` (§ runner).
+
+**Cost.** One Sonnet call per finished trip, ~$0.02 against a build that
+already spends ~20 extraction calls. `VIDEO_CACHE_VERSION` had to go 2 → 3:
+without it every already-cached video contributes zero notes, so the briefing
+would be thinnest on exactly the popular destinations where the cache hits
+most.
+
+**Still open:** the five committed samples have no briefing. Notes can only
+come from transcripts and `scripts/backfill-briefings.mts` needs
+`YOUTUBE_PROXY_URL` — from a machine without it, YouTube 400s every caption
+request. Run it wherever the proxy is configured. Until then the feature is
+invisible on the sample maps, which is what most first-time visitors open.
+
 ## 5. Learnings — infrastructure & cost
 
 ### 5.1 The 60s Vercel timeout (the production hang)
@@ -903,7 +964,11 @@ conditional request are actually exercised.
 | `lib/analytics.ts` + `lib/track.ts` + `app/api/events` | **Product** events (as opposed to `$ai_generation`): build started/completed/failed, first pin visible, itinerary committed, tool errors, question cards. Allowlisted server-side so a public endpoint can't mint event names; keyed to the session user |
 | `lib/routes.ts` + `app/api/routes` | Real road times for `get_travel_times` (Google Routes, adjacent pairs only, one element per leg). Results are tagged `source: "road" \| "estimate"` — the agent was overruling straight-line numbers out loud (§4.8) |
 | `lib/geocode.ts` `geocodeBounds` | The destination's real extent, resolved once at discover → `Trip.bounds`. What makes "is this spot part of this trip?" answerable (§4.9) |
+| `lib/briefing.ts` | Shared briefing half (§4.10): the closed topic table with each topic's remit, note dedupe/caps, staleness. Dependency-free — client and server both import it |
+| `lib/briefingSynth.ts` + `app/api/briefing` | The one model call that turns a trip's raw notes into "Before you go" sections. Server-only (Anthropic SDK) |
+| `components/TripBriefing.tsx` | The collapsed section above the pins; per-topic prose with channel chips linking into the video at the second it was said |
 | `scripts/recategorize-samples.mts` | One-off relabelling pass over the committed sample trips against the tightened category rules (§4.9) |
+| `scripts/backfill-briefings.mts` | Gives the committed samples a briefing by re-reading their transcripts for notes only — never touches their spots (§4.10). Needs `YOUTUBE_PROXY_URL` |
 | `scripts/fixtures/` | The planner's regression net — scripted journeys on the sample maps asserting schema completeness, meal logic, weekday accuracy, pace, turn budget, one-write-per-turn, and no leaked internals (§8) |
 | `app/globals.css` | Everything under `/* Planner agent */` (~end of file) |
 
