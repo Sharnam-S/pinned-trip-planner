@@ -702,6 +702,39 @@ without it every already-cached video contributes zero notes, so the briefing
 would be thinnest on exactly the popular destinations where the cache hits
 most.
 
+**Postscript (2026-08-04): three things this got wrong.**
+
+*One bad field killed a whole video.* `zodOutputFormat` gives the SDK a zod
+parser, and `maybeParseMessage` then validates the whole response
+all-or-nothing and **throws**. A Crete video came back with `spots[9].category`
+outside the enum and we lost the transcript, the other twenty spots, the notes,
+the paid model call and a bench slot — over one label. Worse, the thrown
+message is what the build screen renders next to the video title, so a traveler
+was shown a zod validation dump listing all fourteen category values, wrapped
+across fifteen lines and overflowing the card (`.video-chip .vchannel` had none
+of the clamping `.vtitle` had). Now: the JSON Schema still steers generation,
+but `parse` is stripped from the format and `parseExtraction` checks items one
+at a time. An unrecognised category is a *labelling* miss, not a bad spot — the
+name, coordinates and description are all still good — so it's filed as `other`
+and kept. A whole video only fails when the JSON is unreadable, the destination
+is missing, or *every* spot failed. **Lesson: an all-or-nothing parser at the
+edge of a probabilistic system converts a small error into a total loss.**
+
+*The likely trigger is worth naming:* this schema now carries two enums —
+`category` and the note `topic` — and `food-drink` is a topic while `food` is a
+category. The prompt now says explicitly that the two lists are not
+interchangeable.
+
+*And a briefing could be skipped forever.* `ensureBriefing` sat after the
+throttled early-return in `run()`, so a build that ended paused never got one —
+and the trip page only asked once, at mount, when the notes didn't exist yet.
+Both fixed: the call moved ahead of the branch, and the page re-asks whenever
+the trip settles. Separately, trips built *before* this feature have no notes
+and no path to any, since transcripts are never re-read; `/api/notes` recovers
+them from the video cache, which was repopulated with notes by the version bump.
+Cache-only by design — it can never trigger an extraction, which is what makes
+it safe to attempt unprompted.
+
 **Still open:** the five committed samples have no briefing. Notes can only
 come from transcripts and `scripts/backfill-briefings.mts` needs
 `YOUTUBE_PROXY_URL` — from a machine without it, YouTube 400s every caption
@@ -982,6 +1015,7 @@ conditional request are actually exercised.
 | `lib/geocode.ts` `geocodeBounds` | The destination's real extent, resolved once at discover → `Trip.bounds`. What makes "is this spot part of this trip?" answerable (§4.9) |
 | `lib/briefing.ts` | Shared briefing half (§4.10): the closed topic table with each topic's remit, note dedupe/caps, staleness. Dependency-free — client and server both import it |
 | `lib/briefingSynth.ts` + `app/api/briefing` | The one model call that turns a trip's raw notes into "Before you go" sections. Server-only (Anthropic SDK) |
+| `app/api/notes` | Cache-only note recovery for trips built before briefings existed. Never falls through to an extraction (§4.10 postscript) |
 | `components/TripBriefing.tsx` | The collapsed section above the pins; per-topic prose with channel chips linking into the video at the second it was said |
 | `scripts/recategorize-samples.mts` | One-off relabelling pass over the committed sample trips against the tightened category rules (§4.9) |
 | `scripts/backfill-briefings.mts` | Gives the committed samples a briefing by re-reading their transcripts for notes only — never touches their spots (§4.10). Needs `YOUTUBE_PROXY_URL` |

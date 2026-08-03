@@ -2128,10 +2128,18 @@ button {
   text-overflow: ellipsis;
 }
 
+/* Clamped like .vtitle above, which it wasn't. This line carries the failure
+   reason for a video that couldn't be read, and an unclamped one wrapped a
+   fifteen-line exception dump across the card and out past its right edge. A
+   message this long is a bug in what we're saying, but the card should survive
+   it either way. */
 .video-chip .vchannel {
   color: var(--text-soft);
   font-size: 12px;
   margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .video-chip .vstatus {
