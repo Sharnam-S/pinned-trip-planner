@@ -35,6 +35,12 @@ export const PRODUCT_EVENTS = [
   "build_completed",
   "build_failed",
   "first_pin_visible",
+  // Destination briefing (lib/runner.ts, components/TripBriefing.tsx).
+  // The feature is a bet that travelers want the non-place half of the videos;
+  // `briefing_opened` over `briefing_written` is the only thing that settles
+  // whether a collapsed section above the pins earns its place.
+  "briefing_written",
+  "briefing_opened",
   // Planner (components/PlannerChat.tsx)
   "itinerary_committed",
   "planner_tool_error",

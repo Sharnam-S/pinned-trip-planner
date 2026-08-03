@@ -2,7 +2,16 @@
  * Pure trip-mutation helpers shared by the browser runner (localStorage trips)
  * and the server pipeline. No fs, no API clients — safe in both bundles.
  */
-import { Destination, Mention, Spot, Trip, TripQuery, TripVideo } from "./types";
+import { mergeNotes } from "./briefing";
+import {
+  BriefingNote,
+  Destination,
+  Mention,
+  Spot,
+  Trip,
+  TripQuery,
+  TripVideo,
+} from "./types";
 
 export function normalizeName(name: string) {
   return name
@@ -67,6 +76,10 @@ export interface VideoResult {
   newSpots: Spot[];
   /** Mentions of spots the trip already has, to merge by name. */
   knownMentions: { name: string; mention: Mention; thingsToKnow?: string[] }[];
+  /** Destination-level remarks from this video, for the trip briefing. Unlike
+   *  spots these are never "already known" — they're deduped at the trip level
+   *  by `mergeNotes`, which is where the cross-video overlap actually is. */
+  notes: BriefingNote[];
 }
 
 /**
@@ -84,6 +97,9 @@ export interface CachedVideo {
   destination: Destination;
   /** Every spot the video discusses, each with its own mention. */
   spots: Spot[];
+  /** Absent on entries cached before briefings existed — see
+   *  VIDEO_CACHE_VERSION, which is bumped so that never actually happens. */
+  notes?: BriefingNote[];
 }
 
 /**
@@ -117,6 +133,7 @@ export function partitionCachedVideo(
     destination: cached.destination,
     newSpots,
     knownMentions,
+    notes: cached.notes ?? [],
   };
 }
 
@@ -156,6 +173,7 @@ export function applyVideoResult(trip: Trip, result: VideoResult): number {
     );
     if (existing) mergeMention(existing, k.mention, k.thingsToKnow);
   }
+  mergeNotes(trip, result.notes);
   return added;
 }
 

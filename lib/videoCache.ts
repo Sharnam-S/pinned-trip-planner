@@ -20,8 +20,12 @@ const pathFor = (videoId: string) => `${PREFIX}${videoId}.json`;
  *  justification, "other" is bounded, and convenience stores / unnamed
  *  accommodation are excluded. Cached v1 results predate all of that, and
  *  serving them would mean the fix silently doesn't apply to any video anyone
- *  has already processed. */
-export const VIDEO_CACHE_VERSION = 2;
+ *  has already processed.
+ *  3 (2026-08-03): extraction now also harvests destination-level notes for the
+ *  trip briefing. Without a bump, every video anyone has already processed
+ *  would contribute zero notes — so the briefing would be thinnest on exactly
+ *  the popular destinations where the cache hits most. */
+export const VIDEO_CACHE_VERSION = 3;
 
 function enabled(): boolean {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN);

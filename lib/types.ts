@@ -210,7 +210,80 @@ export interface Trip {
   /** Sub-regions the curator was asked to cover, for the coverage line (C3).
    *  Only set for region/country-scale destinations. */
   subAreas?: string[];
+  /** Raw destination-level remarks harvested from every video, deduped and
+   *  capped (MAX_TRIP_NOTES). Kept, not discarded after synthesis: the
+   *  briefing is rewritten from these whenever more videos land. */
+  notes?: BriefingNote[];
+  /** The synthesized "before you go" briefing rendered above the pins. */
+  briefing?: TripBriefing;
 }
 
 /** [[south, west], [north, east]] — the same shape Leaflet's fitBounds takes. */
 export type TripBounds = [[number, number], [number, number]];
+
+/* ---------------------------------------------------------------------------
+ * The briefing: what creators said about the DESTINATION, not about a place.
+ *
+ * Every video we read is ~15 minutes long and maybe a third of it is a place
+ * recommendation. The rest — "everything is cash below 20 lari", "Bolt, never a
+ * taxi off the street", "the old town empties out by ten" — was extracted,
+ * used once to write a pin's `thingsToKnow`, and otherwise thrown away. Twenty
+ * videos of that is the orientation a traveler actually reads first, and we
+ * were binning it.
+ * ------------------------------------------------------------------------- */
+
+/** Deliberately closed. An open `topic: string` produced a long tail of
+ *  one-note headings ("Nightlife culture", "Tipping", "Tipping etiquette")
+ *  that read as noise; a fixed set forces the model to merge instead. */
+export type BriefingTopic =
+  | "known-for"
+  | "culture"
+  | "lifestyle"
+  | "when-to-go"
+  | "getting-around"
+  | "money"
+  | "safety"
+  | "food-drink"
+  | "language"
+  | "connectivity"
+  | "health"
+  | "practical";
+
+/** One creator's remark about the destination, with its receipt. The quote and
+ *  timestamp are not decoration: they're the only thing separating this from
+ *  the model's own priors about a country. */
+export interface BriefingNote {
+  topic: BriefingTopic;
+  /** One standalone, actionable sentence. */
+  point: string;
+  /** What the creator actually said, near-verbatim. */
+  quote: string;
+  videoId: string;
+  timestampSec: number;
+}
+
+/** Which videos a section was written from. Only the ids and a timestamp to
+ *  jump to — titles, channels and avatars are resolved from `Trip.videos` at
+ *  render time rather than copied per source. */
+export interface BriefingSource {
+  videoId: string;
+  timestampSec: number;
+}
+
+export interface BriefingSection {
+  topic: BriefingTopic;
+  /** 2-5 sentences merged across creators, specifics kept, padding dropped. */
+  summary: string;
+  sources: BriefingSource[];
+}
+
+/** The synthesized briefing stored on the trip. */
+export interface TripBriefing {
+  /** Bump when the topic set or the synthesis contract changes. */
+  version: number;
+  updatedAt: string;
+  /** How many notes it was written from — if the trip has more now (a video
+   *  was added), the briefing is stale and gets rewritten. */
+  fromNotes: number;
+  sections: BriefingSection[];
+}

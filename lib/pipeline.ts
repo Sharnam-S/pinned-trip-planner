@@ -19,6 +19,7 @@ import {
   VideoResult,
 } from "./merge";
 import { getCachedVideo, putCachedVideo, VIDEO_CACHE_VERSION } from "./videoCache";
+import { MAX_NOTES_PER_VIDEO, trimQuote } from "./briefing";
 import { Mention, Spot, SpotPhotoRef, Trip } from "./types";
 
 /**
@@ -119,6 +120,16 @@ export async function processVideoRaw(
   return {
     version: VIDEO_CACHE_VERSION,
     cachedAt: new Date().toISOString(),
+    // Capped and truncated here, once, rather than trusted from the model:
+    // these get stored on every trip that includes this video, and a trip is
+    // already tight against localStorage's ceiling.
+    notes: (extraction.notes ?? []).slice(0, MAX_NOTES_PER_VIDEO).map((n) => ({
+      topic: n.topic,
+      point: n.point.trim(),
+      quote: trimQuote(n.quote),
+      videoId: data.id,
+      timestampSec: Math.max(0, Math.floor(n.timestamp_sec)),
+    })),
     video: {
       id: data.id,
       url: `https://www.youtube.com/watch?v=${data.id}`,
