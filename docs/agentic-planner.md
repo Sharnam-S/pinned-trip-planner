@@ -353,19 +353,27 @@ user-trust lessons that produced it:
    must-sees (flag 2–3 iconic). "Just plan it" → draft with stated assumptions.
 2. **Never invent user facts** — stay is only set when told, or as a
    labeled recommendation with rationale.
-3. **Every plan change goes through `update_itinerary`** (full replace,
-   never prose-only), preceded by one short sentence so the stream shows
-   progress before a long tool call.
-3b. **Shape before pins (initial build only)** — the first plan is proposed
+3. **Every plan change goes through `update_itinerary`**, never prose-only,
+   preceded by one short sentence so the stream shows progress before a long
+   tool call. **Two modes** (2026-08-02, §4.8): `replace` sends every day and is
+   for creating an option or rewriting most of one; `patch` sends only
+   `dayPatches: [{index, day}]` and is for editing an existing plan. Write once
+   per option per turn, and write last — gather travel times first.
+3b. **Shape before pins (initial build only), BOUNDED** — the first plan is proposed
    as a **summary document** (§4.6: title, how the days split, then a section
    per day with area/base + vibe + routing logic, and a `[pins: …]` line naming
    the day's anchor spots for its photo strip — no times, no stop-by-stop
-   lists, no tool call), then the user confirms/adjusts the shape, then
-   `update_itinerary` commits the pins. Course-correcting a rough shape is
-   cheap; reworking a screen of placed pins is overwhelming. "Just plan it"
-   skips it; later edits go straight through the tool. The summary is the ONE
-   exception to rule 3's "never prose-only" — it precedes the commit, it
-   doesn't replace it.
+   lists, no tool call), and the user reacts before any pin lands. If their reply
+   changes the SHAPE (different bases, different length, a chunk dropped) the
+   agent revises the summary **once** — that is what this step is for. Anything
+   else commits on the next turn. **At most two summary documents per trip**,
+   then it commits regardless, and an unanswered question never blocks the
+   commit (state the assumption in the day's rationale and ask after). Course-correcting a rough shape is cheap; reworking a screen of
+   placed pins is overwhelming. "Just plan it" — and "plan it", "go ahead",
+   "do it" — skips it entirely; later edits go straight through the tool. The
+   summary is the ONE exception to rule 3's "never prose-only": it precedes the
+   commit, it doesn't replace it. See §4.8 for what happened when this rule had
+   no bound.
 4. **Times required** (arrival + duration per stop, accounting for
    travel/meals/opening hours); **rationale required** per day; **why
    required** per stop answering: worth it why / this day why / this
@@ -388,6 +396,13 @@ user-trust lessons that produced it:
 9. **Truncation-aware** — durable prefs must be folded into the plan
    immediately (the context block, not old chat turns, is the source of
    truth).
+9b. **Only the shown option rides along in full** (§4.9 cost work) — inactive
+   options arrive as day themes; `load_plan(id)` fetches one back when the agent
+   genuinely needs its detail. Cache *writes* were 43% of chat spend, and most of
+   that weight was plans nobody was editing.
+9c. **Travel times are tagged** — `source: "road"` is a real routed time to plan
+   around as fact; `source: "estimate"` is distance-based and may be argued with
+   out loud, but never silently overridden.
 10. **Options are for alternatives, edits are for corrections** (§2d) — a
    "what if…" / a different region, theme or length gets a NEW option
    (their current plan survives untouched, which is the point); "swap day 2
@@ -504,6 +519,117 @@ Lesson worth keeping: **a debounce is not a durability mechanism.** Persist on
 the event that makes the data worth keeping (a turn completing), and treat
 "restored from storage" as a different state from "just happened" whenever the UI
 says something about *now*.
+
+### 4.9 The plan can only be as good as the map, and the map didn't know where it was (2026-08-02)
+
+Same product pass as §4.8. Everything above is about the agent; this is about
+what the agent has to work with, which turned out to be the harder ceiling.
+
+**Measured on the committed sample maps, against each destination's real extent:**
+
+| Trip | Latitude covered | Longitude | Spots outside the destination |
+|---|---|---|---|
+| Sri Lanka | 28% | 77% | 0 |
+| Hokkaido | 24% | 24% | 0 |
+| Tbilisi (a city) | 679% | 919% | 4 |
+| East Coast SL | 132% | 1404% | 16 of 43 |
+
+Two opposite failures from one missing fact — nothing ever resolved what the
+destination *is*:
+
+- **Under-coverage on countries.** "Sri Lanka" has 70 of its 71 spots south of
+  7.0°N: no Sigiriya, Kandy, Ella, Yala or Colombo. `curateVideos` optimised the
+  first 20 for distinct *channels* and never for distinct *places*, so twenty
+  "Sri Lanka travel guide" videos converged on the same coastal circuit. The
+  traveler sees 71 pins and cannot tell that most of the country is missing —
+  and it's why an "options" request produced a near-duplicate: there was no hill
+  country to build an alternative from.
+- **Over-spill on cities.** Tbilisi carried Svaneti (~9h away); East Coast Sri
+  Lanka pinned "Maldives". The map auto-fit to those outliers, so a three-day
+  walkable plan rendered as one dot.
+
+Fixes, in the order they matter: `geocodeBounds` resolves the extent once at
+discover and stores `Trip.bounds`; `applyVideoResult` flags anything outside as
+`outOfBounds` (kept, hidden from the fit / the grid / the spot digest, one tap
+from coming back — deleting a creator's real recommendation is worse than the
+problem); `planSearchQueries` returns `scale` + named `subAreas` and dedicates a
+query to each; `curateVideos` must cover every sub-area with ≥2 videos *before*
+optimising channel diversity, and returns a coverage map so it has to account for
+each one.
+
+**Extraction had the same shape of problem.** On the shipped samples: Galle Fort,
+Black Fort, Narikala Fortress and Chronicles of Georgia all `other`; a folk
+museum `other`; three beach clubs `stay`; a 7-Eleven and an unnamed Airbnb pinned
+as places to go; Tbilisi with **zero** `food` spots across 28 pins, which left
+the MEAL LOGIC rules with nothing to act on. Prose said "pick the SINGLE category
+that best fits" and "skip generic mentions" — and drifted. The fix is §4.1 again:
+a **required `category_reason`** placed before the category, a stated 1-in-10
+ceiling on `other`, `stay` defined as somewhere you sleep, and a *named* list of
+things never to pin. `scripts/recategorize-samples.mts` backfilled the shipped
+trips (Tbilisi 21% `other` → 0%).
+
+**And the first personalisation question was working against the traveler.** The
+must-see picker was top-3 by mention count across all categories, so a Sri Lanka
+map that's 31/71 food asked a first-time visitor whether they must include
+`Shady Lane`, `Nomads` and `Petty Petty`. Now weighted by how iconic a category
+is, boosted by stated interests, and never three of one category — the same trip
+now offers Udawalawe National Park, Weligama Beach and Shady Lane.
+
+Lesson: **a signal that's easy to compute is not the same as the signal you
+want.** Mention count is a great quality signal *within* a category and a bad one
+across categories; channel diversity is a great proxy for perspective and no
+proxy at all for geography. Both looked fine until someone read the output as a
+traveler.
+
+### 4.8 A rule with no bound will run away, and a whole-plan write is the tax (2026-08-02)
+
+A nine-trip product pass, driven as a real traveler, found the shape-first rule
+(§3b) eating the product it was meant to protect. Measured on the sample maps:
+
+- **Two of four re-run journeys ended with NO itinerary at all.** Sri Lanka: four
+  user messages, 335 seconds, `get_travel_times` every turn, `update_itinerary`
+  never. The third reply was a complete, well-written ten-day plan — *in chat
+  prose*. The traveler ends up with an itinerary they can't see on the map,
+  can't compare, and that was never saved.
+- The agent presented the same shape document twice and closed **every** turn
+  with a question, so there was always one more round before committing.
+- "Four days, keep it easy. **Plan it.**" still produced a shape and a
+  "shall I go ahead?".
+
+Two fixes, and the second is the one that holds:
+
+1. **Persona** (§3b): present the shape once, commit on the next message whatever
+   it says, never let an open question block the plan, widen the fast path, and
+   only close with a question when the answer would change the plan.
+2. **A structural backstop.** `needsCommitNudge` (PlannerChat) watches the full
+   history for two day-structured assistant turns with no `update_itinerary`
+   while the trip still has no plan, and sets `commitNow` on the request; the
+   route turns it into a hard `COMMIT_NUDGE` line in the volatile block. Narrow
+   on purpose — any committed plan switches it off for good.
+
+**The write itself was the other half.** `update_itinerary` was a whole-option
+replace, so "swap day 2 and 3" on a ten-day plan regenerated 35+ stops of JSON.
+Measured consequences: a 308-second turn (the route's ceiling is 300), two and
+three writes of the same option inside one turn, and intermittent
+`AI_JSONParseError` on the oversized payload. `mode: "patch"` with
+`dayPatches: [{index, day}]` fixes the economics; `applyPlanUpdate` in
+`lib/itinerary.ts` does the read-resolve-validate-write atomically, because two
+tool calls can land in one turn before React re-renders (§2d/§5.8) and a base
+taken from props would silently drop the first.
+
+Measured after, same scenarios: Hokkaido "just plan it" 232s → **27s**; Tbilisi
+edit 71s → **22s**; Sri Lanka edit 308s → **33s**; Koh Tao options 0 plans →
+**3 options**. The one thing that did NOT fully hold is "one write per turn" on
+the *initial* build of a long trip — the agent still occasionally writes, checks
+travel times, and rewrites. Feedback beats prohibition here: `applyPlanUpdate`
+returns a warning in the tool result when a full replace changed ≤2 days, which
+is the channel the model actually reads.
+
+**Lesson worth keeping: a behavioural rule needs a bound and a fallback.**
+"Sketch the shape first" is good guidance and became a trap because nothing said
+when to stop sketching. Pair every soft rule with a structural check that fires
+when it runs away — and give the model a cheap way to do the right thing
+(`patch`) rather than only a rule forbidding the expensive one.
 
 ## 5. Learnings — infrastructure & cost
 
@@ -762,7 +888,7 @@ conditional request are actually exercised.
 | File | Role |
 |---|---|
 | `app/api/trips/[id]/chat/route.ts` | Chat route: persona, context assembly, caching breakpoints, tool schemas (no execute), PostHog capture |
-| `lib/itinerary.ts` | Zod schemas (tool input, incl. `ask_questions`/`find_spots`/`discard_plan`), validation/normalization, the **plan-option list API** (`loadPlans`/`savePlans`/`upsertPlan`/`discardPlan`/`activePlan`/`normalizePlans`, §2d) + must-see and active-option overlays, haversine + travel estimates, spot digest builder, day colors, `PlannerContext` |
+| `lib/itinerary.ts` | Zod schemas (tool input, incl. `ask_questions`/`find_spots`/`discard_plan`), validation/normalization, the **plan-option list API** (`loadPlans`/`savePlans`/`upsertPlan`/`discardPlan`/`activePlan`/`normalizePlans`, §2d) + `applyPlanUpdate` (the atomic read-resolve-validate-write behind `update_itinerary`, incl. `mode: "patch"` — §4.8) + must-see and active-option overlays, haversine + travel estimates, spot digest builder, day colors, `PlannerContext` |
 | `lib/findSpots.ts` | `find_spots` tool's client orchestration — a scoped mini-`runner.ts`: reuses `/api/discover` + `/api/process-video` + `applyVideoResult` to add new pins for an area/interest mid-chat (4 videos, parallel fetch / apply-at-end, dedup vs existing). Map re-renders via the trip subscription — no callback |
 | `components/PlannerChat.tsx` | Chat UI: useChat wiring, client tool execution, history persistence (save/sanitize/window), reasoning + tool part rendering, must-see bar, auto-growing input, first-trip nudge; `FormattedText` light-markdown renderer (paragraphs, lists, two heading levels, `---` rules, `[pins: …]` → `PinStrip` photo row, §4.6); `ConversationalIntake` opening intake on every viewport; `QuestionFlow` tap-through form for the `ask_questions` tool |
 | `components/TripView.tsx` | Page shell: 3-panel layout, plan-option/must-see state, day chips, `PlanTabs` (option switcher) + `PlanCompare` (side-by-side, §2d), `DayBrief` (timeline + rationale), `SpotCard` ("In your plan" + "Also in" + star) |
@@ -774,6 +900,11 @@ conditional request are actually exercised.
 | `lib/clientStore.ts` | The localStorage backend — signed-out source of truth; reached only through `tripStore` |
 | `lib/sync.ts` + `components/SyncAgent.tsx` | One-way **migration** of leftover local trips + chats into the account, then reclaims the localStorage space (§2c); adoption of pre-account trips |
 | `lib/useSession.ts` + `components/AccountMenu.tsx` | Client session cache (one `/api/me` per load), avatar menu |
+| `lib/analytics.ts` + `lib/track.ts` + `app/api/events` | **Product** events (as opposed to `$ai_generation`): build started/completed/failed, first pin visible, itinerary committed, tool errors, question cards. Allowlisted server-side so a public endpoint can't mint event names; keyed to the session user |
+| `lib/routes.ts` + `app/api/routes` | Real road times for `get_travel_times` (Google Routes, adjacent pairs only, one element per leg). Results are tagged `source: "road" \| "estimate"` — the agent was overruling straight-line numbers out loud (§4.8) |
+| `lib/geocode.ts` `geocodeBounds` | The destination's real extent, resolved once at discover → `Trip.bounds`. What makes "is this spot part of this trip?" answerable (§4.9) |
+| `scripts/recategorize-samples.mts` | One-off relabelling pass over the committed sample trips against the tightened category rules (§4.9) |
+| `scripts/fixtures/` | The planner's regression net — scripted journeys on the sample maps asserting schema completeness, meal logic, weekday accuracy, pace, turn budget, one-write-per-turn, and no leaked internals (§8) |
 | `app/globals.css` | Everything under `/* Planner agent */` (~end of file) |
 
 ## 8. Working on this project
@@ -790,6 +921,21 @@ conditional request are actually exercised.
   owner merges & tests on prod. Small, complete rounds beat big batches.
 - **Prompt changes are product changes** — update §3 here when you touch
   the persona.
+- **Run the fixture suite for any persona or tool-schema change.** Every rule
+  in §3 lives in a prompt or a zod schema, and `tsc` cannot see any of them.
+  `scripts/fixtures/` drives the real client through five scripted journeys on
+  the committed sample maps and asserts on what the traveler ends up with —
+  schema completeness, meal logic, weekday accuracy, pace, the turn budget,
+  one write per option per turn, and that nothing internal leaks into the
+  thread. It needs a dev server with a real key, and Playwright out of tree:
+  ```bash
+  PORT=3010 npm run dev &
+  mkdir -p /tmp/pw && cd /tmp/pw && npm init -y && npm i playwright
+  npx playwright install chromium
+  PLAYWRIGHT_PATH=/tmp/pw/node_modules/playwright/index.mjs npm run test:fixtures
+  ```
+  Real tokens (~$0.30-1.00 per scenario), so it's a nightly + manual job, not a
+  PR gate. `npm run test:fixtures tbilisi-weekend` is the cheap smoke test.
 
 ## 9. Deliberate non-goals / deferred
 

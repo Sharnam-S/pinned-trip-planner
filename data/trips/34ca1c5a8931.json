@@ -192,7 +192,7 @@
     {
       "id": "a1f29032-25b7-4f9f-9df2-813cc507c84d",
       "name": "Blacktip Connect",
-      "category": "other",
+      "category": "wellness",
       "description": "A co-working and wellness space on Koh Tao with AC, comfortable chairs, a small sauna, ice bath, an outdoor calisthenic workout area, and a café serving coconuts and smoothie bowls. Available as a 500 THB day pass.",
       "lat": 10.0798168,
       "lng": 99.8291091,
@@ -486,7 +486,7 @@
     {
       "id": "ea3e8377-007f-4f8e-87c3-5184d5556ad0",
       "name": "Lotus Bar",
-      "category": "other",
+      "category": "nightlife",
       "description": "A bar on Sairee Beach that hosts a nightly fire show at around 8:00 PM between two dramatically angled palm trees out front. The creator was really impressed and says it is pretty amazing.",
       "lat": 10.0988834,
       "lng": 99.8278893,
@@ -1140,53 +1140,6 @@
       ]
     },
     {
-      "id": "81d76628-e307-46e3-ae92-7ab226b57406",
-      "name": "Koh Tao 7-Eleven Corner",
-      "category": "other",
-      "description": "The iconic corner 7-Eleven on Koh Tao that serves as the unofficial social meeting spot of the island. Travelers gather here to grab drinks and snacks, bump into friends, and watch the nightly motorbike chaos and street life unfold.",
-      "lat": 10.0995309,
-      "lng": 99.82997549999999,
-      "geocodeSource": "google",
-      "mentions": [
-        {
-          "videoId": "IWyn3gPORN8",
-          "videoTitle": "Koh Tao Thailand 🇹🇭 | A Real Day in Island Life, Beaches, Food & Tips",
-          "channelName": "April",
-          "channelAvatar": "https://yt3.googleusercontent.com/PTntTcy9Jk2rYvldafUyAGDEt8jMsRxyGPSuV9HRyVyMXhjk6jXN9agq4785nBO_AFQnU1uqlQ=s900-c-k-c0x00ffffff-no-rj",
-          "timestampSec": 221,
-          "quote": "It is the unofficial meeting spot on this island — flipflops parked out front, people grabbing drinks, snacks, and bumping into friends before heading off for the night."
-        }
-      ],
-      "thingsToKnow": [],
-      "photo": {
-        "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPyfQXEkFnZYN5b8Y1Ngdewscsslz1n2n1TlAs5PMyqBvpCOr_Qzg7mx8utJfwuHQs_WTANHSbJ3K30sStD5YZuObfoeG-WEU38xf657k2Fp-jJ3DcBwEVzAh5jX8V_YzC6rorS_tjIDizqJ-I=s4800-w800",
-        "source": "google"
-      },
-      "placeId": "ChIJEfgxxeihVTARZtk4tmgLu4k",
-      "photos": [
-        {
-          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZPyfQXEkFnZYN5b8Y1Ngdewscsslz1n2n1TlAs5PMyqBvpCOr_Qzg7mx8utJfwuHQs_WTANHSbJ3K30sStD5YZuObfoeG-WEU38xf657k2Fp-jJ3DcBwEVzAh5jX8V_YzC6rorS_tjIDizqJ-I=s4800-w800",
-          "source": "google"
-        },
-        {
-          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMV7eoZXKKpLuNNCL0jhzZc2e-8YfVF-5bdwuSRnziRYtsGD0_aZ-Q7GDmKZ2UEts2TJ2dCMse_rJb5PfkAdqsQjOLkvgfJsQ_ItQVzCwrBDb3vp-lUI_4fi3SK-v9yoNc_fk5brvYYRGlYtuyQXKCE=s4800-w800",
-          "source": "google"
-        },
-        {
-          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZM-o-4_4NXPV6KZM7mDZbuir106eihTl_NjNSaLhieeRJzTv-oaEFPmcLzeBa2TPdyoUsV8Ct5qcK4qGmrasKGyebSkkQLqP19ZQo7EN-mGJyNijcdyhiJo0A6-VJTQ4YDdLkpDtS4RrgT8R6o=s4800-w800",
-          "source": "google"
-        },
-        {
-          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMwYmz2moZ5FIK-5vd59HgfnwLtDRxkK2tKEhkGLBg_Rf32zUt_dez3p7qUPKWhjhiqEqUy1RFrKXJ0WSQPS80uym0sUc4Bf7xNXLf4bI6_HUmy_6FUS2AaMxBkkamZyFgTvPz2bV-YSGnE0OMSkIpf5A=s4800-w800",
-          "source": "google"
-        },
-        {
-          "url": "https://lh3.googleusercontent.com/place-photos/AJRVUZMuezHOtUd1_WOGfsDDjLbqQUjE7vd8HqfsdvZ7DLEI2-tKxJN44_016DDxzwpV47A7QWTf4rZCISJ1P-9NxfjdTG6X-YBeGQxMb53tz7QsQs4it0HKcdhrYrFZDeTUOv4HC_9RSskp7L93Sg=s4800-w800",
-          "source": "google"
-        }
-      ]
-    },
-    {
       "id": "c06e4daa-f5af-4ff2-90b4-5016db35a38d",
       "name": "995 Duck",
       "category": "food",
@@ -1530,7 +1483,7 @@
     {
       "id": "2e6acb22-ec6e-4e7c-8858-7236d83ea829",
       "name": "Shark Island",
-      "category": "nature",
+      "category": "beach",
       "description": "A small island just off the south coast of Koh Tao that the creator confirms is a great snorkeling spot. It can be seen from the viewing platforms at the Coral Bay Resort.",
       "lat": 10.0618598,
       "lng": 99.8447406,

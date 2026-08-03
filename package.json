@@ -7,7 +7,8 @@
     "dev:setup": "./scripts/dev.sh",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:fixtures": "node scripts/fixtures/run.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.16",

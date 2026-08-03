@@ -330,10 +330,15 @@ export default function TripMap({
     // out to fit every must-see pin scattered across the destination.
     if (!fittedRef.current && spots.length > 0) {
       fittedRef.current = true;
+      // Out-of-range spots must not drag the opening view. One Svaneti pin on a
+      // Tbilisi trip zoomed the map out to the whole Caucasus and turned a
+      // three-day walkable plan into a single dot.
+      const inRange = spots.filter((s) => !s.outOfBounds);
+      const base = inRange.length > 0 ? inRange : spots;
       const fitSpots =
-        planAllIds.size > 0 ? spots.filter((s) => planAllIds.has(s.id)) : spots;
+        planAllIds.size > 0 ? base.filter((s) => planAllIds.has(s.id)) : base;
       const bounds = L.latLngBounds(
-        (fitSpots.length > 0 ? fitSpots : spots).map((s) => [s.lat, s.lng] as [number, number])
+        (fitSpots.length > 0 ? fitSpots : base).map((s) => [s.lat, s.lng] as [number, number])
       );
       requestAnimationFrame(() => {
         if (mapRef.current !== map) return; // map was torn down (StrictMode remount)

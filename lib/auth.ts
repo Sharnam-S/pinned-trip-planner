@@ -121,10 +121,13 @@ export function sessionCookieOptions() {
   };
 }
 
+/** Overridable so a local session can carry a named identity — which is what
+ *  makes a scripted product pass show up in PostHog as a real person instead of
+ *  an anonymous trace. Dev-only: devAuthActive() is false in production. */
 export const DEV_USER: DbUser = {
-  id: "dev:local",
-  email: "dev@localhost",
-  name: "Dev User",
+  id: process.env.DEV_USER_ID || "dev:local",
+  email: process.env.DEV_USER_EMAIL || "dev@localhost",
+  name: process.env.DEV_USER_NAME || "Dev User",
   picture: null,
 };
 

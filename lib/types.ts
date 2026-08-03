@@ -52,11 +52,24 @@ export interface Spot {
    *  before /api/photo existed (no placeId, so they must be resolved by name
    *  through /api/photos on first swipe). Never written for new spots. */
   morePhotoNames?: string[];
+  /** Set when this spot fell outside the trip's `bounds`. Kept, not dropped —
+   *  a creator really did recommend it — but held back from the map fit, the
+   *  planner's spot digest and the plan until the traveler opts it in. */
+  outOfBounds?: boolean;
   /** Google Places id; null = Google lookup tried and missed; undefined = not tried yet. */
   placeId?: string | null;
 }
 
-export type VideoStatus = "pending" | "processing" | "done" | "error";
+/** `error` = this video is unreadable (no captions, unavailable) — replace it
+ *  from the bench. `throttled` = YouTube pushed back on US after the retries in
+ *  runner.ts ran out; the video is fine and a bench substitute would fail the
+ *  same way, so the build pauses and offers a retry instead. */
+export type VideoStatus =
+  | "pending"
+  | "processing"
+  | "done"
+  | "error"
+  | "throttled";
 
 export interface TripVideo {
   id: string; // YouTube video id
@@ -185,4 +198,19 @@ export interface Trip {
   itineraries?: Itinerary[];
   /** Ranked substitute video ids, used when a picked video has no captions. */
   bench?: string[];
+  /** The destination's real extent, resolved once at discover time.
+   *
+   *  Without it the map has no idea what "this trip" means geographically, and
+   *  it showed: a trip called "Tbilisi" carried Svaneti (9 hours away) and
+   *  spanned nine times the city's longitude, so the map auto-fit to the
+   *  outliers and a walkable old-town plan rendered as one unreadable cluster.
+   *  Spots outside this box are kept but flagged (`Spot.outOfBounds`) rather
+   *  than dropped — they're real recommendations, just not in this trip. */
+  bounds?: TripBounds;
+  /** Sub-regions the curator was asked to cover, for the coverage line (C3).
+   *  Only set for region/country-scale destinations. */
+  subAreas?: string[];
 }
+
+/** [[south, west], [north, east]] — the same shape Leaflet's fitBounds takes. */
+export type TripBounds = [[number, number], [number, number]];

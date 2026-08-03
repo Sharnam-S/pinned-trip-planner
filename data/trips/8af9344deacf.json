@@ -279,7 +279,7 @@
     {
       "id": "84654056-c576-465c-ae1b-b9d68b7fca8a",
       "name": "Suzukino",
-      "category": "town",
+      "category": "nightlife",
       "description": "A popular nightlife district in Sapporo located very close to Ramen Yokocho. It's described as a lively area with clubs and is a bustling entertainment area similar to Las Vegas with bright lights.",
       "lat": 43.0536195,
       "lng": 141.3522267,
@@ -337,7 +337,7 @@
     {
       "id": "882024f6-769a-4609-b3ce-f857e0c1c892",
       "name": "Odori Park",
-      "category": "viewpoint",
+      "category": "nature",
       "description": "A major park stretching east to west through central Sapporo that features snow sculptures during the winter festival in February. It's about a 15-minute walk from Sapporo Station and offers beautiful seasonal illuminations and markets.",
       "lat": 43.060752099999995,
       "lng": 141.3544308,
@@ -385,7 +385,7 @@
     {
       "id": "5f5e7115-0ff2-42bb-885f-84e074ce28ef",
       "name": "Sapporo TV Tower",
-      "category": "viewpoint",
+      "category": "landmark",
       "description": "A landmark in Odori Park with an observation deck offering 360° views of Sapporo. The digital clock is visible from the park, and the tower is especially beautiful at night.",
       "lat": 43.06110470000001,
       "lng": 141.3564246,
@@ -553,7 +553,7 @@
     {
       "id": "a9f3cd28-146b-475f-917b-01132aa274ab",
       "name": "Sapporo Beer Museum and Beer Garden",
-      "category": "food",
+      "category": "museum",
       "description": "A museum with self-guided tours followed by lunch at the beer garden restaurant. The restaurant specializes in jingisukan, a Hokkaido specialty made with lamb and mutton grilled on a dome-shaped metal skillet.",
       "lat": 43.071334199999995,
       "lng": 141.3690782,
@@ -839,7 +839,7 @@
     {
       "id": "01de65de-cb91-48e3-9a50-de0db65b0afb",
       "name": "Otaru Music Box Museum",
-      "category": "activity",
+      "category": "museum",
       "description": "A museum showcasing many music boxes, some made in Japan, with a top floor featuring Mchi Chi dolls. The building's front offers a view of the Otaru Steam Clock. The museum is approached from the back but worth viewing from the front.",
       "lat": 43.190528799999996,
       "lng": 141.00797319999998,
@@ -998,7 +998,7 @@
     {
       "id": "5a41cf89-13fc-4275-96e4-a653dabafedd",
       "name": "Otaru Canal",
-      "category": "viewpoint",
+      "category": "landmark",
       "description": "A scenic canal in Otaru that is beautiful at any time of year. During the Otaru Snow Light Path Festival it is adorned with snow lanterns, and boat rides are available.",
       "lat": 43.199041,
       "lng": 141.0021176,
@@ -1038,7 +1038,7 @@
     {
       "id": "6855dd20-eb24-4f32-a4d3-21bd2a49d3aa",
       "name": "Otaru Steam Clock",
-      "category": "viewpoint",
+      "category": "landmark",
       "description": "A landmark steam clock in Otaru visible from the front of the Otaru Music Box Museum area.",
       "lat": 43.1906621,
       "lng": 141.00766579999998,
@@ -1149,7 +1149,7 @@
     {
       "id": "a269910d-5830-4a72-9129-eae49c71a6c3",
       "name": "Nijo Market",
-      "category": "food",
+      "category": "market",
       "description": "Famous and popular seafood market in Sapporo where the creator had kaisendon (seafood bowl) with fresh seafood including uni and salmon.",
       "lat": 43.058299,
       "lng": 141.358446,
@@ -1198,7 +1198,7 @@
     {
       "id": "cdfc479c-ffd6-4d3a-a465-abae8b647ba4",
       "name": "Sapporo Clock Tower",
-      "category": "viewpoint",
+      "category": "landmark",
       "description": "Historic clock tower in Sapporo with a line of people waiting for photos. The creator found a hidden spot nearby with no line.",
       "lat": 43.062576799999995,
       "lng": 141.3534927,
@@ -1603,7 +1603,7 @@
     {
       "id": "a400410b-8b58-49cc-a437-1b45ee3ff025",
       "name": "Odori Park Winter Illumination",
-      "category": "viewpoint",
+      "category": "nature",
       "description": "An annual winter illumination event held at Odori Park transforming it into a sparkling winter wonderland. It's Japan's first illumination event starting in 1981, featuring colorful lights throughout the 1.5 km park with the Sapporo TV Tower visible at one end and a Munich Christmas Market during the holiday season.",
       "lat": 43.060583199999996,
       "lng": 141.3526426,

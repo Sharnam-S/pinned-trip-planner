@@ -141,6 +141,12 @@ export function applyVideoResult(trip: Trip, result: VideoResult): number {
       mergeMention(existing, spot.mentions[0], spot.thingsToKnow);
       continue;
     }
+    // A creator's video about "Tbilisi" will happily spend five minutes on
+    // Svaneti, nine hours away — and an East Coast Sri Lanka trip picked up a
+    // spot called "Maldives". Keep them (they're real recommendations) but flag
+    // them, so the map fit, the planner's digest and the plan all ignore them
+    // until the traveler says otherwise.
+    if (isOutOfBounds(trip, spot)) spot.outOfBounds = true;
     trip.spots.push(spot);
     added++;
   }
@@ -151,6 +157,15 @@ export function applyVideoResult(trip: Trip, result: VideoResult): number {
     if (existing) mergeMention(existing, k.mention, k.thingsToKnow);
   }
   return added;
+}
+
+/** Outside the destination's own extent? Unknown bounds means "keep it" — a
+ *  geocoder miss must never quietly hide a traveler's spots. */
+export function isOutOfBounds(trip: Trip, spot: { lat: number; lng: number }): boolean {
+  const b = trip.bounds;
+  if (!b) return false;
+  const [[south, west], [north, east]] = b;
+  return spot.lat < south || spot.lat > north || spot.lng < west || spot.lng > east;
 }
 
 function mergeMention(spot: Spot, mention: Mention | undefined, tips?: string[]) {

@@ -12,6 +12,21 @@ import { applyVideoResult, pendingVideo, VideoResult } from "./merge";
 /** A day's worth is plenty — keeps it fast (~20-30s) and quota-cheap. */
 const FIND_VIDEOS = 4;
 
+/**
+ * Discovery results for a (destination, interests) pair, for this page view.
+ *
+ * `/api/discover` is a Sonnet query plan + YouTube searches + a Sonnet curation
+ * of 60 candidates — 22 seconds and ~$0.03 — and `find_spots` uses it to take
+ * the top FOUR videos. One measured turn spent 45 of its 71 seconds on two of
+ * these back to back. The agent also re-searches the same area across a
+ * conversation more often than you'd think.
+ */
+const discoverCache = new Map<
+  string,
+  { videos: { id: string; title: string; channelName: string }[]; at: number }
+>();
+const DISCOVER_TTL_MS = 15 * 60 * 1000;
+
 async function post<T>(url: string, body: unknown): Promise<T> {
   const res = await fetch(url, {
     method: "POST",
@@ -38,19 +53,25 @@ export async function findSpots(
   tripId: string,
   query: { destination: string; interests?: string },
   onProgress: (msg: string) => void
-): Promise<{ added: number; spots: FoundSpot[] }> {
+): Promise<{ added: number; spots: FoundSpot[]; attempted?: number; unreadable?: number }> {
   const trip0 = peekTrip(tripId);
   if (!trip0) return { added: 0, spots: [] };
 
   onProgress(`Searching ${query.destination}…`);
-  const plan = await post<{
-    videos: { id: string; title: string; channelName: string }[];
-  }>("/api/discover", {
-    destination: query.destination,
-    interests: query.interests,
-    tripId,
-    tripName: trip0.name,
-  });
+  const cacheKey = `${query.destination}|${query.interests ?? ""}`.toLowerCase();
+  const cached = discoverCache.get(cacheKey);
+  const fresh = cached && Date.now() - cached.at < DISCOVER_TTL_MS;
+  const plan = fresh
+    ? { videos: cached!.videos }
+    : await post<{
+        videos: { id: string; title: string; channelName: string }[];
+      }>("/api/discover", {
+        destination: query.destination,
+        interests: query.interests,
+        tripId,
+        tripName: trip0.name,
+      });
+  if (!fresh) discoverCache.set(cacheKey, { videos: plan.videos, at: Date.now() });
 
   const picks = plan.videos.slice(0, FIND_VIDEOS);
   if (picks.length === 0) return { added: 0, spots: [] };
@@ -73,6 +94,7 @@ export async function findSpots(
   const bump = () => onProgress(`Read ${++done}/${picks.length} videos…`);
   // Fetch in parallel (fast), then apply all at once on one trip object (no
   // read-modify-write race across the concurrent calls).
+  let unreadable = 0;
   const results = await Promise.all(
     picks.map((v) =>
       post<VideoResult>("/api/process-video", {
@@ -85,8 +107,12 @@ export async function findSpots(
           bump();
           return r;
         })
-        // A caption-less or unreadable video just contributes nothing.
         .catch(() => {
+          // Counted, not swallowed. Reporting "couldn't find good new spots"
+          // when four videos were found and none could be READ told a traveler
+          // there are no wine bars in Tbilisi — which is both false and exactly
+          // the kind of answer that ends the relationship.
+          unreadable++;
           bump();
           return null;
         })
@@ -101,6 +127,8 @@ export async function findSpots(
   const newSpots = trip.spots.filter((s) => !before.has(s.id));
   return {
     added: newSpots.length,
+    attempted: picks.length,
+    unreadable,
     spots: newSpots.map((s) => ({
       id: s.id,
       name: s.name,

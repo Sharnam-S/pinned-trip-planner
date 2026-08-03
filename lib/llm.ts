@@ -16,7 +16,9 @@ export const client = new Anthropic();
 
 const posthog = process.env.POSTHOG_API_KEY
   ? new PostHog(process.env.POSTHOG_API_KEY, {
-      host: process.env.POSTHOG_HOST ?? "https://us.i.posthog.com",
+      // `||`, not `??` — an unset key in a .env file is "" , not undefined, and an
+      // empty host silently sends every analytics event nowhere.
+      host: process.env.POSTHOG_HOST || "https://us.i.posthog.com",
       // Serverless: send per-event instead of batching — a frozen function
       // never fires the interval flush.
       flushAt: 1,

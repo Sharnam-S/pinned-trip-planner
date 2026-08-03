@@ -7,11 +7,25 @@
  */
 const buckets = new Map<string, { day: string; count: number }>();
 
-export function rateLimit(req: Request, kind: string, limit: number): boolean {
-  const ip =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
+/**
+ * `userId` (when signed in) is a far better bucket than the IP: an office, a
+ * café or a family behind one NAT used to share a single allowance, so one
+ * person planning a few trips could lock out everyone around them. Trips belong
+ * to accounts now, so charge the account. Anonymous callers still fall back to
+ * the IP — it's all we have.
+ */
+export function rateLimit(
+  req: Request,
+  kind: string,
+  limit: number,
+  userId?: string | null
+): boolean {
+  const who =
+    userId ??
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    "local";
   const day = new Date().toISOString().slice(0, 10);
-  const key = `${kind}:${ip}`;
+  const key = `${kind}:${who}`;
   const b = buckets.get(key);
   if (!b || b.day !== day) {
     buckets.set(key, { day, count: 1 });

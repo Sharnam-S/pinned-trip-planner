@@ -15,8 +15,13 @@ import { CachedVideo } from "./merge";
 const PREFIX = "video-cache/";
 const pathFor = (videoId: string) => `${PREFIX}${videoId}.json`;
 
-/** Bump when CachedVideo's shape or the resolution logic changes materially. */
-export const VIDEO_CACHE_VERSION = 1;
+/** Bump when CachedVideo's shape or the resolution logic changes materially.
+ *  2 (2026-08-02): the extraction contract changed — categories now require a
+ *  justification, "other" is bounded, and convenience stores / unnamed
+ *  accommodation are excluded. Cached v1 results predate all of that, and
+ *  serving them would mean the fix silently doesn't apply to any video anyone
+ *  has already processed. */
+export const VIDEO_CACHE_VERSION = 2;
 
 function enabled(): boolean {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN);

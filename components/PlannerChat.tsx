@@ -15,7 +15,7 @@ import {
   lastAssistantMessageIsCompleteWithToolCalls,
   type UIMessage,
 } from "ai";
-import { Itinerary, Spot, Trip } from "@/lib/types";
+import { Itinerary, Spot, SpotCategory, Trip } from "@/lib/types";
 import { listLocalTrips, readOwnedIds } from "@/lib/clientStore";
 import { fetchServerChat, noteChatFromServer, pushChat } from "@/lib/sync";
 import { tripStoreMode } from "@/lib/tripStore";
@@ -25,6 +25,7 @@ import {
   DiscardPlanInput,
   FindSpotsInput,
   ItineraryInput,
+  LoadPlanInput,
   MAX_PLANS,
   TravelTimesInput,
   activePlan,
@@ -32,10 +33,10 @@ import {
   discardPlan,
   haversineKm,
   travelEstimate,
-  upsertPlan,
-  validateItinerary,
+  applyPlanUpdate,
 } from "@/lib/itinerary";
 import { findSpots } from "@/lib/findSpots";
+import { track } from "@/lib/track";
 
 type PlannerQuestion = {
   id: string;
@@ -53,10 +54,14 @@ type QuestionAnswer = { id: string; prompt: string; answer: string };
 function QuestionFlow({
   questions,
   submitLabel,
+  answerRef,
   onSubmit,
 }: {
   questions: PlannerQuestion[];
   submitLabel: string;
+  /** Filled with "answer the current question in words", so typing in the main
+   *  composer answers the card instead of stranding it — see answerWithText. */
+  answerRef?: React.MutableRefObject<((text: string) => void) | null>;
   onSubmit: (answers: QuestionAnswer[]) => void;
 }) {
   const [step, setStep] = useState(0);
@@ -64,13 +69,34 @@ function QuestionFlow({
   const [other, setOther] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
 
-  const compile = (): QuestionAnswer[] =>
-    questions.map((q) => {
+  // `otherOverride` exists because answering by typing sets state and submits in
+  // the same tick — compile() would otherwise read the pre-update map.
+  const compile = (
+    otherOverride?: Record<string, string>
+  ): QuestionAnswer[] => {
+    const typedMap = otherOverride ?? other;
+    return questions.map((q) => {
       const chosen = picks[q.id] ?? [];
-      const typed = (other[q.id] ?? "").trim();
+      const typed = (typedMap[q.id] ?? "").trim();
       const answer = [...chosen, ...(typed ? [typed] : [])].join(", ");
       return { id: q.id, prompt: q.prompt, answer: answer || "no preference" };
     });
+  };
+
+  const q = questions[step];
+  const isLast = step === questions.length - 1;
+
+  // Hand the parent a "answer in words" callback while this card is open, so a
+  // traveler who types instead of tapping answers the question rather than
+  // stranding it. Re-registered every render so it closes over current state,
+  // and declared BEFORE the `done` early return to keep hook order stable.
+  useEffect(() => {
+    if (!answerRef) return;
+    answerRef.current = done ? null : answerWithText;
+    return () => {
+      answerRef.current = null;
+    };
+  });
 
   if (done) {
     return (
@@ -85,10 +111,8 @@ function QuestionFlow({
     );
   }
 
-  const q = questions[step];
   const chosen = picks[q.id] ?? [];
   const typed = other[q.id] ?? "";
-  const isLast = step === questions.length - 1;
 
   function toggle(opt: string) {
     setPicks((prev) => {
@@ -114,6 +138,23 @@ function QuestionFlow({
 
   function back() {
     setStep((s) => Math.max(0, s - 1));
+  }
+
+  /** The traveler typed in the main composer while this card was open. Treat it
+   *  as the current question's answer and move on — the alternative (letting the
+   *  message through) leaves this tool call with no result, which makes every
+   *  later request an invalid conversation the user cannot recover from. */
+  function answerWithText(text: string) {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    const nextOther = { ...other, [q.id]: trimmed };
+    setOther(nextOther);
+    if (isLast) {
+      setDone(true);
+      onSubmit(compile(nextOther));
+    } else {
+      setStep((s) => s + 1);
+    }
   }
 
   return (
@@ -420,7 +461,51 @@ function windowMessages(messages: UIMessage[]): UIMessage[] {
   // The window must open on a user turn (a leading assistant message would
   // replay tool calls with no preceding request).
   while (out.length > 0 && out[0].role !== "user") out = out.slice(1);
-  return out.length > 0 ? out : messages.slice(-1);
+  return closeDanglingToolCalls(out.length > 0 ? out : messages.slice(-1));
+}
+
+/**
+ * A tool call with no result makes the whole conversation invalid — Anthropic
+ * rejects a `tool_use` block with no matching `tool_result` — and the failure is
+ * permanent, because the offending message is already in stored history. Every
+ * later send fails with "Tool result is missing for tool call toolu_…", and
+ * "Try again" replays the same broken array.
+ *
+ * `sanitizeChat` only drops a *trailing* dangling message, which doesn't help
+ * once the traveler has said something after it. So close the gap here, at the
+ * request boundary: whatever the UI did, what goes on the wire is valid. The
+ * synthesized result also tells the model what happened, so it can pick the
+ * thread up from the traveler's own words instead of re-asking.
+ */
+function closeDanglingToolCalls(messages: UIMessage[]): UIMessage[] {
+  return messages.map((m) => {
+    if (m.role !== "assistant") return m;
+    type Part = UIMessage["parts"][number];
+    let patched = false;
+    const parts = m.parts.map((p): Part => {
+      if (
+        !p.type.startsWith("tool-") ||
+        !("state" in p) ||
+        p.state === "output-available" ||
+        p.state === "output-error"
+      ) {
+        return p;
+      }
+      patched = true;
+      // The cast is the honest shape: a tool part carrying a result. TS can't
+      // narrow a spread across the part union on its own.
+      return {
+        ...p,
+        state: "output-available",
+        output: {
+          ok: false,
+          error:
+            "No result — the traveler replied in the chat instead of using this card. Read their message and carry on.",
+        },
+      } as Part;
+    });
+    return patched ? { ...m, parts } : m;
+  });
 }
 
 /** Inline formatting within a line: **bold** → <strong>. */
@@ -622,6 +707,156 @@ function FormattedText({
 // Module scope so the request-time callback reads the ref outside render
 // (react-hooks/refs). The transport is created once per trip; the ref always
 // holds the latest trip + itinerary when a request actually fires.
+/**
+ * The three spots to offer as "anything you must include?".
+ *
+ * This used to be the top three by mention count across all categories, which
+ * works on a balanced map and fails badly on a skewed one. On the shipped Sri
+ * Lanka trip — 31 of 71 spots are food — it asked a first-time visitor to a
+ * ten-day trip whether they must include `Shady Lane`, `Nomads` and
+ * `Petty Petty`: two cafés and a beach club, offered as the icons of a country.
+ * The very first personalisation question was steering away from what the
+ * traveler came for.
+ *
+ * Three corrections, in order of effect:
+ *  - weight by how iconic a CATEGORY is (nobody's must-see is a café),
+ *  - boost anything matching the trip's stated interests, so a clubbing trip
+ *    surfaces nightlife,
+ *  - never offer three of the same category — variety is what makes the
+ *    question answerable.
+ */
+const ICONIC_WEIGHT: Partial<Record<SpotCategory, number>> = {
+  landmark: 1.6,
+  nature: 1.5,
+  beach: 1.4,
+  viewpoint: 1.3,
+  activity: 1.2,
+  museum: 1.1,
+  town: 1.0,
+  market: 1.0,
+  wellness: 0.9,
+  nightlife: 0.9,
+  shopping: 0.6,
+  food: 0.45,
+  other: 0.5,
+  stay: 0.2,
+};
+
+/** What people type vs what the extractor calls it. Small and hand-kept: the
+ *  interests field is free text and these are the words that actually show up. */
+const INTEREST_SYNONYMS: Record<string, SpotCategory[]> = {
+  clubbing: ["nightlife"],
+  club: ["nightlife"],
+  clubs: ["nightlife"],
+  party: ["nightlife"],
+  parties: ["nightlife"],
+  bars: ["nightlife"],
+  drinks: ["nightlife"],
+  nightlife: ["nightlife"],
+  food: ["food", "market"],
+  eating: ["food"],
+  restaurants: ["food"],
+  street: ["food", "market"],
+  hiking: ["nature", "activity"],
+  trekking: ["nature", "activity"],
+  wildlife: ["nature", "activity"],
+  nature: ["nature"],
+  waterfalls: ["nature"],
+  diving: ["activity"],
+  snorkelling: ["activity", "beach"],
+  snorkeling: ["activity", "beach"],
+  surfing: ["beach", "activity"],
+  beaches: ["beach"],
+  museums: ["museum"],
+  history: ["landmark", "museum"],
+  temples: ["landmark"],
+  culture: ["landmark", "museum"],
+  shopping: ["shopping", "market"],
+  markets: ["market"],
+  spa: ["wellness"],
+  onsen: ["wellness"],
+  wellness: ["wellness"],
+  views: ["viewpoint"],
+  viewpoints: ["viewpoint"],
+  sunsets: ["viewpoint", "beach"],
+};
+
+function pickIconicSpots(trip: Trip): string[] {
+  const interestWords = (trip.query?.interests ?? "")
+    .toLowerCase()
+    .split(/[^a-z]+/)
+    .filter((w) => w.length > 2);
+  const scored = trip.spots
+    .filter((s) => !s.outOfBounds)
+    .map((s) => {
+      const base = Math.max(1, s.mentions.length);
+      const weight = ICONIC_WEIGHT[s.category] ?? 0.8;
+      // A stated interest is the traveler telling us what they're here for —
+      // it should outrank generic popularity. Match the category name against
+      // the interest words in either direction ("clubbing" ↔ "nightlife" needs
+      // the synonym map below; "beaches" ↔ "beach" only needs a prefix).
+      const wanted = interestWords.some(
+        (w) =>
+          s.category.startsWith(w.slice(0, 4)) ||
+          (INTEREST_SYNONYMS[w] ?? []).includes(s.category)
+      )
+        ? 1.8
+        : 1;
+      return { spot: s, score: base * weight * wanted };
+    })
+    .sort((a, b) => b.score - a.score);
+
+  const picked: typeof scored = [];
+  const usedCats = new Set<SpotCategory>();
+  // First pass: best of each category, so the three options are three
+  // different kinds of thing.
+  for (const entry of scored) {
+    if (picked.length >= 3) break;
+    if (usedCats.has(entry.spot.category)) continue;
+    usedCats.add(entry.spot.category);
+    picked.push(entry);
+  }
+  // Backfill if the trip genuinely only has one or two categories.
+  for (const entry of scored) {
+    if (picked.length >= 3) break;
+    if (!picked.includes(entry)) picked.push(entry);
+  }
+  return picked.map((e) => e.spot.name);
+}
+
+/** A day heading in an assistant reply: "## Day 3 — …", "Day 1:", "**Day 2**". */
+const DAY_STRUCTURE_RE = /(^|\n)\s*(#{1,3}\s*)?\**\s*day\s*\d/i;
+
+/**
+ * The shape-first step (persona §PLAN IN TWO STEPS) is deliberate and good: the
+ * agent sketches the trip in prose, the traveler reacts, and only then do thirty
+ * pins land on the map. Rearranging a paragraph is cheap; rearranging a placed
+ * plan is not.
+ *
+ * What it lacked was a bound. Live testing found whole conversations that never
+ * escaped it — four messages, five minutes, a beautifully written ten-day plan,
+ * and an empty map, because each reply produced another summary instead of a
+ * tool call. The rule allows ONE revision; this counts the summaries and, on the
+ * third, tells the route to force the commit (COMMIT_NUDGE).
+ *
+ * Deliberately narrow: it only fires while the trip has NO plan at all, and any
+ * update_itinerary anywhere in the conversation switches it off for good. A trip
+ * that already has an itinerary is allowed to talk as much as it likes.
+ */
+function needsCommitNudge(messages: UIMessage[], plans: Itinerary[]): boolean {
+  if (plans.length > 0) return false;
+  let described = 0;
+  for (const m of messages) {
+    if (m.role !== "assistant") continue;
+    if (m.parts.some((p) => p.type === "tool-update_itinerary")) return false;
+    const text = m.parts
+      .map((p) => (p.type === "text" ? p.text : ""))
+      .join("\n");
+    if (DAY_STRUCTURE_RE.test(text)) described++;
+  }
+  return described >= 2;
+}
+
 function makeTransport(tripId: string, ctxRef: { current: PlannerCtx }) {
   return new DefaultChatTransport({
     api: `/api/trips/${tripId}/chat`,
@@ -635,6 +870,9 @@ function makeTransport(tripId: string, ctxRef: { current: PlannerCtx }) {
           ctxRef.current.mustSeeIds
         ),
         traceId: ctxRef.current.traceId,
+        // Measured on the FULL history, not the send window — the shape turns
+        // that need catching can already have scrolled out of it.
+        commitNow: needsCommitNudge(messages, ctxRef.current.plans),
       },
     }),
   });
@@ -728,6 +966,17 @@ export default function PlannerChat({
       .slice(0, 5);
   }, [trip]);
   const intakeAnswerRef = useRef<((text: string) => void) | null>(null);
+  // Set while the agent's ask_questions card is open (§A1). Typing in the
+  // composer answers that card instead of sending a message the card's tool
+  // call would never see.
+  const askAnswerRef = useRef<((text: string) => void) | null>(null);
+  /** Whether the open card was answered by typing rather than tapping — the
+   *  signal that used to be a dead end (§A1), now just a stat. */
+  const answeredByTyping = useRef(false);
+  /** Options written since the traveler's last message. Cleared in send(), so
+   *  "this turn" means "since they last spoke" — which is what they experience,
+   *  and includes the auto-continued post-tool-call round. */
+  const writtenThisTurn = useRef<Map<string, boolean>>(new Map());
   // "Arugam Bay, Sri Lanka" → "Sri Lanka"; fall back to the trip's name.
   const shortDest =
     trip.destination?.name.split(",").map((s) => s.trim()).pop() || trip.name;
@@ -771,10 +1020,7 @@ export default function PlannerChat({
   // proposes the rough shape (route persona §PLAN IN TWO STEPS). Dates only if
   // the trip has none set.
   const intakeQuestions = useMemo<PlannerQuestion[]>(() => {
-    const iconic = [...trip.spots]
-      .sort((a, b) => b.mentions.length - a.mentions.length)
-      .slice(0, 3)
-      .map((s) => s.name);
+    const iconic = pickIconicSpots(trip);
     const hasDates = Boolean(trip.query?.startDate && trip.query?.endDate);
     return [
       { id: "who", prompt: "Who's going?", options: ["Solo", "Couple", "Family", "Friends"], allowOther: true },
@@ -809,18 +1055,38 @@ export default function PlannerChat({
 
       if (toolCall.toolName === "update_itinerary") {
         const currentTrip = ctxRef.current.trip;
-        const { itinerary: next, warnings } = validateItinerary(
-          toolCall.input as ItineraryInput,
-          currentTrip.spots
-        );
-        // upsertPlan re-reads the stored list rather than trusting the props:
-        // "build me both shapes" lands two of these calls in one turn, and
-        // React hasn't re-rendered in between.
-        const { plans: nextPlans, created, rejected } = upsertPlan(
-          currentTrip,
-          isLocal,
-          next
-        );
+        const input = toolCall.input as ItineraryInput;
+        // B3, structurally. The persona says "write once per option per turn,
+        // and write last"; the fixture suite showed it still writing a 40-stop
+        // plan two and three times on one message — think, commit, check travel
+        // times, commit again. Prose didn't hold, so refuse the second full
+        // rewrite and tell it what to send instead. A patch is always allowed:
+        // that's the cheap correction we WANT it to reach for.
+        const alreadyWrote = writtenThisTurn.current.get(input?.planId ?? "");
+        if (alreadyWrote && input?.mode !== "patch") {
+          addToolOutput({
+            tool: "update_itinerary",
+            toolCallId: toolCall.toolCallId,
+            output: {
+              ok: false,
+              error: `You already wrote "${input.planId}" in this turn — the traveler has watched that plan stream once. Don't rewrite it whole. If something still needs changing, send mode="patch" with just the affected days.`,
+            },
+          });
+          return;
+        }
+        writtenThisTurn.current.set(input?.planId ?? "", true);
+        // One call, because the read and the write must not be separated:
+        // "build me both shapes" lands two of these in a single turn and React
+        // hasn't re-rendered in between, so a patch base taken from props would
+        // silently drop the first write.
+        const {
+          plans: nextPlans,
+          itinerary: next,
+          created,
+          warnings,
+          rejected,
+          mode,
+        } = applyPlanUpdate(currentTrip, isLocal, input, currentTrip.spots);
         if (rejected) {
           addToolOutput({
             tool: "update_itinerary",
@@ -831,6 +1097,15 @@ export default function PlannerChat({
         }
         onPlansChange(nextPlans, next.id ?? null);
         const planned = next.days.reduce((n, d) => n + d.stops.length, 0);
+        track("itinerary_committed", {
+          tripId: currentTrip.id,
+          planId: next.id,
+          mode,
+          created,
+          days: next.days.length,
+          stops: planned,
+          optionCount: nextPlans.length,
+        });
         addToolOutput({
           tool: "update_itinerary",
           toolCallId: toolCall.toolCallId,
@@ -839,9 +1114,13 @@ export default function PlannerChat({
             warnings,
             planId: next.id,
             planTitle: next.title,
-            // Which of the two things just happened, so the model's reply can
+            // Which of the three things just happened, so the model's reply can
             // say "added a second option" instead of guessing.
-            action: created ? "created a new option" : "replaced that option",
+            action: created
+              ? "created a new option"
+              : mode === "patch"
+                ? "patched that option"
+                : "replaced that option",
             optionCount: nextPlans.length,
             optionsRemaining: MAX_PLANS - nextPlans.length,
             plannedStops: planned,
@@ -873,15 +1152,79 @@ export default function PlannerChat({
                 }.`,
               },
         });
+      } else if (toolCall.toolName === "load_plan") {
+        // Only the shown option rides along in full (see plansBlock). This is
+        // how the model gets an inactive one back when it genuinely needs the
+        // detail — a read, not a write.
+        const { planId } = toolCall.input as LoadPlanInput;
+        const found = ctxRef.current.plans.find((p) => p.id === planId);
+        addToolOutput({
+          tool: "load_plan",
+          toolCallId: toolCall.toolCallId,
+          output: found
+            ? { ok: true, plan: found }
+            : {
+                ok: false,
+                error: `No option with id "${planId}". Current options: ${
+                  ctxRef.current.plans.map((p) => p.id).join(", ") || "none"
+                }.`,
+              },
+        });
       } else if (toolCall.toolName === "get_travel_times") {
         const spots = new Map(ctxRef.current.trip.spots.map((s) => [s.id, s]));
         const { pairs } = toolCall.input as TravelTimesInput;
-        const results = pairs.map(({ from, to }) => {
-          const a = spots.get(from);
-          const b = spots.get(to);
-          if (!a || !b) return { from, to, error: "unknown spot id" };
-          const km = haversineKm(a.lat, a.lng, b.lat, b.lng);
-          return { from, to, km: Number(km.toFixed(2)), ...travelEstimate(km) };
+        const resolved = pairs.map(({ from, to }) => ({
+          from,
+          to,
+          a: spots.get(from),
+          b: spots.get(to),
+        }));
+
+        // Real road times where we can get them. The agent demonstrably does
+        // not trust a straight-line number — it called this tool and then
+        // overrode the answer from memory — so the fix is to make the number
+        // true, not to argue with it.
+        let road: (number | null)[] = resolved.map(() => null);
+        const routable = resolved.filter((r) => r.a && r.b);
+        if (routable.length > 0) {
+          try {
+            const res = await fetch("/api/routes", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                pairs: routable.map((r) => ({
+                  from: { lat: r.a!.lat, lng: r.a!.lng },
+                  to: { lat: r.b!.lat, lng: r.b!.lng },
+                })),
+              }),
+            });
+            if (res.ok) {
+              const data = (await res.json()) as { minutes?: (number | null)[] };
+              const byIndex = new Map(
+                routable.map((r, i) => [r, data.minutes?.[i] ?? null])
+              );
+              road = resolved.map((r) => byIndex.get(r) ?? null);
+            }
+          } catch {
+            // Routing is an upgrade, never a dependency.
+          }
+        }
+
+        const results = resolved.map((r, i) => {
+          if (!r.a || !r.b) return { from: r.from, to: r.to, error: "unknown spot id" };
+          const km = haversineKm(r.a.lat, r.a.lng, r.b.lat, r.b.lng);
+          const est = travelEstimate(km);
+          const realDrive = road[i];
+          return {
+            from: r.from,
+            to: r.to,
+            km: Number(km.toFixed(2)),
+            walkMin: est.walkMin,
+            driveMin: realDrive ?? est.driveMin,
+            // Say which it is. An agent told "estimate" is entitled to second
+            // -guess it; one told "real road time" should plan around it.
+            source: realDrive != null ? ("road" as const) : ("estimate" as const),
+          };
         });
         addToolOutput({
           tool: "get_travel_times",
@@ -941,12 +1284,23 @@ export default function PlannerChat({
                     res.added === 1 ? "" : "s"
                   }${area ? ` around ${area}` : ""}.`,
                 }
-              : {
-                  ok: false,
-                  message: `Couldn't find good new spots${
-                    area ? ` for ${area}` : ""
-                  } — want me to plan with what's on the map?`,
-                }
+              : // "We found nothing" and "we found videos and couldn't read
+                // them" are completely different answers to the traveler. The
+                // second one told someone there are no wine bars in Tbilisi.
+                res.unreadable && res.unreadable >= (res.attempted ?? 0)
+                ? {
+                    ok: false,
+                    retryable: true,
+                    message: `Found ${res.attempted} videos${
+                      area ? ` for ${area}` : ""
+                    } but couldn't read any of them right now (YouTube is rate-limiting us). Tell the traveler that plainly — do NOT say there's nothing there — and offer to try again shortly or plan with what's on the map.`,
+                  }
+                : {
+                    ok: false,
+                    message: `Couldn't find good new spots${
+                      area ? ` for ${area}` : ""
+                    } — want me to plan with what's on the map?`,
+                  }
           );
         } catch {
           // Let the model retry a hard failure — don't cache the miss.
@@ -968,6 +1322,45 @@ export default function PlannerChat({
   // "this turn died just now" from "this is how the history ends".
   const [streamedHere, setStreamedHere] = useState(false);
   if (busy && !streamedHere) setStreamedHere(true);
+
+  // A big plan payload sometimes arrives as malformed tool input
+  // (AI_InvalidToolInputError wrapping AI_JSONParseError). It's transient — the
+  // same turn regenerated usually lands — but today the traveler eats a raw SDK
+  // string and loses the whole plan. Retry once, silently, per failed turn; the
+  // rendered message below is only reached if the retry fails too.
+  const retriedTurns = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    if (busy) return;
+    const tail = messages[messages.length - 1];
+    if (!tail || tail.role !== "assistant") return;
+    const toolFailed = tail.parts.some(
+      (p) =>
+        p.type === "tool-update_itinerary" &&
+        "state" in p &&
+        p.state === "output-error"
+    );
+    if (!toolFailed || retriedTurns.current.has(tail.id)) return;
+    retriedTurns.current.add(tail.id);
+    console.warn("[planner] update_itinerary tool input failed — retrying once");
+    // The raw error goes to analytics, not to the traveler (§A5). Without this
+    // the failure is invisible: LLM analytics records the generation as normal.
+    track("planner_tool_error", {
+      tripId: trip.id,
+      tool: "update_itinerary",
+      errorText:
+        tail.parts
+          .map((p) =>
+            p.type === "tool-update_itinerary" &&
+            "state" in p &&
+            p.state === "output-error"
+              ? p.errorText
+              : ""
+          )
+          .find(Boolean) ?? "",
+      retried: true,
+    });
+    void regenerate();
+  }, [messages, busy, regenerate, trip.id]);
 
   // The stream can die server-side without an error event (e.g. a runtime
   // timeout kills the function mid-think) — the request "finishes" but the
@@ -1053,6 +1446,8 @@ export default function PlannerChat({
   function send(text: string) {
     const trimmed = text.trim();
     if (!trimmed || busy) return;
+    // New turn: the "you already wrote this option" guard measures from here.
+    writtenThisTurn.current.clear();
     sendMessage({ text: trimmed });
     setInput("");
     const el = inputRef.current;
@@ -1110,8 +1505,13 @@ export default function PlannerChat({
   // deliver the compiled answers).
   function submitComposer() {
     const trimmed = input.trim();
-    if (trimmed && intakeAnswerRef.current) {
-      intakeAnswerRef.current(trimmed);
+    // Opening intake first, then the agent's own question card: in both cases
+    // there is a question on screen waiting on this person, and a free-form
+    // message would either be ignored (intake) or strand a tool call (card).
+    const answer = intakeAnswerRef.current ?? askAnswerRef.current;
+    if (trimmed && answer) {
+      if (!intakeAnswerRef.current) answeredByTyping.current = true;
+      answer(trimmed);
       setInput("");
       const el = inputRef.current;
       if (el) el.style.height = "auto";
@@ -1121,6 +1521,10 @@ export default function PlannerChat({
   }
 
   const showNudge = !hasOwnTrips && !isLocal && !nudgeDismissed;
+  // A question is on screen waiting on this person — the composer answers it
+  // rather than starting a new thought. Read during render, so it's derived
+  // from the same refs submitComposer uses.
+  const answering = Boolean(intakeAnswerRef.current ?? askAnswerRef.current);
 
   return (
     <aside className="planner-panel" onClick={(e) => e.stopPropagation()}>
@@ -1239,18 +1643,33 @@ export default function PlannerChat({
                     );
                   }
                   const input = part.input as ItineraryInput;
-                  const days = input?.days ?? [];
-                  const stops = days.reduce((n, d) => n + (d.stops?.length ?? 0), 0);
                   // A turn can write several options; each card is the way
                   // back to the one it wrote. Gone (discarded later) = plain
                   // card, not a button that does nothing.
                   const optionIndex = plans.findIndex((p) => p.id === input?.planId);
                   const live = optionIndex !== -1;
-                  const meta = `${days.length} day${
-                    days.length === 1 ? "" : "s"
-                  } · ${stops} stop${stops === 1 ? "" : "s"}${
-                    live ? " · show it on the map" : ""
-                  }`;
+                  const written = live ? plans[optionIndex] : undefined;
+                  // A patch call carries only the days it changed (and no
+                  // title), so describe the OPTION as it now stands rather than
+                  // the payload — "1 day · 4 stops" would be a lie about a
+                  // ten-day trip.
+                  const patching = input?.mode === "patch";
+                  const days =
+                    patching && written ? written.days : (input?.days ?? []);
+                  const stops = days.reduce(
+                    (n, d) => n + (d.stops?.length ?? 0),
+                    0
+                  );
+                  const changed = patching
+                    ? (input?.dayPatches?.length ?? 0)
+                    : 0;
+                  const meta = `${
+                    changed > 0
+                      ? `${changed} day${changed === 1 ? "" : "s"} updated · `
+                      : ""
+                  }${days.length} day${days.length === 1 ? "" : "s"} · ${stops} stop${
+                    stops === 1 ? "" : "s"
+                  }${live ? " · show it on the map" : ""}`;
                   const body = (
                     <>
                       <span className="pm-event-icon" aria-hidden="true">
@@ -1258,7 +1677,7 @@ export default function PlannerChat({
                       </span>
                       <div className="pm-event-body">
                         <div className="pm-event-title">
-                          {input?.title ?? "Plan updated"}
+                          {input?.title ?? written?.title ?? "Plan updated"}
                           {live && (
                             <span className="pm-event-badge">
                               Option {optionIndex + 1}
@@ -1284,9 +1703,14 @@ export default function PlannerChat({
                   );
                 }
                 if (part.state === "output-error") {
+                  // `errorText` is raw SDK prose — "AI_InvalidToolInputError:
+                  // AI_JSONParseError: … {"planId": "snow-and-food"" — which is
+                  // meaningless to a traveler. The retry above usually clears
+                  // it; this only renders when the retry failed too.
                   return (
                     <div key={i} className="pm-tool error">
-                      Couldn&rsquo;t apply the plan: {part.errorText}
+                      That plan didn&rsquo;t come through cleanly. Ask me to try
+                      again and I&rsquo;ll rebuild it.
                     </div>
                   );
                 }
@@ -1346,13 +1770,22 @@ export default function PlannerChat({
                       key={i}
                       questions={qs}
                       submitLabel="Send answers →"
-                      onSubmit={(answers) =>
+                      answerRef={askAnswerRef}
+                      onSubmit={(answers) => {
+                        track("question_card_answered", {
+                          tripId: trip.id,
+                          questions: qs.length,
+                          // Which affordance they actually used. If "type"
+                          // dominates, the card is the wrong shape for the ask.
+                          answeredVia: answeredByTyping.current ? "type" : "tap",
+                        });
+                        answeredByTyping.current = false;
                         addToolOutput({
                           tool: "ask_questions",
                           toolCallId: part.toolCallId,
                           output: answers,
-                        })
-                      }
+                        });
+                      }}
                     />
                   );
                 }
@@ -1448,7 +1881,10 @@ export default function PlannerChat({
       )}
 
       <form
-        className="planner-inputrow"
+        // D1 — say which of the two things typing will do. Without this the
+        // composer looks identical whether or not a question card is waiting,
+        // which is how travelers typed into a card and lost the conversation.
+        className={`planner-inputrow${answering ? " answering" : ""}`}
         onSubmit={(e) => {
           e.preventDefault();
           submitComposer();
@@ -1468,7 +1904,11 @@ export default function PlannerChat({
               submitComposer();
             }
           }}
-          placeholder="Ask your local planner…"
+          placeholder={
+            answering
+              ? "Type your answer…"
+              : "Ask your local planner…"
+          }
           aria-label="Message the planner"
         />
         <button type="submit" disabled={!input.trim() || busy} aria-label="Send">
