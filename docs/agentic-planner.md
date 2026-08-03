@@ -581,6 +581,22 @@ across categories; channel diversity is a great proxy for perspective and no
 proxy at all for geography. Both looked fine until someone read the output as a
 traveler.
 
+**Postscript (2026-08-04): the coverage note was gated on the wrong thing.** It
+rendered as soon as `trip.spots.length > 0`, which since B4 (reveal the map as
+it fills) means *after the first video of twenty*. A traveler building "Greece"
+watched "**Your map doesn't cover everything** — nothing yet for the
+Peloponnese, Mykonos, Crete, Thessaloniki" sit there for several minutes,
+listing the exact regions the remaining nineteen videos were about to cover,
+then vanish. Every word true of a finished map; pure anxiety about one still
+being built. Now gated on `buildSettled` — every video `done` or `error`, and
+the trip out of `processing`. `throttled` is deliberately not terminal: that
+build is paused, and the retry will add spots.
+
+Lesson, and it generalises past this one card: **a warning about incompleteness
+must be gated on completeness, not on having data.** "We have some spots" is
+the cheapest available proxy and it's the wrong one — during the exact window
+where the traveler is most anxious, it is guaranteed to be wrong.
+
 ### 4.8 A rule with no bound will run away, and a whole-plan write is the tax (2026-08-02)
 
 A nine-trip product pass, driven as a real traveler, found the shape-first rule
