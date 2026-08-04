@@ -21,6 +21,151 @@ export function normalizeName(name: string) {
     .trim();
 }
 
+/* ---------------------------------------------------------------------------
+ * Finding the spot a video is talking about.
+ *
+ * This used to be exact equality on `normalizeName`, and one place on Skye came
+ * out as THREE pins: "The Quiraing" (3 creators), "Quiraing", and "Quiraing
+ * Mountains (Trotternish Ridge)". Three strings, three spots, one mountain.
+ *
+ * The defence that was supposed to prevent it is dead code. `extractSpots`
+ * takes `knownSpotNames` and tells the model "reuse the EXACT same name string
+ * so it can be merged" — but `processVideoRaw` calls it with an EMPTY array,
+ * and always has to: extractions are cached cross-trip, so they can't depend on
+ * what any one trip has already found. The cache made per-trip name consistency
+ * impossible, and nothing downstream was strengthened to compensate.
+ *
+ * So matching has to be post-hoc, and it's layered by how much each signal can
+ * be trusted:
+ *
+ *   1. Google place id — authoritative. Two spots Google resolved to the same
+ *      id ARE the same place, whatever the creators called them.
+ *   2. Exact normalized name — the old rule, kept.
+ *   3. Article/parenthetical-stripped name — "The Quiraing" == "Quiraing".
+ *      Still exact, so still safe with no distance check.
+ *   4. One name's significant words contained in the other's, SAME CATEGORY,
+ *      and geographically close. This is the loose one, so it carries all
+ *      three guards: "Sairee Beach" and "Sairee Beach Bar" share words but
+ *      differ in category, and two "Blue Lagoon"s in different countries are
+ *      far apart.
+ *
+ * The asymmetry that sets the tuning: under-merging shows an ugly duplicate
+ * pin, which is visible and annoying. OVER-merging silently destroys a real
+ * recommendation, which nobody ever notices. When in doubt, don't merge.
+ * ------------------------------------------------------------------------- */
+
+/** Words that carry no identity — dropped before comparing names. */
+const NAME_STOPWORDS = new Set([
+  "the", "a", "an", "of", "at", "in", "on", "and", "de", "la", "le",
+]);
+
+/** Rule 4's distance ceiling. Generous because it's guarded by category and
+ *  word containment, and because a big natural feature legitimately has its
+ *  coordinates guessed kilometres apart by two different videos. */
+const DUPLICATE_MERGE_KM = 3;
+
+/** Rule 3's ceiling. Wider, because an identical name is much stronger
+ *  evidence — but not unbounded: a trip can pick up a far-away namesake (an
+ *  East Coast Sri Lanka trip once collected a spot called "Maldives"), and
+ *  collapsing two real places into one is the failure nobody ever sees. */
+const SAME_NAME_MERGE_KM = 50;
+
+/** "The Quiraing" and "Quiraing (Trotternish)" both reduce to "quiraing". */
+function bareName(name: string): string {
+  return normalizeName(name.replace(/\([^)]*\)/g, " "))
+    .split(" ")
+    .filter((w) => w && !NAME_STOPWORDS.has(w))
+    .join(" ");
+}
+
+/** Every significant word of the shorter name appears in the longer one. */
+function nameContained(a: string, b: string): boolean {
+  const wa = bareName(a).split(" ").filter(Boolean);
+  const wb = bareName(b).split(" ").filter(Boolean);
+  if (wa.length === 0 || wb.length === 0) return false;
+  const [short, long] = wa.length <= wb.length ? [wa, wb] : [wb, wa];
+  return short.every((w) => long.includes(w));
+}
+
+/** Rough great-circle km. Local copy so merge.ts stays dependency-free. */
+function kmApart(
+  a: { lat: number; lng: number },
+  b: { lat: number; lng: number }
+): number {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const s =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
+  return 6371 * 2 * Math.asin(Math.sqrt(s));
+}
+
+/** The spot in `spots` that `candidate` is another name for, if any. */
+export function findDuplicate(
+  spots: Spot[],
+  candidate: { name: string; category?: string; lat: number; lng: number; placeId?: string | null }
+): Spot | undefined {
+  // 1. Google's own answer, and it outranks everything.
+  if (typeof candidate.placeId === "string" && candidate.placeId) {
+    const byPlace = spots.find((s) => s.placeId === candidate.placeId);
+    if (byPlace) return byPlace;
+  }
+  // 2 + 3. Exact, then article/parenthetical-stripped.
+  const exact = spots.find(
+    (s) => normalizeName(s.name) === normalizeName(candidate.name)
+  );
+  if (exact) return exact;
+  const bare = bareName(candidate.name);
+  if (bare) {
+    const stripped = spots.find(
+      (s) => bareName(s.name) === bare && kmApart(s, candidate) <= SAME_NAME_MERGE_KM
+    );
+    if (stripped) return stripped;
+  }
+  // 4. The loose rule, fully guarded.
+  return spots.find((s) => {
+    if (candidate.category && s.category !== candidate.category) return false;
+    // Two DIFFERENT Google ids is Google telling us these are different
+    // places. A word-overlap heuristic doesn't get to overrule that.
+    if (
+      typeof s.placeId === "string" &&
+      typeof candidate.placeId === "string" &&
+      s.placeId !== candidate.placeId
+    ) {
+      return false;
+    }
+    if (!nameContained(s.name, candidate.name)) return false;
+    return kmApart(s, candidate) <= DUPLICATE_MERGE_KM;
+  });
+}
+
+/**
+ * Near-duplicates that survived the merge — the same failure the traveler sees
+ * as three pins on one mountain.
+ *
+ * Deliberately LOOSER than `findDuplicate`: this reports, it doesn't merge, so
+ * it can afford false positives that the merge itself must not. It is the only
+ * way to know whether the matching rules are actually holding on real trips,
+ * because the bug is invisible from inside any single video — each extraction
+ * is cached trip-independently and never sees what the others called a place.
+ */
+export function findNearDuplicates(spots: Spot[]): [string, string][] {
+  const pairs: [string, string][] = [];
+  const visible = spots.filter((s) => !s.outOfBounds);
+  for (let i = 0; i < visible.length; i++) {
+    for (let j = i + 1; j < visible.length; j++) {
+      const a = visible[i];
+      const b = visible[j];
+      if (!nameContained(a.name, b.name)) continue;
+      if (kmApart(a, b) > DUPLICATE_MERGE_KM) continue;
+      pairs.push([a.name, b.name]);
+      if (pairs.length >= 10) return pairs;
+    }
+  }
+  return pairs;
+}
+
 export function mergeThingsToKnow(spot: Spot, incoming: string[] | undefined) {
   if (!incoming?.length) return;
   const seen = new Set((spot.thingsToKnow ?? []).map(normalizeName));
@@ -150,9 +295,7 @@ export function applyVideoResult(trip: Trip, result: VideoResult): number {
 
   let added = 0;
   for (const spot of result.newSpots) {
-    const existing = trip.spots.find(
-      (s) => normalizeName(s.name) === normalizeName(spot.name)
-    );
+    const existing = findDuplicate(trip.spots, spot);
     if (existing) {
       // server couldn't know another video in this batch already added it
       mergeMention(existing, spot.mentions[0], spot.thingsToKnow);
@@ -168,9 +311,11 @@ export function applyVideoResult(trip: Trip, result: VideoResult): number {
     added++;
   }
   for (const k of result.knownMentions) {
-    const existing = trip.spots.find(
-      (s) => normalizeName(s.name) === normalizeName(k.name)
-    );
+    // Only a name here — knownMentions carry no coordinates — so this reaches
+    // rules 1-3 and stops short of the geographic one.
+    const existing =
+      trip.spots.find((s) => normalizeName(s.name) === normalizeName(k.name)) ??
+      trip.spots.find((s) => bareName(s.name) === bareName(k.name));
     if (existing) mergeMention(existing, k.mention, k.thingsToKnow);
   }
   mergeNotes(trip, result.notes);

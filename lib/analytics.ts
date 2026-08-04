@@ -81,6 +81,13 @@ export const PRODUCT_EVENTS = [
   "build_requested",
   "sample_opened",
   "trip_shared",
+  // One place, several pins — reported as "The Quiraing", "Quiraing" and
+  // "Quiraing Mountains (Trotternish Ridge)" all on one mountain. Emitted at
+  // the end of a build for whatever the matching rules did NOT catch, because
+  // this failure is invisible from inside any single video: extractions are
+  // cached trip-independently, so no one of them can know what the others
+  // called the same place.
+  "duplicate_spots_detected",
 ] as const;
 
 export type ProductEvent = (typeof PRODUCT_EVENTS)[number];

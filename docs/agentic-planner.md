@@ -955,6 +955,48 @@ also a **trace target** that waits for a conversation to settle, so
 conversation-level checks are possible — bearing in mind a trace is one
 *sitting*, not the whole conversation.
 
+### 5.10 A trace id is not a cache key, and a cache key is not an identity (2026-08-04)
+
+**One mountain, three pins.** A Skye trip produced "The Quiraing" (3 creators),
+"Quiraing", and "Quiraing Mountains (Trotternish Ridge)" as three separate
+spots. Matching was exact equality on `normalizeName`, so three strings meant
+three places.
+
+**The defence that should have caught it was dead code.** `extractSpots` takes
+`knownSpotNames` and instructs the model to "reuse the EXACT same name string
+so it can be merged" — but `processVideoRaw` calls it with an EMPTY array, and
+has to: extractions are cached cross-trip, so they cannot depend on what any
+one trip has already found. **The caching decision silently disabled the
+consistency mechanism, and nothing downstream was strengthened to compensate.**
+The instruction has probably never run in production.
+
+So matching became post-hoc and layered by trust (`findDuplicate`):
+
+1. **Google place id** — authoritative. Same id, same place, whatever it's called.
+2. **Exact normalized name** — the old rule, unchanged.
+3. **Articles and parentheticals stripped** — "The Quiraing" == "Quiraing".
+   Still exact, but bounded at 50km so a far-away namesake can't collapse in.
+4. **Word containment + same category + within 3km** — the loose rule, so it
+   carries every guard. Two *different* Google ids veto it outright: that's
+   Google saying these are different places, and a word-overlap heuristic
+   doesn't get to overrule it.
+
+**The asymmetry that set the tuning:** under-merging shows an ugly duplicate
+pin — visible, annoying, recoverable. Over-merging silently destroys a real
+recommendation, and nobody ever notices. When in doubt, don't merge. Verified
+against the reported case plus five over-merge traps ("Sairee Beach" vs
+"Sairee Beach Bar", "Galle Fort" vs "Galle Fort Lighthouse", two "Blue
+Lagoon"s, differing Google ids).
+
+**Measuring it needs both halves, and they're different instruments.** Within
+one video, a Hog eval on `extract-spots` catches two names for one place. The
+cross-video case — the one actually reported — is invisible from any single
+generation, because each extraction is cached trip-independently and cannot
+know what the others called a place. That half is the
+`duplicate_spots_detected` product event, emitted at build completion from a
+deliberately looser scan than the merge uses: it reports, so it can afford
+false positives the merge cannot.
+
 ### 5.5 Verify costs in PostHog, decide with data
 Every planner turn emits `$ai_generation` (span `planner-chat`, tagged
 tripId/tripName) with token + cache fields. Before optimizing anything

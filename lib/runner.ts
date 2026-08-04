@@ -10,7 +10,12 @@
 import { listLocalTrips, publishTrip } from "./clientStore";
 import { loadTrip, peekTrip, saveTrip, tripSaveError } from "./tripStore";
 import { getSession } from "./useSession";
-import { applyVideoResult, pendingVideo, VideoResult } from "./merge";
+import {
+  applyVideoResult,
+  findNearDuplicates,
+  pendingVideo,
+  VideoResult,
+} from "./merge";
 import { BRIEFING_VERSION, briefingIsStale, mergeNotes } from "./briefing";
 import { BriefingNote, Trip, TripBriefing } from "./types";
 import { track } from "./track";
@@ -233,6 +238,19 @@ async function run(tripId: string) {
       videosTotal: finished.videos.length,
       spots: finished.spots.length,
     });
+
+    // Whatever the matching rules did NOT catch. Reported rather than merged:
+    // this pass is looser than `findDuplicate` on purpose, because it is only
+    // telling us the rules need work, not deciding a traveler's map.
+    const dupes = findNearDuplicates(finished.spots);
+    if (dupes.length > 0) {
+      track("duplicate_spots_detected", {
+        tripId,
+        pairs: dupes.length,
+        spots: finished.spots.length,
+        example: dupes[0].join(" / ").slice(0, 120),
+      });
+    }
 
     // With accounts, trips are private to their creator (the account syncs
     // them across devices) and the community library only gets trips the user
