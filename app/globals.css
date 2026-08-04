@@ -2179,6 +2179,181 @@ button {
   padding: 16px 16px 0;
 }
 
+/* ---------- Where to stay -------------------------------------------------
+   Two surfaces for one decision. `.stay-strip` is the card inside the agent's
+   summary document — it lands BEFORE any pin, because how many bases and where
+   is far easier to argue with as three lines of prose than after thirty pins
+   have been placed. `.stayplan` is the same information once accepted, parked
+   collapsed at the top of the itinerary where it frames the days without
+   competing with them. */
+.stay-strip {
+  margin: 10px 0;
+  padding: 12px 14px;
+  background: var(--surface-alt);
+  border-radius: var(--radius-card, 14px);
+}
+.stay-strip-head {
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+.stay-row {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+}
+.stay-row + .stay-row {
+  margin-top: 9px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(27, 43, 58, 0.07);
+}
+.stay-index,
+.stayplan-n {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+.stay-body { min-width: 0; }
+.stay-area {
+  font-size: 13px;
+  font-weight: var(--fw-medium);
+  color: var(--ink);
+}
+.stay-nights {
+  margin-left: 7px;
+  font-weight: 400;
+  color: var(--text-soft);
+}
+.stay-why {
+  margin-top: 2px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #3d5266;
+}
+
+.stayplan {
+  margin: 0 0 14px;
+  background: white;
+  border-radius: var(--radius-card, 14px);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+.stayplan-toggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 12px 14px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink);
+}
+.stayplan-title {
+  font-size: var(--fs-support);
+  font-weight: var(--fw-medium);
+}
+.stayplan-sub {
+  font-size: var(--fs-label);
+  color: var(--text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stayplan-caret {
+  margin-left: auto;
+  color: var(--text-soft);
+  font-size: 11px;
+}
+.stayplan-body {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.32s cubic-bezier(0.32, 0.72, 0.25, 1),
+    opacity 0.2s ease, padding 0.32s cubic-bezier(0.32, 0.72, 0.25, 1);
+}
+.stayplan.open .stayplan-body {
+  max-height: 2000px;
+  opacity: 1;
+  padding: 2px 14px 13px;
+}
+.stayplan-base + .stayplan-base {
+  margin-top: 13px;
+  padding-top: 13px;
+  border-top: 1px solid rgba(27, 43, 58, 0.08);
+}
+.stayplan-base-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.stayplan-area {
+  font-size: 13px;
+  font-weight: var(--fw-medium);
+  color: var(--ink);
+}
+.stayplan-meta {
+  font-size: var(--fs-label);
+  color: var(--text-soft);
+}
+.stayplan-why {
+  margin: 5px 0 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #3d5266;
+}
+/* Only ever rendered for a booking they already hold, and only when it costs
+   them something they can still act on — so it reads as information, not as
+   second-guessing a decision they've paid for. */
+.stayplan-warn {
+  margin: 6px 0 0;
+  padding: 7px 10px;
+  border-radius: 9px;
+  background: var(--yellow-soft, #fdf6e3);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #6b5518;
+}
+.stayplan-picks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.stayplan-pick {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 999px;
+  background: #f1f3f6;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.stayplan-pick:hover { background: #e6e9ee; }
+.stayplan-pick-n {
+  opacity: 0.5;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ---------- "Before you go": the destination briefing ----------------------
    Everything the videos said that wasn't a place — how you pay, when things
    shut, what the taxi scam is. It sits above the pins because it's read once,

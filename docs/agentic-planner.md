@@ -844,6 +844,53 @@ was asked for` on this branch (4.7 stops/day against a 2–4.5 band) — and fai
 variance nor caused by layer 4. It is the same Relaxed-pace drift first noticed
 in the PM audit and still open.
 
+### 4.12 Where you sleep is part of the plan (2026-08-04)
+
+**Reported:** "if I'm going to Bali, I have already booked Uluwatu for 2 days,
+Canggu 3, Ubud 4. Maybe I don't know if I should be staying in three different
+areas... These are different PNCs that the agent can help me figure out."
+
+**That trip was unrepresentable.** `Itinerary.stay` held ONE `{name, lat, lng,
+note}` for a whole trip, so a sequence of bases with nights had nowhere to live
+— and basing is the decision that silently determines which spots are even
+reachable. Based in Ubud, an Uluwatu day is two hours each way. `Itinerary.bases`
+is the fix: area, nights, day range, why, and `stayIds` pointing at the
+creator-recommended `stay` spots the map already holds (9 on Koh Tao, 9 on Sri
+Lanka) — which is what makes it a recommendation with receipts rather than a
+guess.
+
+**The intake never asked.** The persona listed "where they're staying" among
+things worth asking, but the client-side form that runs BEFORE the agent didn't
+include it, so the fast path never raised it. It's now a question, and
+`allowOther` is the important part: someone can type the whole Bali answer into
+it in one go.
+
+**Two surfaces, deliberately.** The proposal lands as a card inside the summary
+document, before any pin — three lines of prose are far easier to argue with
+than thirty placed pins. Once accepted it's written onto the plan and rendered
+collapsed at the top of the itinerary, scoped to the ACTIVE option: "east coast
+only" and "east, south and the airport" have genuinely different bases, so a
+trip-level section would show one option the other's answer.
+
+**What live testing changed.** First run: bases landed on the plan correctly,
+and the in-prose block never appeared — because the agent skipped Step 1
+entirely. The intake compiles to *"Plan my days."*, which the persona reads as
+the documented "just plan it" fast path, so there was no summary document for
+the block to live in. Two fixes: the where-to-stay block became step 3 of the
+numbered SUMMARY DOCUMENT FORMAT rather than a bullet after it (an aside reads
+as optional), and when the stay answer is unresolved the intake now compiles to
+*"tell me which areas to base in… then plan the days around that"* instead.
+
+**Lesson: a fast path is a policy, and policies need exceptions.** "Skip the
+shape when they say just plan it" is right when the structure is settled and
+wrong when it isn't — days built on a base the traveler never chose aren't days
+they can agree to.
+
+**On booked travelers:** plan around what they have, and flag the split only
+when it's genuinely costly and still actionable ("two nights here, one spot on
+your map, the rest 90 minutes north"). Never because we'd have chosen
+differently — they've paid, and that advice is noise.
+
 ## 5. Learnings — infrastructure & cost
 
 ### 5.1 The 60s Vercel timeout (the production hang)

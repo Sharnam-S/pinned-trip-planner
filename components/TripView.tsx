@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
   Itinerary,
+  ItineraryBase,
   ItineraryDay,
   ItineraryStop,
   Spot,
@@ -2378,6 +2379,101 @@ function PlanCompare({
 /** The "Trip overview" tab: a numbered timeline of day cards built from the
  *  agent's itinerary. Clicking a card expands its stop-by-stop schedule and
  *  filters the map to that day. */
+/**
+ * Where you sleep, at the top of the itinerary.
+ *
+ * Collapsed by default and above Day 1, because it is the frame the days hang
+ * off — "days 1-3 from Canggu" explains why day 2 looks the way it does — but
+ * it is read once and the days are read many times. Scoped to the ACTIVE plan
+ * rather than the trip: an "east coast only" option and an "east, south and
+ * the airport" option have genuinely different bases, and a trip-level section
+ * would show one of them the other's answer.
+ */
+function StayPlan({
+  bases,
+  spotById,
+  onSelectSpot,
+}: {
+  bases?: ItineraryBase[];
+  spotById: Map<string, Spot>;
+  onSelectSpot: (id: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  if (!bases?.length) return null;
+  const booked = bases.some((b) => b.booked);
+  const nights = bases.reduce((n, b) => n + (b.nights || 0), 0);
+
+  return (
+    <section className={`stayplan ${open ? "open" : ""}`}>
+      <button
+        className="stayplan-toggle"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <span className="stayplan-title">
+          {booked ? "Your stays" : "Where to stay"}
+        </span>
+        <span className="stayplan-sub">
+          {bases.length} base{bases.length === 1 ? "" : "s"}
+          {nights > 0 ? ` · ${nights} night${nights === 1 ? "" : "s"}` : ""}
+          {booked ? "" : " · suggested"}
+        </span>
+        <span className="stayplan-caret" aria-hidden="true">
+          {open ? "▴" : "▾"}
+        </span>
+      </button>
+      <div className="stayplan-body" inert={!open}>
+        {bases.map((b, i) => {
+          // Creator-recommended places to sleep the map already holds. This is
+          // what separates a recommendation from a guess, so a base with none
+          // simply shows the area.
+          const stays = (b.stayIds ?? [])
+            .map((id) => spotById.get(id))
+            .filter((sp): sp is Spot => Boolean(sp));
+          const days =
+            b.fromDay != null && b.toDay != null
+              ? b.fromDay === b.toDay
+                ? `Day ${b.fromDay + 1}`
+                : `Days ${b.fromDay + 1}-${b.toDay + 1}`
+              : null;
+          return (
+            <div className="stayplan-base" key={`${b.area}-${i}`}>
+              <div className="stayplan-base-head">
+                <span className="stayplan-n">{i + 1}</span>
+                <span className="stayplan-area">{b.area}</span>
+                <span className="stayplan-meta">
+                  {b.nights} night{b.nights === 1 ? "" : "s"}
+                  {days ? ` · ${days}` : ""}
+                </span>
+              </div>
+              {b.why && <p className="stayplan-why">{b.why}</p>}
+              {/* Only ever set on a booking they already hold, and only when
+                  it genuinely costs them something they can still act on. */}
+              {b.warning && <p className="stayplan-warn">{b.warning}</p>}
+              {stays.length > 0 && (
+                <div className="stayplan-picks">
+                  {stays.map((sp) => (
+                    <button
+                      key={sp.id}
+                      className="stayplan-pick"
+                      onClick={() => onSelectSpot(sp.id)}
+                    >
+                      🏡 {sp.name}
+                      <span className="stayplan-pick-n">
+                        {sp.mentions.length}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 function TripOverview({
   itinerary,
   spotById,
@@ -2438,6 +2534,7 @@ function TripOverview({
           )}
         </div>
       </div>
+      <StayPlan bases={itinerary.bases} spotById={spotById} onSelectSpot={onSelectSpot} />
       <div className="ov-timeline">
         {itinerary.days.map((day, i) => {
           const stops = day.stops.flatMap((st) => {

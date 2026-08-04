@@ -151,6 +151,47 @@ export const ItineraryInputSchema = z.object({
     })
     .optional()
     .describe("Where the user is staying (or your recommended area)"),
+  bases: z
+    .array(
+      z.object({
+        area: z
+          .string()
+          .describe('The area as a traveler says it — "Canggu", "Ubud", "the old town". Not a hotel name.'),
+        nights: z.number().describe("Nights based here."),
+        fromDay: z
+          .number()
+          .optional()
+          .describe("0-based index of the first day this base covers — day 1 of the plan is 0."),
+        toDay: z.number().optional().describe("0-based index of the last day it covers."),
+        lat: z.number().optional(),
+        lng: z.number().optional(),
+        why: z
+          .string()
+          .describe(
+            "1-2 sentences on why base HERE for these days: what it puts within reach, what it saves, what it costs. Name the spots or the drive times — this is the sentence that justifies a move, and a move costs them half a day."
+          ),
+        booked: z
+          .boolean()
+          .optional()
+          .describe("true only when the traveler told you they have already booked this one."),
+        warning: z
+          .string()
+          .optional()
+          .describe(
+            "ONLY on a base they have already booked, and ONLY when it is genuinely costly — 'two nights here, but one spot on your map and the rest 90 minutes north'. Never write this because you would have chosen differently: they have paid, and second-guessing a booking is noise."
+          ),
+        stayIds: z
+          .array(z.string())
+          .optional()
+          .describe(
+            'Spot ids of category "stay" in this area, from the trip context. Creator-recommended places to sleep — what makes this a recommendation with receipts rather than a guess. Omit when the map has none nearby.'
+          ),
+      })
+    )
+    .optional()
+    .describe(
+      "Where they sleep, in trip order. Set this whenever you know the basing — their own booking, or your recommendation once they've accepted the shape. Nights across all bases should equal the trip length."
+    ),
   pace: z.enum(["packed", "balanced", "relaxed"]).optional(),
   budget: z.string().optional().describe('e.g. "mid-range, ~$100/day"'),
 });
@@ -394,6 +435,7 @@ export function validateItinerary(
       title: input.title?.trim() || existing?.title || "Untitled plan",
       days,
       stay: input.stay ?? existing?.stay,
+      bases: input.bases ?? existing?.bases,
       pace: input.pace ?? existing?.pace,
       budget: input.budget ?? existing?.budget,
       updatedAt: new Date().toISOString(),
