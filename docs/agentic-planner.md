@@ -930,6 +930,54 @@ traveler is already there — the moment they scroll up they have taken control
 and keep it until they come back down. Their own messages always scroll into
 view regardless, because that one is theirs.
 
+### 4.14 One state change, two triggers, two turns (2026-08-04)
+
+**Found in analytics, not reported.** PostHog trace `b7c4c75b` shows three
+generations on one conversation, two of them started 125ms apart and both
+streaming a complete four-day sketch — 6,884 and 7,842 output tokens, $0.22
+each, into the same transcript. Nobody typed twice. Nobody typed at all.
+
+The traveler had answered the agent's `ask_questions` card. That single state
+change satisfies two independent triggers at once:
+
+- `addToolOutput` completes the assistant message's tool calls, which is
+  exactly `lastAssistantMessageIsCompleteWithToolCalls` — the SDK auto-continues.
+- the same change clears `awaitingAnswer`, which releases the §4.11 pickup.
+
+**Both guards that should have caught it were a commit late.** `busy` derives
+from `status`, which the SDK sets *after* the send, so the effect that ran off
+the `messages` change read `busy === false`. And the promise flag is cleared
+inside `prepareSendMessagesRequest` (§4.11) — correct as a rule, but the
+transport prepares the request asynchronously, so `planWasDeferred` was still
+true when the pickup asked.
+
+**The fix is to share the trigger, not observe the side effect.** The pickup now
+tests `willAutoContinue(messages)` — the SDK's own `sendAutomaticallyWhen`
+condition, extracted and named — and stands down when it's true. It cannot be
+late, because it is not watching for the other turn to start; it is reading the
+same precondition. It is also the right answer on the merits: the auto-continue
+builds its context fresh, so it already carries the finished map. In the trace,
+the turn that fired *without* the nudge had all 206 spots and no
+MAP-IS-STILL-BEING-BUILT block, and produced the plan. The nudge added nothing.
+
+Behind it, a synchronous `turnStarted` latch closes the same class for the
+triggers we own: it is set at the moment a turn is decided on (and inside the
+transport, the only hook the SDK's own sends pass through) and released on the
+FALLING edge of `busy` — never on plain `!busy`, which would clear it inside the
+window it exists to cover. Every turn this panel starts goes through one
+`startTurn(...)` door, so no caller can read the guard and send two statements
+later.
+
+**Verified against a headless reproduction** (`ask_questions` on screen, build
+released mid-card, then answered): reverted, two requests 1ms apart — the
+auto-continue and a "The map has finished building" pickup, exactly the trace's
+shape. With the fix, one.
+
+**Lesson: two triggers for one state change is a bug even when both are
+guarded.** Guards written against React state answer "has the other one already
+happened", and in the same tick the answer is always no. Ask what the other
+trigger is *about to do*, off the condition it reads.
+
 ## 5. Learnings — infrastructure & cost
 
 ### 5.1 The 60s Vercel timeout (the production hang)
