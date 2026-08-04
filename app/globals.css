@@ -4167,6 +4167,37 @@ button {
 }
 /* Transient progress chips (sketching, checking travel times) — quiet and
    neutral, on-palette. Not success: they're in-flight status, so no green. */
+/* The build landing, in the transcript. Deliberately NOT a message bubble on
+   either side: the agent didn't say it and neither did the traveler. A centred
+   hairline rule with a label reads as "time passed and something happened",
+   which is exactly what it is, and it explains why the agent speaks next
+   without having been asked. */
+.pm-landed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 6px 0;
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  color: var(--text-soft);
+  text-align: center;
+}
+.pm-landed::before,
+.pm-landed::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(27, 43, 58, 0.1);
+}
+.pm-landed-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2f9e63;
+  flex: none;
+}
+
 .pm-tool {
   display: inline-flex;
   align-items: center;

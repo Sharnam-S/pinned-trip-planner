@@ -805,6 +805,45 @@ deferred UX layer was going to design. Control on a complete build:
 unblocks.** B4 was a good fix for a ten-minute blank stare. It also handed the
 traveler a planner that had no idea it was looking at a sixth of the map.
 
+**Layer 4 — keeping the promise (2026-08-04).** Layers 1–2 stopped the bad
+plans; what they left behind was an agent that says *"I'll lay out the days as
+soon as the map is complete"* and then goes quiet. The gate lifted in silence
+and the traveler had to notice the build had finished and ask again — a strange
+thing to ask of someone who was just told to sit tight.
+
+The panel now watches the build land and hands the turn back. Four things made
+it non-trivial:
+
+- **The trigger has to be a user-role turn** for the model to answer it, but it
+  is *not* something the traveler said. It renders as a hairline event divider
+  (`.pm-landed`) rather than a bubble — putting words in their mouth in a
+  transcript they can scroll back through is exactly the invented fact the
+  persona forbids. (Watch the class name: `.pm-event` was already taken by the
+  `find_spots` cards, and the first version silently restyled all of them.)
+- **The promise is stored per trip** (`pinned.plan-deferred.*`), not in a ref.
+  The wait is precisely when people navigate away, so a ref would miss the one
+  case the feature exists for.
+- **Any outgoing turn after the map lands clears it**, in the transport rather
+  than at one call site. Whether the traveler typed, answered a question card,
+  or a tool round-trip carried things forward, that turn already keeps the
+  promise — without this the pickup arrives on top of a conversation that
+  continued fine without it.
+- **It holds while a question card is open.** Barging in would strand the tool
+  call, which is the bug §A1 exists to prevent, and would talk over someone
+  already mid-answer.
+
+Verified end to end against a frozen build released mid-conversation: the agent
+deferred (*"I'll build the full shape once the rest of the map finishes reading
+in… I'll pick this back up the moment it's complete"*), the build landed, the
+pickup fired, and it opened with *"The full set has landed — 25 spots now."*
+The flag cleared, and no user bubble was fabricated.
+
+**Unrelated finding, worth chasing:** `tbilisi-weekend` fails `pace matches what
+was asked for` on this branch (4.7 stops/day against a 2–4.5 band) — and fails
+*worse* without these changes (5.0). Reproducible across runs, so it is neither
+variance nor caused by layer 4. It is the same Relaxed-pace drift first noticed
+in the PM audit and still open.
+
 ## 5. Learnings — infrastructure & cost
 
 ### 5.1 The 60s Vercel timeout (the production hang)
