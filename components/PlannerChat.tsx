@@ -7,7 +7,7 @@
  * mid-conversation, which is what makes the map feel like the agent's
  * whiteboard.
  */
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useChat } from "@ai-sdk/react";
 import {
@@ -960,6 +960,48 @@ function mapReadyLabel(m: UIMessage): string {
   return spots ? `Map complete — ${spots[1]} spots` : "Map complete";
 }
 
+/** How many refused writes we let the agent make before we stop handing the
+ *  turn back. Two: the first refusal teaches it something it didn't know, a
+ *  second is worth one more try, a third is a loop. */
+const MAX_REFUSED_WRITES = 2;
+
+/**
+ * Is this conversation going round in circles on a refused write?
+ *
+ * `update_itinerary` can legitimately REFUSE — most often because the map is
+ * still being built (§4.11). A refusal comes back as a normal tool output, and
+ * a completed tool call is exactly what `lastAssistantMessageIsCompleteWithToolCalls`
+ * auto-resends on. So the agent gets the turn back, tries again, is refused
+ * again, and hands the turn back again. Reported as the planner "getting stuck
+ * and repeating" — eight identical passes of the same reasoning, each one a
+ * full Sonnet turn on a 30KB prompt, none of which could ever have succeeded
+ * because the thing it was waiting on is a build that had not finished.
+ *
+ * The refusal text asks it to stop. That is steering, and §4.1 is the standing
+ * lesson about what steering is worth without a structural bound — so here is
+ * the bound. Counted since the traveler's last message, because their next
+ * message is a genuinely new situation and deserves a fresh budget.
+ */
+function refusalLoop(messages: UIMessage[]): boolean {
+  let refused = 0;
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const m = messages[i];
+    if (m.role === "user") break;
+    if (m.role !== "assistant") continue;
+    for (const p of m.parts) {
+      if (
+        p.type === "tool-update_itinerary" &&
+        "state" in p &&
+        p.state === "output-available" &&
+        (p.output as { ok?: boolean } | undefined)?.ok === false
+      ) {
+        refused++;
+      }
+    }
+  }
+  return refused >= MAX_REFUSED_WRITES;
+}
+
 function makeTransport(tripId: string, ctxRef: { current: PlannerCtx }) {
   return new DefaultChatTransport({
     api: `/api/trips/${tripId}/chat`,
@@ -1171,7 +1213,9 @@ export default function PlannerChat({
   const { messages, setMessages, sendMessage, addToolOutput, status, error, regenerate } = useChat({
     transport,
     messages: initialMessages,
-    sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
+    sendAutomaticallyWhen: (opts) =>
+      lastAssistantMessageIsCompleteWithToolCalls(opts) &&
+      !refusalLoop(opts.messages),
     async onToolCall({ toolCall }) {
       if (toolCall.dynamic) return;
 
@@ -1450,7 +1494,14 @@ export default function PlannerChat({
   // same turn regenerated usually lands — but today the traveler eats a raw SDK
   // string and loses the whole plan. Retry once, silently, per failed turn; the
   // rendered message below is only reached if the retry fails too.
-  const retriedTurns = useRef<Set<string>>(new Set());
+  /** Retries of a THROWN update_itinerary since the traveler last spoke.
+   *
+   *  This was a Set of message ids, which does not bound anything: regenerate()
+   *  replaces the last assistant message with a NEW one carrying a NEW id, so a
+   *  failure that reproduces is never recognised as the same failure and the
+   *  "retry once" is really "retry forever". A counter reset on the traveler's
+   *  next message is the honest version of what the comment always claimed. */
+  const toolRetries = useRef(0);
   useEffect(() => {
     if (busy) return;
     const tail = messages[messages.length - 1];
@@ -1461,8 +1512,8 @@ export default function PlannerChat({
         "state" in p &&
         p.state === "output-error"
     );
-    if (!toolFailed || retriedTurns.current.has(tail.id)) return;
-    retriedTurns.current.add(tail.id);
+    if (!toolFailed || toolRetries.current >= 1) return;
+    toolRetries.current += 1;
     console.warn("[planner] update_itinerary tool input failed — retrying once");
     // The raw error goes to analytics, not to the traveler (§A5). Without this
     // the failure is invisible: LLM analytics records the generation as normal.
@@ -1500,15 +1551,46 @@ export default function PlannerChat({
     !error &&
     (last?.role === "user" || lastAssistantEmpty);
 
+  // Where the traveler is. A long reply streams for a minute or more, and this
+  // effect ran on every chunk of it — so scrolling up to read what had already
+  // arrived yanked you straight back to the bottom, and the prose was
+  // unreadable until the turn finished. Reported exactly that way.
+  //
+  // The rule instead: follow the stream only while they are ALREADY at the
+  // bottom. The moment they scroll up they have taken control, and they keep
+  // it until they come back down. Read in the handler rather than on every
+  // render — this is the scroll position, not React state.
+  const stickToBottom = useRef(true);
+
+  const onScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    // A generous threshold: "near the bottom" has to survive the layout shift
+    // of a chunk landing, or one unlucky frame detaches them mid-read.
+    stickToBottom.current =
+      el.scrollHeight - el.scrollTop - el.clientHeight < 120;
+  }, []);
+
   useEffect(() => {
-    // Follow the conversation as it streams. Not before it starts, though:
-    // with no messages the panel shows the intro/nudge, and in a short panel
-    // (the mobile half-height sheet) jumping to the bottom would clip the
-    // top of it — the photo fan cut mid-frame reads as broken layout.
+    // Not before the conversation starts: with no messages the panel shows the
+    // intro/nudge, and in a short panel (the mobile half-height sheet) jumping
+    // to the bottom would clip the top of it — the photo fan cut mid-frame
+    // reads as broken layout.
     if (messages.length === 0) return;
+    if (!stickToBottom.current) return;
     const el = scrollRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages, busy, error, streamDropped]);
+
+  // A message they sent is theirs — always follow that one down, even if they
+  // had scrolled up to re-read something first.
+  const lastRoleForScroll = messages[messages.length - 1]?.role;
+  useEffect(() => {
+    if (lastRoleForScroll !== "user") return;
+    stickToBottom.current = true;
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [lastRoleForScroll, messages.length]);
 
   // A trip opened on a fresh device has no localStorage chat — pull the
   // account's saved conversation. Local always wins when it exists (it is
@@ -1568,8 +1650,11 @@ export default function PlannerChat({
   function send(text: string) {
     const trimmed = text.trim();
     if (!trimmed || busy) return;
-    // New turn: the "you already wrote this option" guard measures from here.
+    // New turn: the "you already wrote this option" guard measures from here,
+    // and so does the tool-retry budget — their next message is a genuinely
+    // new situation, not a continuation of whatever was failing.
     writtenThisTurn.current.clear();
+    toolRetries.current = 0;
     sendMessage({ text: trimmed });
     setInput("");
     const el = inputRef.current;
@@ -1732,7 +1817,7 @@ export default function PlannerChat({
 
   return (
     <aside className="planner-panel" onClick={(e) => e.stopPropagation()}>
-      <div className="planner-scroll" ref={scrollRef}>
+      <div className="planner-scroll" ref={scrollRef} onScroll={onScroll}>
         {messages.length === 0 &&
           (showNudge ? (
             <div className="planner-nudge">

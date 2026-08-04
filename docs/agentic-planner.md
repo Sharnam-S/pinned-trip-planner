@@ -891,6 +891,45 @@ when it's genuinely costly and still actionable ("two nights here, one spot on
 your map, the rest 90 minutes north"). Never because we'd have chosen
 differently — they've paid, and that advice is noise.
 
+### 4.13 A refusal is a completed tool call (2026-08-04)
+
+**Reported:** "planner got stuck and kept repeating in this state… the prose
+came 8 times."
+
+**Two independent unbounded loops, and one of them I built.** §4.11 made
+`update_itinerary` REFUSE while the map is still building. A refusal comes back
+through `addToolOutput` as a normal tool output — and a completed tool call is
+exactly what `lastAssistantMessageIsCompleteWithToolCalls` auto-resends on. So
+the agent got the turn back, tried again, was refused again, and handed the
+turn back again. Eight identical passes of the same reasoning, each a full
+Sonnet turn on a ~30KB prompt, none of which could ever have succeeded because
+the thing it was waiting on was a build that had not finished.
+
+The refusal text says "Do NOT call update_itinerary again yet". That is
+steering, and §4.1 is the standing lesson about what steering is worth without
+a structural bound. `sendAutomaticallyWhen` now carries the bound: two refused
+writes since the traveler last spoke and the turn stops being handed back. Counted
+since their last message, because their next message is a genuinely new
+situation and deserves a fresh budget.
+
+**The second loop was older and worse.** The "retry a thrown tool call ONCE"
+guard was a `Set` of message ids — but `regenerate()` replaces the last
+assistant message with a NEW one carrying a NEW id, so a failure that
+reproduces is never recognised as the same failure. "Retry once" was really
+"retry forever". Now a counter, reset when the traveler speaks.
+
+**Lesson: when you add a way for something to fail, check what auto-resumes.**
+The gate in §4.11 was correct and well-tested in isolation; what it didn't
+account for is that the SDK treats "refused" and "succeeded" identically,
+because both are a tool call with an output.
+
+**Also reported, and unrelated:** scrolling up to read while a reply streamed
+yanked you back to the bottom. The follow-the-stream effect ran on every chunk
+and set `scrollTop` unconditionally. It now sticks to the bottom only while the
+traveler is already there — the moment they scroll up they have taken control
+and keep it until they come back down. Their own messages always scroll into
+view regardless, because that one is theirs.
+
 ## 5. Learnings — infrastructure & cost
 
 ### 5.1 The 60s Vercel timeout (the production hang)
