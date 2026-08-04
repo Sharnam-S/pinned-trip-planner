@@ -28,6 +28,7 @@ import {
   isRunning,
 } from "@/lib/runner";
 import { buildProgress } from "@/lib/merge";
+import { track } from "@/lib/track";
 import { parseVideoId } from "@/lib/links";
 import {
   extraPhotoCount,
@@ -589,6 +590,7 @@ function ShareTrip({ trip }: { trip: Trip }) {
   async function onShareClick() {
     if (busy) return;
     setFailed(false);
+    track("trip_shared", { tripId: trip.id, alreadyPublic: shared });
     if (shared) {
       // Already public: hand over the link; refresh the public copy quietly.
       void publishTrip({ ...trip, ownerId: undefined });
@@ -1332,10 +1334,15 @@ export default function TripView({
 
   const toggleMustSee = (id: string) => {
     setMustSeeIds((prev) => {
-      const next = prev.includes(id)
-        ? prev.filter((x) => x !== id)
-        : [...prev, id];
+      const on = !prev.includes(id);
+      const next = on ? [...prev, id] : prev.filter((x) => x !== id);
       saveMustSees(tripId, next);
+      track("must_see_starred", {
+        tripId,
+        on,
+        category: trip?.spots.find((sp) => sp.id === id)?.category ?? null,
+        total: next.length,
+      });
       return next;
     });
   };
@@ -1361,6 +1368,11 @@ export default function TripView({
   const selectSpot = (id: string | null) => {
     setSelectedId(id);
     if (id) {
+      track("spot_opened", {
+        tripId,
+        category: trip?.spots.find((sp) => sp.id === id)?.category ?? null,
+        filtered: activeCats.length > 0,
+      });
       // Remember where we came from so the detail's close button returns there.
       setSpotOrigin(
         isMobile ? (sheetTab === "overview" ? "overview" : "pins") : rightTab
@@ -1404,6 +1416,11 @@ export default function TripView({
    *  disappears while its effect stays visible reads as the plan changing by
    *  itself. Switching options mid-spot-browse shouldn't eject you either. */
   const showPlan = (planId: string | null) => {
+    // #97 built parallel options on the theory people compare shapes. This is
+    // the only thing that can ever confirm it.
+    if (planId !== activePlanId) {
+      track("plan_option_switched", { tripId, options: plans.length });
+    }
     setActivePlanId(planId);
     saveActivePlanId(tripId, planId);
     setComparing(false);
@@ -1813,7 +1830,10 @@ export default function TripView({
               key={area}
               className="rail-note-btn"
               onClick={() =>
-                composeRef.current?.(`Find me some spots in ${area}.`)
+                {
+                  track("coverage_gap_clicked", { tripId, area });
+                  composeRef.current?.(`Find me some spots in ${area}.`);
+                }
               }
             >
               + {area}
@@ -1847,7 +1867,13 @@ export default function TripView({
         <div className="rail-note-actions">
           <button
             className="rail-note-btn"
-            onClick={() => setShowOutOfRange(true)}
+            onClick={() => {
+              track("out_of_range_revealed", {
+                tripId,
+                spots: outOfRangeSpots.length,
+              });
+              setShowOutOfRange(true);
+            }}
           >
             Show them anyway
           </button>
@@ -1917,13 +1943,18 @@ export default function TripView({
                           key={cat}
                           className={`pf-chip ${on ? "on" : ""}`}
                           aria-pressed={on}
-                          onClick={() =>
+                          onClick={() => {
+                            track("filter_applied", {
+                              tripId,
+                              category: cat,
+                              on: !on,
+                            });
                             setActiveCats((prev) =>
                               prev.includes(cat)
                                 ? prev.filter((c) => c !== cat)
                                 : [...prev, cat]
-                            )
-                          }
+                            );
+                          }}
                         >
                           <span className="pf-emoji">{CATEGORY_EMOJI[cat]}</span>
                           <span className="pf-label">{cat}</span>

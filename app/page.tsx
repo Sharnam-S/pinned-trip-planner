@@ -12,6 +12,7 @@ import {
   unpublishTrip,
 } from "@/lib/clientStore";
 import { newSearchTrip } from "@/lib/merge";
+import { track } from "@/lib/track";
 import { deleteTrip, saveTrip } from "@/lib/tripStore";
 import { tripLabel } from "@/lib/tripName";
 import { ensureRunning } from "@/lib/runner";
@@ -341,6 +342,15 @@ function Landing({
       return;
     }
     setCreating(true);
+    // The top of the funnel. Everything measured downstream — first pin,
+    // itinerary committed, briefing opened — is a fraction of this number, and
+    // until now there was no denominator.
+    track("build_requested", {
+      destination: destination.trim().slice(0, 80),
+      hasDates: Boolean(startDate && endDate),
+      hasInterests: Boolean(interests.trim()),
+      signedIn: Boolean(user),
+    });
     const id = startTrip({ destination, startDate, endDate, interests }, user?.id);
     if (!id) {
       setError("Your browser storage is full — delete an old trip first.");
@@ -505,7 +515,10 @@ Every YouTube travel
                 >
                   <button
                     className="rail-name"
-                    onClick={() => setSelectedTripId(t.id)}
+                    onClick={() => {
+                      track("sample_opened", { tripId: t.id, name: t.name });
+                      setSelectedTripId(t.id);
+                    }}
                   >
                     <svg width="13" height="13" viewBox="0 0 22 22" fill="none" aria-hidden="true">
                       <path

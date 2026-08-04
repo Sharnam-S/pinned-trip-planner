@@ -55,6 +55,32 @@ export const PRODUCT_EVENTS = [
   // the only question that matters here: does the pickup actually end in a
   // plan, or does it just add a message nobody asked for?
   "planner_picked_up",
+  // --- Interactions -------------------------------------------------------
+  // Autocapture (components/Analytics.tsx) covers clicks broadly, by DOM
+  // label. These are the handful where the ANSWER matters enough to want a
+  // stable name and real properties rather than "button with text 'Filters'":
+  // each one settles a question the product has been guessing at.
+  //
+  // Does the map get browsed by category, and which? (Feeds the filter chips
+  // and, indirectly, what extraction should be good at.)
+  "filter_applied",
+  // Do people open pins at all, or only read the plan?
+  "spot_opened",
+  // The must-see picker is the first personalisation question we ask, and it
+  // was measurably asking the wrong three things (§4.9).
+  "must_see_starred",
+  // #97 built parallel plan options on the theory that people want to compare
+  // shapes. Nothing has ever confirmed anyone switches between them.
+  "plan_option_switched",
+  // The two recovery paths, both of which cost real work to build and neither
+  // of which has ever been observed being used: "+ <area>" on the coverage
+  // note (§4.9) and "Show them anyway" on the out-of-range note (D3).
+  "coverage_gap_clicked",
+  "out_of_range_revealed",
+  // The top of the funnel. Everything above is meaningless without it.
+  "build_requested",
+  "sample_opened",
+  "trip_shared",
 ] as const;
 
 export type ProductEvent = (typeof PRODUCT_EVENTS)[number];
@@ -95,11 +121,17 @@ export function sanitizeProps(raw: unknown): EventProps {
 export async function captureProductEvent(
   event: ProductEvent,
   props: EventProps,
-  user: SessionUser | null
+  user: SessionUser | null,
+  /** The browser SDK's distinct id, when the client sent one. Only used for
+   *  ANONYMOUS visitors: it's what makes their pageviews (captured by
+   *  posthog-js) and their product events land on the same person instead of
+   *  two. A signed-in visitor is keyed to the account on both paths already. */
+  clientDistinctId?: string | null
 ): Promise<void> {
   if (!posthog) return;
   posthog.capture({
-    distinctId: user?.id ?? `anon:${props.tripId ?? "unknown"}`,
+    distinctId:
+      user?.id ?? clientDistinctId ?? `anon:${props.tripId ?? "unknown"}`,
     event,
     properties: {
       ...props,
