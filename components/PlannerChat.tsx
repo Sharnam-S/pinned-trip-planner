@@ -37,6 +37,7 @@ import {
   markPlanDeferred,
   planWasDeferred,
   clearPlanDeferred,
+  DAY_STRUCTURE_RE,
 } from "@/lib/itinerary";
 import { buildProgress } from "@/lib/merge";
 import { findSpots } from "@/lib/findSpots";
@@ -829,7 +830,6 @@ function pickIconicSpots(trip: Trip): string[] {
 }
 
 /** A day heading in an assistant reply: "## Day 3 — …", "Day 1:", "**Day 2**". */
-const DAY_STRUCTURE_RE = /(^|\n)\s*(#{1,3}\s*)?\**\s*day\s*\d/i;
 
 /**
  * The shape-first step (persona §PLAN IN TWO STEPS) is deliberate and good: the

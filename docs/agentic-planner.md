@@ -928,7 +928,26 @@ because `$ai_output_choices` already carries `tool_calls` — the actual
 |---|---|---|
 | Pace matches what the traveller asked for | Hog (free) | Stops/day vs the intake pace, same bands as the fixtures |
 | Plan was written from a finished map | Hog (free) | Guards §4.11 — fails if the input still says the map is building |
-| Plan serves what the traveller actually asked for | LLM judge | Relevance, not structure. Needs an Anthropic provider key in PostHog |
+| Plan serves what the traveller actually asked for | LLM judge | Relevance of the committed itinerary. Needs an Anthropic key |
+| Summary document is worth saying yes to | LLM judge | Relevance of the PROSE SHAPE, before any pin is placed. Needs a key |
+
+**Both halves of the flow get judged, and the prose half matters more.** The
+shape document is what the traveller actually says yes to (§4.6) — a plan built
+on a shape they should have rejected is wasted work — and it carries no tool
+call, so anything conditioned on one is blind to it. Its judge has a failure
+mode the plan judge doesn't need: *could this have been written about
+anywhere?* A sketch of "explore the old town, beach day, soak up the
+atmosphere" is fluent, on-topic, and gives the traveller nothing to push back
+on.
+
+**Turn-shape properties are what make this affordable.** `wrotePlan`,
+`wroteShape`, `planIsPatch`, `plannedDays` and `plannedStops` are emitted on
+every `$ai_generation`, so a judge runs only on the turns it can say something
+about instead of sampling everything and returning N/A. `plannedDays`/
+`plannedStops` also fixed a *wrong* eval: the first pace check counted
+`spotId` occurrences in `$ai_output_choices`, which is truncated at
+`MAX_CONTENT_CHARS` — so it undercounted exactly the biggest plans, the ones
+most likely to be overpacked. Measuring before truncation is exact.
 
 Worth knowing for future evals: Hog gets `properties.*` and supports
 `splitByString`/`ilike`, and returning `null` marks a generation N/A. There is

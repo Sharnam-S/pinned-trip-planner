@@ -760,6 +760,13 @@ export function clearPlanDeferred(tripId: string): void {
   }
 }
 
+/** A day heading in an assistant reply — the signature of a prose SUMMARY
+ *  DOCUMENT (§4.6) rather than a committed plan. Shared so the three places
+ *  that ask "did this turn describe days?" can't drift: the client's
+ *  commit-nudge counter, the chat route's `wroteShape` property, and the
+ *  fixture suite (which keeps its own copy, being plain .mjs — update both). */
+export const DAY_STRUCTURE_RE = /(^|\n)\s*(#{1,3}\s*)?\**\s*day\s*\d/i;
+
 // --- Must-see spots (user-starred; the agent must include them) ---
 // Stored separately from the itinerary because the agent replaces the
 // itinerary wholesale — stars are the user's, not the agent's, to overwrite.

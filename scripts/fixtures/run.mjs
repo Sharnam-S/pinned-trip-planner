@@ -66,7 +66,10 @@ if (selected.length === 0) {
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /** A day heading in an assistant reply — the signature of a summary document.
- *  Same shape the client uses to decide when to force a commit. */
+ *  MUST match DAY_STRUCTURE_RE in lib/itinerary.ts, which the client's
+ *  commit-nudge counter and the chat route's `wroteShape` property both use.
+ *  Duplicated rather than imported because this runner is plain .mjs — if you
+ *  change one, change both. */
 const DAY_STRUCTURE_RE = /(^|\n)\s*(#{1,3}\s*)?\**\s*day\s*\d/i;
 
 // --- assertions ------------------------------------------------------------
