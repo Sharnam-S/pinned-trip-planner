@@ -19,6 +19,7 @@ import {
 import { PostHog } from "posthog-node";
 import {
   AskQuestionsInputSchema,
+  DAY_STRUCTURE_RE,
   DiscardPlanInputSchema,
   FindSpotsInputSchema,
   LoadPlanInputSchema,
@@ -325,6 +326,32 @@ function formatInput(messages: ModelMessage[]): { role: string; content: string 
   return formatted;
 }
 
+/** Exact day/stop counts off an `update_itinerary` call, for the evals.
+ *  `patch` writes only the days that changed, so their counts describe the
+ *  edit and not the trip — flagged so a pace check can skip them rather than
+ *  read a two-day patch as a two-day trip. */
+function planShape(
+  toolCalls?: { name: string; args: unknown }[]
+): Record<string, string | number | boolean> {
+  const call = toolCalls?.find((c) => c.name === "update_itinerary");
+  if (!call) return { wrotePlan: false };
+  const args = (call.args ?? {}) as {
+    mode?: string;
+    days?: { stops?: unknown[] }[];
+    dayPatches?: { day?: { stops?: unknown[] } }[];
+  };
+  const patch = args.mode === "patch" || Boolean(args.dayPatches?.length);
+  const days = patch
+    ? (args.dayPatches ?? []).map((p) => p.day)
+    : (args.days ?? []);
+  return {
+    wrotePlan: true,
+    planIsPatch: patch,
+    plannedDays: days.length,
+    plannedStops: days.reduce((n, d) => n + (d?.stops?.length ?? 0), 0),
+  };
+}
+
 async function captureGeneration(opts: {
   traceId: string;
   tripId: string;
@@ -424,6 +451,24 @@ async function captureGeneration(opts: {
         // show the full surface, including turns where nothing was called.
         $ai_tools: AI_TOOLS,
         $ai_span_name: "planner-chat",
+        // What KIND of turn this was, as plain filterable properties.
+        //
+        // Evaluations condition on event properties, and "did this turn write
+        // a plan / sketch a shape" was only answerable by scanning the
+        // serialized output — so a judge had to run on every turn and return
+        // N/A for most of them, paying for an LLM call to say "not applicable".
+        //
+        // The counts matter more than they look. The tool arguments are
+        // truncated at MAX_CONTENT_CHARS on the way into $ai_output_choices, so
+        // counting stops by parsing that string UNDERCOUNTS exactly the biggest
+        // plans — the ones most likely to be overpacked. Measured here, before
+        // truncation, they're exact.
+        ...planShape(opts.toolCalls),
+        // The prose summary document (§4.6) is the first thing the traveler
+        // reads and the thing they say yes to. It carries no tool call, so
+        // without this it is invisible to anything conditioned on one.
+        wroteShape:
+          !opts.toolCalls?.length && DAY_STRUCTURE_RE.test(opts.outputText),
         ...(opts.error ? { $ai_is_error: true, $ai_error: String(opts.error) } : {}),
         // Custom analytics dimension (deliberately NOT $ai_-prefixed so it
         // never touches cost): how much of the turn was thinking. Anthropic
