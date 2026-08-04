@@ -27,6 +27,7 @@ import {
   ensureRunning,
   isRunning,
 } from "@/lib/runner";
+import { buildProgress } from "@/lib/merge";
 import { parseVideoId } from "@/lib/links";
 import {
   extraPhotoCount,
@@ -1770,11 +1771,9 @@ export default function TripView({
 
   // The build is over and nothing more is coming: every video has been read or
   // given up on. `throttled` is deliberately NOT terminal — that build is
-  // paused, not finished, and the retry will add spots.
-  const buildSettled =
-    trip.status !== "processing" &&
-    trip.videos.length > 0 &&
-    trip.videos.every((v) => v.status === "done" || v.status === "error");
+  // paused, not finished, and the retry will add spots. (Shared with the
+  // planner's gate, which asks the *other* question — see buildProgress.)
+  const { settled: buildSettled } = buildProgress(trip);
 
   // C3/D5 — a partial map is indistinguishable from a complete one. 71 pins
   // looks like thorough coverage even when it's a single coastline of a whole
