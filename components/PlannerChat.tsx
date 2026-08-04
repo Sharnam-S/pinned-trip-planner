@@ -1002,10 +1002,29 @@ function refusalLoop(messages: UIMessage[]): boolean {
   return refused >= MAX_REFUSED_WRITES;
 }
 
-function makeTransport(tripId: string, ctxRef: { current: PlannerCtx }) {
+/** The SDK's own auto-continue rule, named so the rest of the panel can defer
+ *  to it instead of racing it. Anything that would start a turn off the same
+ *  `messages` change must ask this first — see `turnStarted`. */
+function willAutoContinue(messages: UIMessage[]): boolean {
+  return (
+    lastAssistantMessageIsCompleteWithToolCalls({ messages }) &&
+    !refusalLoop(messages)
+  );
+}
+
+function makeTransport(
+  tripId: string,
+  ctxRef: { current: PlannerCtx },
+  turnStarted: { current: boolean }
+) {
   return new DefaultChatTransport({
     api: `/api/trips/${tripId}/chat`,
     prepareSendMessagesRequest: ({ messages }) => {
+      // Every outgoing turn passes through here, including the ones the SDK
+      // starts by itself (`sendAutomaticallyWhen`) — which is the only hook
+      // those get. Latching here means a trigger in the panel cannot start a
+      // second turn on top of one the SDK already began.
+      turnStarted.current = true;
       // Any turn that goes out after the map has landed keeps the promise on
       // its own — whether the traveler typed, answered a question card, or a
       // tool round-trip carried the conversation forward. Clearing here rather
@@ -1134,6 +1153,15 @@ export default function PlannerChat({
   const shortDest =
     trip.destination?.name.split(",").map((s) => s.trim()).pop() || trip.name;
 
+  /** One chat runs ONE turn at a time. `status` is the SDK's answer to "is a
+   *  turn running", but it lands a commit AFTER the send — so two triggers
+   *  reading the same `messages` change both see `busy === false` and both
+   *  send. Not theoretical: answering a question card once started the SDK's
+   *  auto-continue and the §4.11 pickup 125ms apart, and the traveler watched
+   *  two full plans stream into one transcript (§4.14). Written synchronously
+   *  at the moment a turn is decided on, so the second trigger sees it. */
+  const turnStarted = useRef(false);
+
   // The transport is created once; the ctx ref keeps the request body current.
   const ctxRef = useRef<PlannerCtx>({
     trip,
@@ -1205,17 +1233,18 @@ export default function PlannerChat({
   const findCache = useRef<Set<string>>(new Set());
   const findCount = useRef(0);
 
-  // The transport only reads the ref at request time
+  // The transport only reads the refs at request time
   // (prepareSendMessagesRequest), never during render.
-  // eslint-disable-next-line react-hooks/refs
-  const transport = useMemo(() => makeTransport(trip.id, ctxRef), [trip.id]);
+  const transport = useMemo(
+    // eslint-disable-next-line react-hooks/refs
+    () => makeTransport(trip.id, ctxRef, turnStarted),
+    [trip.id]
+  );
 
   const { messages, setMessages, sendMessage, addToolOutput, status, error, regenerate } = useChat({
     transport,
     messages: initialMessages,
-    sendAutomaticallyWhen: (opts) =>
-      lastAssistantMessageIsCompleteWithToolCalls(opts) &&
-      !refusalLoop(opts.messages),
+    sendAutomaticallyWhen: (opts) => willAutoContinue(opts.messages),
     async onToolCall({ toolCall }) {
       if (toolCall.dynamic) return;
 
@@ -1489,6 +1518,33 @@ export default function PlannerChat({
   const [streamedHere, setStreamedHere] = useState(false);
   if (busy && !streamedHere) setStreamedHere(true);
 
+  // Released on the FALLING edge of `busy`, never on plain `!busy` — the whole
+  // point of the latch is the window where a turn has been sent and `busy` has
+  // not caught up yet, and clearing on `!busy` would clear it inside exactly
+  // that window. `busy` is what unblocks the next turn from here on; the latch
+  // only has to survive the gap.
+  const sawBusy = useRef(false);
+  useEffect(() => {
+    if (busy) sawBusy.current = true;
+    else if (sawBusy.current) {
+      sawBusy.current = false;
+      turnStarted.current = false;
+    }
+  }, [busy]);
+
+  /** The one door every turn this panel starts goes through. Checking and
+   *  latching in one place is the point: a caller that reads the guard and
+   *  sends two statements later has re-opened the race this closes. */
+  const startTurn = useCallback(
+    (run: () => void) => {
+      if (busy || turnStarted.current) return false;
+      turnStarted.current = true;
+      run();
+      return true;
+    },
+    [busy]
+  );
+
   // A big plan payload sometimes arrives as malformed tool input
   // (AI_InvalidToolInputError wrapping AI_JSONParseError). It's transient — the
   // same turn regenerated usually lands — but today the traveler eats a raw SDK
@@ -1513,6 +1569,10 @@ export default function PlannerChat({
         p.state === "output-error"
     );
     if (!toolFailed || toolRetries.current >= 1) return;
+    // Spend the one retry only if it actually goes out. A turn already starting
+    // means this effect re-runs on the falling edge of `busy` with the budget
+    // still intact — burning it here would swallow the retry silently.
+    if (!startTurn(() => void regenerate())) return;
     toolRetries.current += 1;
     console.warn("[planner] update_itinerary tool input failed — retrying once");
     // The raw error goes to analytics, not to the traveler (§A5). Without this
@@ -1532,8 +1592,7 @@ export default function PlannerChat({
           .find(Boolean) ?? "",
       retried: true,
     });
-    void regenerate();
-  }, [messages, busy, regenerate, trip.id]);
+  }, [messages, busy, regenerate, startTurn, trip.id]);
 
   // The stream can die server-side without an error event (e.g. a runtime
   // timeout kills the function mid-think) — the request "finishes" but the
@@ -1649,13 +1708,18 @@ export default function PlannerChat({
 
   function send(text: string) {
     const trimmed = text.trim();
-    if (!trimmed || busy) return;
-    // New turn: the "you already wrote this option" guard measures from here,
-    // and so does the tool-retry budget — their next message is a genuinely
-    // new situation, not a continuation of whatever was failing.
-    writtenThisTurn.current.clear();
-    toolRetries.current = 0;
-    sendMessage({ text: trimmed });
+    if (!trimmed) return;
+    // Dropped rather than queued when a turn is already starting — and the
+    // composer keeps the text, so the next tap sends it.
+    const sent = startTurn(() => {
+      // New turn: the "you already wrote this option" guard measures from here,
+      // and so does the tool-retry budget — their next message is a genuinely
+      // new situation, not a continuation of whatever was failing.
+      writtenThisTurn.current.clear();
+      toolRetries.current = 0;
+      sendMessage({ text: trimmed });
+    });
+    if (!sent) return;
     setInput("");
     const el = inputRef.current;
     if (el) el.style.height = "auto";
@@ -1690,9 +1754,19 @@ export default function PlannerChat({
       )
   );
   const lastRole = messages[messages.length - 1]?.role;
+  // The SDK is about to continue a finished tool round-trip on its own. That
+  // turn is built from fresh context, so it already carries the complete map —
+  // the nudge would add nothing and start a second turn on the same chat.
+  const autoContinuing = willAutoContinue(messages);
 
   useEffect(() => {
     if (pickedUp.current || build.running || busy) return;
+    // Deferring to the SDK by testing the SAME condition it tests, rather than
+    // waiting to observe that it sent: `busy` and the transport's
+    // clearPlanDeferred both land a commit late, so answering a question card
+    // satisfied this effect and `sendAutomaticallyWhen` off one `messages`
+    // change and fired both (§4.14).
+    if (autoContinuing) return;
     // Nothing was promised, or it's already been kept.
     if (!hasConversation || !planWasDeferred(trip.id)) return;
     // A plan already exists — the map growing under it is a different problem
@@ -1705,21 +1779,25 @@ export default function PlannerChat({
     // over someone who is already getting what they need.
     if (lastRole !== "assistant" || awaitingAnswer) return;
 
-    // Cleared BEFORE the send, not after: a reload mid-stream would otherwise
-    // find the flag still set and pick up a second time.
-    pickedUp.current = true;
-    clearPlanDeferred(trip.id);
-    writtenThisTurn.current.clear();
-    sendMessage({
-      text: mapReadyText(build.videosRead, trip.spots.length),
-      metadata: { kind: MAP_READY_KIND },
+    const sent = startTurn(() => {
+      // Cleared BEFORE the send, not after: a reload mid-stream would otherwise
+      // find the flag still set and pick up a second time.
+      pickedUp.current = true;
+      clearPlanDeferred(trip.id);
+      writtenThisTurn.current.clear();
+      sendMessage({
+        text: mapReadyText(build.videosRead, trip.spots.length),
+        metadata: { kind: MAP_READY_KIND },
+      });
     });
+    if (!sent) return;
     track("planner_picked_up", {
       tripId: trip.id,
       spots: trip.spots.length,
       videos: build.videosRead,
     });
   }, [
+    autoContinuing,
     awaitingAnswer,
     build.running,
     build.videosRead,
@@ -1728,6 +1806,7 @@ export default function PlannerChat({
     lastRole,
     plans.length,
     sendMessage,
+    startTurn,
     trip.id,
     trip.spots.length,
   ]);
@@ -2141,7 +2220,7 @@ export default function PlannerChat({
         {error && (
           <div className="pm-problem">
             <div>Something went wrong: {error.message}</div>
-            <button className="pm-retry" onClick={() => regenerate()}>
+            <button className="pm-retry" onClick={() => startTurn(() => void regenerate())}>
               ↻ Try again
             </button>
           </div>
@@ -2152,7 +2231,7 @@ export default function PlannerChat({
               The connection dropped before the plan arrived — this can happen
               on very large plans.
             </div>
-            <button className="pm-retry" onClick={() => regenerate()}>
+            <button className="pm-retry" onClick={() => startTurn(() => void regenerate())}>
               ↻ Try again
             </button>
           </div>
