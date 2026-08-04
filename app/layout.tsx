@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Analytics from "@/components/Analytics";
 import SyncAgent from "@/components/SyncAgent";
 import "./globals.css";
 
@@ -23,6 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body>
+        <Analytics />
         <SyncAgent />
         {children}
       </body>

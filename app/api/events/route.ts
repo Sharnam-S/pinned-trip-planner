@@ -32,6 +32,11 @@ export async function POST(req: NextRequest) {
 
   const user = await getSessionUser();
   const props = sanitizeProps(body.properties);
-  after(captureProductEvent(body.event, props, user));
+  // Client-supplied, so shape-checked before it becomes an identity.
+  const clientDistinctId =
+    typeof body.distinctId === "string" && body.distinctId.length <= 200
+      ? body.distinctId
+      : null;
+  after(captureProductEvent(body.event, props, user, clientDistinctId));
   return new NextResponse(null, { status: 204 });
 }
