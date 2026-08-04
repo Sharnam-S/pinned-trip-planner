@@ -717,6 +717,49 @@ export function activePlan(
   return plans.find((p) => p.id === activeId) ?? plans[0];
 }
 
+// --- "I'll plan it the moment the map is ready" (the promise, and keeping it) ---
+//
+// The planner refuses to write a plan while the build is still reading videos
+// (§4.11), and tells the traveler it will lay out the days as soon as the map
+// is complete. Nothing was keeping that promise: the gate lifted in silence and
+// the traveler had to notice the build had finished and ask again.
+//
+// Stored per trip rather than held in a ref because the wait is exactly when
+// people navigate away — the pickup has to survive a reload, or the one case
+// it exists for is the one case it misses.
+
+const DEFERRED_PREFIX = "pinned.plan-deferred.";
+
+/** Record that the agent has told this traveler it would plan once the map
+ *  lands. Idempotent. */
+export function markPlanDeferred(tripId: string): void {
+  try {
+    localStorage.setItem(DEFERRED_PREFIX + tripId, "1");
+  } catch {
+    // Quota — the in-session pickup still works, it just won't survive a reload.
+  }
+}
+
+export function planWasDeferred(tripId: string): boolean {
+  if (typeof window === "undefined" || !window.localStorage) return false;
+  try {
+    return localStorage.getItem(DEFERRED_PREFIX + tripId) === "1";
+  } catch {
+    return false;
+  }
+}
+
+/** Called once the promise has been kept (or is moot). Must happen BEFORE the
+ *  turn is sent, not after: a reload mid-stream would otherwise pick up a
+ *  second time. */
+export function clearPlanDeferred(tripId: string): void {
+  try {
+    localStorage.removeItem(DEFERRED_PREFIX + tripId);
+  } catch {
+    // Nothing to do — a failed remove just means one redundant pickup at worst.
+  }
+}
+
 // --- Must-see spots (user-starred; the agent must include them) ---
 // Stored separately from the itinerary because the agent replaces the
 // itinerary wholesale — stars are the user's, not the agent's, to overwrite.

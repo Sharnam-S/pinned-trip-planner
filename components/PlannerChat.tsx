@@ -34,7 +34,11 @@ import {
   haversineKm,
   travelEstimate,
   applyPlanUpdate,
+  markPlanDeferred,
+  planWasDeferred,
+  clearPlanDeferred,
 } from "@/lib/itinerary";
+import { buildProgress } from "@/lib/merge";
 import { findSpots } from "@/lib/findSpots";
 import { track } from "@/lib/track";
 
@@ -857,10 +861,54 @@ function needsCommitNudge(messages: UIMessage[], plans: Itinerary[]): boolean {
   return described >= 2;
 }
 
+/* ---------------------------------------------------------------------------
+ * Keeping the promise (§4.11 layer 4).
+ *
+ * While the build is still reading videos the planner refuses to write a plan
+ * and says so — "I'll lay out the days as soon as the map is complete". Then
+ * the gate lifted in silence. The traveler had to spot that the build had
+ * finished and ask a second time, which is a strange thing to ask of someone
+ * who was just told to sit tight.
+ *
+ * So the panel notices the build land and hands the turn back to the agent.
+ * The trigger has to be a USER-role message for the model to answer it, but it
+ * is not something the traveler said, so it renders as an event line rather
+ * than a bubble — putting words in their mouth in a transcript they can scroll
+ * back through is exactly the kind of invented fact the persona forbids.
+ * ------------------------------------------------------------------------- */
+
+const MAP_READY_KIND = "map-ready";
+
+function mapReadyText(videos: number, spots: number): string {
+  return `The map has finished building — ${videos} video${
+    videos === 1 ? "" : "s"
+  } read, ${spots} spot${spots === 1 ? "" : "s"} on it now. This is the complete set.`;
+}
+
+function isMapReadyTurn(m: UIMessage): boolean {
+  return (
+    m.role === "user" &&
+    (m.metadata as { kind?: string } | undefined)?.kind === MAP_READY_KIND
+  );
+}
+
+function mapReadyLabel(m: UIMessage): string {
+  const text = m.parts.find((p) => p.type === "text");
+  const spots = text && text.type === "text" ? /(\d+) spots? on it/.exec(text.text) : null;
+  return spots ? `Map complete — ${spots[1]} spots` : "Map complete";
+}
+
 function makeTransport(tripId: string, ctxRef: { current: PlannerCtx }) {
   return new DefaultChatTransport({
     api: `/api/trips/${tripId}/chat`,
-    prepareSendMessagesRequest: ({ messages }) => ({
+    prepareSendMessagesRequest: ({ messages }) => {
+      // Any turn that goes out after the map has landed keeps the promise on
+      // its own — whether the traveler typed, answered a question card, or a
+      // tool round-trip carried the conversation forward. Clearing here rather
+      // than in one call site is what stops the pickup from arriving on top of
+      // an exchange that already continued without it.
+      if (!buildProgress(ctxRef.current.trip).running) clearPlanDeferred(tripId);
+      return {
       body: {
         messages: windowMessages(messages),
         context: buildPlannerContext(
@@ -874,7 +922,8 @@ function makeTransport(tripId: string, ctxRef: { current: PlannerCtx }) {
         // that need catching can already have scrolled out of it.
         commitNow: needsCommitNudge(messages, ctxRef.current.plans),
       },
-    }),
+      };
+    },
   });
 }
 
@@ -1454,6 +1503,77 @@ export default function PlannerChat({
     if (el) el.style.height = "auto";
   }
 
+  // ---- The build landed: hand the turn back to the agent (§4.11 layer 4) ----
+
+  const build = buildProgress(trip);
+  const hasConversation = messages.some((m) => m.role === "assistant");
+  const pickedUp = useRef(false);
+
+  // The promise is made whenever the agent answers while the map is still
+  // filling — that's the turn where it says "I'll plan once this is done".
+  // Recorded per trip because the wait is precisely when people navigate away.
+  useEffect(() => {
+    if (build.running && hasConversation) markPlanDeferred(trip.id);
+  }, [build.running, hasConversation, trip.id]);
+
+  // A question card is on screen waiting on this person. Derived from messages
+  // rather than the answer refs so the effect below actually re-runs when it
+  // changes — and because barging in here would strand the tool call, which is
+  // the exact bug §A1 exists to prevent.
+  const awaitingAnswer = messages.some(
+    (m) =>
+      m.role === "assistant" &&
+      m.parts.some(
+        (p) =>
+          p.type === "tool-ask_questions" &&
+          "state" in p &&
+          p.state !== "output-available" &&
+          p.state !== "output-error"
+      )
+  );
+  const lastRole = messages[messages.length - 1]?.role;
+
+  useEffect(() => {
+    if (pickedUp.current || build.running || busy) return;
+    // Nothing was promised, or it's already been kept.
+    if (!hasConversation || !planWasDeferred(trip.id)) return;
+    // A plan already exists — the map growing under it is a different problem
+    // (offer to redo it), and silently starting a new turn is not the answer.
+    if (plans.length > 0) return;
+    // A build that died with nothing to show has no good news to deliver.
+    if (trip.spots.length === 0) return;
+    // The agent has to have spoken last, with nothing outstanding. Anything
+    // else means the traveler is mid-exchange, and the pickup would be talking
+    // over someone who is already getting what they need.
+    if (lastRole !== "assistant" || awaitingAnswer) return;
+
+    // Cleared BEFORE the send, not after: a reload mid-stream would otherwise
+    // find the flag still set and pick up a second time.
+    pickedUp.current = true;
+    clearPlanDeferred(trip.id);
+    writtenThisTurn.current.clear();
+    sendMessage({
+      text: mapReadyText(build.videosRead, trip.spots.length),
+      metadata: { kind: MAP_READY_KIND },
+    });
+    track("planner_picked_up", {
+      tripId: trip.id,
+      spots: trip.spots.length,
+      videos: build.videosRead,
+    });
+  }, [
+    awaitingAnswer,
+    build.running,
+    build.videosRead,
+    busy,
+    hasConversation,
+    lastRole,
+    plans.length,
+    sendMessage,
+    trip.id,
+    trip.spots.length,
+  ]);
+
   // Instant intake answers → one compiled first message. The agent (persona)
   // then proposes the rough shape rather than a full pin plan.
   function submitIntake(answers: QuestionAnswer[]) {
@@ -1588,6 +1708,16 @@ export default function PlannerChat({
           ))}
 
         {messages.map((message) => (
+          isMapReadyTurn(message) ? (
+            // The pickup's trigger. It has to be a user-role turn for the model
+            // to answer it, but it is NOT something the traveler said, so it
+            // does not get a traveler's bubble — it renders as what it actually
+            // is, the build finishing.
+            <div key={message.id} className="pm-landed">
+              <span className="pm-landed-dot" aria-hidden="true" />
+              {mapReadyLabel(message)}
+            </div>
+          ) : (
           <div key={message.id} className={`pm pm-${message.role}`}>
             {message.parts.map((part, i) => {
               if (part.type === "text") {
@@ -1835,6 +1965,7 @@ export default function PlannerChat({
               return null;
             })}
           </div>
+          )
         ))}
 
         {busy && <ThinkingStatus />}

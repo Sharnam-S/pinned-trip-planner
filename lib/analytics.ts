@@ -50,6 +50,11 @@ export const PRODUCT_EVENTS = [
   "planner_tool_error",
   "question_card_shown",
   "question_card_answered",
+  // The agent handing the turn back to itself when the build lands, after it
+  // told the traveler it would wait. Paired with itinerary_committed it answers
+  // the only question that matters here: does the pickup actually end in a
+  // plan, or does it just add a message nobody asked for?
+  "planner_picked_up",
 ] as const;
 
 export type ProductEvent = (typeof PRODUCT_EVENTS)[number];
