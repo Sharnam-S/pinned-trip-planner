@@ -889,6 +889,53 @@ the request is windowed.
 - One trip = one conversation. No "new chat" — planning context is never
   intentionally discarded.
 
+### 5.9 One trip, one trace — and evals on real traffic (2026-08-04)
+
+**A 20-video build was landing as 22 traces.** Discovery took a `randomUUID`,
+each extraction took `video-<id>`, the briefing took `trip-<id>`. Every one was
+locally sensible and the whole was useless: nothing could answer "what did
+building this trip cost", and one traveler's build read as 22 unrelated
+conversations.
+
+The video id was chosen because *extractions are cached cross-trip* — but that
+conflated two different keys. The **cache** is keyed by video and stays that
+way. The **trace** describes this traveler's build, so it's keyed by trip
+(`buildTraceId`). On a cache hit no model call happens and no generation is
+emitted, which is the honest record — the trip that paid for the read is the
+one that shows it.
+
+The tier above was missing too: `$ai_session_id` was set by the chat route but
+not by any build call, so the two halves of one trip's history didn't line up.
+`tripProperties` now sets it everywhere. The hierarchy:
+
+```
+session = trip
+├── trace build-<tripId>   plan-search-queries, curate-videos, 20× extract-spots, briefing
+├── trace <sitting 1>      planner-chat turns
+└── trace <sitting 2>      …
+```
+
+**Lesson: a trace id is not a cache key.** They answer different questions —
+"can I reuse this work?" versus "what happened for this person?" — and the one
+that's convenient at the call site is usually the wrong one.
+
+**Evals now run on production traffic.** PostHog's native evaluations
+(`/docs/ai-evals`) attach to `$ai_generation` with no new instrumentation,
+because `$ai_output_choices` already carries `tool_calls` — the actual
+`update_itinerary` payload. Three are configured:
+
+| Evaluation | Type | Notes |
+|---|---|---|
+| Pace matches what the traveller asked for | Hog (free) | Stops/day vs the intake pace, same bands as the fixtures |
+| Plan was written from a finished map | Hog (free) | Guards §4.11 — fails if the input still says the map is building |
+| Plan serves what the traveller actually asked for | LLM judge | Relevance, not structure. Needs an Anthropic provider key in PostHog |
+
+Worth knowing for future evals: Hog gets `properties.*` and supports
+`splitByString`/`ilike`, and returning `null` marks a generation N/A. There is
+also a **trace target** that waits for a conversation to settle, so
+conversation-level checks are possible — bearing in mind a trace is one
+*sitting*, not the whole conversation.
+
 ### 5.5 Verify costs in PostHog, decide with data
 Every planner turn emits `$ai_generation` (span `planner-chat`, tagged
 tripId/tripName) with token + cache fields. Before optimizing anything

@@ -22,7 +22,7 @@ import {
   sortSections,
   topicMeta,
 } from "./briefing";
-import { observedMessage, TripTag, tripProperties } from "./llm";
+import { buildTraceId, observedMessage, TripTag, tripProperties } from "./llm";
 import { BriefingNote, BriefingSection, TripBriefing } from "./types";
 
 // Judgment-heavy and small, like discover.ts — the traveler reads this before
@@ -113,7 +113,8 @@ ${BRIEFING_TOPICS.map((t) => `- ${t.id} (${t.label}): ${t.remit}`).join("\n")}`,
     },
     {
       spanName: "briefing",
-      traceId: trip?.tripId ? `trip-${trip.tripId}` : `briefing-${destination}`,
+      // Same build trace as the extractions it was written from.
+      traceId: buildTraceId(trip) ?? `briefing-${destination}`,
       properties: { destination, notes: notes.length, ...tripProperties(trip) },
     }
   );

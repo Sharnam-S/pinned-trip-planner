@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { curateVideos, gatherCandidates, planSearchQueries } from "@/lib/discover";
-import { parseTripTag, withLlmUser } from "@/lib/llm";
+import { buildTraceId, parseTripTag, withLlmUser } from "@/lib/llm";
 import { getSessionUser } from "@/lib/auth";
 import { rateLimit, rateLimited } from "@/lib/ratelimit";
 import { TripQuery } from "@/lib/types";
@@ -50,10 +50,11 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // One PostHog trace groups both LLM calls of this discover request;
-  // withLlmUser attributes every capture inside to the signed-in account.
-  const traceId = randomUUID();
+  // Discovery is the first step of the trip's build, so it shares the build
+  // trace with every extraction that follows (see buildTraceId). randomUUID is
+  // the fallback for a request with no trip tag.
   const trip = parseTripTag(body);
+  const traceId = buildTraceId(trip) ?? randomUUID();
   return withLlmUser(user, async () => {
     const plan = await planSearchQueries(query, traceId, trip);
   const candidates = await gatherCandidates(plan.queries);
