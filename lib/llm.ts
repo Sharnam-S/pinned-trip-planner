@@ -94,10 +94,36 @@ export type LlmCallOptions = {
   properties?: Record<string, string | number | boolean | null>;
 };
 
-/** TripTag -> event properties, skipping absent fields. */
+/**
+ * One trace for the whole of a trip's map.
+ *
+ * Building a trip is ONE unit of work: resolve the destination, curate twenty
+ * videos, read each of them, write the briefing. It was landing in PostHog as
+ * twenty-two separate traces — one for discover, one per video, one for the
+ * briefing — because each call picked whatever id was locally convenient
+ * (`video-<id>`, a fresh randomUUID). That is a fine cache key and a useless
+ * trace: nothing in the UI could show "what did building this trip cost", and
+ * a single traveler's build looked like twenty-two unrelated conversations.
+ *
+ * The video id was chosen because extractions are cached cross-trip, but that
+ * conflated two different things. The CACHE is keyed by video, and stays that
+ * way. The TRACE describes this traveler's build, so it's keyed by trip. On a
+ * cache hit no model call happens and no generation is emitted at all, which
+ * is the honest record.
+ */
+export function buildTraceId(trip?: TripTag): string | null {
+  return trip?.tripId ? `build-${trip.tripId}` : null;
+}
+
+/** TripTag -> event properties, skipping absent fields.
+ *
+ *  `$ai_session_id` is the tier above the trace: one trip = one session,
+ *  holding the build trace and every later planner-chat sitting. The chat
+ *  route already keyed sessions this way; the build half never did, so the two
+ *  halves of the same trip's history didn't line up. */
 export function tripProperties(trip?: TripTag): Record<string, string> {
   return {
-    ...(trip?.tripId ? { tripId: trip.tripId } : {}),
+    ...(trip?.tripId ? { tripId: trip.tripId, $ai_session_id: trip.tripId } : {}),
     ...(trip?.tripName ? { tripName: trip.tripName } : {}),
   };
 }

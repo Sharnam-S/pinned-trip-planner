@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { VideoData, transcriptToText } from "./youtube";
-import { observedMessage, TripTag, tripProperties } from "./llm";
+import { buildTraceId, observedMessage, TripTag, tripProperties } from "./llm";
 import {
   BRIEFING_TOPIC_IDS,
   BRIEFING_TOPICS,
@@ -299,9 +299,11 @@ ${NOTE_RULES}`,
     },
   }, {
     spanName: "extract-spots",
-    // One extraction per video and results are cached cross-trip, so the
-    // video id is the natural trace id.
-    traceId: `video-${video.id}`,
+    // Every video read for one trip belongs to that trip's build trace, not to
+    // a trace of its own — see buildTraceId. The video id remains the CACHE
+    // key; it just stopped being the trace id. Falls back to the video when
+    // there's no trip (scripts, one-off reprocessing).
+    traceId: buildTraceId(trip) ?? `video-${video.id}`,
     stream: true,
     // Extractions are cached cross-trip, so the trip tag names the trip that
     // paid for this call; later trips reuse the cache at zero LLM cost.
@@ -353,7 +355,7 @@ ${NOTE_RULES}`,
     },
     {
       spanName: "extract-notes",
-      traceId: `video-${video.id}`,
+      traceId: buildTraceId(trip) ?? `video-${video.id}`,
       stream: true,
       properties: {
         videoId: video.id,
