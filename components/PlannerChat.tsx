@@ -531,6 +531,23 @@ const PINS_RE = /^\s*\[pins?:\s*([^\]]+)\]\s*$/i;
 // The same line half-streamed. Without this the raw directive flashes as text
 // for the frames between "[pins: 6543…" and its closing bracket.
 const PINS_PARTIAL_RE = /^\s*\[pins?:[^\]]*$/i;
+// One proposed base: `[stay: Canggu — 3 nights — near the beach clubs]`.
+// Same bracket convention as the pins line, and the same reason for it: the
+// agent needs a way to say something structured inside prose without the
+// traveler ever seeing the syntax. Consecutive lines collect into one card.
+const STAY_RE = /^\s*\[stays?:\s*([^\]]+)\]\s*$/i;
+const STAY_PARTIAL_RE = /^\s*\[stays?:[^\]]*$/i;
+
+/** "Canggu — 3 nights — near the beach clubs" → its three parts. Em dash, en
+ *  dash or hyphen, because the model uses all three. */
+function parseStayLine(body: string): { area: string; nights: string; why: string } {
+  const parts = body.split(/\s+[—–-]\s+/);
+  return {
+    area: (parts[0] ?? "").trim(),
+    nights: (parts[1] ?? "").trim(),
+    why: parts.slice(2).join(" — ").trim(),
+  };
+}
 
 /** Spots for a pins directive, in the order named. Ids first (that's what the
  *  context hands the model), names as a forgiving fallback; anything that
@@ -546,6 +563,34 @@ function resolvePins(list: string, spots: Spot[]): Spot[] {
     if (spot && !out.includes(spot)) out.push(spot);
   }
   return out;
+}
+
+/** The proposed bases, as a card inside the summary document.
+ *
+ *  This lands BEFORE any pin does, which is the point: how many bases and
+ *  where is a decision the traveler has to make before the days mean anything,
+ *  and it is far easier to argue with here than after thirty pins have been
+ *  placed. Once they accept, the same information is written onto the plan and
+ *  rendered in the itinerary rail. */
+function StayStrip({ bases }: { bases: { area: string; nights: string; why: string }[] }) {
+  if (bases.length === 0) return null;
+  return (
+    <div className="stay-strip">
+      <div className="stay-strip-head">Where to stay</div>
+      {bases.map((b, i) => (
+        <div className="stay-row" key={`${b.area}-${i}`}>
+          <span className="stay-index">{i + 1}</span>
+          <div className="stay-body">
+            <div className="stay-area">
+              {b.area}
+              {b.nights ? <span className="stay-nights">{b.nights}</span> : null}
+            </div>
+            {b.why ? <div className="stay-why">{b.why}</div> : null}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 /** A day's photo strip: the first three of the day's spots, each a way into the
@@ -613,7 +658,14 @@ function FormattedText({
   const blocks: ReactNode[] = [];
   let para: string[] = [];
   let list: { ordered: boolean; items: string[] } | null = null;
+  // Consecutive [stay: …] lines are one card, not one card each.
+  let stays: { area: string; nights: string; why: string }[] = [];
 
+  const flushStays = () => {
+    if (!stays.length) return;
+    blocks.push(<StayStrip key={blocks.length} bases={stays} />);
+    stays = [];
+  };
   const flushPara = () => {
     if (!para.length) return;
     const lines = para;
@@ -669,11 +721,20 @@ function FormattedText({
       blocks.push(<hr key={blocks.length} className="pm-rule" />);
       continue;
     }
-    if (PINS_PARTIAL_RE.test(line)) {
+    if (PINS_PARTIAL_RE.test(line) || STAY_PARTIAL_RE.test(line)) {
       flushPara();
       flushList();
       continue;
     }
+    const stay = line.match(STAY_RE);
+    if (stay) {
+      flushPara();
+      flushList();
+      stays.push(parseStayLine(stay[1]));
+      continue;
+    }
+    // A run of stay lines has ended — emit the card before whatever follows.
+    flushStays();
     const pins = line.match(PINS_RE);
     if (pins) {
       flushPara();
@@ -705,6 +766,7 @@ function FormattedText({
   }
   flushPara();
   flushList();
+  flushStays();
 
   return <>{blocks}</>;
 }
@@ -1074,6 +1136,17 @@ export default function PlannerChat({
     return [
       { id: "who", prompt: "Who's going?", options: ["Solo", "Couple", "Family", "Friends"], allowOther: true },
       { id: "pace", prompt: "How packed should it be?", options: ["Relaxed", "Balanced", "Packed"], allowOther: true },
+      // Asked HERE rather than left to the agent, because it is structural:
+      // where you sleep decides which spots are even reachable, and the fast
+      // path ("just plan it") skipped straight past it. `allowOther` is the
+      // important part — it lets someone type "Uluwatu 2 nights, Canggu 3,
+      // Ubud 4" and have the whole basing plan land in one answer.
+      {
+        id: "stay",
+        prompt: "Sorted where you're staying?",
+        options: ["Not yet — suggest areas", "Booked already", "With friends or family"],
+        allowOther: true,
+      },
       ...(iconic.length
         ? [{ id: "mustsee", prompt: "Anything you must include?", options: iconic, multiSelect: true, allowOther: true }]
         : []),
@@ -1580,12 +1653,23 @@ export default function PlannerChat({
     const stated = answers.filter(
       (a) => a.answer && a.answer !== "no preference"
     );
+    // "Plan my days" reads to the agent as "just plan it", which is the
+    // documented skip-the-shape fast path. That's right when they've sorted
+    // where they're sleeping and wrong when they haven't: days built on a base
+    // they never chose aren't days they can agree to. So when the stay answer
+    // is unresolved, ask for the basing FIRST, in their own words.
+    const unsorted = answers.some(
+      (a) => a.id === "stay" && /^not yet/i.test(a.answer.trim())
+    );
+    const ask = unsorted
+      ? "I haven't booked anywhere yet — tell me which areas to base in and for how many nights, then plan the days around that."
+      : "Plan my days.";
     send(
       stated.length
         ? `Here's my trip:\n${stated
             .map((a) => `- ${a.prompt} ${a.answer}`)
-            .join("\n")}\n\nPlan my days.`
-        : "Plan my days for me."
+            .join("\n")}\n\n${ask}`
+        : ask
     );
   }
 

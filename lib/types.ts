@@ -143,6 +143,45 @@ export interface ItineraryStay {
   note?: string;
 }
 
+/**
+ * One base — somewhere you sleep for a stretch of the trip, and the days it
+ * covers.
+ *
+ * `stay` above could only ever hold ONE place for a whole trip, which made the
+ * most consequential question in multi-area travel unrepresentable: "Uluwatu 2
+ * nights, Canggu 3, Ubud 4" had nowhere to live. And that decision drives
+ * everything downstream — based in Ubud, an Uluwatu day is two hours each way,
+ * so the basing choice silently decides which spots are even reachable.
+ *
+ * The real question is rarely "which hotel" but "how many bases": three moves
+ * in ten days buys proximity and costs two half-days to packing and transfers.
+ * That trade is what the agent is for.
+ */
+export interface ItineraryBase {
+  /** The area as a traveler would say it — "Canggu", "Ubud", "the old town". */
+  area: string;
+  nights: number;
+  /** 0-based day range this base covers, so the rail can say "Days 1-3". */
+  fromDay?: number;
+  toDay?: number;
+  lat?: number;
+  lng?: number;
+  /** Why base here: what it puts within reach, what it saves. */
+  why: string;
+  /** True when the traveler told us they've already booked this one. Changes
+   *  the section from a recommendation into a record of their plan. */
+  booked?: boolean;
+  /** Set ONLY when a booking they already hold looks genuinely costly — "two
+   *  nights here, but one spot on your map and the rest 90 minutes north".
+   *  Never advice on a booking that's merely different from our suggestion:
+   *  they've paid, and second-guessing that is noise. */
+  warning?: string;
+  /** Creator-recommended places to sleep in this area — Spot ids of category
+   *  "stay". The map already holds them; this is what makes the section a
+   *  recommendation with receipts rather than a guess. */
+  stayIds?: string[];
+}
+
 export type ItineraryPace = "packed" | "balanced" | "relaxed";
 
 /** The planner agent's artifact: a day-by-day plan over the trip's spots.
@@ -161,6 +200,9 @@ export interface Itinerary {
   title?: string;
   days: ItineraryDay[];
   stay?: ItineraryStay;
+  /** Where to sleep, in trip order. Absent on plans written before bases
+   *  existed, and on trips where the traveler never said. */
+  bases?: ItineraryBase[];
   pace?: ItineraryPace;
   budget?: string;
   updatedAt: string;
