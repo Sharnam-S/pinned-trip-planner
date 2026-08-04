@@ -741,6 +741,70 @@ come from transcripts and `scripts/backfill-briefings.mts` needs
 request. Run it wherever the proxy is configured. Until then the feature is
 invisible on the sample maps, which is what most first-time visitors open.
 
+### 4.11 The agent didn't know the map was still loading (2026-08-04)
+
+**Reported by a traveler:** *"as soon as the video starts getting scraped, the
+points start appearing on the map and I'm on the map screen… I would end up
+answering the messages or initiating a message. Now the agent does not have all
+the context because not all the pins are marked. It plans a very subpar
+itinerary."*
+
+**This is a side effect of B4.** The full-page build screen used to hide the
+planner until the build finished. Since B4 (reveal the map as it fills) it
+lifts the moment the *first* spot lands — ~40 seconds into a four-minute build.
+So the traveler gets a complete-looking planner with 8 of an eventual 71 pins.
+
+**The part that made it dangerous: nothing hedged.** `buildPlannerContext`
+handed over `spots` with no indication it was partial, so the agent had no way
+to know. It planned a confident week in Greece out of Mykonos, and a
+confidently wrong plan is indistinguishable from a good one — worse than no
+plan, because the traveler has no reason to doubt it.
+
+There was a second, quieter casualty: `intakeQuestions` builds "Anything you
+must include?" from `pickIconicSpots(trip)`. Answer it three videos in and
+three Mykonos bars become hard must-includes for the whole trip — a constraint
+that outlives the build and shapes every later plan. (Not fixed here; it's part
+of the deferred UX pass.)
+
+**Fix, in two layers, because one wasn't enough.**
+
+1. *Tell it.* `PlannerContext.build = { videosRead, videosTotal, running }`, and
+   a `buildBlock` in the volatile context — **volatile, not the trip header**,
+   because it changes on every landed video and the header carries the spot
+   digest, the most expensive thing in the prompt to invalidate.
+2. *Enforce it.* `applyPlanUpdate` refuses while `running` and hands back a
+   `rejected` string. §4.1 again — prose is steering, and §4.8 is what happens
+   when a behavioural rule has no structural backstop. The tool result is the
+   channel the model demonstrably reads and corrects itself on; it's what made
+   the patch-mode nudge work.
+
+`COMMIT_NUDGE` is suppressed while the build runs — the two instructions are in
+direct contradiction and the nudge is the more forceful.
+
+**Gated on `running`, not on "every video read"**, and that distinction is the
+whole of `buildProgress`. A build that gave up rate-limited leaves videos
+queued forever; blocking on those would strand the traveler on a usable map
+they're not allowed to plan. The coverage warning asks the *other* question
+(`settled`) because claiming regions are missing is only safe once nothing more
+is coming at all.
+
+**Verified live, both directions.** Mid-build (3 of 20 videos, 8 spots, build
+frozen), asked to "just plan it": no plan written, and the agent said —
+
+> "The map's still filling in — only 3 of 20 videos read so far, so whole areas
+> (surf breaks, waterfalls, viewpoints, etc.) probably haven't landed yet. I
+> don't want to sketch a plan off a fraction of the picture, but I can use this
+> time to nail down the shape of your trip so I'm ready the moment it's
+> complete."
+
+— then went into the intake unprompted, which is exactly the behaviour the
+deferred UX layer was going to design. Control on a complete build:
+`tbilisi-weekend` fixture, 15/15 assertions.
+
+**Lesson: when you make a slow thing visible earlier, check what else that
+unblocks.** B4 was a good fix for a ten-minute blank stare. It also handed the
+traveler a planner that had no idea it was looking at a sixth of the map.
+
 ## 5. Learnings — infrastructure & cost
 
 ### 5.1 The 60s Vercel timeout (the production hang)

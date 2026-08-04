@@ -177,6 +177,38 @@ export function applyVideoResult(trip: Trip, result: VideoResult): number {
   return added;
 }
 
+/** How far through its videos a trip is.
+ *
+ *  `running` and `settled` are deliberately NOT complements. "Is the build
+ *  still reading?" and "is this map final?" are different questions with
+ *  different costs of being wrong:
+ *
+ *  - `running` gates PLANNING. A build that has stopped — even one that gave up
+ *    rate-limited with videos still queued — leaves a map that is as good as it
+ *    will get without the traveler doing something, and they must be able to
+ *    plan on it. Blocking on "any video unread" would strand them for good.
+ *  - `settled` gates the COVERAGE WARNING, which claims the map is missing
+ *    regions. That claim is only safe once nothing more is coming at all. */
+export function buildProgress(trip: Trip): {
+  videosRead: number;
+  videosTotal: number;
+  running: boolean;
+  settled: boolean;
+} {
+  const videosTotal = trip.videos.length;
+  const videosRead = trip.videos.filter((v) => v.status === "done").length;
+  const running = trip.status === "processing";
+  return {
+    videosRead,
+    videosTotal,
+    running,
+    settled:
+      !running &&
+      videosTotal > 0 &&
+      trip.videos.every((v) => v.status === "done" || v.status === "error"),
+  };
+}
+
 /** Outside the destination's own extent? Unknown bounds means "keep it" — a
  *  geocoder miss must never quietly hide a traveler's spots. */
 export function isOutOfBounds(trip: Trip, spot: { lat: number; lng: number }): boolean {

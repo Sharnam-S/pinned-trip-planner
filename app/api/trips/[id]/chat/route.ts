@@ -51,6 +51,8 @@ NEVER invent facts about the user:
 - Do not set the stay field unless the user told you where they're staying OR asked you to recommend — and a recommendation must come with rationale (which spots it's near, transit, vibe) and be clearly labeled as your suggestion they can change.
 - State assumptions out loud whenever you plan around one.
 
+THE MAP MAY STILL BE BUILDING WHEN THE TRAVELER STARTS TALKING. The map reveals itself as it fills, so they can be chatting to you forty seconds into a four-minute build, looking at a page that gives no hint it is incomplete. When the trip state says the map is still being built, the spot list you can see is a FRACTION of the trip — often one region of a whole country. Do not plan against it; the intake is what this time is for. Trip state tells you when this is the case, and update_itinerary will refuse until it clears.
+
 PLAN IN TWO STEPS — sketch the shape first, commit the pins second:
 - STEP 1, THE SHAPE (prose, NO tool yet): After intake, do NOT jump to the full pin-by-pin plan. Write the shape as a short SUMMARY DOCUMENT — it's the first thing the traveler reads, so it gets structure (exact format below): a title line, how the days split, then one section per day covering which area or base anchors it, the day's vibe/energy, and the routing logic (why this order — geography, pace, day-of-week). No times, no stop-by-stop lists, and do NOT call update_itinerary. Then stop and let the user confirm or adjust.
 - THE SUMMARY DOCUMENT FORMAT, exactly:
@@ -149,16 +151,33 @@ function plansBlock(ctx: PlannerContext): string {
  *  exists. */
 const COMMIT_NUDGE = `COMMIT NOW: you have already written the summary document twice — the one revision the shape-first step allows — and there is still NO itinerary on the traveler's map. Call update_itinerary in THIS turn. Use your stated assumptions for anything still unknown, put those assumptions in the day rationales, and ask any remaining question AFTER the tool call. Do not describe the plan in prose a third time.`;
 
+/** Goes in the VOLATILE block, not the cached trip header: it changes every
+ *  time a video lands, and the header carries the spot digest, which is the
+ *  most expensive thing in the prompt to invalidate. */
+function buildBlock(ctx: PlannerContext): string | null {
+  const b = ctx.build;
+  if (!b?.running) return null;
+  return `THE MAP IS STILL BEING BUILT — ${b.videosRead} of ${b.videosTotal} videos read so far, and the spot list above is INCOMPLETE. More places, and probably whole regions, are still arriving.
+- DO NOT call update_itinerary yet. It will be refused, and the refusal costs the traveler a turn. A plan drawn from a fraction of the map looks exactly as confident as a good one, which is what makes it worse than no plan.
+- DO use this time. It is the best moment in the whole conversation to ask what you need anyway: who's going, how packed they want the days, what they must include, budget, and dates if they aren't set. None of that needs the map.
+- Say where things stand, once, in a clause — "still reading the last few videos" — not as an apology and not in every message.
+- The moment the map is complete this line disappears. That is your cue to say what you found and lay out the shape.`;
+}
+
 function volatileContext(ctx: PlannerContext, commitNow = false): string {
   const parts = [
+    buildBlock(ctx),
     plansBlock(ctx),
     ctx.mustSeeSpotIds?.length
       ? `USER-STARRED MUST-SEES (non-negotiable, include every one): ${ctx.mustSeeSpotIds.join(", ")}`
       : "Must-sees: none starred yet.",
     `Today's date: ${new Date().toISOString().slice(0, 10)}`,
-    ...(commitNow ? [COMMIT_NUDGE] : []),
+    // Never nudge toward committing while the map is still filling — the two
+    // rules would be in direct contradiction, and COMMIT_NUDGE is the more
+    // forceful of them.
+    ...(commitNow && !ctx.build?.running ? [COMMIT_NUDGE] : []),
   ];
-  return parts.join("\n");
+  return parts.filter((p): p is string => Boolean(p)).join("\n");
 }
 
 function tripHeader(ctx: PlannerContext): string {

@@ -7,6 +7,7 @@
 import { z } from "zod";
 import { Itinerary, ItinerarySlot, Spot, Trip } from "./types";
 import { peekTrip, saveTrip } from "./tripStore";
+import { buildProgress } from "./merge";
 
 /** The model reaches for time-of-day words beyond the canonical three
  *  ("midday", "night", "lunch"). Map the common synonyms onto the real slots
@@ -425,6 +426,30 @@ export function applyPlanUpdate(
   mode: "replace" | "patch";
 } {
   const live = isLocal ? (peekTrip(trip.id) ?? trip) : trip;
+
+  // THE MAP ISN'T FINISHED. Refuse, and say so in the tool result.
+  //
+  // A prompt rule was not enough here, and this repo already knows why (§4.1:
+  // schemas are guarantees, prose is steering; §4.8 is the story of a soft rule
+  // running away). The tool result is the channel the model demonstrably reads
+  // and corrects itself on — it's what made the patch-mode nudge work. So the
+  // gate lives here, where "don't plan yet" is enforced rather than requested.
+  //
+  // Gated on `running`, not on "every video read": a build that gave up
+  // rate-limited leaves a usable map with videos still queued, and the traveler
+  // must be able to plan on it. See buildProgress.
+  const progress = buildProgress(live);
+  if (progress.running) {
+    return {
+      plans: loadPlans(live, isLocal),
+      itinerary: { days: [], updatedAt: new Date().toISOString() },
+      created: false,
+      warnings: [],
+      rejected: `The map is still being built — ${progress.videosRead} of ${progress.videosTotal} videos read, ${live.spots.length} spots so far. Planning now would commit a plan drawn from a fraction of the places this trip is about, and the traveler would never know. Do NOT call update_itinerary again yet. Instead: keep talking to them — ask what you still need to know about who's going, the pace they want, and anything they must include — and tell them plainly that you're still reading and will lay out the days as soon as the map is complete.`,
+      mode: input.mode === "patch" ? "patch" : "replace",
+    };
+  }
+
   const stored = loadPlans(live, isLocal);
   const id = slugPlanId(input.planId);
   const existing = stored.find((p) => p.id === id);
@@ -792,6 +817,15 @@ export interface PlannerContext {
   activePlanId?: string;
   /** Spot ids the user starred as non-negotiable must-sees. */
   mustSeeSpotIds?: string[];
+  /** How much of the map exists yet.
+   *
+   *  Without this the agent had no way to know that `spots` was 8 of an
+   *  eventual 71 — so a traveler who started talking the moment the first pins
+   *  landed (which, since the map reveals as it fills, is ~40 seconds into a
+   *  four-minute build) got a confident week in Greece planned entirely out of
+   *  Mykonos. Nothing in the context said otherwise, so nothing in the answer
+   *  hedged. */
+  build?: { videosRead: number; videosTotal: number; running: boolean };
 }
 
 export function buildPlannerContext(
@@ -808,6 +842,10 @@ export function buildPlannerContext(
     interests: trip.query?.interests,
     party: trip.query?.party,
     mustSeeSpotIds: mustSeeSpotIds.length > 0 ? mustSeeSpotIds : undefined,
+    build: (() => {
+      const { videosRead, videosTotal, running } = buildProgress(trip);
+      return { videosRead, videosTotal, running };
+    })(),
     // Out-of-bounds spots are held back from the agent as well as the map: a
     // planner that can see Svaneti on a Tbilisi weekend will eventually put it
     // in a day, and the traveler finds out it's nine hours away.
