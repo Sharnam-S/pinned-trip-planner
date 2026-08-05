@@ -10,8 +10,9 @@ import { BriefingNote, BriefingTopic, Trip, TripBriefing } from "./types";
 
 /** Bump when the topic set or the synthesis contract changes, so stored
  *  briefings are rewritten instead of rendering against a stale shape.
- *  1 (2026-08-03): first version. */
-export const BRIEFING_VERSION = 1;
+ *  1 (2026-08-03): first version.
+ *  2 (2026-08-05): sections are bullets (`points`), not a prose `summary`. */
+export const BRIEFING_VERSION = 2;
 
 /** Render order, top to bottom. Orientation before logistics: a traveler wants
  *  to know what the place IS before they want to know how to pay for it. */

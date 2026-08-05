@@ -9,10 +9,29 @@
  * straight through and nothing is sent.
  */
 import Anthropic from "@anthropic-ai/sdk";
+import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { AsyncLocalStorage } from "async_hooks";
 import { PostHog } from "posthog-node";
+import type { z } from "zod";
 
 export const client = new Anthropic();
+
+/**
+ * The same JSON Schema the model is generated against, minus the SDK's `parse`.
+ *
+ * Handing the SDK a zod parser makes `maybeParseMessage` validate the whole
+ * response all-or-nothing and THROW — which once cost an entire transcript,
+ * twenty good spots and a bench slot because spot #9 came back with a category
+ * outside the enum. The schema still steers generation; callers do the checking
+ * themselves, per item. Any call whose response is a LIST of independently
+ * useful things should use this rather than `zodOutputFormat` directly.
+ */
+export function schemaOnly<T extends z.ZodType>(schema: T) {
+  const format = zodOutputFormat(schema);
+  // Dropping `parse` is what disarms the SDK: `maybeParseMessage` only
+  // validates when the format carries one.
+  return { type: format.type, schema: format.schema };
+}
 
 const posthog = process.env.POSTHOG_API_KEY
   ? new PostHog(process.env.POSTHOG_API_KEY, {

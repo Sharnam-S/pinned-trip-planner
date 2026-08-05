@@ -1,7 +1,12 @@
 import { z } from "zod";
-import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { VideoData, transcriptToText } from "./youtube";
-import { buildTraceId, observedMessage, TripTag, tripProperties } from "./llm";
+import {
+  buildTraceId,
+  observedMessage,
+  schemaOnly,
+  TripTag,
+  tripProperties,
+} from "./llm";
 import {
   BRIEFING_TOPIC_IDS,
   BRIEFING_TOPICS,
@@ -111,19 +116,6 @@ export class ExtractionError extends Error {
     super(message);
     this.name = "ExtractionError";
   }
-}
-
-/** The same JSON Schema the model is generated against, minus the SDK's
- *  `parse`. Handing the SDK a zod parser makes it validate the whole response
- *  all-or-nothing and THROW — which cost us an entire transcript, twenty good
- *  spots and a bench slot because spot #9 came back with a category outside
- *  the enum. The schema still steers generation; we just do the checking
- *  ourselves, per item, below. */
-function schemaOnly<T extends z.ZodType>(schema: T) {
-  const format = zodOutputFormat(schema);
-  // Dropping `parse` is what disarms the SDK: `maybeParseMessage` only
-  // validates when the format carries one.
-  return { type: format.type, schema: format.schema };
 }
 
 const CATEGORIES = new Set<string>(ExtractedSpotSchema.shape.category.options);

@@ -21,7 +21,11 @@ export default function TripBriefing({ trip }: { trip: Trip }) {
   const briefing = usableBriefing(trip);
   if (!briefing) return null;
 
-  const sections = sortSections(briefing.sections);
+  // `points` is required from BRIEFING_VERSION 2 on, and `usableBriefing`
+  // rejects older versions — the guard is for a hand-edited or half-written
+  // store, where an empty section would render as a heading over nothing.
+  const sections = sortSections(briefing.sections).filter((s) => s.points?.length);
+  if (sections.length === 0) return null;
   // Resolve sources against the trip's own video list rather than storing the
   // channel name on every note — same reason spot mentions don't.
   const videoById = new Map(trip.videos.map((v) => [v.id, v]));
@@ -79,7 +83,11 @@ export default function TripBriefing({ trip }: { trip: Trip }) {
                 </span>
                 <h3 className="briefing-label">{meta.label}</h3>
               </div>
-              <p className="briefing-summary">{section.summary}</p>
+              <ul className="briefing-points">
+                {section.points.map((point, i) => (
+                  <li key={i}>{point}</li>
+                ))}
+              </ul>
               {sources.length > 0 && (
                 <div className="briefing-sources">
                   {sources.map((s) => (

@@ -2445,11 +2445,38 @@ button {
   color: var(--ink);
 }
 
-.briefing-summary {
-  margin: 6px 0 0;
+/* Bullets, not paragraphs. This is read once, standing somewhere, before any
+   planning starts — a paragraph makes the traveler read all of it to find the
+   one line that changes their trip. Markers are drawn rather than list-style so
+   the hanging indent and the gap between points are both ours. */
+.briefing-points {
+  margin: 7px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.briefing-points li {
+  position: relative;
+  padding-left: 15px;
   font-size: 13px;
-  line-height: 1.62;
+  line-height: 1.55;
   color: #3d5266;
+}
+
+.briefing-points li::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  /* (line-height × font-size − dot) / 2, so the dot sits on the first line's
+     optical middle instead of its baseline. */
+  top: 8px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(27, 43, 58, 0.3);
 }
 
 /* The receipts. Attribution is the whole difference between this and asking a
