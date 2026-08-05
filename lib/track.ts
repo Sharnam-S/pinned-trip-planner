@@ -28,6 +28,12 @@ export function setClientDistinctId(id: string | null | undefined): void {
   clientDistinctId = id ?? null;
 }
 
+/** For the one caller that posts somewhere other than `/api/events` and still
+ *  wants an anonymous sender to land on the same person (`/api/feedback`). */
+export function getClientDistinctId(): string | null {
+  return clientDistinctId;
+}
+
 export function track(event: ProductEvent, props: Props = {}): void {
   if (typeof window === "undefined") return;
   const properties: Record<string, string | number | boolean | null> = {};

@@ -1135,6 +1135,58 @@ guarded.** Guards written against React state answer "has the other one already
 happened", and in the same tick the answer is always no. Ask what the other
 trigger is *about to do*, off the condition it reads.
 
+### 4.15 The feedback box is a prompt box (2026-08-05)
+
+**Asked for:** a button next to Share where someone can either send feedback or
+write *"a long message the user can type out or say out loud using any Wispr
+Flow-type tools… then used for tools like Conductor or Claude to build the
+actual changes."*
+
+**One box, two framings, and that ordering is the design.**
+
+- Telling us something is broken and telling us what to build instead are the
+  same act from the traveler's side. The mode switch changes the copy and the
+  stored `kind`; it does **not** swap the textarea, so someone who starts
+  writing feedback and realises it's really a feature request keeps every word.
+- The prompt half is written to be handed to a coding agent close to verbatim.
+  That makes **length a feature**, not a smell — hence a real resizable
+  textarea with room in it, and an 8000-char server cap rather than a
+  tweet-sized one.
+
+**The textarea is uncontrolled, and that's the whole point.**
+
+- Dictation tools write into an element by setting `.value` directly. A React
+  *controlled* textarea can miss that (no synthetic change event) and will
+  happily overwrite it on the next render — so the failure mode is someone
+  speaking three paragraphs and watching them vanish when they switch tabs.
+- So: `defaultValue`, a ref, and read the DOM at submit. `onInput` is used only
+  to decide whether the button is live. **Verified by setting `.value` with no
+  event dispatched, switching tabs, and checking the text survived** — which it
+  does not if the box is controlled.
+
+**Two sinks, and a submission succeeds if either lands.**
+
+- Postgres (`feedback` table) is the durable, readable record. **Not** a foreign
+  key to `trips`: most feedback arrives from a *sample* trip nobody owns, and
+  deleting a trip should not delete the note about it.
+- PostHog carries the full body via `captureFeedback`, which deliberately
+  bypasses `sanitizeProps` (500-char cap — it would cut exactly the interesting
+  half). It's also the only sink on a deploy with no `DATABASE_URL`.
+- `feedback_submitted` is captured **server-side only**. It was briefly in
+  `PRODUCT_EVENTS` *and* fired from the client, which would have double-counted
+  every submission — an allowlisted event and a direct capture under one name
+  are two events, not one.
+
+**Placement:** it shows even when Share doesn't. Share needs a finished trip you
+*own*; the people most worth hearing from are often on a sample map they can't
+share. Also fixed on the way: `.share-trip` still carried `margin-left: auto`
+from when it was alone in its row, which stranded the two pills ~450px apart in
+a container that already right-aligns.
+
+**`scripts/read-feedback.mts` exists because there is no admin UI.** A prompt
+nobody reads is a prompt nobody runs; `--prompts` prints them one per block,
+ready to paste into Conductor.
+
 ## 5. Learnings — infrastructure & cost
 
 ### 5.1 The 60s Vercel timeout (the production hang)
@@ -1570,7 +1622,9 @@ Two harness traps this cost time on, both worth remembering:
 | `lib/briefing.ts` | Shared briefing half (§4.10): the closed topic table with each topic's remit, note dedupe/caps, staleness. Dependency-free — client and server both import it |
 | `lib/briefingSynth.ts` + `app/api/briefing` | The one model call that turns a trip's raw notes into "Before you go" sections — 2-5 bullets per topic since `BRIEFING_VERSION` 2 (§4.10). Server-only (Anthropic SDK); parses section-by-section via `schemaOnly` |
 | `app/api/notes` | Cache-only note recovery for trips built before briefings existed. Never falls through to an extraction (§4.10 postscript) |
-| `components/TripBriefing.tsx` | The collapsed section above the pins; per-topic prose with channel chips linking into the video at the second it was said |
+| `components/TripBriefing.tsx` | The collapsed section above the pins; per-topic bullets with channel chips linking into the video at the second it was said |
+| `components/TripFeedback.tsx` + `app/api/feedback` | "Feedback" / "Build this", the pill beside Share (§4.15). One uncontrolled textarea so dictated text can't be clobbered; writes to the `feedback` table and to PostHog with the full body |
+| `scripts/read-feedback.mts` | Reads submissions back — `--prompts` prints the build-this ones ready to paste into a coding agent (§4.15) |
 | `scripts/recategorize-samples.mts` | One-off relabelling pass over the committed sample trips against the tightened category rules (§4.9) |
 | `scripts/backfill-briefings.mts` | Gives the committed samples a briefing by re-reading their transcripts for notes only — never touches their spots (§4.10). Needs `YOUTUBE_PROXY_URL` |
 | `scripts/fixtures/` | The planner's regression net — scripted journeys on the sample maps asserting schema completeness, meal logic, weekday accuracy, pace, turn budget, one-write-per-turn, and no leaked internals (§8) |

@@ -1417,6 +1417,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 8px;
 }
 
 .facet-pill {
@@ -1779,7 +1780,8 @@ button {
   font-weight: var(--fw-medium);
 }
 
-/* Share sits in the header's right slot — same pill geometry as the facets. */
+/* Share and Feedback sit in the header's right slot — same pill geometry as
+   the facets. */
 .trip-header .share-btn {
   height: 34px;
   padding: 0 14px;
@@ -6303,6 +6305,199 @@ button {
   background: #245cd6;
 }
 
+/* ---------- Feedback / "Build this", the pill left of Share ----------------
+   Same geometry as .share-btn (it reuses the class) so the two read as one
+   pair of controls rather than a button and a bolt-on. The panel is a popover
+   like .share-pop, not a modal: it's anchored to the thing it's about, and a
+   modal would hide the trip the feedback is FOR. */
+.trip-feedback {
+  position: relative;
+  align-self: center;
+}
+
+/* .share-trip carries `margin-left: auto` from when it was the only thing in
+   its row. Both containers right-align their own children now, so left alone
+   that margin shoves Share to the far edge and strands Feedback ~450px away
+   — two controls that are meant to read as a pair. */
+.trip-header-actions .share-trip,
+.sheet-share .share-trip {
+  margin-left: 0;
+}
+
+.fb-btn {
+  color: var(--text-soft, #64798d);
+}
+.fb-btn.on {
+  background: #f1f3f6;
+  color: var(--ink, #17232e);
+}
+
+.fb-pop {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  width: 380px;
+  max-width: calc(100vw - 24px);
+  background: white;
+  border: 1px solid rgba(20, 50, 70, 0.1);
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(20, 50, 70, 0.06), 0 12px 32px rgba(20, 50, 70, 0.16);
+  padding: 14px;
+  animation: confirm-in 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fb-pop {
+    animation: none;
+  }
+}
+
+/* Two framings of one box. A segmented control rather than two buttons,
+   because picking a mode is not an action — nothing is sent by tapping it. */
+.fb-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  margin-bottom: 12px;
+  background: #f1f3f6;
+  border-radius: 10px;
+}
+
+.fb-tab {
+  flex: 1;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12.5px;
+  font-weight: var(--fw-medium, 500);
+  color: var(--text-soft, #64798d);
+  transition: background 0.12s, color 0.12s;
+}
+.fb-tab.on {
+  background: white;
+  color: var(--ink, #17232e);
+  box-shadow: 0 1px 2px rgba(20, 50, 70, 0.08);
+}
+
+.fb-pop-title {
+  font-size: 14px;
+  font-weight: 650;
+  color: #17232e;
+}
+
+.fb-pop-sub {
+  margin: 4px 0 12px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #64798d;
+}
+
+.fb-label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: var(--fs-label, 11.5px);
+  font-weight: var(--fw-medium, 500);
+  color: #64798d;
+}
+
+/* Resizable and roomy: a prompt written to be handed to a coding agent is
+   long by design, and a three-line box tells people to be brief. */
+.fb-box {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #e2e9ef;
+  background: #f7fafc;
+  border-radius: 10px;
+  padding: 9px 11px;
+  font: inherit;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #17232e;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.12s, background 0.12s;
+}
+.fb-box:focus {
+  border-color: var(--blue-primary, #2f6bea);
+  background: white;
+}
+
+.fb-who {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #e2e9ef;
+  background: #f7fafc;
+  border-radius: 10px;
+  padding: 8px 11px;
+  font: inherit;
+  font-size: 12.5px;
+  color: #17232e;
+  outline: none;
+}
+.fb-who:focus {
+  border-color: var(--blue-primary, #2f6bea);
+  background: white;
+}
+
+.fb-box + .fb-label {
+  margin-top: 11px;
+}
+
+.fb-error {
+  margin: 9px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #c4423c;
+}
+
+.fb-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.fb-send {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: none;
+  background: var(--blue-primary, #2f6bea);
+  color: white;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  transition: background 0.12s, opacity 0.12s;
+}
+.fb-send:hover:not(:disabled) {
+  background: #245cd6;
+}
+.fb-send:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.fb-kbd {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.fb-done {
+  padding: 6px 0 2px;
+}
+
+.fb-again {
+  border: 1px solid rgba(20, 50, 70, 0.14);
+  background: white;
+  border-radius: 10px;
+  padding: 7px 12px;
+  font-size: 12.5px;
+  font-weight: var(--fw-medium, 500);
+  color: var(--ink, #17232e);
+}
+
 /* ========== Mobile trip page: fullscreen map + bottom sheet ==========
    Below 900px (matches MOBILE_QUERY in TripView) the 3-rail layout gives
    way to Airbnb-style: the map IS the page, and the agent / itinerary /
@@ -6488,9 +6683,11 @@ button {
 .sheet-share {
   display: flex;
   justify-content: flex-end;
+  gap: 8px;
   padding: 12px 16px 0;
 }
-.sheet-share .share-pop {
+.sheet-share .share-pop,
+.sheet-share .fb-pop {
   right: 0;
 }
 

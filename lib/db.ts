@@ -47,6 +47,21 @@ CREATE TABLE IF NOT EXISTS chats (
   messages   jsonb NOT NULL DEFAULT '[]',
   updated_at timestamptz NOT NULL DEFAULT now()
 );
+CREATE TABLE IF NOT EXISTS feedback (
+  id         bigserial PRIMARY KEY,
+  kind       text NOT NULL,
+  message    text NOT NULL,
+  contact    text,
+  -- Deliberately NOT a foreign key to trips: most feedback arrives from a
+  -- sample trip nobody owns, and losing the note when a trip is deleted would
+  -- be exactly backwards.
+  trip_id    text,
+  trip_name  text,
+  user_id    text,
+  user_email text,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS feedback_created_idx ON feedback(created_at DESC);
 `;
 
 let dbPromise: Promise<Queryable> | null = null;
@@ -277,4 +292,69 @@ export async function putChat(
     [tripId, ownerId, JSON.stringify(messages)]
   );
   return rows.length > 0;
+}
+
+// --- Feedback ---------------------------------------------------------------
+
+export interface FeedbackInput {
+  /** `feedback` = tell us about it; `prompt` = build this. Both arrive through
+   *  the same box on the trip page, so the kind is what the sender picked. */
+  kind: "feedback" | "prompt";
+  message: string;
+  contact?: string | null;
+  tripId?: string | null;
+  tripName?: string | null;
+  userId?: string | null;
+  userEmail?: string | null;
+}
+
+/** Stores one submission. Nothing here is owner-scoped: feedback about a
+ *  sample trip from a signed-out visitor is the most valuable kind. */
+export async function insertFeedback(input: FeedbackInput): Promise<number> {
+  const db = await getDb();
+  const rows = await db.query(
+    `INSERT INTO feedback (kind, message, contact, trip_id, trip_name, user_id, user_email)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)
+     RETURNING id`,
+    [
+      input.kind,
+      input.message,
+      input.contact ?? null,
+      input.tripId ?? null,
+      input.tripName ?? null,
+      input.userId ?? null,
+      input.userEmail ?? null,
+    ]
+  );
+  return Number(rows[0]?.id ?? 0);
+}
+
+export interface FeedbackRow extends FeedbackInput {
+  id: number;
+  createdAt: string;
+}
+
+/** Newest first. For `scripts/read-feedback.mts` — there is no admin UI, and
+ *  a prompt nobody reads is a prompt nobody runs. */
+export async function listFeedback(limit = 100): Promise<FeedbackRow[]> {
+  const db = await getDb();
+  const rows = await db.query(
+    `SELECT id, kind, message, contact, trip_id, trip_name, user_id, user_email, created_at
+       FROM feedback ORDER BY created_at DESC LIMIT $1`,
+    [Math.min(Math.max(limit, 1), 1000)]
+  );
+  return rows.map((r) => ({
+    id: Number(r.id),
+    kind: (r.kind === "prompt" ? "prompt" : "feedback") as "feedback" | "prompt",
+    message: String(r.message ?? ""),
+    contact: (r.contact as string) ?? null,
+    tripId: (r.trip_id as string) ?? null,
+    tripName: (r.trip_name as string) ?? null,
+    userId: (r.user_id as string) ?? null,
+    userEmail: (r.user_email as string) ?? null,
+    createdAt:
+      r.created_at instanceof Date
+        ? r.created_at.toISOString()
+        : String(r.created_at ?? ""),
+  }));
 }

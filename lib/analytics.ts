@@ -88,6 +88,11 @@ export const PRODUCT_EVENTS = [
   // cached trip-independently, so no one of them can know what the others
   // called the same place.
   "duplicate_spots_detected",
+  // NB: `feedback_submitted` is deliberately NOT here. It's captured directly
+  // by `/api/feedback` through `captureFeedback` below, because it carries the
+  // full message body and `sanitizeProps` would cut that to 500 characters.
+  // Allowlisting it too would emit the same event twice per submission and
+  // double every count.
 ] as const;
 
 export type ProductEvent = (typeof PRODUCT_EVENTS)[number];
@@ -142,6 +147,52 @@ export async function captureProductEvent(
     event,
     properties: {
       ...props,
+      ...(user
+        ? { userId: user.id, $set: { email: user.email, name: user.name } }
+        : { $process_person_profile: false }),
+    },
+  });
+  await posthog.flush().catch(() => {});
+}
+
+/**
+ * One feedback / prompt submission, captured with its FULL text.
+ *
+ * Deliberately not a `PRODUCT_EVENTS` entry going through `sanitizeProps`:
+ * that caps strings at 500 characters, and the whole point of the prompt box
+ * is a long message someone dictated. Truncating it to a property-sized
+ * snippet would leave the interesting half on the floor.
+ *
+ * This is the SECOND sink. Postgres is the durable record (`insertFeedback`);
+ * this one exists so a deploy without DATABASE_URL still can't swallow
+ * somebody's paragraph, and so the team sees it where they already look.
+ */
+export async function captureFeedback(
+  kind: "feedback" | "prompt",
+  message: string,
+  meta: {
+    contact?: string | null;
+    tripId?: string | null;
+    tripName?: string | null;
+    stored: boolean;
+  },
+  user: SessionUser | null,
+  clientDistinctId?: string | null
+): Promise<void> {
+  if (!posthog) return;
+  posthog.capture({
+    distinctId: user?.id ?? clientDistinctId ?? `anon:feedback`,
+    event: "feedback_submitted",
+    properties: {
+      kind,
+      message,
+      chars: message.length,
+      contact: meta.contact ?? null,
+      tripId: meta.tripId ?? null,
+      tripName: meta.tripName ?? null,
+      // False means this row exists ONLY here — worth knowing before someone
+      // reads the Postgres table and concludes that's all of it.
+      stored: meta.stored,
       ...(user
         ? { userId: user.id, $set: { email: user.email, name: user.name } }
         : { $process_person_profile: false }),
