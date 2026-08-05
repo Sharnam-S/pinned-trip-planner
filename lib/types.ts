@@ -314,8 +314,11 @@ export interface BriefingSource {
 
 export interface BriefingSection {
   topic: BriefingTopic;
-  /** 2-5 sentences merged across creators, specifics kept, padding dropped. */
-  summary: string;
+  /** 2-5 standalone bullets merged across creators, specifics kept, padding
+   *  dropped. Bullets rather than prose because this is skimmed once, before
+   *  planning starts — a paragraph makes the traveler read all of it to find
+   *  the one line that changes their trip. */
+  points: string[];
   sources: BriefingSource[];
 }
 

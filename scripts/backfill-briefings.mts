@@ -91,7 +91,7 @@ async function backfill(file: string) {
   for (const s of briefing.sections) {
     const meta = topicMeta(s.topic);
     console.log(`\n  ${meta.emoji} ${meta.label}  [${s.sources.length} sources]`);
-    console.log(`    ${s.summary}`);
+    for (const point of s.points) console.log(`    · ${point}`);
   }
   trip.briefing = briefing;
 

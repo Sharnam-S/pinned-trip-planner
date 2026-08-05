@@ -12,12 +12,13 @@ Last updated: 2026-07-27 (parallel plan options — §2d)
 
 ## 1. What this is
 
-The trip page's second half. Part one (pre-existing): YouTube research →
-spots on a map. Part two (the planner): a chat agent that behaves like a
-local guide, interviews the user briefly, and builds a **day-by-day
-itinerary** rendered on the map as a whiteboard — day chips, numbered
-per-day markers, route lines, per-day "brief" panels, and per-stop
-rationale on the spot cards.
+The trip page's second half.
+
+- **Part one** (pre-existing): YouTube research → spots on a map.
+- **Part two** (the planner): a chat agent that behaves like a local guide,
+  interviews the user briefly, and builds a **day-by-day itinerary** rendered on
+  the map as a whiteboard — day chips, numbered per-day markers, route lines,
+  per-day "brief" panels, and per-stop rationale on the spot cards.
 
 ```
 ┌──────────────┬────────────────────────────┬────────────────────┐
@@ -31,55 +32,66 @@ rationale on the spot cards.
 │              │    pin click               │ timeline (+ empty).│
 └──────────────┴────────────────────────────┴────────────────────┘
 ```
-(Redesigned 2026-07-19 to a Rentizy-style map-center layout — selection
-opens the right rail, not a map overlay; the map keeps a small photo
-popup. Visual system: white cards floating on a soft gray canvas
-(#edeff2), monochrome ink accents — day colors only on the map where
-they encode routes — borderless soft-gray pill chips, white Day badges,
-grayscale CARTO Positron tiles, Poppins. The chat has no close button:
-one trip, one always-open conversation. The map's day-brief opens only
-from the map's own chips; the overview's expanded cards are the
-right-rail equivalent.)
+**Layout — Rentizy-style map-center redesign (2026-07-19):**
 
-(2026-07-23: the map top bar now holds a Google-Maps-style **search box**
-instead of the Filters pill — typing matches spots by name/category and
-picking a result flies the map there + opens the detail. Category filter
-chips moved to the pins rail, right above the grid, where testers
-instinctively looked for them. Search spans all spots and clears an active
-category filter if it would hide the picked result. Map fly-to is a
-one-shot `flyTo={lat,lng,zoom,key}` prop on `TripMap`; bumping `key`
-re-fires. See `map-search` / `pins-filters` in `TripView.tsx` + globals.css.)
+- Selection opens the right rail, not a map overlay; the map keeps a small
+  photo popup.
+- Visual system: white cards floating on a soft gray canvas (#edeff2),
+  monochrome ink accents — day colors only on the map, where they encode
+  routes — borderless soft-gray pill chips, white Day badges, grayscale CARTO
+  Positron tiles, Poppins.
+- The chat has no close button: one trip, one always-open conversation.
+- The map's day-brief opens only from the map's own chips; the overview's
+  expanded cards are the right-rail equivalent.
 
-(2026-07-23b, follow-up feedback: (1) **search now covers the real map**,
-not just our spots. `GET /api/geocode` proxies OSM Nominatim (UA set
-server-side, edge-cached, viewbox-biased to the trip); the dropdown shows
-two groups — "Pinned in this trip" (our YouTube spots, 📍-tagged, and they
-pulse on the map as you type via `searchMatchIds` → `.pin-pill.search-match`)
-and "Places on the map". Picking a place drops a transient `searchMarker`
-and fits its bbox (`flyTo.bounds` → `flyToBounds`) so nearby pins come into
-view. (2) The pins-rail filters were too heavy always-open, so they now
-**collapse to a `pf-toggle` button** that fans open (`pins-filters.open`).
-(3) Removed the category badge (`tile-cat`) from grid photos — name + photo
-are self-explanatory.)
+**Search and filters (2026-07-23):**
 
-**Core principle: the itinerary is a data object, not chat prose.** The
-agent edits it via one tool (`update_itinerary`, full replace); the map,
-day briefs, and spot cards all render that same object. The chat is a
-means; the artifact is the product.
+- The map top bar holds a Google-Maps-style **search box** instead of the
+  Filters pill — typing matches spots by name/category, and picking a result
+  flies the map there + opens the detail.
+- Category filter chips moved to the pins rail, right above the grid, where
+  testers instinctively looked for them.
+- Search spans all spots and clears an active category filter if it would hide
+  the picked result.
+- Map fly-to is a one-shot `flyTo={lat,lng,zoom,key}` prop on `TripMap`;
+  bumping `key` re-fires. See `map-search` / `pins-filters` in `TripView.tsx`
+  + globals.css.
 
-(2026-07-27: a trip now holds **up to 4 of those objects at once** — parallel
-plan options the traveler compares before committing. Everything above still
-describes "the itinerary": exactly one option is active, and the map, day
-briefs and cards render that one. See §2d.)
+**Follow-up feedback (2026-07-23b):**
+
+- **Search now covers the real map**, not just our spots. `GET /api/geocode`
+  proxies OSM Nominatim (UA set server-side, edge-cached, viewbox-biased to the
+  trip).
+- The dropdown shows two groups — "Pinned in this trip" (our YouTube spots,
+  📍-tagged; they pulse on the map as you type via `searchMatchIds` →
+  `.pin-pill.search-match`) and "Places on the map".
+- Picking a place drops a transient `searchMarker` and fits its bbox
+  (`flyTo.bounds` → `flyToBounds`) so nearby pins come into view.
+- The pins-rail filters were too heavy always-open, so they now **collapse to a
+  `pf-toggle` button** that fans open (`pins-filters.open`).
+- Removed the category badge (`tile-cat`) from grid photos — name + photo are
+  self-explanatory.
+
+**Core principle: the itinerary is a data object, not chat prose.**
+
+- The agent edits it via one tool (`update_itinerary`, full replace); the map,
+  day briefs, and spot cards all render that same object.
+- The chat is a means; the artifact is the product.
+- (2026-07-27) A trip now holds **up to 4 of those objects at once** — parallel
+  plan options the traveler compares before committing. Everything above still
+  describes "the itinerary": exactly one option is active, and the map, day
+  briefs and cards render that one. See §2d.
 
 ## 2. Architecture (and the one fact that shapes everything)
 
 **The browser orchestrates everything; where the trip is *stored* depends on
-whether you're signed in.** Signed in, the account's Postgres row is the source
-of truth and the browser keeps a working copy in memory that writes through
-(`lib/tripStore.ts`). Signed out, localStorage is the source of truth, exactly
-as it always was. What did NOT change is the client-first *compute* model —
-everything below still holds:
+whether you're signed in.**
+
+- **Signed in:** the account's Postgres row is the source of truth, and the
+  browser keeps a working copy in memory that writes through (`lib/tripStore.ts`).
+- **Signed out:** localStorage is the source of truth, exactly as it always was.
+- **Unchanged either way:** the client-first *compute* model — everything below
+  still holds.
 
 - **The chat route is stateless.** The client sends trip context (spot
   digest + current itinerary + must-sees) with every request.
@@ -103,11 +115,11 @@ everything below still holds:
 
 ### 2d. Parallel plan options (2026-07-27)
 
-Reported from a real Sri Lanka trip: *"sometimes I just want the east coast;
-sometimes east, south, then the airport; sometimes I want the national park in
-too. I want 3-4 options and to figure out which one to finalize."* The decision
-that was missing wasn't between spots — it was between **shapes of trip**, and
-the product could only hold one at a time.
+- **Reported** from a real Sri Lanka trip: *"sometimes I just want the east
+  coast; sometimes east, south, then the airport; sometimes I want the national
+  park in too. I want 3-4 options and to figure out which one to finalize."*
+- **The gap:** the missing decision wasn't between spots — it was between
+  **shapes of trip**, and the product could only hold one at a time.
 
 - **`Trip.itineraries: Itinerary[]`**, each with an `id` (a model-authored slug
   like `east-coast`) and a `title` naming the tradeoff. Capped at
@@ -155,39 +167,47 @@ the product could only hold one at a time.
   seeing that a place survives the choice — or that it's the thing one option is
   *for*.
 - **Cost note (§5.2) — the pins are NOT re-billed; the history is.** Measured on
-  the 71-spot Sri Lanka trip: the spot digest is 28.4KB and sits **before** cache
-  breakpoint 1, together with the persona (14.0KB) and the tool schemas. Options
-  live in the volatile block *after* it, so adding a plan cannot invalidate the
-  pins — that prefix keeps reading at ~0.1× for the trip's life. What options
-  cost is the volatile tail: 9.7KB for one plan, 32.4KB for three (~+6.3K
-  uncached tokens a turn, est.). Every option rides along in full because the
-  tool is a whole-option replace — the model can only edit an option it can see,
-  and a summarized copy would make it rewrite untouched days from memory.
-  `MAX_PLANS` is the bound.
-- **The bigger line is ordering, not size.** The volatile block sits *in front of*
-  the conversation history, so any change to it — a plan write, and now also
-  **switching which option is shown** (the `CURRENTLY SHOWN` marker is part of the
-  block) — invalidates breakpoint 2 and re-writes the whole windowed history at
-  1.25×. By mid-session that history is far larger than the options themselves, so
-  it dominates. This is the §5.2 "move itinerary state out of the system tail"
-  micro-opt, now worth more than it was. It is **deferred on purpose**: the fix
-  needs the volatile block to come *after* the history, and a `role: "system"`
-  message inside `messages[]` is Opus-4.8-only — on `claude-sonnet-5` it would
-  have to become a trailing user turn (`<system-reminder>`), which changes how the
-  model weights trip state on a trust-critical agent. Check `llm-total-costs` in
-  PostHog before touching it (§5.5). If the options block itself ever turns out to
-  be the top line, the separate fix is to summarize the *inactive* options and add
-  a tool that loads one in full — not to shrink the active one.
+  the 71-spot Sri Lanka trip:
+  - The spot digest is 28.4KB and sits **before** cache breakpoint 1, together
+    with the persona (14.0KB) and the tool schemas.
+  - Options live in the volatile block *after* it, so adding a plan cannot
+    invalidate the pins — that prefix keeps reading at ~0.1× for the trip's life.
+  - What options cost is the volatile tail: 9.7KB for one plan, 32.4KB for three
+    (~+6.3K uncached tokens a turn, est.).
+  - Every option rides along in full because the tool is a whole-option replace —
+    the model can only edit an option it can see, and a summarized copy would make
+    it rewrite untouched days from memory. `MAX_PLANS` is the bound.
+- **The bigger line is ordering, not size.**
+  - The volatile block sits *in front of* the conversation history, so any change
+    to it — a plan write, and now also **switching which option is shown** (the
+    `CURRENTLY SHOWN` marker is part of the block) — invalidates breakpoint 2 and
+    re-writes the whole windowed history at 1.25×.
+  - By mid-session that history is far larger than the options themselves, so it
+    dominates. This is the §5.2 "move itinerary state out of the system tail"
+    micro-opt, now worth more than it was.
+  - **Deferred on purpose:** the fix needs the volatile block to come *after* the
+    history, and a `role: "system"` message inside `messages[]` is Opus-4.8-only.
+    On `claude-sonnet-5` it would have to become a trailing user turn
+    (`<system-reminder>`), which changes how the model weights trip state on a
+    trust-critical agent.
+  - Check `llm-total-costs` in PostHog before touching it (§5.5).
+  - If the options block itself ever turns out to be the top line, the separate
+    fix is to summarize the *inactive* options and add a tool that loads one in
+    full — not to shrink the active one.
 
 ### 2c. Server-first storage for signed-in users (2026-07-25)
 
-Accounts (§2b) shipped as *sync*: localStorage stayed the working copy and
-copies rode up to Postgres. That had a hard ceiling — **~5M characters per
-origin** (measured), against ~3.4KB per spot and a chat history that stores
-whole itineraries per tool call. A handful of built trips filled it, and then
-**every save failed** ("your browser storage is full"), including each step of a
-build, while the same trips sat safely in Neon. Reported from prod with a
-20-video trip.
+**Why this changed** (reported from prod with a 20-video trip):
+
+- Accounts (§2b) shipped as *sync*: localStorage stayed the working copy and
+  copies rode up to Postgres.
+- That had a hard ceiling — **~5M characters per origin** (measured), against
+  ~3.4KB per spot and a chat history that stores whole itineraries per tool call.
+- A handful of built trips filled it, and then **every save failed** ("your
+  browser storage is full"), including each step of a build — while the same
+  trips sat safely in Neon.
+
+**The design:**
 
 - **`lib/tripStore.ts` is the only storage API.** Mode is decided once per load
   from `/api/me`: `server` (signed in) or `local`. Signed in, `saveTrip` writes
@@ -274,36 +294,38 @@ client-first architecture above. The design:
   back editable, so there's no adopt-into-localStorage-and-re-render dance any
   more. A trip that isn't yours falls through to the sample/published copy,
   read-only with localStorage overlays.
-- **Privacy model:** DB trips are served only to their owner — anyone else
-  falls through to samples/Blob and gets 404. The Blob community library
-  is **explicit opt-in**: the `ShareTrip` button top-right of the trip
-  page's right rail (owner-picked spot after rejecting the trip header).
-  First click publishes (owner id stripped — the public copy is
-  anonymous) and pops a copyable link; once public, clicking just copies
-  the link and silently re-publishes so the shared copy stays fresh.
-  "Shared" state = `pinned.owned-ids`, so it's per-browser (a second
-  device shows "Share" again — harmless, it re-publishes + copies). The
-  runner's auto-publish only fires on no-auth deploys where it remains
-  the only cross-device path. The
-  **video cache stays global** (`lib/videoCache.ts`) — extractions are
-  trip- and user-independent, so one user processing a video benefits
-  everyone (and the bill is paid once).
-- **Landing UX:** ONE page for everyone — the sky/clouds landing (owner
-  iterated through a separate app-shell dashboard on 2026-07-24 and
-  reverted the same day: "the current landing page looks much better").
-  Signed out: hero + Sign in pill + community gallery; "Build my map"
-  stashes the form in `pinned.pending-trip`, rides through SSO, and the
-  build auto-resumes on return. Signed in: same page with a **profile
-  chip** (avatar → name/email/sign-out popover) in the nav, the
-  browser-frame section shows **your account trips** (light summaries
-  from `GET /api/me/trips`, computed in SQL — never full trips in a
-  list) instead of the community library, and the hero stat chip adds
-  "≈ Nh watching saved" (~20 min per video read).
-- **Chat across devices:** the chat route stays stateless; persistence
-  mirrors the localStorage save — the browser PUTs the sanitized message
-  array (debounced), and a fresh device seeds `useChat` from the server
-  copy only when localStorage is empty (local always wins; it is what got
-  synced up in the first place).
+- **Privacy model:**
+  - DB trips are served only to their owner — anyone else falls through to
+    samples/Blob and gets 404.
+  - The Blob community library is **explicit opt-in**: the `ShareTrip` button
+    top-right of the trip page's right rail (owner-picked spot after rejecting
+    the trip header).
+  - First click publishes (owner id stripped — the public copy is anonymous) and
+    pops a copyable link; once public, clicking just copies the link and silently
+    re-publishes so the shared copy stays fresh.
+  - "Shared" state = `pinned.owned-ids`, so it's per-browser (a second device
+    shows "Share" again — harmless, it re-publishes + copies).
+  - The runner's auto-publish only fires on no-auth deploys, where it remains the
+    only cross-device path.
+  - The **video cache stays global** (`lib/videoCache.ts`) — extractions are trip-
+    and user-independent, so one user processing a video benefits everyone (and
+    the bill is paid once).
+- **Landing UX:** ONE page for everyone — the sky/clouds landing (owner iterated
+  through a separate app-shell dashboard on 2026-07-24 and reverted the same day:
+  "the current landing page looks much better").
+  - *Signed out:* hero + Sign in pill + community gallery; "Build my map" stashes
+    the form in `pinned.pending-trip`, rides through SSO, and the build
+    auto-resumes on return.
+  - *Signed in:* same page with a **profile chip** (avatar → name/email/sign-out
+    popover) in the nav; the browser-frame section shows **your account trips**
+    (light summaries from `GET /api/me/trips`, computed in SQL — never full trips
+    in a list) instead of the community library; the hero stat chip adds
+    "≈ Nh watching saved" (~20 min per video read).
+- **Chat across devices:**
+  - The chat route stays stateless; persistence mirrors the localStorage save —
+    the browser PUTs the sanitized message array (debounced).
+  - A fresh device seeds `useChat` from the server copy only when localStorage is
+    empty (local always wins; it is what got synced up in the first place).
 
 ### Stack
 
@@ -342,15 +364,17 @@ deliberate — see Learnings §4.1.
 The persona is the product spec. Current contract, in order of the
 user-trust lessons that produced it:
 
-1. **Intake before planning — structured, not prose.** A client-rendered
-   **instant intake card** (`QuestionFlow`, no model round-trip) collects the
-   universals on trip-open (who/pace/must-sees/budget, + dates if unset) and
-   compiles them into the first message — so the model's first act is the shape
-   (§3b), not a 40s think-then-interrogate. Mid-planning, the model gathers any
-   missing choice with the **`ask_questions` tool** (same tap-through card, one
-   question at a time, answers returned in one shot) — never a wall of prose.
-   Things to ask when unknown: dates (weekday reasoning), stay, budget + pace,
-   must-sees (flag 2–3 iconic). "Just plan it" → draft with stated assumptions.
+1. **Intake before planning — structured, not prose.**
+   - A client-rendered **instant intake card** (`QuestionFlow`, no model
+     round-trip) collects the universals on trip-open (who/pace/must-sees/budget,
+     + dates if unset) and compiles them into the first message — so the model's
+     first act is the shape (§3b), not a 40s think-then-interrogate.
+   - Mid-planning, the model gathers any missing choice with the
+     **`ask_questions` tool** (same tap-through card, one question at a time,
+     answers returned in one shot) — never a wall of prose.
+   - Things to ask when unknown: dates (weekday reasoning), stay, budget + pace,
+     must-sees (flag 2–3 iconic).
+   - "Just plan it" → draft with stated assumptions.
 2. **Never invent user facts** — stay is only set when told, or as a
    labeled recommendation with rationale.
 3. **Every plan change goes through `update_itinerary`**, never prose-only,
@@ -359,21 +383,25 @@ user-trust lessons that produced it:
    for creating an option or rewriting most of one; `patch` sends only
    `dayPatches: [{index, day}]` and is for editing an existing plan. Write once
    per option per turn, and write last — gather travel times first.
-3b. **Shape before pins (initial build only), BOUNDED** — the first plan is proposed
-   as a **summary document** (§4.6: title, how the days split, then a section
-   per day with area/base + vibe + routing logic, and a `[pins: …]` line naming
-   the day's anchor spots for its photo strip — no times, no stop-by-stop
-   lists, no tool call), and the user reacts before any pin lands. If their reply
-   changes the SHAPE (different bases, different length, a chunk dropped) the
-   agent revises the summary **once** — that is what this step is for. Anything
-   else commits on the next turn. **At most two summary documents per trip**,
-   then it commits regardless, and an unanswered question never blocks the
-   commit (state the assumption in the day's rationale and ask after). Course-correcting a rough shape is cheap; reworking a screen of
-   placed pins is overwhelming. "Just plan it" — and "plan it", "go ahead",
-   "do it" — skips it entirely; later edits go straight through the tool. The
-   summary is the ONE exception to rule 3's "never prose-only": it precedes the
-   commit, it doesn't replace it. See §4.8 for what happened when this rule had
-   no bound.
+3b. **Shape before pins (initial build only), BOUNDED.**
+   - The first plan is proposed as a **summary document** (§4.6: title, how the
+     days split, then a section per day with area/base + vibe + routing logic, and
+     a `[pins: …]` line naming the day's anchor spots for its photo strip — no
+     times, no stop-by-stop lists, no tool call), and the user reacts before any
+     pin lands.
+   - If their reply changes the SHAPE (different bases, different length, a chunk
+     dropped) the agent revises the summary **once** — that is what this step is
+     for. Anything else commits on the next turn.
+   - **At most two summary documents per trip**, then it commits regardless.
+   - An unanswered question never blocks the commit: state the assumption in the
+     day's rationale and ask after.
+   - Why: course-correcting a rough shape is cheap; reworking a screen of placed
+     pins is overwhelming.
+   - "Just plan it" — and "plan it", "go ahead", "do it" — skips it entirely;
+     later edits go straight through the tool.
+   - The summary is the ONE exception to rule 3's "never prose-only": it precedes
+     the commit, it doesn't replace it. See §4.8 for what happened when this rule
+     had no bound.
 4. **Times required** (arrival + duration per stop, accounting for
    travel/meals/opening hours); **rationale required** per day; **why
    required** per stop answering: worth it why / this day why / this
@@ -381,13 +409,14 @@ user-trust lessons that produced it:
 5. **Day-of-week awareness** — clubs Fri/Sat, weekend-crowded spots on
    weekday mornings, closure days, trip-level arcs (beach first, party
    Saturday).
-5b. **Time-of-day fit** — slot each spot at the hour its nature is best
-   (sunset beach at golden hour, swimming beach mid-morning, shaded/cave
-   beach at hot midday, viewpoints pre-crowd), anchor the time-sensitive
-   ones first and route the flexible spots around them, and when a
-   deciding fact (shade? which way does it face? swimmable?) isn't in the
-   spot data, state the assumption and invite correction rather than
-   ordering silently on a guess.
+5b. **Time-of-day fit.**
+   - Slot each spot at the hour its nature is best — sunset beach at golden hour,
+     swimming beach mid-morning, shaded/cave beach at hot midday, viewpoints
+     pre-crowd.
+   - Anchor the time-sensitive ones first and route the flexible spots around them.
+   - When a deciding fact (shade? which way does it face? swimmable?) isn't in the
+     spot data, state the assumption and invite correction rather than ordering
+     silently on a guess.
 6. **Creator consensus weights picks** — 2+ mention spots get priority;
    dropping one requires an explicit stated reason.
 7. **Meal logic** — one food spot per meal slot; consecutive food stops
@@ -403,122 +432,153 @@ user-trust lessons that produced it:
 9c. **Travel times are tagged** — `source: "road"` is a real routed time to plan
    around as fact; `source: "estimate"` is distance-based and may be argued with
    out loud, but never silently overridden.
-10. **Options are for alternatives, edits are for corrections** (§2d) — a
-   "what if…" / a different region, theme or length gets a NEW option
-   (their current plan survives untouched, which is the point); "swap day 2
-   and 3" edits the one they're looking at. Asked for several at once: sketch
-   them all in one summary document first, then one `update_itinerary` per
-   option in the same turn — and **close with the tradeoff**, what each gains
-   and costs and which you'd pick. Listing the plans without comparing them
-   leaves the user with the decision they came in with.
+10. **Options are for alternatives, edits are for corrections** (§2d).
+   - A "what if…" / a different region, theme or length gets a NEW option — their
+     current plan survives untouched, which is the point.
+   - "Swap day 2 and 3" edits the one they're looking at.
+   - Asked for several at once: sketch them all in one summary document first,
+     then one `update_itinerary` per option in the same turn.
+   - **Close with the tradeoff** — what each gains and costs, and which you'd
+     pick. Listing the plans without comparing them leaves the user with the
+     decision they came in with.
 
 ## 4. Learnings — agent behavior
 
 ### 4.1 Schemas are guarantees; prose is steering (the biggest lesson)
-Prose-level "times are required" produced plans with no times. Optional
-zod fields get skipped; loose `describe()` strings get lazy content
-("theme" = spot names joined with "+", "why" = a practical tip). The fix
-that actually worked, twice: **make the field required in the tool input
-schema and write the description as a content spec** (e.g. why must
-answer three named questions; theme must be experiential, "never join
-spot names with +"). Keep stored types optional for backward compat.
+
+- **Symptom:** prose-level "times are required" produced plans with no times.
+- **Why:** optional zod fields get skipped, and loose `describe()` strings get
+  lazy content ("theme" = spot names joined with "+", "why" = a practical tip).
+- **The fix that actually worked, twice:** make the field **required in the tool
+  input schema** and write the description as a **content spec** — e.g. `why`
+  must answer three named questions; `theme` must be experiential, "never join
+  spot names with +".
+- Keep stored types optional for backward compat.
 
 ### 4.2 Judgment gaps close with one explicit rule
+
 Sonnet follows short, explicit, targeted rules reliably. Real examples:
-back-to-back restaurants (fixed by MEAL LOGIC rule naming the exact
-anti-pattern), skipped 3-creator spot (CONSENSUS rule), invented stay
-(NEVER-INVENT rule), beaches ordered by proximity with no regard for
-sunset/swimming/shade (TIME-OF-DAY FIT rule — it now anchors
-time-sensitive spots first and, when the deciding fact isn't in the spot
-data, states its assumption instead of guessing silently). When live
-testing surfaces a bad judgment call, prefer one added persona line
-naming the anti-pattern over re-architecting.
+
+- Back-to-back restaurants → MEAL LOGIC rule naming the exact anti-pattern.
+- Skipped 3-creator spot → CONSENSUS rule.
+- Invented stay → NEVER-INVENT rule.
+- Beaches ordered by proximity with no regard for sunset/swimming/shade →
+  TIME-OF-DAY FIT rule. It now anchors time-sensitive spots first and, when the
+  deciding fact isn't in the spot data, states its assumption instead of guessing
+  silently.
+
+**Takeaway:** when live testing surfaces a bad judgment call, prefer one added
+persona line naming the anti-pattern over re-architecting.
 
 ### 4.3 Trust is rationale at every zoom level
-The user's core demand ("trips are how people spend their most precious
-money"). Rationale renders where decisions are inspected: trip flow in
-chat prose, day structure in the map's day brief, individual picks on the
-spot card ("In your plan — Day 4 (Friday) · 19:00"). The persona is told
-these render on the map/cards — write for the user, not a log.
+
+- **The user's core demand:** "trips are how people spend their most precious
+  money."
+- **Rationale renders where decisions are inspected:**
+  - Trip flow → chat prose.
+  - Day structure → the map's day brief.
+  - Individual picks → the spot card ("In your plan — Day 4 (Friday) · 19:00").
+- The persona is told these render on the map/cards — write for the user, not a
+  log.
 
 ### 4.4 Intake-first beats propose-first (for this domain)
-v1's "propose, don't interrogate" was wrong for high-stakes planning —
-the user explicitly wanted to be asked (dates, stay, budget, must-sees)
-before a draft. Compromise that works: ask everything in ONE batched
-message, never re-ask what context answers, honor "just plan it".
+
+- v1's "propose, don't interrogate" was wrong for high-stakes planning — the user
+  explicitly wanted to be asked (dates, stay, budget, must-sees) before a draft.
+- **Compromise that works:** ask everything in ONE batched message, never re-ask
+  what context answers, honor "just plan it".
 
 ### 4.5 Silence looks like a hang
-Sonnet thinks before answering and thinking is invisible by default
-(API `display` defaults to `omitted` — empty thinking blocks). Three
-layers fixed it: request `thinking: {type:"adaptive", display:
-"summarized"}` via providerOptions and render reasoning parts (live
-italic block → collapsible); persona rule "one sentence before every
-tool call"; staged status cues + elapsed counter in the UI. Note:
-thinking is billed identically whether displayed or not.
+
+- **Cause:** Sonnet thinks before answering, and thinking is invisible by default
+  (API `display` defaults to `omitted` — empty thinking blocks).
+- **Three layers fixed it:**
+  - Request `thinking: {type:"adaptive", display:"summarized"}` via
+    providerOptions and render reasoning parts (live italic block → collapsible).
+  - Persona rule: "one sentence before every tool call".
+  - Staged status cues + elapsed counter in the UI.
+- Note: thinking is billed identically whether displayed or not.
 
 ### 4.6 The opening summary is a document, and the agent picks its pictures (2026-07-25)
-Seven days of shape is long, and as one prose blob it read like homework. The
-shape message is now a **document**: bold title, a bullet per chunk of the trip,
-then per day a `## Day N — theme` heading, a photo strip, `### Morning/Evening`
-sub-headings, and `---` between days. Reference was a ChatGPT itinerary reply;
-the format is in the persona under "THE SUMMARY DOCUMENT FORMAT".
+**The problem:** seven days of shape is long, and as one prose blob it read like
+homework.
 
-The photos come from a directive the **model** writes: `[pins: <id>, <id>, <id>]`
-under each day heading, 3–5 spots that "show the day". Two decisions worth
+**The format:**
+
+- The shape message is now a **document**: bold title, a bullet per chunk of the
+  trip, then per day a `## Day N — theme` heading, a photo strip,
+  `### Morning/Evening` sub-headings, and `---` between days.
+- Reference was a ChatGPT itinerary reply; the format lives in the persona under
+  "THE SUMMARY DOCUMENT FORMAT".
+
+**The photo strip comes from a directive the model writes** — `[pins: <id>, <id>,
+<id>]` under each day heading, 3–5 spots that "show the day". Two decisions worth
 keeping:
-- **The agent chooses, not a text matcher.** Inferring spots by scanning the
-  prose for names looked tempting but picks whatever is *mentioned*, not what's
-  *representative* — and it can't tell a fortress from a supermarket. The model
-  already knows the ids (it plans with them) and it knows which spot carries the
-  day, so it names them. The renderer resolves ids first and spot *names* as a
-  fallback, because a model that writes a name instead of a uuid should still
-  get its picture (§4.1: prose is steering, so build for the sloppy case).
-- **Unresolvable = render nothing.** A directive naming ids we don't have
-  produces no strip and, critically, never leaks the raw `[pins: …]` text into
-  the conversation.
 
-Only the first three pins get a picture; extras become a `+N` badge on the last
-tile, so a 5-spot day and a 3-spot day are the same shape. Each tile selects its
-spot — same selection as a map pin or grid tile — which makes the summary
-navigation, not decoration. `FormattedText` grew headings (two levels: the day
-at the title step, its parts at body/medium — all a ~400px rail can carry) and
-`---` rules to support it. Cost: the summary is ~3× the old skeleton's output
-tokens; worth it for the moment the plan first lands.
+- **The agent chooses, not a text matcher.**
+  - Inferring spots by scanning the prose for names looked tempting, but it picks
+    whatever is *mentioned*, not what's *representative* — and it can't tell a
+    fortress from a supermarket.
+  - The model already knows the ids (it plans with them) and knows which spot
+    carries the day, so it names them.
+  - The renderer resolves ids first and spot *names* as a fallback, because a
+    model that writes a name instead of a uuid should still get its picture
+    (§4.1: prose is steering, so build for the sloppy case).
+- **Unresolvable = render nothing.** A directive naming ids we don't have produces
+  no strip and, critically, never leaks the raw `[pins: …]` text into the
+  conversation.
+
+**Rendering details:**
+
+- Only the first three pins get a picture; extras become a `+N` badge on the last
+  tile, so a 5-spot day and a 3-spot day are the same shape.
+- Each tile selects its spot — same selection as a map pin or grid tile — which
+  makes the summary navigation, not decoration.
+- `FormattedText` grew headings (two levels: the day at the title step, its parts
+  at body/medium — all a ~400px rail can carry) and `---` rules to support it.
+- **Cost:** the summary is ~3× the old skeleton's output tokens; worth it for the
+  moment the plan first lands.
 
 ### 4.7 Persist completed turns, and don't let history impersonate a live failure (2026-07-25)
-Reported: a Switzerland trip built a full itinerary, the user navigated away and
-came back, and the panel showed **"The connection dropped before the plan
+**Reported:** a Switzerland trip built a full itinerary, the user navigated away
+and came back, and the panel showed **"The connection dropped before the plan
 arrived — Try again"** above a "Thinking…" block cut off mid-sentence. The plan
 was fine and on the map; two separate bugs made it look otherwise.
 
-**1. A mid-stream snapshot got stored.** Chat persistence was debounced against
-streaming churn (400ms local, 2500ms to the account). A debounce is a race, not
-a rule: a long think outlasts it, so the pause between reasoning and the reply
-was long enough for a save to land — an assistant message holding *only* a
-reasoning part — and then the user navigated before the real turn was written.
-Worse, §2c had just made the account copy the only copy for signed-in users, so
-the unmount flush (which wrote localStorage) had become a no-op and the pending
-account push died with the page. Fix: **persist only between turns** (`busy`
-gates the effect) and **push the moment a turn ends**, not on a timer — one
-write per turn, nothing left pending for a navigation to cancel. Plus a
-`sendBeacon` on `pagehide` for a real unload, which needed `POST` on the
-messages route (beacons are always POST; a normal fetch dies with the document
-and `keepalive` caps the body at 64KB).
+**Bug 1 — a mid-stream snapshot got stored.**
 
-**2. The "stream died" heuristic couldn't tell live from loaded.** It was
-derived purely from the shape of the last message (`role === "user"`, or an
-assistant message with no text and no tool part), so *any* conversation that
-ended that way — including one merely restored from storage — rendered the red
-retry box. Fix: it now also requires that a stream actually ran in this session,
-and `sanitizeChat` drops a trailing assistant message that never got past its
-reasoning, so the truncated "Thinking…" ghost goes with it. A conversation whose
-tail was lost now reads as the user's last message, quietly, with the plan intact
-on the map.
+- Chat persistence was debounced against streaming churn (400ms local, 2500ms to
+  the account).
+- A debounce is a race, not a rule: a long think outlasts it, so the pause between
+  reasoning and the reply was long enough for a save to land — an assistant
+  message holding *only* a reasoning part — and then the user navigated before the
+  real turn was written.
+- Worse, §2c had just made the account copy the only copy for signed-in users, so
+  the unmount flush (which wrote localStorage) had become a no-op and the pending
+  account push died with the page.
+- **Fix:** persist only between turns (`busy` gates the effect) and push the
+  moment a turn ends, not on a timer — one write per turn, nothing left pending
+  for a navigation to cancel.
+- Plus a `sendBeacon` on `pagehide` for a real unload, which needed `POST` on the
+  messages route (beacons are always POST; a normal fetch dies with the document,
+  and `keepalive` caps the body at 64KB).
 
-Lesson worth keeping: **a debounce is not a durability mechanism.** Persist on
-the event that makes the data worth keeping (a turn completing), and treat
-"restored from storage" as a different state from "just happened" whenever the UI
-says something about *now*.
+**Bug 2 — the "stream died" heuristic couldn't tell live from loaded.**
+
+- It was derived purely from the shape of the last message (`role === "user"`, or
+  an assistant message with no text and no tool part), so *any* conversation that
+  ended that way — including one merely restored from storage — rendered the red
+  retry box.
+- **Fix:** it now also requires that a stream actually ran in this session, and
+  `sanitizeChat` drops a trailing assistant message that never got past its
+  reasoning, so the truncated "Thinking…" ghost goes with it.
+- A conversation whose tail was lost now reads as the user's last message,
+  quietly, with the plan intact on the map.
+
+**Lesson worth keeping: a debounce is not a durability mechanism.** Persist on the
+event that makes the data worth keeping (a turn completing), and treat "restored
+from storage" as a different state from "just happened" whenever the UI says
+something about *now*.
 
 ### 4.9 The plan can only be as good as the map, and the map didn't know where it was (2026-08-02)
 
@@ -548,54 +608,63 @@ destination *is*:
   Lanka pinned "Maldives". The map auto-fit to those outliers, so a three-day
   walkable plan rendered as one dot.
 
-Fixes, in the order they matter: `geocodeBounds` resolves the extent once at
-discover and stores `Trip.bounds`; `applyVideoResult` flags anything outside as
-`outOfBounds` (kept, hidden from the fit / the grid / the spot digest, one tap
-from coming back — deleting a creator's real recommendation is worse than the
-problem); `planSearchQueries` returns `scale` + named `subAreas` and dedicates a
-query to each; `curateVideos` must cover every sub-area with ≥2 videos *before*
-optimising channel diversity, and returns a coverage map so it has to account for
-each one.
+**Fixes, in the order they matter:**
 
-**Extraction had the same shape of problem.** On the shipped samples: Galle Fort,
-Black Fort, Narikala Fortress and Chronicles of Georgia all `other`; a folk
-museum `other`; three beach clubs `stay`; a 7-Eleven and an unnamed Airbnb pinned
-as places to go; Tbilisi with **zero** `food` spots across 28 pins, which left
-the MEAL LOGIC rules with nothing to act on. Prose said "pick the SINGLE category
-that best fits" and "skip generic mentions" — and drifted. The fix is §4.1 again:
-a **required `category_reason`** placed before the category, a stated 1-in-10
-ceiling on `other`, `stay` defined as somewhere you sleep, and a *named* list of
-things never to pin. `scripts/recategorize-samples.mts` backfilled the shipped
-trips (Tbilisi 21% `other` → 0%).
+- `geocodeBounds` resolves the extent once at discover and stores `Trip.bounds`.
+- `applyVideoResult` flags anything outside as `outOfBounds` — kept, hidden from
+  the fit / the grid / the spot digest, one tap from coming back. Deleting a
+  creator's real recommendation is worse than the problem.
+- `planSearchQueries` returns `scale` + named `subAreas` and dedicates a query to
+  each.
+- `curateVideos` must cover every sub-area with ≥2 videos *before* optimising
+  channel diversity, and returns a coverage map so it has to account for each one.
 
-**And the first personalisation question was working against the traveler.** The
-must-see picker was top-3 by mention count across all categories, so a Sri Lanka
-map that's 31/71 food asked a first-time visitor whether they must include
-`Shady Lane`, `Nomads` and `Petty Petty`. Now weighted by how iconic a category
-is, boosted by stated interests, and never three of one category — the same trip
-now offers Udawalawe National Park, Weligama Beach and Shady Lane.
+**Extraction had the same shape of problem.**
 
-Lesson: **a signal that's easy to compute is not the same as the signal you
+- On the shipped samples: Galle Fort, Black Fort, Narikala Fortress and Chronicles
+  of Georgia all `other`; a folk museum `other`; three beach clubs `stay`; a
+  7-Eleven and an unnamed Airbnb pinned as places to go; Tbilisi with **zero**
+  `food` spots across 28 pins, which left the MEAL LOGIC rules with nothing to act
+  on.
+- Prose said "pick the SINGLE category that best fits" and "skip generic
+  mentions" — and drifted.
+- **The fix is §4.1 again:** a required `category_reason` placed before the
+  category, a stated 1-in-10 ceiling on `other`, `stay` defined as somewhere you
+  sleep, and a *named* list of things never to pin.
+- `scripts/recategorize-samples.mts` backfilled the shipped trips (Tbilisi 21%
+  `other` → 0%).
+
+**And the first personalisation question was working against the traveler.**
+
+- The must-see picker was top-3 by mention count across all categories, so a Sri
+  Lanka map that's 31/71 food asked a first-time visitor whether they must include
+  `Shady Lane`, `Nomads` and `Petty Petty`.
+- Now weighted by how iconic a category is, boosted by stated interests, and never
+  three of one category — the same trip now offers Udawalawe National Park,
+  Weligama Beach and Shady Lane.
+
+**Lesson: a signal that's easy to compute is not the same as the signal you
 want.** Mention count is a great quality signal *within* a category and a bad one
-across categories; channel diversity is a great proxy for perspective and no
-proxy at all for geography. Both looked fine until someone read the output as a
+across categories; channel diversity is a great proxy for perspective and no proxy
+at all for geography. Both looked fine until someone read the output as a
 traveler.
 
-**Postscript (2026-08-04): the coverage note was gated on the wrong thing.** It
-rendered as soon as `trip.spots.length > 0`, which since B4 (reveal the map as
-it fills) means *after the first video of twenty*. A traveler building "Greece"
-watched "**Your map doesn't cover everything** — nothing yet for the
-Peloponnese, Mykonos, Crete, Thessaloniki" sit there for several minutes,
-listing the exact regions the remaining nineteen videos were about to cover,
-then vanish. Every word true of a finished map; pure anxiety about one still
-being built. Now gated on `buildSettled` — every video `done` or `error`, and
-the trip out of `processing`. `throttled` is deliberately not terminal: that
-build is paused, and the retry will add spots.
+**Postscript (2026-08-04): the coverage note was gated on the wrong thing.**
 
-Lesson, and it generalises past this one card: **a warning about incompleteness
-must be gated on completeness, not on having data.** "We have some spots" is
-the cheapest available proxy and it's the wrong one — during the exact window
-where the traveler is most anxious, it is guaranteed to be wrong.
+- It rendered as soon as `trip.spots.length > 0`, which since B4 (reveal the map
+  as it fills) means *after the first video of twenty*.
+- A traveler building "Greece" watched "**Your map doesn't cover everything** —
+  nothing yet for the Peloponnese, Mykonos, Crete, Thessaloniki" sit there for
+  several minutes, listing the exact regions the remaining nineteen videos were
+  about to cover, then vanish. Every word true of a finished map; pure anxiety
+  about one still being built.
+- Now gated on `buildSettled` — every video `done` or `error`, and the trip out of
+  `processing`. `throttled` is deliberately not terminal: that build is paused, and
+  the retry will add spots.
+- **Lesson, and it generalises past this one card: a warning about incompleteness
+  must be gated on completeness, not on having data.** "We have some spots" is the
+  cheapest available proxy and it's the wrong one — during the exact window where
+  the traveler is most anxious, it is guaranteed to be wrong.
 
 ### 4.8 A rule with no bound will run away, and a whole-plan write is the tax (2026-08-02)
 
@@ -623,23 +692,29 @@ Two fixes, and the second is the one that holds:
    route turns it into a hard `COMMIT_NUDGE` line in the volatile block. Narrow
    on purpose — any committed plan switches it off for good.
 
-**The write itself was the other half.** `update_itinerary` was a whole-option
-replace, so "swap day 2 and 3" on a ten-day plan regenerated 35+ stops of JSON.
-Measured consequences: a 308-second turn (the route's ceiling is 300), two and
-three writes of the same option inside one turn, and intermittent
-`AI_JSONParseError` on the oversized payload. `mode: "patch"` with
-`dayPatches: [{index, day}]` fixes the economics; `applyPlanUpdate` in
-`lib/itinerary.ts` does the read-resolve-validate-write atomically, because two
-tool calls can land in one turn before React re-renders (§2d/§5.8) and a base
-taken from props would silently drop the first.
+**The write itself was the other half.**
 
-Measured after, same scenarios: Hokkaido "just plan it" 232s → **27s**; Tbilisi
-edit 71s → **22s**; Sri Lanka edit 308s → **33s**; Koh Tao options 0 plans →
-**3 options**. The one thing that did NOT fully hold is "one write per turn" on
-the *initial* build of a long trip — the agent still occasionally writes, checks
-travel times, and rewrites. Feedback beats prohibition here: `applyPlanUpdate`
-returns a warning in the tool result when a full replace changed ≤2 days, which
-is the channel the model actually reads.
+- `update_itinerary` was a whole-option replace, so "swap day 2 and 3" on a
+  ten-day plan regenerated 35+ stops of JSON.
+- Measured consequences: a 308-second turn (the route's ceiling is 300), two and
+  three writes of the same option inside one turn, and intermittent
+  `AI_JSONParseError` on the oversized payload.
+- `mode: "patch"` with `dayPatches: [{index, day}]` fixes the economics.
+- `applyPlanUpdate` in `lib/itinerary.ts` does the read-resolve-validate-write
+  atomically, because two tool calls can land in one turn before React re-renders
+  (§2d/§5.8) and a base taken from props would silently drop the first.
+
+**Measured after, same scenarios:**
+
+- Hokkaido "just plan it": 232s → **27s**
+- Tbilisi edit: 71s → **22s**
+- Sri Lanka edit: 308s → **33s**
+- Koh Tao options: 0 plans → **3 options**
+- **What did NOT fully hold:** "one write per turn" on the *initial* build of a
+  long trip — the agent still occasionally writes, checks travel times, and
+  rewrites. Feedback beats prohibition here: `applyPlanUpdate` returns a warning
+  in the tool result when a full replace changed ≤2 days, which is the channel the
+  model actually reads.
 
 **Lesson worth keeping: a behavioural rule needs a bound and a fallback.**
 "Sketch the shape first" is good guidance and became a trap because nothing said
@@ -649,15 +724,18 @@ when it runs away — and give the model a cheap way to do the right thing
 
 ### 4.10 Half of every transcript was the half we threw away (2026-08-03)
 
-**What was wrong.** A 15-minute travel video is maybe a third place
-recommendations. The rest is orientation — "nowhere takes card under 20 lari",
-"the road to Kazbegi shuts with the snow", "the dogs with ear tags are
-vaccinated", "don't flag a street taxi, they quote tourists triple". We read
-every second of that, used the place-attached slice for a pin's
-`thingsToKnow`, and binned the remainder. Twenty videos of it is the briefing a
-traveler actually reads *before* they start picking pins, and we were the only
-product in a position to assemble it: not from a guidebook, from the specific
-creators this specific map was built from.
+**What was wrong.**
+
+- A 15-minute travel video is maybe a third place recommendations. The rest is
+  orientation — "nowhere takes card under 20 lari", "the road to Kazbegi shuts
+  with the snow", "the dogs with ear tags are vaccinated", "don't flag a street
+  taxi, they quote tourists triple".
+- We read every second of that, used the place-attached slice for a pin's
+  `thingsToKnow`, and binned the remainder.
+- Twenty videos of it is the briefing a traveler actually reads *before* they
+  start picking pins — and we were the only product in a position to assemble it:
+  not from a guidebook, from the specific creators this specific map was built
+  from.
 
 **The shape.**
 
@@ -677,69 +755,115 @@ creators this specific map was built from.
    never open the section again. Merging near-duplicates *while keeping the
    numbers* is the one job a model is unambiguously good at.
 
-**What made the output good, and it wasn't the topic list.** Two instructions
-did nearly all the work. *Omit thin topics* — a topic with one throwaway remark
-is not a section, and four real sections beat twelve padded ones. And a literal
-banned-phrase list ("rich culture", "friendly locals", "something for
-everyone", "be respectful of local customs"), because every one of those is
-true of everywhere and the model reaches for them by default. Verified against a
-note set seeded with two deliberate pieces of filler: both were dropped, and the
-`lifestyle` and `known-for` sections simply didn't appear. The safety rule
-earned its place too — creators routinely distinguish solo from with-people and
-day from night, and "it's generally safe" is what you get if you don't forbid
-the averaging.
+**What made the output good, and it wasn't the topic list.** Two instructions did
+nearly all the work:
 
-**Timing decisions.** The briefing is written *after* the build flips to
-`ready` and is never awaited, because time-to-a-usable-map is the number that
-matters and a nice-to-have must not spend it. That leaves a hole — a reload in
-that window loses it and no build will run again — so the trip page also calls
-`ensureBriefing`, which no-ops unless the stored briefing is older than the
-trip's notes. Same reasoning as `resumeInterruptedBuilds` (§ runner).
+- ***Omit thin topics*** — a topic with one throwaway remark is not a section, and
+  four real sections beat twelve padded ones.
+- **A literal banned-phrase list** ("rich culture", "friendly locals", "something
+  for everyone", "be respectful of local customs"), because every one of those is
+  true of everywhere and the model reaches for them by default.
+- **Verified** against a note set seeded with two deliberate pieces of filler:
+  both were dropped, and the `lifestyle` and `known-for` sections simply didn't
+  appear.
+- The safety rule earned its place too — creators routinely distinguish solo from
+  with-people and day from night, and "it's generally safe" is what you get if you
+  don't forbid the averaging.
 
-**Cost.** One Sonnet call per finished trip, ~$0.02 against a build that
-already spends ~20 extraction calls. `VIDEO_CACHE_VERSION` had to go 2 → 3:
-without it every already-cached video contributes zero notes, so the briefing
-would be thinnest on exactly the popular destinations where the cache hits
-most.
+**Timing decisions.**
+
+- The briefing is written *after* the build flips to `ready` and is never awaited,
+  because time-to-a-usable-map is the number that matters and a nice-to-have must
+  not spend it.
+- That leaves a hole — a reload in that window loses it and no build will run
+  again — so the trip page also calls `ensureBriefing`, which no-ops unless the
+  stored briefing is older than the trip's notes. Same reasoning as
+  `resumeInterruptedBuilds` (§ runner).
+
+**Cost.**
+
+- One Sonnet call per finished trip, ~$0.02 against a build that already spends
+  ~20 extraction calls.
+- `VIDEO_CACHE_VERSION` had to go 2 → 3: without it every already-cached video
+  contributes zero notes, so the briefing would be thinnest on exactly the popular
+  destinations where the cache hits most.
 
 **Postscript (2026-08-04): three things this got wrong.**
 
-*One bad field killed a whole video.* `zodOutputFormat` gives the SDK a zod
-parser, and `maybeParseMessage` then validates the whole response
-all-or-nothing and **throws**. A Crete video came back with `spots[9].category`
-outside the enum and we lost the transcript, the other twenty spots, the notes,
-the paid model call and a bench slot — over one label. Worse, the thrown
-message is what the build screen renders next to the video title, so a traveler
-was shown a zod validation dump listing all fourteen category values, wrapped
-across fifteen lines and overflowing the card (`.video-chip .vchannel` had none
-of the clamping `.vtitle` had). Now: the JSON Schema still steers generation,
-but `parse` is stripped from the format and `parseExtraction` checks items one
-at a time. An unrecognised category is a *labelling* miss, not a bad spot — the
-name, coordinates and description are all still good — so it's filed as `other`
-and kept. A whole video only fails when the JSON is unreadable, the destination
-is missing, or *every* spot failed. **Lesson: an all-or-nothing parser at the
-edge of a probabilistic system converts a small error into a total loss.**
+- **One bad field killed a whole video.**
+  - `zodOutputFormat` gives the SDK a zod parser, and `maybeParseMessage` then
+    validates the whole response all-or-nothing and **throws**.
+  - A Crete video came back with `spots[9].category` outside the enum and we lost
+    the transcript, the other twenty spots, the notes, the paid model call and a
+    bench slot — over one label.
+  - Worse, the thrown message is what the build screen renders next to the video
+    title, so a traveler was shown a zod validation dump listing all fourteen
+    category values, wrapped across fifteen lines and overflowing the card
+    (`.video-chip .vchannel` had none of the clamping `.vtitle` had).
+  - **Now:** the JSON Schema still steers generation, but `parse` is stripped from
+    the format and `parseExtraction` checks items one at a time. An unrecognised
+    category is a *labelling* miss, not a bad spot — the name, coordinates and
+    description are all still good — so it's filed as `other` and kept.
+  - A whole video only fails when the JSON is unreadable, the destination is
+    missing, or *every* spot failed.
+  - **Lesson: an all-or-nothing parser at the edge of a probabilistic system
+    converts a small error into a total loss.**
+- **The likely trigger is worth naming:** this schema now carries two enums —
+  `category` and the note `topic` — and `food-drink` is a topic while `food` is a
+  category. The prompt now says explicitly that the two lists are not
+  interchangeable.
+- **A briefing could be skipped forever.**
+  - `ensureBriefing` sat after the throttled early-return in `run()`, so a build
+    that ended paused never got one — and the trip page only asked once, at mount,
+    when the notes didn't exist yet.
+  - Both fixed: the call moved ahead of the branch, and the page re-asks whenever
+    the trip settles.
+  - Separately, trips built *before* this feature have no notes and no path to any,
+    since transcripts are never re-read. `/api/notes` recovers them from the video
+    cache, which was repopulated with notes by the version bump. Cache-only by
+    design — it can never trigger an extraction, which is what makes it safe to
+    attempt unprompted.
 
-*The likely trigger is worth naming:* this schema now carries two enums —
-`category` and the note `topic` — and `food-drink` is a topic while `food` is a
-category. The prompt now says explicitly that the two lists are not
-interchangeable.
+**Postscript (2026-08-05): the briefing is bullets now (`BRIEFING_VERSION` 2).**
 
-*And a briefing could be skipped forever.* `ensureBriefing` sat after the
-throttled early-return in `run()`, so a build that ended paused never got one —
-and the trip page only asked once, at mount, when the notes didn't exist yet.
-Both fixed: the call moved ahead of the branch, and the page re-asks whenever
-the trip settles. Separately, trips built *before* this feature have no notes
-and no path to any, since transcripts are never re-read; `/api/notes` recovers
-them from the video cache, which was repopulated with notes by the version bump.
-Cache-only by design — it can never trigger an extraction, which is what makes
-it safe to attempt unprompted.
+- **Reported:** *"these content here is long paragraphs. this should be bullet
+  points that are easy to read and understand."* On a Bali trip, "Getting around"
+  was an eight-line paragraph holding six unrelated facts — Grab/Gojek, car
+  charter rates, scooter rental, traffic, the Canggu-Seminyak drive.
+- Every one of those is a thing the traveler might act on, and burying them in
+  one paragraph means finding the one that matters costs reading all of them.
+  This section is skimmed *once*, before planning starts — the format was
+  fighting its own job.
+- **`BriefingSection.summary: string` → `points: string[]`**, rendered as a
+  `<ul class="briefing-points">` with drawn dot markers. The version bump makes
+  every stored briefing stale, and `ensureBriefing` rewrites it from the trip's
+  existing **notes** on the next page visit — no re-extraction, ~$0.02 a trip,
+  once.
+- **The prompt does most of the work, and the schema deliberately doesn't.** The
+  count (2–5) is asked for in prose and clamped in code rather than expressed as
+  `.min(2).max(5)`: an array-length near-miss is exactly the all-or-nothing
+  throw that cost a whole video above. The new rules that matter are *one idea
+  per bullet*, *lead with the fact not the setup* ("Sarong required at every
+  temple — handed to you free at the entrance", not "When visiting temples in
+  Bali, you should be aware that…"), and ~25 words.
+- **`schemaOnly` moved to `lib/llm.ts`.** The briefing call still handed the SDK
+  a zod parser, so it had the same all-or-nothing throw this section's postscript
+  fixed for extraction — one topic id outside the enum would have cost the whole
+  briefing. It now parses section-by-section with `safeParse`, and the disarming
+  helper is shared rather than a subtle trick living in one file.
+- Bullet markers the model writes anyway (`- `, `• `, `1. `) are stripped on the
+  way in; the list renders its own.
+- **Verified** headless at 1512×950 and 390×844 (the sheet), against the reported
+  Bali copy re-split as bullets: 4 sections, 3–5 bullets each, 0 prose
+  paragraphs left, sources still resolving, no console errors.
 
-**Still open:** the five committed samples have no briefing. Notes can only
-come from transcripts and `scripts/backfill-briefings.mts` needs
-`YOUTUBE_PROXY_URL` — from a machine without it, YouTube 400s every caption
-request. Run it wherever the proxy is configured. Until then the feature is
-invisible on the sample maps, which is what most first-time visitors open.
+**Still open:** the five committed samples have no briefing.
+
+- Notes can only come from transcripts, and `scripts/backfill-briefings.mts` needs
+  `YOUTUBE_PROXY_URL` — from a machine without it, YouTube 400s every caption
+  request. Run it wherever the proxy is configured.
+- Until then the feature is invisible on the sample maps, which is what most
+  first-time visitors open.
 
 ### 4.11 The agent didn't know the map was still loading (2026-08-04)
 
@@ -749,22 +873,25 @@ answering the messages or initiating a message. Now the agent does not have all
 the context because not all the pins are marked. It plans a very subpar
 itinerary."*
 
-**This is a side effect of B4.** The full-page build screen used to hide the
-planner until the build finished. Since B4 (reveal the map as it fills) it
-lifts the moment the *first* spot lands — ~40 seconds into a four-minute build.
-So the traveler gets a complete-looking planner with 8 of an eventual 71 pins.
+**This is a side effect of B4.**
 
-**The part that made it dangerous: nothing hedged.** `buildPlannerContext`
-handed over `spots` with no indication it was partial, so the agent had no way
-to know. It planned a confident week in Greece out of Mykonos, and a
-confidently wrong plan is indistinguishable from a good one — worse than no
-plan, because the traveler has no reason to doubt it.
+- The full-page build screen used to hide the planner until the build finished.
+- Since B4 (reveal the map as it fills) it lifts the moment the *first* spot
+  lands — ~40 seconds into a four-minute build.
+- So the traveler gets a complete-looking planner with 8 of an eventual 71 pins.
 
-There was a second, quieter casualty: `intakeQuestions` builds "Anything you
-must include?" from `pickIconicSpots(trip)`. Answer it three videos in and
-three Mykonos bars become hard must-includes for the whole trip — a constraint
-that outlives the build and shapes every later plan. (Not fixed here; it's part
-of the deferred UX pass.)
+**The part that made it dangerous: nothing hedged.**
+
+- `buildPlannerContext` handed over `spots` with no indication it was partial, so
+  the agent had no way to know.
+- It planned a confident week in Greece out of Mykonos — and a confidently wrong
+  plan is indistinguishable from a good one, worse than no plan, because the
+  traveler has no reason to doubt it.
+- **A second, quieter casualty:** `intakeQuestions` builds "Anything you must
+  include?" from `pickIconicSpots(trip)`. Answer it three videos in and three
+  Mykonos bars become hard must-includes for the whole trip — a constraint that
+  outlives the build and shapes every later plan. (Not fixed here; it's part of the
+  deferred UX pass.)
 
 **Fix, in two layers, because one wasn't enough.**
 
@@ -778,15 +905,16 @@ of the deferred UX pass.)
    channel the model demonstrably reads and corrects itself on; it's what made
    the patch-mode nudge work.
 
-`COMMIT_NUDGE` is suppressed while the build runs — the two instructions are in
-direct contradiction and the nudge is the more forceful.
+**Interaction with §4.8:** `COMMIT_NUDGE` is suppressed while the build runs — the
+two instructions are in direct contradiction, and the nudge is the more forceful.
 
-**Gated on `running`, not on "every video read"**, and that distinction is the
-whole of `buildProgress`. A build that gave up rate-limited leaves videos
-queued forever; blocking on those would strand the traveler on a usable map
-they're not allowed to plan. The coverage warning asks the *other* question
-(`settled`) because claiming regions are missing is only safe once nothing more
-is coming at all.
+**Gated on `running`, not on "every video read"** — and that distinction is the
+whole of `buildProgress`:
+
+- A build that gave up rate-limited leaves videos queued forever; blocking on those
+  would strand the traveler on a usable map they're not allowed to plan.
+- The coverage warning asks the *other* question (`settled`), because claiming
+  regions are missing is only safe once nothing more is coming at all.
 
 **Verified live, both directions.** Mid-build (3 of 20 videos, 8 spots, build
 frozen), asked to "just plan it": no plan written, and the agent said —
@@ -805,14 +933,15 @@ deferred UX layer was going to design. Control on a complete build:
 unblocks.** B4 was a good fix for a ten-minute blank stare. It also handed the
 traveler a planner that had no idea it was looking at a sixth of the map.
 
-**Layer 4 — keeping the promise (2026-08-04).** Layers 1–2 stopped the bad
-plans; what they left behind was an agent that says *"I'll lay out the days as
-soon as the map is complete"* and then goes quiet. The gate lifted in silence
-and the traveler had to notice the build had finished and ask again — a strange
-thing to ask of someone who was just told to sit tight.
+**Layer 4 — keeping the promise (2026-08-04).**
 
-The panel now watches the build land and hands the turn back. Four things made
-it non-trivial:
+- Layers 1–2 stopped the bad plans; what they left behind was an agent that says
+  *"I'll lay out the days as soon as the map is complete"* and then goes quiet.
+- The gate lifted in silence and the traveler had to notice the build had finished
+  and ask again — a strange thing to ask of someone who was just told to sit tight.
+
+The panel now watches the build land and hands the turn back. Four things made it
+non-trivial:
 
 - **The trigger has to be a user-role turn** for the model to answer it, but it
   is *not* something the traveler said. It renders as a hairline event divider
@@ -832,17 +961,20 @@ it non-trivial:
   call, which is the bug §A1 exists to prevent, and would talk over someone
   already mid-answer.
 
-Verified end to end against a frozen build released mid-conversation: the agent
-deferred (*"I'll build the full shape once the rest of the map finishes reading
-in… I'll pick this back up the moment it's complete"*), the build landed, the
-pickup fired, and it opened with *"The full set has landed — 25 spots now."*
-The flag cleared, and no user bubble was fabricated.
+**Verified end to end** against a frozen build released mid-conversation:
 
-**Unrelated finding, worth chasing:** `tbilisi-weekend` fails `pace matches what
-was asked for` on this branch (4.7 stops/day against a 2–4.5 band) — and fails
-*worse* without these changes (5.0). Reproducible across runs, so it is neither
-variance nor caused by layer 4. It is the same Relaxed-pace drift first noticed
-in the PM audit and still open.
+- The agent deferred (*"I'll build the full shape once the rest of the map
+  finishes reading in… I'll pick this back up the moment it's complete"*).
+- The build landed, the pickup fired, and it opened with *"The full set has
+  landed — 25 spots now."*
+- The flag cleared, and no user bubble was fabricated.
+
+**Unrelated finding, worth chasing:**
+
+- `tbilisi-weekend` fails `pace matches what was asked for` on this branch (4.7
+  stops/day against a 2–4.5 band) — and fails *worse* without these changes (5.0).
+- Reproducible across runs, so it is neither variance nor caused by layer 4.
+- It is the same Relaxed-pace drift first noticed in the PM audit, and still open.
 
 ### 4.12 Where you sleep is part of the plan (2026-08-04)
 
@@ -850,92 +982,113 @@ in the PM audit and still open.
 Canggu 3, Ubud 4. Maybe I don't know if I should be staying in three different
 areas... These are different PNCs that the agent can help me figure out."
 
-**That trip was unrepresentable.** `Itinerary.stay` held ONE `{name, lat, lng,
-note}` for a whole trip, so a sequence of bases with nights had nowhere to live
-— and basing is the decision that silently determines which spots are even
-reachable. Based in Ubud, an Uluwatu day is two hours each way. `Itinerary.bases`
-is the fix: area, nights, day range, why, and `stayIds` pointing at the
-creator-recommended `stay` spots the map already holds (9 on Koh Tao, 9 on Sri
-Lanka) — which is what makes it a recommendation with receipts rather than a
-guess.
+**That trip was unrepresentable.**
 
-**The intake never asked.** The persona listed "where they're staying" among
-things worth asking, but the client-side form that runs BEFORE the agent didn't
-include it, so the fast path never raised it. It's now a question, and
-`allowOther` is the important part: someone can type the whole Bali answer into
-it in one go.
+- `Itinerary.stay` held ONE `{name, lat, lng, note}` for a whole trip, so a
+  sequence of bases with nights had nowhere to live.
+- Basing is the decision that silently determines which spots are even reachable:
+  based in Ubud, an Uluwatu day is two hours each way.
+- **`Itinerary.bases` is the fix:** area, nights, day range, why, and `stayIds`
+  pointing at the creator-recommended `stay` spots the map already holds (9 on Koh
+  Tao, 9 on Sri Lanka) — which is what makes it a recommendation with receipts
+  rather than a guess.
 
-**Two surfaces, deliberately.** The proposal lands as a card inside the summary
-document, before any pin — three lines of prose are far easier to argue with
-than thirty placed pins. Once accepted it's written onto the plan and rendered
-collapsed at the top of the itinerary, scoped to the ACTIVE option: "east coast
-only" and "east, south and the airport" have genuinely different bases, so a
-trip-level section would show one option the other's answer.
+**The intake never asked.**
 
-**What live testing changed.** First run: bases landed on the plan correctly,
-and the in-prose block never appeared — because the agent skipped Step 1
-entirely. The intake compiles to *"Plan my days."*, which the persona reads as
-the documented "just plan it" fast path, so there was no summary document for
-the block to live in. Two fixes: the where-to-stay block became step 3 of the
-numbered SUMMARY DOCUMENT FORMAT rather than a bullet after it (an aside reads
-as optional), and when the stay answer is unresolved the intake now compiles to
-*"tell me which areas to base in… then plan the days around that"* instead.
+- The persona listed "where they're staying" among things worth asking, but the
+  client-side form that runs BEFORE the agent didn't include it, so the fast path
+  never raised it.
+- It's now a question, and `allowOther` is the important part: someone can type the
+  whole Bali answer into it in one go.
 
-**Lesson: a fast path is a policy, and policies need exceptions.** "Skip the
-shape when they say just plan it" is right when the structure is settled and
-wrong when it isn't — days built on a base the traveler never chose aren't days
-they can agree to.
+**Two surfaces, deliberately.**
 
-**On booked travelers:** plan around what they have, and flag the split only
-when it's genuinely costly and still actionable ("two nights here, one spot on
-your map, the rest 90 minutes north"). Never because we'd have chosen
-differently — they've paid, and that advice is noise.
+- The proposal lands as a card inside the summary document, before any pin — three
+  lines of prose are far easier to argue with than thirty placed pins.
+- Once accepted it's written onto the plan and rendered collapsed at the top of the
+  itinerary, scoped to the ACTIVE option: "east coast only" and "east, south and
+  the airport" have genuinely different bases, so a trip-level section would show
+  one option the other's answer.
+
+**What live testing changed.**
+
+- First run: bases landed on the plan correctly, and the in-prose block never
+  appeared — because the agent skipped Step 1 entirely.
+- The intake compiles to *"Plan my days."*, which the persona reads as the
+  documented "just plan it" fast path, so there was no summary document for the
+  block to live in.
+- **Two fixes:** the where-to-stay block became step 3 of the numbered SUMMARY
+  DOCUMENT FORMAT rather than a bullet after it (an aside reads as optional); and
+  when the stay answer is unresolved, the intake now compiles to *"tell me which
+  areas to base in… then plan the days around that"* instead.
+
+**Lesson: a fast path is a policy, and policies need exceptions.** "Skip the shape
+when they say just plan it" is right when the structure is settled and wrong when
+it isn't — days built on a base the traveler never chose aren't days they can agree
+to.
+
+**On booked travelers:**
+
+- Plan around what they have.
+- Flag the split only when it's genuinely costly and still actionable ("two nights
+  here, one spot on your map, the rest 90 minutes north").
+- Never flag it just because we'd have chosen differently — they've paid, and that
+  advice is noise.
 
 ### 4.13 A refusal is a completed tool call (2026-08-04)
 
 **Reported:** "planner got stuck and kept repeating in this state… the prose
 came 8 times."
 
-**Two independent unbounded loops, and one of them I built.** §4.11 made
-`update_itinerary` REFUSE while the map is still building. A refusal comes back
-through `addToolOutput` as a normal tool output — and a completed tool call is
-exactly what `lastAssistantMessageIsCompleteWithToolCalls` auto-resends on. So
-the agent got the turn back, tried again, was refused again, and handed the
-turn back again. Eight identical passes of the same reasoning, each a full
-Sonnet turn on a ~30KB prompt, none of which could ever have succeeded because
-the thing it was waiting on was a build that had not finished.
+**Loop 1 — the one I built.**
 
-The refusal text says "Do NOT call update_itinerary again yet". That is
-steering, and §4.1 is the standing lesson about what steering is worth without
-a structural bound. `sendAutomaticallyWhen` now carries the bound: two refused
-writes since the traveler last spoke and the turn stops being handed back. Counted
-since their last message, because their next message is a genuinely new
-situation and deserves a fresh budget.
+- §4.11 made `update_itinerary` REFUSE while the map is still building.
+- A refusal comes back through `addToolOutput` as a normal tool output — and a
+  completed tool call is exactly what `lastAssistantMessageIsCompleteWithToolCalls`
+  auto-resends on.
+- So the agent got the turn back, tried again, was refused again, and handed the
+  turn back again. Eight identical passes of the same reasoning, each a full Sonnet
+  turn on a ~30KB prompt, none of which could ever have succeeded — the thing it
+  was waiting on was a build that had not finished.
+- The refusal text says "Do NOT call update_itinerary again yet". That is steering,
+  and §4.1 is the standing lesson about what steering is worth without a structural
+  bound.
+- **Fix:** `sendAutomaticallyWhen` now carries the bound — two refused writes since
+  the traveler last spoke and the turn stops being handed back. Counted since their
+  last message, because their next message is a genuinely new situation and
+  deserves a fresh budget.
 
-**The second loop was older and worse.** The "retry a thrown tool call ONCE"
-guard was a `Set` of message ids — but `regenerate()` replaces the last
-assistant message with a NEW one carrying a NEW id, so a failure that
-reproduces is never recognised as the same failure. "Retry once" was really
-"retry forever". Now a counter, reset when the traveler speaks.
+**Loop 2 — older and worse.**
 
-**Lesson: when you add a way for something to fail, check what auto-resumes.**
-The gate in §4.11 was correct and well-tested in isolation; what it didn't
-account for is that the SDK treats "refused" and "succeeded" identically,
-because both are a tool call with an output.
+- The "retry a thrown tool call ONCE" guard was a `Set` of message ids — but
+  `regenerate()` replaces the last assistant message with a NEW one carrying a NEW
+  id, so a failure that reproduces is never recognised as the same failure.
+- "Retry once" was really "retry forever". Now a counter, reset when the traveler
+  speaks.
+
+**Lesson: when you add a way for something to fail, check what auto-resumes.** The
+gate in §4.11 was correct and well-tested in isolation; what it didn't account for
+is that the SDK treats "refused" and "succeeded" identically, because both are a
+tool call with an output.
 
 **Also reported, and unrelated:** scrolling up to read while a reply streamed
-yanked you back to the bottom. The follow-the-stream effect ran on every chunk
-and set `scrollTop` unconditionally. It now sticks to the bottom only while the
-traveler is already there — the moment they scroll up they have taken control
-and keep it until they come back down. Their own messages always scroll into
-view regardless, because that one is theirs.
+yanked you back to the bottom.
+
+- The follow-the-stream effect ran on every chunk and set `scrollTop`
+  unconditionally.
+- It now sticks to the bottom only while the traveler is already there — the moment
+  they scroll up they have taken control and keep it until they come back down.
+- Their own messages always scroll into view regardless, because that one is
+  theirs.
 
 ### 4.14 One state change, two triggers, two turns (2026-08-04)
 
-**Found in analytics, not reported.** PostHog trace `b7c4c75b` shows three
-generations on one conversation, two of them started 125ms apart and both
-streaming a complete four-day sketch — 6,884 and 7,842 output tokens, $0.22
-each, into the same transcript. Nobody typed twice. Nobody typed at all.
+**Found in analytics, not reported.**
+
+- PostHog trace `b7c4c75b` shows three generations on one conversation, two of them
+  started 125ms apart and both streaming a complete four-day sketch.
+- 6,884 and 7,842 output tokens, $0.22 each, into the same transcript.
+- Nobody typed twice. Nobody typed at all.
 
 The traveler had answered the agent's `ask_questions` card. That single state
 change satisfies two independent triggers at once:
@@ -944,34 +1097,38 @@ change satisfies two independent triggers at once:
   exactly `lastAssistantMessageIsCompleteWithToolCalls` — the SDK auto-continues.
 - the same change clears `awaitingAnswer`, which releases the §4.11 pickup.
 
-**Both guards that should have caught it were a commit late.** `busy` derives
-from `status`, which the SDK sets *after* the send, so the effect that ran off
-the `messages` change read `busy === false`. And the promise flag is cleared
-inside `prepareSendMessagesRequest` (§4.11) — correct as a rule, but the
-transport prepares the request asynchronously, so `planWasDeferred` was still
-true when the pickup asked.
+**Both guards that should have caught it were a commit late.**
 
-**The fix is to share the trigger, not observe the side effect.** The pickup now
-tests `willAutoContinue(messages)` — the SDK's own `sendAutomaticallyWhen`
-condition, extracted and named — and stands down when it's true. It cannot be
-late, because it is not watching for the other turn to start; it is reading the
-same precondition. It is also the right answer on the merits: the auto-continue
-builds its context fresh, so it already carries the finished map. In the trace,
-the turn that fired *without* the nudge had all 206 spots and no
-MAP-IS-STILL-BEING-BUILT block, and produced the plan. The nudge added nothing.
+- `busy` derives from `status`, which the SDK sets *after* the send, so the effect
+  that ran off the `messages` change read `busy === false`.
+- The promise flag is cleared inside `prepareSendMessagesRequest` (§4.11) — correct
+  as a rule, but the transport prepares the request asynchronously, so
+  `planWasDeferred` was still true when the pickup asked.
 
-Behind it, a synchronous `turnStarted` latch closes the same class for the
-triggers we own: it is set at the moment a turn is decided on (and inside the
-transport, the only hook the SDK's own sends pass through) and released on the
-FALLING edge of `busy` — never on plain `!busy`, which would clear it inside the
-window it exists to cover. Every turn this panel starts goes through one
-`startTurn(...)` door, so no caller can read the guard and send two statements
-later.
+**The fix is to share the trigger, not observe the side effect.**
+
+- The pickup now tests `willAutoContinue(messages)` — the SDK's own
+  `sendAutomaticallyWhen` condition, extracted and named — and stands down when
+  it's true.
+- It cannot be late, because it is not watching for the other turn to start; it is
+  reading the same precondition.
+- It is also the right answer on the merits: the auto-continue builds its context
+  fresh, so it already carries the finished map. In the trace, the turn that fired
+  *without* the nudge had all 206 spots and no MAP-IS-STILL-BEING-BUILT block, and
+  produced the plan. The nudge added nothing.
+- **Behind it, a synchronous `turnStarted` latch** closes the same class for the
+  triggers we own: set at the moment a turn is decided on (and inside the transport,
+  the only hook the SDK's own sends pass through), released on the FALLING edge of
+  `busy` — never on plain `!busy`, which would clear it inside the window it exists
+  to cover. Every turn this panel starts goes through one `startTurn(...)` door, so
+  no caller can read the guard and send two statements later.
 
 **Verified against a headless reproduction** (`ask_questions` on screen, build
-released mid-card, then answered): reverted, two requests 1ms apart — the
-auto-continue and a "The map has finished building" pickup, exactly the trace's
-shape. With the fix, one.
+released mid-card, then answered):
+
+- Reverted: two requests 1ms apart — the auto-continue and a "The map has finished
+  building" pickup, exactly the trace's shape.
+- With the fix: one.
 
 **Lesson: two triggers for one state change is a bug even when both are
 guarded.** Guards written against React state answer "has the other one already
@@ -981,38 +1138,45 @@ trigger is *about to do*, off the condition it reads.
 ## 5. Learnings — infrastructure & cost
 
 ### 5.1 The 60s Vercel timeout (the production hang)
-First live session: silent dots → dead stream. Vercel runtime logs showed
-`Task timed out after 60 seconds` — my own `maxDuration = 60` while the
-model was mid-think on a 5-day plan. Fixes: `maxDuration = 300` (needs
-Fluid Compute — default on this project), the speak-before-tool-call
-rule, and error surfacing (unmask via `toUIMessageStream({onError})`,
-retry buttons, detection of empty assistant turns = dropped stream).
-**Debugging lesson: check Vercel runtime logs first** (`get_runtime_logs`
-MCP tool) — the answer was one grep away.
+
+- **Symptom:** first live session — silent dots → dead stream.
+- **Cause:** Vercel runtime logs showed `Task timed out after 60 seconds` — my own
+  `maxDuration = 60` while the model was mid-think on a 5-day plan.
+- **Fixes:**
+  - `maxDuration = 300` (needs Fluid Compute — default on this project).
+  - The speak-before-tool-call rule.
+  - Error surfacing: unmask via `toUIMessageStream({onError})`, retry buttons,
+    detection of empty assistant turns = dropped stream.
+- **Debugging lesson: check Vercel runtime logs first** (`get_runtime_logs` MCP
+  tool) — the answer was one grep away.
 
 ### 5.2 Prompt caching layout (Anthropic caching is explicit, prefix-based)
-The AI SDK does NOT auto-cache for Anthropic (OpenAI auto-caches; that's
-where "plumbing handles it" intuition comes from). We place two
-`cacheControl: {type:"ephemeral"}` breakpoints via providerOptions:
-1. On the **spot-digest system message** — prefix semantics mean this
-   also covers tool schemas + the persona before it. The volatile block
-   (current itinerary, stars, today's date) sits AFTER it on purpose.
-2. On the **last conversation message** — replayed history bills at
-   ~0.1× within a session.
-Known tradeoff: a plan-changing turn mutates the volatile block →
-one-turn cache miss on history (bounded by the send window). Micro-opt
-if ever justified by PostHog data: move itinerary state out of the
-system tail.
+
+- The AI SDK does **not** auto-cache for Anthropic (OpenAI auto-caches; that's
+  where the "plumbing handles it" intuition comes from).
+- We place two `cacheControl: {type:"ephemeral"}` breakpoints via providerOptions:
+  1. On the **spot-digest system message** — prefix semantics mean this also covers
+     tool schemas + the persona before it. The volatile block (current itinerary,
+     stars, today's date) sits AFTER it on purpose.
+  2. On the **last conversation message** — replayed history bills at ~0.1× within
+     a session.
+- **Known tradeoff:** a plan-changing turn mutates the volatile block → one-turn
+  cache miss on history (bounded by the send window).
+- **Micro-opt if ever justified by PostHog data:** move itinerary state out of the
+  system tail.
 
 ### 5.3 Long-conversation cost: state-carrying truncation, not summarization
-Requests send only the last 30 messages (window always opens on a user
-turn so tool pairs don't strand). Safe because **the itinerary IS the
-compressed conversation** — durable state (plan + whys + stars + budget
-+ pace + dates) rides in the context block every turn. The persona knows
-truncation happens and folds lasting chat-stated prefs into the plan
-immediately. LLM summarization was rejected: extra calls, lossy, and
-unnecessary at this scale. Storage keeps 80 messages for display; only
-the request is windowed.
+
+- Requests send only the last 30 messages (the window always opens on a user turn
+  so tool pairs don't strand).
+- Safe because **the itinerary IS the compressed conversation** — durable state
+  (plan + whys + stars + budget + pace + dates) rides in the context block every
+  turn.
+- The persona knows truncation happens and folds lasting chat-stated prefs into the
+  plan immediately.
+- **LLM summarization was rejected:** extra calls, lossy, and unnecessary at this
+  scale.
+- Storage keeps 80 messages for display; only the request is windowed.
 
 ### 5.4 Chat persistence pitfalls
 - Save **continuously** (debounced 400ms) + **flush on unmount** —
@@ -1025,22 +1189,28 @@ the request is windowed.
 
 ### 5.9 One trip, one trace — and evals on real traffic (2026-08-04)
 
-**A 20-video build was landing as 22 traces.** Discovery took a `randomUUID`,
-each extraction took `video-<id>`, the briefing took `trip-<id>`. Every one was
-locally sensible and the whole was useless: nothing could answer "what did
-building this trip cost", and one traveler's build read as 22 unrelated
-conversations.
+**A 20-video build was landing as 22 traces.**
 
-The video id was chosen because *extractions are cached cross-trip* — but that
-conflated two different keys. The **cache** is keyed by video and stays that
-way. The **trace** describes this traveler's build, so it's keyed by trip
-(`buildTraceId`). On a cache hit no model call happens and no generation is
-emitted, which is the honest record — the trip that paid for the read is the
-one that shows it.
+- Discovery took a `randomUUID`, each extraction took `video-<id>`, the briefing
+  took `trip-<id>`.
+- Every one was locally sensible and the whole was useless: nothing could answer
+  "what did building this trip cost", and one traveler's build read as 22 unrelated
+  conversations.
 
-The tier above was missing too: `$ai_session_id` was set by the chat route but
-not by any build call, so the two halves of one trip's history didn't line up.
-`tripProperties` now sets it everywhere. The hierarchy:
+**The fix — separate the cache key from the trace key:**
+
+- The video id was chosen because *extractions are cached cross-trip*, but that
+  conflated two different keys.
+- The **cache** is keyed by video and stays that way.
+- The **trace** describes this traveler's build, so it's keyed by trip
+  (`buildTraceId`).
+- On a cache hit no model call happens and no generation is emitted, which is the
+  honest record — the trip that paid for the read is the one that shows it.
+- The tier above was missing too: `$ai_session_id` was set by the chat route but
+  not by any build call, so the two halves of one trip's history didn't line up.
+  `tripProperties` now sets it everywhere.
+
+The hierarchy:
 
 ```
 session = trip
@@ -1053,10 +1223,12 @@ session = trip
 "can I reuse this work?" versus "what happened for this person?" — and the one
 that's convenient at the call site is usually the wrong one.
 
-**Evals now run on production traffic.** PostHog's native evaluations
-(`/docs/ai-evals`) attach to `$ai_generation` with no new instrumentation,
-because `$ai_output_choices` already carries `tool_calls` — the actual
-`update_itinerary` payload. Three are configured:
+**Evals now run on production traffic.**
+
+- PostHog's native evaluations (`/docs/ai-evals`) attach to `$ai_generation` with
+  no new instrumentation, because `$ai_output_choices` already carries
+  `tool_calls` — the actual `update_itinerary` payload.
+- Configured:
 
 | Evaluation | Type | Notes |
 |---|---|---|
@@ -1065,44 +1237,52 @@ because `$ai_output_choices` already carries `tool_calls` — the actual
 | Plan serves what the traveller actually asked for | LLM judge | Relevance of the committed itinerary. Needs an Anthropic key |
 | Summary document is worth saying yes to | LLM judge | Relevance of the PROSE SHAPE, before any pin is placed. Needs a key |
 
-**Both halves of the flow get judged, and the prose half matters more.** The
-shape document is what the traveller actually says yes to (§4.6) — a plan built
-on a shape they should have rejected is wasted work — and it carries no tool
-call, so anything conditioned on one is blind to it. Its judge has a failure
-mode the plan judge doesn't need: *could this have been written about
-anywhere?* A sketch of "explore the old town, beach day, soak up the
-atmosphere" is fluent, on-topic, and gives the traveller nothing to push back
-on.
+**Both halves of the flow get judged, and the prose half matters more.**
 
-**Turn-shape properties are what make this affordable.** `wrotePlan`,
-`wroteShape`, `planIsPatch`, `plannedDays` and `plannedStops` are emitted on
-every `$ai_generation`, so a judge runs only on the turns it can say something
-about instead of sampling everything and returning N/A. `plannedDays`/
-`plannedStops` also fixed a *wrong* eval: the first pace check counted
-`spotId` occurrences in `$ai_output_choices`, which is truncated at
-`MAX_CONTENT_CHARS` — so it undercounted exactly the biggest plans, the ones
-most likely to be overpacked. Measuring before truncation is exact.
+- The shape document is what the traveller actually says yes to (§4.6) — a plan
+  built on a shape they should have rejected is wasted work.
+- It carries no tool call, so anything conditioned on one is blind to it.
+- Its judge has a failure mode the plan judge doesn't need: *could this have been
+  written about anywhere?* A sketch of "explore the old town, beach day, soak up
+  the atmosphere" is fluent, on-topic, and gives the traveller nothing to push back
+  on.
 
-Worth knowing for future evals: Hog gets `properties.*` and supports
-`splitByString`/`ilike`, and returning `null` marks a generation N/A. There is
-also a **trace target** that waits for a conversation to settle, so
-conversation-level checks are possible — bearing in mind a trace is one
-*sitting*, not the whole conversation.
+**Turn-shape properties are what make this affordable.**
+
+- `wrotePlan`, `wroteShape`, `planIsPatch`, `plannedDays` and `plannedStops` are
+  emitted on every `$ai_generation`, so a judge runs only on the turns it can say
+  something about instead of sampling everything and returning N/A.
+- `plannedDays`/`plannedStops` also fixed a *wrong* eval: the first pace check
+  counted `spotId` occurrences in `$ai_output_choices`, which is truncated at
+  `MAX_CONTENT_CHARS` — so it undercounted exactly the biggest plans, the ones most
+  likely to be overpacked. Measuring before truncation is exact.
+
+**Worth knowing for future evals:**
+
+- Hog gets `properties.*` and supports `splitByString`/`ilike`.
+- Returning `null` marks a generation N/A.
+- There is a **trace target** that waits for a conversation to settle, so
+  conversation-level checks are possible — bearing in mind a trace is one
+  *sitting*, not the whole conversation.
 
 ### 5.10 A trace id is not a cache key, and a cache key is not an identity (2026-08-04)
 
-**One mountain, three pins.** A Skye trip produced "The Quiraing" (3 creators),
-"Quiraing", and "Quiraing Mountains (Trotternish Ridge)" as three separate
-spots. Matching was exact equality on `normalizeName`, so three strings meant
-three places.
+**One mountain, three pins.**
 
-**The defence that should have caught it was dead code.** `extractSpots` takes
-`knownSpotNames` and instructs the model to "reuse the EXACT same name string
-so it can be merged" — but `processVideoRaw` calls it with an EMPTY array, and
-has to: extractions are cached cross-trip, so they cannot depend on what any
-one trip has already found. **The caching decision silently disabled the
-consistency mechanism, and nothing downstream was strengthened to compensate.**
-The instruction has probably never run in production.
+- A Skye trip produced "The Quiraing" (3 creators), "Quiraing", and "Quiraing
+  Mountains (Trotternish Ridge)" as three separate spots.
+- Matching was exact equality on `normalizeName`, so three strings meant three
+  places.
+
+**The defence that should have caught it was dead code.**
+
+- `extractSpots` takes `knownSpotNames` and instructs the model to "reuse the EXACT
+  same name string so it can be merged".
+- But `processVideoRaw` calls it with an EMPTY array, and has to: extractions are
+  cached cross-trip, so they cannot depend on what any one trip has already found.
+- **The caching decision silently disabled the consistency mechanism, and nothing
+  downstream was strengthened to compensate.** The instruction has probably never
+  run in production.
 
 So matching became post-hoc and layered by trust (`findDuplicate`):
 
@@ -1115,59 +1295,70 @@ So matching became post-hoc and layered by trust (`findDuplicate`):
    Google saying these are different places, and a word-overlap heuristic
    doesn't get to overrule it.
 
-**The asymmetry that set the tuning:** under-merging shows an ugly duplicate
-pin — visible, annoying, recoverable. Over-merging silently destroys a real
-recommendation, and nobody ever notices. When in doubt, don't merge. Verified
-against the reported case plus five over-merge traps ("Sairee Beach" vs
-"Sairee Beach Bar", "Galle Fort" vs "Galle Fort Lighthouse", two "Blue
-Lagoon"s, differing Google ids).
+**The asymmetry that set the tuning:**
 
-**Measuring it needs both halves, and they're different instruments.** Within
-one video, a Hog eval on `extract-spots` catches two names for one place. The
-cross-video case — the one actually reported — is invisible from any single
-generation, because each extraction is cached trip-independently and cannot
-know what the others called a place. That half is the
-`duplicate_spots_detected` product event, emitted at build completion from a
-deliberately looser scan than the merge uses: it reports, so it can afford
-false positives the merge cannot.
+- Under-merging shows an ugly duplicate pin — visible, annoying, recoverable.
+- Over-merging silently destroys a real recommendation, and nobody ever notices.
+- **When in doubt, don't merge.**
+- Verified against the reported case plus five over-merge traps ("Sairee Beach" vs
+  "Sairee Beach Bar", "Galle Fort" vs "Galle Fort Lighthouse", two "Blue Lagoon"s,
+  differing Google ids).
+
+**Measuring it needs both halves, and they're different instruments.**
+
+- *Within one video:* a Hog eval on `extract-spots` catches two names for one
+  place.
+- *Cross-video* (the case actually reported): invisible from any single generation,
+  because each extraction is cached trip-independently and cannot know what the
+  others called a place.
+- That half is the `duplicate_spots_detected` product event, emitted at build
+  completion from a deliberately looser scan than the merge uses — it reports, so
+  it can afford false positives the merge cannot.
 
 ### 5.5 Verify costs in PostHog, decide with data
-Every planner turn emits `$ai_generation` (span `planner-chat`, tagged
-tripId/tripName) with token + cache fields. Before optimizing anything
-cost-related (model splits, summarization, Routes API), check
-`llm-total-costs` there first. From turn 2 of a session,
-cache_read should dominate input tokens — if not, a silent cache
-invalidator crept in.
 
-**User-level attribution (2026-07-24, post-accounts).** Every
-`$ai_generation` is keyed to the signed-in account: `distinctId` = the
-session user's id (`google:<sub>`), a plain `userId` event property for
-breakdowns, and `$set: {email, name}` so PostHog person profiles/cohorts
-populate. Anonymous callers keep the old behavior (`distinctId` = traceId,
-`$process_person_profile: false`). The user always comes from the session
-cookie SERVER-side (client-sent ids would be spoofable). Plumbing: the chat
-route passes the user explicitly into its capture opts (its callbacks run
-under `after()`, where ambient context is risky); the discover/process-video
-pipeline uses `withLlmUser()` — request-scoped AsyncLocalStorage in
-`lib/llm.ts` — so `extract.ts`/`discover.ts` needed no signature changes.
+- Every planner turn emits `$ai_generation` (span `planner-chat`, tagged
+  tripId/tripName) with token + cache fields.
+- Before optimizing anything cost-related (model splits, summarization, Routes
+  API), check `llm-total-costs` there first.
+- From turn 2 of a session, `cache_read` should dominate input tokens — if not, a
+  silent cache invalidator crept in.
+
+**User-level attribution (2026-07-24, post-accounts).**
+
+- Every `$ai_generation` is keyed to the signed-in account: `distinctId` = the
+  session user's id (`google:<sub>`), a plain `userId` event property for
+  breakdowns, and `$set: {email, name}` so PostHog person profiles/cohorts
+  populate.
+- Anonymous callers keep the old behavior (`distinctId` = traceId,
+  `$process_person_profile: false`).
+- The user always comes from the session cookie SERVER-side (client-sent ids would
+  be spoofable).
+- **Plumbing:** the chat route passes the user explicitly into its capture opts
+  (its callbacks run under `after()`, where ambient context is risky); the
+  discover/process-video pipeline uses `withLlmUser()` — request-scoped
+  AsyncLocalStorage in `lib/llm.ts` — so `extract.ts`/`discover.ts` needed no
+  signature changes.
 
 **Two capture paths, one schema — and the AI-SDK path had three bugs.**
-`lib/llm.ts` wraps the raw Anthropic SDK (discover/extract); the chat route
-hand-rolls its own `$ai_generation` around `streamText`. They must stay in
-sync. The route's copy drifted and mis-reported for a while:
-- **Inflated cost (~3×).** PostHog uses **exclusive** cache counting for
-  Anthropic (auto-detected from `$ai_provider: "anthropic"` when
-  `$ai_cache_reporting_exclusive` is unset — see
-  [calculating-costs](https://posthog.com/docs/llm-analytics/calculating-costs)):
-  `$ai_input_tokens` must be the *uncached* input, and `cache_read`/
-  `cache_creation` are priced as separate buckets on top. But the AI SDK's
-  `usage.inputTokens` is the **total** (`= noCache + cacheRead + cacheWrite`;
-  confirmed in `@ai-sdk/anthropic` `dist/index.js`, the `inputTokens.total`
-  field). Sending that total made PostHog bill the cached prefix twice — once
-  full, once discounted. Fix: send `inputTokens − cacheRead − cacheWrite`.
-  (The raw-SDK path is immune: Anthropic's `usage.input_tokens` already
-  excludes cache.) Diagnostic that nailed it: a warm turn's cost equalled
-  `input×full + cacheRead×0.1 + cacheWrite×1.25 + output` to 4 sig-figs.
+
+- `lib/llm.ts` wraps the raw Anthropic SDK (discover/extract); the chat route
+  hand-rolls its own `$ai_generation` around `streamText`. They must stay in sync.
+- The route's copy drifted and mis-reported for a while:
+- **Inflated cost (~3×).**
+  - PostHog uses **exclusive** cache counting for Anthropic (auto-detected from
+    `$ai_provider: "anthropic"` when `$ai_cache_reporting_exclusive` is unset — see
+    [calculating-costs](https://posthog.com/docs/llm-analytics/calculating-costs)):
+    `$ai_input_tokens` must be the *uncached* input, and `cache_read`/
+    `cache_creation` are priced as separate buckets on top.
+  - But the AI SDK's `usage.inputTokens` is the **total**
+    (`= noCache + cacheRead + cacheWrite`; confirmed in `@ai-sdk/anthropic`
+    `dist/index.js`, the `inputTokens.total` field). Sending that total made
+    PostHog bill the cached prefix twice — once full, once discounted.
+  - **Fix:** send `inputTokens − cacheRead − cacheWrite`. (The raw-SDK path is
+    immune: Anthropic's `usage.input_tokens` already excludes cache.)
+  - **Diagnostic that nailed it:** a warm turn's cost equalled
+    `input×full + cacheRead×0.1 + cacheWrite×1.25 + output` to 4 sig-figs.
 - **Empty Input panel.** The route never set `$ai_input`. Fixed by
   flattening `modelMessages` (mirrors `lib/llm.ts` `formatInput`).
 - **Empty Output on tool turns.** Captured only `event.text`, which excludes
@@ -1200,43 +1391,51 @@ The route now records the full decision context:
   `tool` (results fed back, e.g. travel times). The token bulk is `system` +
   `assistant`/`tool` history, not user text.
 
-Guard when adding `$ai_input`: PostHog **silently drops events over ~1MB**.
-Per-message truncation (50K) isn't enough — a windowed history can sum past
-it — so `formatInput` also caps the serialized total (`MAX_INPUT_CHARS` 300K),
-dropping oldest history first (system prefix + recent turns kept, a
-`[N older message(s) omitted]` breadcrumb inserted). Without this, a long
-session would vanish from analytics entirely (worse than a blank field).
+**Guard when adding `$ai_input`: PostHog silently drops events over ~1MB.**
 
-**Deliver the capture with `after()`, not fire-and-forget.** Symptom that
-exposed this: a completed post-tool-call summary turn streamed to the user but
-was **missing from its trace**. Cause: the capture ran as `void
-captureGeneration(...)` in `onEnd` — the `await posthog.flush()` inside it can't
-help once the *route* doesn't await it, because a serverless function can freeze
-the instant the response stream closes and drop the detached flush. The
-**trailing** turn is most exposed (nothing keeps the function warm after it).
-Fix: a barrier promise resolved by the lifecycle callback, awaited via Next's
-`after()` (`next/server`) — it keeps the function alive past the response and
-runs even on error/abort. Also added an **`onAbort`** path (fires on client
-disconnect or the §5.1 maxDuration timeout — neither onEnd nor onError fire):
-logs partial text + best-effort step-usage tokens, flagged `aborted: true` with
-`$ai_http_status: 499`, so a killed turn is visible instead of silently gone.
+- Per-message truncation (50K) isn't enough — a windowed history can sum past it.
+- So `formatInput` also caps the serialized total (`MAX_INPUT_CHARS` 300K), dropping
+  oldest history first (system prefix + recent turns kept, a `[N older message(s)
+  omitted]` breadcrumb inserted).
+- Without this, a long session would vanish from analytics entirely — worse than a
+  blank field.
+
+**Deliver the capture with `after()`, not fire-and-forget.**
+
+- **Symptom:** a completed post-tool-call summary turn streamed to the user but was
+  **missing from its trace**.
+- **Cause:** the capture ran as `void captureGeneration(...)` in `onEnd` — the
+  `await posthog.flush()` inside it can't help once the *route* doesn't await it,
+  because a serverless function can freeze the instant the response stream closes
+  and drop the detached flush. The **trailing** turn is most exposed (nothing keeps
+  the function warm after it).
+- **Fix:** a barrier promise resolved by the lifecycle callback, awaited via Next's
+  `after()` (`next/server`) — it keeps the function alive past the response and runs
+  even on error/abort.
+- **Also added an `onAbort` path** (fires on client disconnect or the §5.1
+  maxDuration timeout — neither onEnd nor onError fire): logs partial text +
+  best-effort step-usage tokens, flagged `aborted: true` with
+  `$ai_http_status: 499`, so a killed turn is visible instead of silently gone.
 
 **Trace = one sitting, generation = one API call, group by tripId.**
-`$ai_trace_id` (= the client-minted `traceId`, a `useRef` UUID in
-`PlannerChat` — renamed from the misleading `chatSessionId`) groups every
-generation in a **sitting** into one trace; each generation is one POST to the
-route, i.e. one Anthropic call (thinking lives *inside* a generation, not as
-its own). A single user turn that hits a tool spawns **two** generations — the
-tool-call round and the post-tool-result round — because tools execute
-client-side and `sendAutomaticallyWhen` re-sends. The UUID is minted per mount
-(**not** persisted), so a reload deliberately starts a fresh trace = one trace
-per sitting. To follow a conversation *across* sittings/reloads, group by the
-`tripId` property (emitted on every event, stable for the trip's life) — which
-matches the product model: one chat per trip. `tripId` collides only across
-users of a shared *sample* trip (no accounts to separate them anyway); a
-user's own local trips have unique ids. A persisted, independent
-`chatSessionId` property is only worth adding if per-person separation on
-shared trips ever matters (deferred).
+
+- `$ai_trace_id` (= the client-minted `traceId`, a `useRef` UUID in `PlannerChat` —
+  renamed from the misleading `chatSessionId`) groups every generation in a
+  **sitting** into one trace.
+- Each generation is one POST to the route, i.e. one Anthropic call (thinking lives
+  *inside* a generation, not as its own).
+- A single user turn that hits a tool spawns **two** generations — the tool-call
+  round and the post-tool-result round — because tools execute client-side and
+  `sendAutomaticallyWhen` re-sends.
+- The UUID is minted per mount (**not** persisted), so a reload deliberately starts
+  a fresh trace = one trace per sitting.
+- To follow a conversation *across* sittings/reloads, group by the `tripId`
+  property (emitted on every event, stable for the trip's life) — which matches the
+  product model: one chat per trip.
+- `tripId` collides only across users of a shared *sample* trip (no accounts to
+  separate them anyway); a user's own local trips have unique ids.
+- A persisted, independent `chatSessionId` property is only worth adding if
+  per-person separation on shared trips ever matters (deferred).
 
 Two properties light up PostHog's native tabs:
 - **`$ai_session_id` = `tripId`** — populates the **Sessions** tab (one session
@@ -1251,10 +1450,12 @@ Two properties light up PostHog's native tabs:
   and analytics-facing copies can't drift. Tool *calls* themselves come from
   `$ai_output_choices[].tool_calls` (captured in the §5.5 output fix).
 
-Reminder that shaped the reading of all this: caching does **not** make the
-prefix "cost once" — each turn re-reads the whole (growing) prefix at ~0.1×,
-and any plan-changing turn rewrites the post-breakpoint tail at 1.25×
-(§5.2). Latency is not a cost driver; Anthropic bills tokens, not seconds.
+**Reminder that shaped the reading of all this:**
+
+- Caching does **not** make the prefix "cost once" — each turn re-reads the whole
+  (growing) prefix at ~0.1×.
+- Any plan-changing turn rewrites the post-breakpoint tail at 1.25× (§5.2).
+- Latency is not a cost driver; Anthropic bills tokens, not seconds.
 
 ### 5.6 Anthropic platform facts that shaped decisions
 - Subscription/OAuth reuse in third-party apps is **banned & enforced**
@@ -1263,27 +1464,33 @@ and any plan-changing turn rewrites the post-breakpoint tail at 1.25×
   feature for this use case, `effort` is the knob if cost ever bites.
 
 ### 5.8 React state must not be the object you mutate (2026-07-25c)
-Reported: a 20-video build sat on "0 of 20" with every video spinning, and the
-trip turned out to be fully built — reload and the map was there. Not the
-network, not the build: **the loader never re-rendered.**
 
-`TripView` kept the store's live trip in state, and everything that writes a trip
-mutates it in place (the runner sets `videos[i].status`, the agent pushes onto
-`spots`). So `setTrip(peekTrip(id))` handed React the object it was already
-holding: `Object.is` equal, update skipped, screen frozen — while the same
-mutations sailed into Postgres. It only *looked* intermittent because any
-unrelated re-render would suddenly reveal the mutated state.
+**Reported:** a 20-video build sat on "0 of 20" with every video spinning, and the
+trip turned out to be fully built — reload and the map was there. Not the network,
+not the build: **the loader never re-rendered.**
 
-Invisible before §2c because every read was a fresh `JSON.parse` of localStorage,
-so each render got its own copy for free. The store now separates the two kinds
-of read: **`peekTrip` is the live object** (build workers run four at a time and
-rely on sharing it — cloning there would drop merges) and **`snapshotTrip` is an
-immutable copy for React**. A shallow copy is not enough: the arrays the screen
-reads are the ones being mutated.
+**The cause:**
 
-Verified before/after with the render log: without it, 6/6 videos folded and 8
-store notifications produced 4 renders, all reading "0 done"; with it, renders
-climb 0 → 1 → 2 → 4 → 5 → 6.
+- `TripView` kept the store's live trip in state, and everything that writes a trip
+  mutates it in place (the runner sets `videos[i].status`, the agent pushes onto
+  `spots`).
+- So `setTrip(peekTrip(id))` handed React the object it was already holding:
+  `Object.is` equal, update skipped, screen frozen — while the same mutations
+  sailed into Postgres.
+- It only *looked* intermittent because any unrelated re-render would suddenly
+  reveal the mutated state.
+- Invisible before §2c, because every read was a fresh `JSON.parse` of localStorage
+  and each render got its own copy for free.
+
+**The fix — two kinds of read:**
+
+- **`peekTrip` is the live object** (build workers run four at a time and rely on
+  sharing it — cloning there would drop merges).
+- **`snapshotTrip` is an immutable copy for React.** A shallow copy is not enough:
+  the arrays the screen reads are the ones being mutated.
+- **Verified** before/after with the render log: without it, 6/6 videos folded and
+  8 store notifications produced 4 renders, all reading "0 done"; with it, renders
+  climb 0 → 1 → 2 → 4 → 5 → 6.
 
 Two harness traps this cost time on, both worth remembering:
 - **Assert on renders, not on sampled DOM.** The first three versions of the test
@@ -1298,15 +1505,17 @@ Two harness traps this cost time on, both worth remembering:
   Fakes that return none keep it on screen.
 
 ### 5.7 Measure the wire, not the promise (2026-07-25)
-Verifying the ETag work, `page.on("response")` reported **200** for requests the
-server had answered **304** — a revalidated response is handed to JS as the
-cached 200, so both `status()` and `body()` describe the resolved resource, not
-what crossed the network. Two consequences worth remembering: read the server's
-own log (or a proxy) when the claim is about bytes, and don't verify caching
-through `page.goto`/`reload` in Playwright — its contexts don't reuse the HTTP
-cache across full loads, so a real win looks like no win. The honest test was an
-in-app (client-side) navigation, where both the in-memory copy and the
-conditional request are actually exercised.
+
+- Verifying the ETag work, `page.on("response")` reported **200** for requests the
+  server had answered **304** — a revalidated response is handed to JS as the
+  cached 200, so both `status()` and `body()` describe the resolved resource, not
+  what crossed the network.
+- **Two consequences worth remembering:**
+  - Read the server's own log (or a proxy) when the claim is about bytes.
+  - Don't verify caching through `page.goto`/`reload` in Playwright — its contexts
+    don't reuse the HTTP cache across full loads, so a real win looks like no win.
+- The honest test was an in-app (client-side) navigation, where both the in-memory
+  copy and the conditional request are actually exercised.
 
 ## 6. Learnings — Vercel AI SDK v7 specifics
 
@@ -1359,7 +1568,7 @@ conditional request are actually exercised.
 | `lib/routes.ts` + `app/api/routes` | Real road times for `get_travel_times` (Google Routes, adjacent pairs only, one element per leg). Results are tagged `source: "road" \| "estimate"` — the agent was overruling straight-line numbers out loud (§4.8) |
 | `lib/geocode.ts` `geocodeBounds` | The destination's real extent, resolved once at discover → `Trip.bounds`. What makes "is this spot part of this trip?" answerable (§4.9) |
 | `lib/briefing.ts` | Shared briefing half (§4.10): the closed topic table with each topic's remit, note dedupe/caps, staleness. Dependency-free — client and server both import it |
-| `lib/briefingSynth.ts` + `app/api/briefing` | The one model call that turns a trip's raw notes into "Before you go" sections. Server-only (Anthropic SDK) |
+| `lib/briefingSynth.ts` + `app/api/briefing` | The one model call that turns a trip's raw notes into "Before you go" sections — 2-5 bullets per topic since `BRIEFING_VERSION` 2 (§4.10). Server-only (Anthropic SDK); parses section-by-section via `schemaOnly` |
 | `app/api/notes` | Cache-only note recovery for trips built before briefings existed. Never falls through to an extraction (§4.10 postscript) |
 | `components/TripBriefing.tsx` | The collapsed section above the pins; per-topic prose with channel chips linking into the video at the second it was said |
 | `scripts/recategorize-samples.mts` | One-off relabelling pass over the committed sample trips against the tightened category rules (§4.9) |
