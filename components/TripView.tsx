@@ -63,6 +63,7 @@ import { ICON_CARD, ICON_NAV } from "@/lib/ui";
 import { useIsMobile } from "@/lib/useIsMobile";
 import BuildingScreen from "./BuildingScreen";
 import TripBriefing from "./TripBriefing";
+import TripFeedback from "./TripFeedback";
 import BottomSheet, { SheetSnap } from "./BottomSheet";
 import PlannerChat from "./PlannerChat";
 import TripHeader from "./TripHeader";
@@ -2097,9 +2098,10 @@ export default function TripView({
               drag target fights the gesture). */}
           <div className="sheet-panel scroll" hidden={activeTab !== "pins"}>
             {planTabsEl}
-            {canShare && !selectedSpot && (
+            {!embed && !selectedSpot && (
               <div className="sheet-share">
-                <ShareTrip trip={trip} />
+                <TripFeedback trip={trip} />
+                {canShare && <ShareTrip trip={trip} />}
               </div>
             )}
             {spotCardEl ?? pinsViewEl}
@@ -2124,7 +2126,15 @@ export default function TripView({
           facets={facets}
           onChange={updateFacets}
           onRename={isLocal === null ? undefined : renameTrip}
-          action={canShare ? <ShareTrip trip={trip} /> : null}
+          // Feedback shows even when Share doesn't. Share needs a finished
+          // trip you OWN; the people most worth hearing from are often on a
+          // sample map they don't own and can't share.
+          action={
+            <>
+              <TripFeedback trip={trip} />
+              {canShare && <ShareTrip trip={trip} />}
+            </>
+          }
         />
       )}
       <div className="trip-body" ref={bodyRef}>
