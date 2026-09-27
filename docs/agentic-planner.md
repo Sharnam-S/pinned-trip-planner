@@ -38,8 +38,10 @@ The trip page's second half.
   photo popup.
 - Visual system: white cards floating on a soft gray canvas (#edeff2),
   monochrome ink accents — day colors only on the map, where they encode
-  routes — borderless soft-gray pill chips, white Day badges, grayscale CARTO
-  Positron tiles, Poppins.
+  routes — borderless soft-gray pill chips, white Day badges, OpenStreetMap
+  standard tiles (was CARTO Voyager until CARTO put its free basemaps behind an
+  API key in Sep 2026 and every tile came back as an "API KEY REQUIRED"
+  watermark — see 5.10), Poppins.
 - The chat has no close button: one trip, one always-open conversation.
 - The map's day-brief opens only from the map's own chips; the overview's
   expanded cards are the right-rail equivalent.
@@ -1677,3 +1679,18 @@ Two harness traps this cost time on, both worth remembering:
 - **Rejected:** LangChain/LangGraph (see §2), LLM summarization of chat
   (§5.3), Vercel AI Gateway (fragmenting billing/analytics), Claude
   subscription harnessing (ToS, §5.6).
+
+### 5.10 The basemap that needed a key (2026-09-27)
+
+The map "stopped working": pins rendered, but every tile was a gray
+"API KEY REQUIRED / carto.com/basemaps/apikey" watermark. CARTO's free raster
+basemaps (`basemaps.cartocdn.com`) now require an API key. The endpoint still
+answers 200 with a 2KB PNG, so nothing errored — the map just went blank.
+A referer or a bogus `api_key` param changes nothing.
+
+Fix: `components/TripMap.tsx` (and the unused `HeroMap.tsx`) now load
+`https://tile.openstreetmap.org/{z}/{x}/{y}.png`. OSM needs no key, has no
+`@2x` retina tiles (dropped `{r}`) and no `{s}` subdomains. Trade-off: the
+look is OSM's stronger colors, not Voyager's pastel. If the pastel matters
+again, the options are a CARTO key via env var, or a keyless vector source
+like OpenFreeMap, which means moving from Leaflet raster to MapLibre.

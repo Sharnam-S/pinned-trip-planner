@@ -162,13 +162,14 @@ export default function TripMap({
       attributionControl: true,
     });
     // No zoom buttons — pinch/scroll/double-tap gestures cover it.
-    // CARTO Voyager: the soft pastel look — owner's pick over grayscale.
+    // OpenStreetMap standard tiles. CARTO Voyager was the pick for its pastel
+    // look, but CARTO put its free basemaps behind an API key (Sep 2026) and
+    // serves "API KEY REQUIRED" watermark tiles without one. OSM needs no key.
     L.tileLayer(
-      "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+      "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
       {
         attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: "abcd",
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
         maxZoom: 19,
       }
     ).addTo(map);
